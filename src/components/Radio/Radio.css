@@ -1,0 +1,44 @@
+.Radio {
+  margin-bottom: 3px;
+}
+
+.Radio-option {
+  display: inline-block;
+  margin-right: 2rem;
+  opacity: 0.7;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.Radio-option-bubble {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 1rem;
+  vertical-align: middle;
+  margin-left: 3px;
+  margin-bottom: 1px;
+  border: 2px solid #ffffff;
+}
+
+.Radio-option-bubble-inner {
+  display: none;
+  background: #ffffff;
+  width: 8px;
+  height: 8px;
+  border-radius: 16px;
+  margin-left: 2px;
+  margin-top: 2px;
+}
+
+.Radio-option.active {
+  opacity: 1;
+}
+
+.Radio-option.active .Radio-option-bubble {
+  /* border-color: #ffffff; */
+}
+
+.Radio-option.active .Radio-option-bubble-inner {
+  display: block;
+}

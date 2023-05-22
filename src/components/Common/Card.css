@@ -1,0 +1,29 @@
+.card {
+  padding: 1rem;
+  border: 1px solid rgba(234, 234, 234, 0.15);
+  border-radius: 15px;
+  background: rgba(118, 118, 128, 0.24);
+}
+
+.card-header {
+  font-size: 1.032rem;
+  line-height: 1.355rem;
+  font-weight: normal;
+  letter-spacing: 0px;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border-bottom: 1px solid rgba(234, 234, 234, 0.15);
+}
+
+.card-divider {
+  height: 1px;
+  background: #4b494a;
+  margin: 0.7rem -1rem;
+}
+
+.card-body {
+}

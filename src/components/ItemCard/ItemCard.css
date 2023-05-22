@@ -1,0 +1,26 @@
+
+.item-card-container{
+    border-radius: 24px;
+    background: #272D3D;
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    align-items: center;
+
+}
+.item-card-container .left{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.icon-container{
+    /* border-radius: 10px;
+    background: gray;
+    border: 1px solid #fff; */
+}
+.content-container{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+}

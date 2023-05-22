@@ -1,0 +1,53 @@
+.trailing-header{
+    display: flex;
+    justify-content: space-between;
+}
+
+.box-select {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    /* margin: 0px; */
+    /* background-color: #7676803d;
+    border-radius: 3px;
+    padding: 1rem;
+    padding-left: 0.7rem; */
+}
+
+.box-select.Exchange-swap-section {
+    padding-top: 3px;
+    padding-bottom: 1px;
+}
+
+.box-select>div {
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+.box-select>div.active {
+    opacity: 1;
+}
+
+.box-select>input {
+    border-radius: 0 4px 4px;
+    flex-basis: 20%;
+    max-width: 20%;
+    font-size: 12px;
+    height: 20px;
+    padding: 0;
+    border: 1px solid transparent;
+}
+
+.take-profit-input-box{
+
+}
+
+.take-profit-input{
+    height: auto;
+    width: 25%;
+    max-width: 100px;
+    height: 20px;
+    font-size: 16px;
+    background-color: #51506b;
+    border-radius: 3px;
+}
