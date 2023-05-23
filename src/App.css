@@ -9,7 +9,9 @@
     padding: 0 8px;
   }
 }
-
+h1,h2,h3,p{
+    margin: 0;
+}
 .App-header-backdrop {
   position: fixed;
   z-index: 10;
@@ -1222,7 +1224,7 @@ button.App-button {
 }
 
 .positive {
-  color: #0ecc83;
+  color: #79ffab;
 }
 
 .positive-background {
@@ -1230,7 +1232,7 @@ button.App-button {
 }
 
 .negative {
-  color: #fa3c58;
+  color: #ff7b41;
 }
 
 .negative-background {

@@ -5,35 +5,29 @@
 .total-info{
     display: flex;
     flex-direction: column;
-    gap:12px;
+    gap: 4px;
 }
-.section{
-    margin-bottom: 30px;
-    padding: 24px;
-    border-radius: 24px;
+.total-info .info-number{
+    font-size: 32px;
+    font-weight: 600;
 }
-.section-investments{
-    border: 1px solid #333B3F;
 
 
-}
 .section-header{
     text-align: center;
 }
 .invest-card{
-    background: #1B1E29;
-    padding: 24px;
+    border-radius: 30px;
+    background-color: rgba(255,255,255,0.05);
+    padding: 40px 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap:36px;
-    border-radius: 12px;
+    /* gap:36px; */
 }
-.section-markets{
-    background: #272D3D;
-    padding: 16px;
+.invest-card p{
+    margin: 16px 0 48px 0;
 }
-
 
 .grid-cols-3 {
     display: grid;
@@ -46,6 +40,20 @@
   gap: 16px;
 }
 
+.grid-cols-7 {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 16px;
+}
+.col-span-2{
+    grid-column: span 2;
+}
+.col-span-3 {
+  grid-column: span 3;
+}
+.col-span-4 {
+  grid-column: span 4;
+}
 
 .leverage-liquidity-container{
     border: 1px solid #333B3F;

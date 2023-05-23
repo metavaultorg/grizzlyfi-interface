@@ -63,6 +63,9 @@ import SEO from "../../components/Common/SEO";
 import { useTotalVolume, useHourlyVolume, useTotalFees } from "../../Api";
 import ItemCard from '../../components/ItemCard/ItemCard'
 import DemoIcon from "../../assets/icons/ReferralCodeIcon";
+import IconPercentage from '../../assets/icons/icon-percentage.svg'
+import IconMoney from '../../assets/icons/icon-investments-money.svg'
+import IconClaim from '../../assets/icons/icon-claim-reward.svg'
 
 
 
@@ -84,21 +87,21 @@ const vaultList = [
 export default function DashboardV3() { 
     return <SEO title={getPageTitle("Dashboard")}>
         <div className="default-container DashboardV2 page-layout">
-            <div className="section section-total-info">
+            <div className=" section-total-info">
                 <div className="total-info">
-                    <div className="info-label">Total Trading Volume</div>
-                    <div className="info-number">$123456</div>
-                    <div className="info-change">12.4%($113.4) <span>24h</span></div>
+                    <div className="label">Total Trading Volume</div>
+                    <h1>$123456</h1>
+                    <div className="info-change positive">12.4%($113.4) <span style={{ opacity: '0.5', marginLeft:4}}>24h</span></div>
                 </div>
                 <div className="total-info">
-                    <div className="info-label">Paid out to GLL Stakers</div>
-                    <div className="info-number">$123456</div>
-                    <div className="info-change">12.4%($113.4) <span>24h</span></div>
+                    <div className="label">Paid out to GLL Stakers</div>
+                    <h1>$123456</h1>
+                    <div className="info-change positive">12.4%($113.4) <span style={{ opacity: '0.5', marginLeft: 4 }}>24h</span></div>
                 </div>
                 <div className="total-info">
-                    <div className="info-label">Assets Under Management</div>
-                    <div className="info-number">$1232</div>
-                    <div className="info-change">12.4%($113.4) <span>24h</span></div>
+                    <div className="label">Assets Under Management</div>
+                    <h1>$1232</h1>
+                    <div className="info-change negative">12.4%(-$113.4) <span style={{ opacity: '0.5', marginLeft: 4 }}>24h</span></div>
                 </div>
 
             </div>
@@ -106,25 +109,32 @@ export default function DashboardV3() {
             <div className="section section-investments">
                 <div className="section-header">
                     <h1>No investment Yet</h1>
-                    <p>dadasfagdsgdfgfvxcvxvxvxv </p>
+                    <p className="text-des" style={{ marginTop: 16 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas varius tortor nibh, sit amet tempor nibh finibus et. Aenean eu enim justo. Vestibulum aliquam hendrerit molestie. Mauris </p>
                 </div>
                 
-                <div style={{display: 'grid',gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',gap:12}}>
+                <div style={{display: 'grid',gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',gap:12,marginTop:56}}>
                     <div className="invest-card">
                         <img />
                         <h1>Start Trading</h1>
-                        <p>sdashdhasdhadhadkjasdas</p>
-                        <Link to="/" className="btn-primary ">
-                            Trade Now
-                        </Link>
+                        <p>Experience purely decentralized trading on Grizzly. Trade your favorite bluechip Cryptocurrencies instantly with up to 100x leverage</p>
+                        <div className="w-full" style={{maxWidth:512}}>
+                            <Link to="" className="btn-primary ">
+                                Trade Now
+                            </Link>
+                        </div>
                     </div>
                     <div className="invest-card">
                         <img />
                         <h1>Earn real yield</h1>
-                        <p>sdashdhasdhadhadkjasdas</p>
-                        <Link to="/" className="btn-primary ">
-                            Invest Now
-                        </Link>
+                        <p>Get to earn real yield in BTC, ETH and other bluechip
+                            currencies by providing the liquidity others can use to trade.
+                        </p>
+                        <div className="w-full" style={{ maxWidth: 512 }}>
+                            <Link to="" className="btn-primary ">
+                                Invest Now
+                            </Link>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -132,14 +142,15 @@ export default function DashboardV3() {
                 <div className="section-header">
                     <h1>Your Investments </h1>
                 </div>
-                <div className="grid-cols-3">
-                    <ItemCard label='Total PnL' value='$92.21' icon={<DemoIcon />} />
-                    <ItemCard label='Your GLL deposit' value='$92.21' icon={<DemoIcon />} />
-                    <ItemCard label='Claimable' value='$92.21' icon={<DemoIcon />} buttonEle={<button
+                <div className="grid-cols-7" style={{ margin:'40px 200px'}}>
+                    <ItemCard className='col-span-2'  label='Total PnL' value='$92.21' icon={IconPercentage}  />
+                    <ItemCard className='col-span-2'  label='Your GLL deposit' value='$92.21' icon={IconMoney}  />
+                    <ItemCard className='col-span-3'  label='Claimable' value='$92.21' icon={IconClaim} buttonEle={<button
                         className="card-btn  "
                     >
                         Claim
-                    </button>} />
+                    </button>}
+                    />
                 </div>
                 <div className="card">
                     <h3>Your Opened Positions</h3>
