@@ -66,14 +66,18 @@ import DemoIcon from "../../assets/icons/ReferralCodeIcon";
 import IconPercentage from '../../assets/icons/icon-percentage.svg'
 import IconMoney from '../../assets/icons/icon-investments-money.svg'
 import IconClaim from '../../assets/icons/icon-claim-reward.svg'
-
+import InnerCard from '../../components/Common/InnerCard'
+import IconLong from '../../assets/icons/icon-long.svg'
+import IconShort from '../../assets/icons/icon-short.svg'
+import IconToken from '../../assets/icons/honey-token.svg'
+import LiquidityPng from '../../assets/liquidity.png'
 
 
 const tokenPairMarketList = [
-    { name: 'BTC/USD', lastPrice: '$456', change: '12', high: '34', low: '13', volume: '123', volumeUsd: '56' },
-    { name: 'ETH/USD', lastPrice: '$456', change: '12', high: '34', low: '13', volume: '123', volumeUsd: '56' },
-    { name: 'BNB/USD', lastPrice: '$456', change: '12', high: '34', low: '13', volume: '123', volumeUsd: '56' },
-    { name: 'USDT/USD', lastPrice: '$456', change: '12', high: '34', low: '13', volume: '123', volumeUsd: '56' },
+    { name: 'BTC/USD', symbol: 'BTC', lastPrice: '$456', change: '1.54', high: '34', low: '13', volume: '123', volumeUsd: '56' },
+    { name: 'ETH/USD', symbol: 'ETH', lastPrice: '$456', change: '1.62', high: '34', low: '13', volume: '123', volumeUsd: '56' },
+    { name: 'DAI/USD', symbol: 'DAI', lastPrice: '$456', change: '-2.52', high: '34', low: '13', volume: '123', volumeUsd: '56' },
+    { name: 'USDT/USD', symbol: 'USDT', lastPrice: '$456', change: '1.62', high: '34', low: '13', volume: '123', volumeUsd: '56' },
 ]
 const positionList = [
     { symbol: 'ETH', isLong: true, levarage: '15.4', marketPrice: '0.9611', change: '-8.05', entryPrice: '0.96', liqPrice: '1.05', colleteral: '10.43', pnl: '-804', },
@@ -106,17 +110,17 @@ export default function DashboardV3() {
 
             </div>
 
-            <div className="section section-investments">
+            <div className="section section-noinvestments">
                 <div className="section-header">
                     <h1>No investment Yet</h1>
-                    <p className="text-des" style={{ marginTop: 16 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas varius tortor nibh, sit amet tempor nibh finibus et. Aenean eu enim justo. Vestibulum aliquam hendrerit molestie. Mauris </p>
+                    <p className="text-description" style={{ marginTop: 16 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas varius tortor nibh, sit amet tempor nibh finibus et. Aenean eu enim justo. Vestibulum aliquam hendrerit molestie. Mauris </p>
                 </div>
                 
                 <div style={{display: 'grid',gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',gap:12,marginTop:56}}>
                     <div className="invest-card">
                         <img />
                         <h1>Start Trading</h1>
-                        <p>Experience purely decentralized trading on Grizzly. Trade your favorite bluechip Cryptocurrencies instantly with up to 100x leverage</p>
+                        <p className="text-description">Experience purely decentralized trading on Grizzly. Trade your favorite bluechip Cryptocurrencies instantly with up to 100x leverage</p>
                         <div className="w-full" style={{maxWidth:512}}>
                             <Link to="" className="btn-primary ">
                                 Trade Now
@@ -126,7 +130,7 @@ export default function DashboardV3() {
                     <div className="invest-card">
                         <img />
                         <h1>Earn real yield</h1>
-                        <p>Get to earn real yield in BTC, ETH and other bluechip
+                        <p className="text-description">Get to earn real yield in BTC, ETH and other bluechip
                             currencies by providing the liquidity others can use to trade.
                         </p>
                         <div className="w-full" style={{ maxWidth: 512 }}>
@@ -146,17 +150,17 @@ export default function DashboardV3() {
                     <ItemCard className='col-span-2'  label='Total PnL' value='$92.21' icon={IconPercentage}  />
                     <ItemCard className='col-span-2'  label='Your GLL deposit' value='$92.21' icon={IconMoney}  />
                     <ItemCard className='col-span-3'  label='Claimable' value='$92.21' icon={IconClaim} buttonEle={<button
-                        className="card-btn  "
+                        className="btn-secondary "
+                        style={{width:75,height:32}}
                     >
                         Claim
                     </button>}
                     />
                 </div>
-                <div className="card">
-                    <h3>Your Opened Positions</h3>
-                    <table style={{ width: '100%', textAlign: 'left', borderSpacing: '0px 10px' }} cellspacing="0" cellpadding="0">
+                <InnerCard title='Your Opened Positions'>
+                    <table className="table-bordered" style={{ width: '100%', textAlign: 'left', borderSpacing: '0px 10px' }} cellspacing="0" cellpadding="0">
                         <thead>
-                            <tr style={{ background: '#212121' }}>
+                            <tr>
                                 <th>Position</th>
                                 <th>Mkt.Price</th>
                                 <th>24h Change</th>
@@ -194,8 +198,12 @@ export default function DashboardV3() {
                                                     />
                                                 </div>
                                                 <div>
-                                                    <div>{position.symbol}</div>
-                                                    <div>{position.isLong ? "Long" : "Short"}-{position.levarage}x</div>
+                                                    <div style={{fontSize:18,fontWeight:600}}>{position.symbol}</div>
+                                                    <div>
+                                                        <img src={position.isLong ? IconLong : IconShort} alt="icon" />
+                                                        
+                                                        <span style={{fontSize:14,fontWeight:500,marginLeft:4}}>{position.levarage}x</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
@@ -203,7 +211,8 @@ export default function DashboardV3() {
                                         <td><span className={cx({
                                             positive: position.change > 0,
                                             negative: position.change < 0,
-                                            muted: position.change === 0, })}>{position.change}%</span></td>
+                                            muted: position.change === 0,
+                                        })}>{position.change}%</span></td>
                                         <td>${position.entryPrice}/${position.liqPrice}</td>
                                         <td>${position.colleteral}</td>
                                         <td><span className={cx({
@@ -212,21 +221,20 @@ export default function DashboardV3() {
                                             muted: position.change === 0,
                                         })}>{position.pnl}</span></td>
                                         <td><button
-                                            className="card-btn"
+                                            className="table-trade-btn"
                                         >
                                             Trade
                                         </button></td>
                                     </tr>
                                 )
                             }
-                                
+
                             )}
                         </tbody>
                     </table>
-                </div>
-                <div className="card">
-                    <h3>Your GLL Vault</h3>
-                    <table style={{ width: '100%', textAlign: 'left', borderSpacing: '0px 10px' }} cellspacing="0" cellpadding="0">
+                </InnerCard>
+                <InnerCard title='Your GLL Vault' style={{marginTop:8}}>
+                    <table className="table-bordered" style={{ width: '100%', textAlign: 'left', borderSpacing: '0px 10px' }} cellspacing="0" cellpadding="0">
                         <thead>
                             <tr style={{ background: '#212121' }}>
                                 <th></th>
@@ -274,7 +282,8 @@ export default function DashboardV3() {
                                         <td>{item.poolShare}</td>
                                         <td>{item.profit}</td>
                                         <td><button
-                                            className="card-btn"
+                                            className="btn-secondary "
+
                                         >
                                             Claim
                                         </button></td>
@@ -285,18 +294,19 @@ export default function DashboardV3() {
                             )}
                         </tbody>
                     </table>
-                </div>
+                </InnerCard>
+                
             </div>
 
-            <div className="section section-markets">
+            <div className=" section-markets">
                 <div className="section-header">
                     <h1>Markets</h1>
-                    <p>dadasfagdsgdfgfvxcvxvxvxv </p>
+                    <p className="text-description" style={{marginTop:16}}>Start leverage trading with Grizzly Pairs and earn up to 100x. </p>
                 </div>
-                <div className="table-card">
+                <div className="market-card">
                     <table style={{ width: '100%', textAlign: 'left', borderSpacing:'0px 10px' }} cellspacing="0" cellpadding="0">
                         <thead>
-                            <tr style={{ background:'#212121'}}>
+                            <tr>
                                 <th>Pair</th>
                                 <th>Last Price</th>
                                 <th>24h Change</th>
@@ -307,20 +317,52 @@ export default function DashboardV3() {
                             </tr>
                         </thead>
                         <tbody>
-                            {tokenPairMarketList.map((pairItem, index) =>
-                                <tr
-                                    key={index}
+                            {tokenPairMarketList.map((pairItem, index) => {
+                                var tokenImage = null;
 
-                                >
-                                    <td>{pairItem.name}</td>
-                                    <td>{pairItem.lastPrice}</td>
-                                    <td>{pairItem.change}</td>
-                                    <td>{pairItem.high}</td>
-                                    <td>{pairItem.low}</td>
-                                    <td>{pairItem.volume}</td>
-                                    <td>{pairItem.volumeUsd}</td>
+                                try {
+                                    tokenImage = getImageUrl({
+                                        path: `coins/others/${pairItem.symbol.toLowerCase()}-original`,
+                                    });
+                                } catch (error) {
+                                    console.error(error);
+                                }
+                                return (
+                                    <tr
+                                        key={index}
 
-                                </tr>
+                                    >
+                                        <td>
+                                            <div style={{display:"flex",alignItems:'center',gap:16}}>
+                                                <img
+                                                    style={{ objectFit: "contain" }}
+                                                    src={tokenImage || tokenImage.default}
+                                                    alt={pairItem.symbol}
+                                                    width={40}
+                                                    height={51}
+                                                />
+                                                <span>{pairItem.name}</span>
+                                            </div>
+                                        </td>
+                                        <td className={cx({
+                                            positive: pairItem.change > 0,
+                                            negative: pairItem.change < 0,
+                                            muted: pairItem.change === 0,
+                                        })}>{pairItem.lastPrice}</td>
+                                        <td className={cx({
+                                            positive: pairItem.change > 0,
+                                            negative: pairItem.change < 0,
+                                            muted: pairItem.change === 0,
+                                        })}>{pairItem.change}%</td>
+                                        <td>{pairItem.high}</td>
+                                        <td>{pairItem.low}</td>
+                                        <td>{pairItem.volume}</td>
+                                        <td>{pairItem.volumeUsd}</td>
+
+                                    </tr>
+                                )
+                            }
+
                             )}
                         </tbody>
                     </table>
@@ -329,15 +371,18 @@ export default function DashboardV3() {
             </div>
 
             <div className=" section leverage-liquidity-container">
+                <div style={{textAlign:'center'}}>
+                    <img src={LiquidityPng} alt="liquidity" />
+                </div>
                 <div className="section-header" >
-                    <h1>Markets</h1>
-                    <p>dadasfagdsgdfgfvxcvxvxvxvdadasfagdsgdfgfvxcvxvxvxvdadasfagdsgdfgfvxcvxvxvxvdadasfagdsgdfgfvxcvxvxvxvdadasfagdsgdfgfvxcvxvxvxvdadasfagdsgdfgfvxcvxvxvxvdadasfagdsgdfgfvxcvxvxvxvdadasfagdsgdfgfvxcvxvxvxvdadasfagdsgdfgfvxcvxvxvxvdadasfagdsgdfgfvxcvxvxvxv </p>
+                    <h1>Grizzly Leverage Liquidity</h1>
+                    <p className="text-description" style={{marginTop:16,marginBottom:48}}>The Grizzly Leverage Liquidity tokens (GLL) is the counterparty to everyone trading with leverage. Deposit your favourite cryptocurrency and earn a solid yield which comes from the trading fees paid on Grizzly Trade. Earn like an exchange. </p>
                 </div>
                 <div className="grid-cols-4">
-                    <ItemCard label='Price of GLL' value='$92.21' icon={<DemoIcon />} />
-                    <ItemCard label='Assets in GLL' value='$92.21' icon={<DemoIcon />} />
-                    <ItemCard label='GLL APY' value='$92.21' icon={<DemoIcon />} />
-                    <ItemCard label='GLL 24h Rewards' value='$92.21' icon={<DemoIcon />} />
+                    <ItemCard label='Price of GLL' value='$92.21' icon={IconToken} />
+                    <ItemCard label='Assets in GLL' value='$8921' icon={IconMoney} />
+                    <ItemCard label='GLL APY' value='52.22%' icon={IconPercentage} />
+                    <ItemCard label='GLL 24h Rewards' value='$521' icon={IconClaim} />
                 </div>
                 <div style={{ maxWidth: 500, margin: 'auto', marginTop: 80, }}>
                     <Link to="/" className="btn-primary " >

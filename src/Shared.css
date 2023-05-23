@@ -91,28 +91,62 @@ button.App-cta:disabled {
 table {
   margin: 0;
   padding: 0;
+
+}
+thead tr {
+  background: #242424;
+}
+table.table-bordered thead tr {
+  background: rgba(36, 36,36,0.2 );
+}
+table.table-bordered tbody tr {
+    background-color: rgba(216, 216, 216, 0.1);
+}
+tbody tr {
+  -webkit-backdrop-filter: blur(50px);
+  backdrop-filter: blur(50px);
+  background-color: rgba(38, 38, 38, 0.6);
+}
+th{
+    padding: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+}
+td{
+    font-size: 18px;
+    padding: 16px;
+    
+}
+table.table-bordered td{
+    border-top: 1px solid rgba(165, 184, 214, 0.7);
+    border-bottom:1px solid rgba(165, 184, 214, 0.7);
+}
+table.table-bordered td:first-child{
+    border-left: 1px solid rgba(165, 184, 214, 0.7);
+}
+table.table-bordered td:last-child {
+  border-right:1px solid rgba(165, 184, 214, 0.7);
 }
 
-tr {
-  background: #252527;
-
-  /* margin: 4px 0; */
+table td:first-child {
+  border-bottom-left-radius: 20px;
+  border-top-left-radius: 20px;
+  
 }
-
-th,
-td {
-  padding: 20px;
-}
-table td:first-child,
 table th:first-child {
-  border-bottom-left-radius: 16px;
-  border-top-left-radius: 16px;
+  border-bottom-left-radius: 18px;
+  border-top-left-radius: 18px;
 }
 
-table td:last-child,
+table td:last-child {
+  border-bottom-right-radius: 20px;
+  border-top-right-radius: 20px;
+  
+}
 table th:last-child {
-  border-bottom-right-radius: 16px;
-  border-top-right-radius: 16px;
+  border-bottom-right-radius: 18px;
+  border-top-right-radius: 18px;
 }
 
 .border {
@@ -552,8 +586,10 @@ button.btn-link:hover .logout-icon {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
 }
 .btn-secondary{
+    width: 100%;
     color: #f2c75c;
     height: 40px;
     border-radius: 13px;
@@ -581,10 +617,10 @@ button.btn-link:hover .logout-icon {
     -webkit-backdrop-filter: blur(50px);
     backdrop-filter: blur(50px);
     border: solid 1px rgba(255, 255, 255, 0.2);
-    background-color: rgba(36, 36, 36, 0.6);
+    /* background-color: rgba(36, 36, 36, 0.6); */
 }
 
-.text-des{
+.text-description{
     opacity: 0.5;
     font-size: 18px;
     font-weight: 600;
