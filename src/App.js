@@ -97,6 +97,7 @@ import Vault from "./abis/Vault.json";
 import PositionRouter from "./abis/PositionRouter.json";
 import ReferralTerms from "./views/ReferralTerms/ReferralTerms";
 import { getImageUrl } from "./cloudinary/getImageUrl";
+import Earn from "./views/Earn/Earn";
 
 const safeMultisigConnector = new SafeAppConnector();
 
@@ -781,7 +782,8 @@ function FullApp() {
               <Dashboard />
             </Route>
             <Route exact path="/earn">
-              <Stake setPendingTxns={setPendingTxns} connectWallet={connectWallet} />
+              {/* <Stake setPendingTxns={setPendingTxns} connectWallet={connectWallet} /> */}
+              <Earn />
             </Route>
             <Route exact path="/buy">
               <Buy
