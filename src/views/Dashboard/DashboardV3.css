@@ -1,6 +1,9 @@
 .section-total-info{
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 1065px;
+    margin: 0 auto;
+    width: -webkit-fill-available;
 }
 .total-info{
     display: flex;

@@ -71,6 +71,7 @@ import IconLong from '../../assets/icons/icon-long.svg'
 import IconShort from '../../assets/icons/icon-short.svg'
 import IconToken from '../../assets/icons/honey-token.svg'
 import LiquidityPng from '../../assets/liquidity.png'
+import IconDown from '../../assets/icons/icon-down.svg'
 
 
 const tokenPairMarketList = [
@@ -84,14 +85,14 @@ const positionList = [
     { symbol: 'BTC', isLong: false, levarage: '15.4', marketPrice: '0.9611', change: '41.5', entryPrice: '0.96', liqPrice: '1.05', colleteral: '10.43', pnl: '104.41', }
 ]
 const vaultList = [
-    { symbol: 'ETH',  apy: '15.4', locked: '104.41', invest: '21221', poolShare: '0.96%', profit: '521.52',},
+    { symbol: 'GLL',  apy: '15.4', locked: '104.41', invest: '21221', poolShare: '0.96%', profit: '521.52',},
 
 ]
 
 export default function DashboardV3() { 
     return <SEO title={getPageTitle("Dashboard")}>
         <div className="default-container DashboardV2 page-layout">
-            <div className=" section-total-info">
+            <div className="section-total-info">
                 <div className="total-info">
                     <div className="label">Total Trading Volume</div>
                     <h1>$123456</h1>
@@ -163,7 +164,7 @@ export default function DashboardV3() {
                             <tr>
                                 <th>Position</th>
                                 <th>Mkt.Price</th>
-                                <th>24h Change</th>
+                                <th>24h Change <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /></th>
                                 <th>Entry Price/Liq Price</th>
                                 <th>Collateral</th>
                                 <th>PnL</th>
@@ -238,7 +239,7 @@ export default function DashboardV3() {
                         <thead>
                             <tr >
                                 <th></th>
-                                <th>APY</th>
+                                <th>APY <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /></th>
                                 <th>Locked in GLL</th>
                                 <th>Your Investment</th>
                                 <th>Pool Share</th>
@@ -248,15 +249,6 @@ export default function DashboardV3() {
                         </thead>
                         <tbody>
                             {vaultList.map((item, index) => {
-                                var tokenImage = null;
-
-                                try {
-                                    tokenImage = getImageUrl({
-                                        path: `coins/others/${item.symbol.toLowerCase()}-original`,
-                                    });
-                                } catch (error) {
-                                    console.error(error);
-                                }
                                 return (
                                     <tr
                                         key={index}
@@ -264,13 +256,23 @@ export default function DashboardV3() {
                                     >
                                         <td>
                                             <div className="App-card-title-info">
-                                                <div className="App-card-title-info-icon">
+                                                <div className="App-card-title-info-icon"
+                                                    style={{
+                                                        border: 'solid 1px rgba(255, 255, 255, 0.2)',
+                                                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                                                        borderRadius: 10,
+                                                        width: 34,
+                                                        height: 34,
+                                                        alignItems: 'center',
+                                                        justifyContent:'center',
+                                                    }}
+                                                >
                                                     <img
                                                         style={{ objectFit: "contain" }}
-                                                        src={tokenImage || tokenImage.default}
+                                                        src={IconToken}
                                                         alt={item.symbol}
-                                                        width={32}
-                                                        height={32}
+                                                        width={18}
+                                                        height={18}
                                                     />
                                                 </div>
                                                 <div>{item.symbol}</div>
@@ -308,7 +310,7 @@ export default function DashboardV3() {
                         <thead>
                             <tr>
                                 <th>Pair</th>
-                                <th>Last Price</th>
+                                <th>Last Price <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /></th>
                                 <th>24h Change</th>
                                 <th>24h High</th>
                                 <th>24h Low</th>
@@ -328,6 +330,7 @@ export default function DashboardV3() {
                                     console.error(error);
                                 }
                                 return (
+                                    
                                     <tr
                                         key={index}
 
@@ -359,7 +362,9 @@ export default function DashboardV3() {
                                         <td>{pairItem.volume}</td>
                                         <td>{pairItem.volumeUsd}</td>
 
-                                    </tr>
+                                        </tr>
+                                    
+                                    
                                 )
                             }
 
