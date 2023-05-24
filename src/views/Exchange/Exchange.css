@@ -660,7 +660,7 @@ table.Exchange-list th {
 .Exchange-swap-section {
   padding: 1rem;
   margin-bottom: 0.7rem;
-  border-radius: 3px;
+  border-radius: 20px;
   box-shadow: inset 0px 0px 30px 5px rgba(35, 31, 32, 0.01);
   background: rgba(118, 118, 128, 0.24);
   padding-left: 0.7rem;
@@ -711,7 +711,7 @@ table.Exchange-list th {
   top: 0;
   padding: 0.3rem 0.5rem;
   color: #000;
-  border-radius: 3px;
+  border-radius: 10px;
   z-index: 1;
   cursor: pointer;
   background: #ffaa27;
@@ -772,7 +772,7 @@ input.Exchange-swap-input.small {
   left: 50%;
   margin-left: -1.15rem;
   top: -1.25rem;
-  border-radius: 2rem;
+  border-radius: 12px;
   cursor: pointer;
   user-select: none;
   background-color: #625df5;

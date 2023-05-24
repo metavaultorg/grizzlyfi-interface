@@ -9,3 +9,11 @@
 .doc-link:hover {
   color: #ffc56b !important;
 }
+
+.Exchange-swap-market-box.App-box.App-box-border {
+  border-radius: 30px;
+}
+
+.Exchange-swap-box-inner.App-box-highlight {
+  border-radius: 40px;
+}
