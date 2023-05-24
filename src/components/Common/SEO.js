@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 function SEO(props) {
   const { children, ...customMeta } = props;
   const meta = {
-    title: "MVX | Metavault.Trade - Perpetual trading exchange",
+    title: "GLL | Grizzly.Trade - Perpetual trading exchange",
     description: `Trade spot or perpetual BTC, ETH, MATIC and other top cryptocurrencies with up to 50x leverage directly from your wallet on Polygon.`,
     image: "https://metavault.trade/android-chrome-512x512.png",
     type: "exchange",

@@ -320,7 +320,7 @@ button:hover{
 
 .App-card-title-info-icon {
   display: flex;
-  margin-right: 8px;
+  margin: 0 8px;
 }
 
 .App-card-title-info {

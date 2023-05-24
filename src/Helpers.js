@@ -2599,7 +2599,7 @@ export function sleep(ms) {
 }
 
 export function getPageTitle(data) {
-  return `${data} | Metavault.Trade - Perpetual trading exchange | MVX`;
+  return `${data} | Grizzly.Trade - Perpetual trading exchange | GLL`;
 }
 
 export function isHashZero(value) {

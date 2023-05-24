@@ -13,7 +13,7 @@ body,
 
 * {
   box-sizing: border-box;
-  font-family: "Inter", sans-serif;
+  font-family: "Boston",sans-serif;
 }
 
 ::-webkit-scrollbar {
@@ -115,8 +115,8 @@ th{
 }
 td{
     font-size: 18px;
-    padding: 16px;
-    
+    height: 72px;
+    padding: 0 20px;
 }
 table.table-bordered td{
     border-top: 1px solid rgba(165, 184, 214, 0.7);

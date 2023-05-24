@@ -193,8 +193,8 @@ export default function DashboardV3() {
                                                         style={{ objectFit: "contain" }}
                                                         src={tokenImage || tokenImage.default}
                                                         alt={position.symbol}
-                                                        width={40}
-                                                        height={51}
+                                                        width={32}
+                                                        height={32}
                                                     />
                                                 </div>
                                                 <div>
@@ -236,7 +236,7 @@ export default function DashboardV3() {
                 <InnerCard title='Your GLL Vault' style={{marginTop:8}}>
                     <table className="table-bordered" style={{ width: '100%', textAlign: 'left', borderSpacing: '0px 10px' }} cellspacing="0" cellpadding="0">
                         <thead>
-                            <tr style={{ background: '#212121' }}>
+                            <tr >
                                 <th></th>
                                 <th>APY</th>
                                 <th>Locked in GLL</th>
@@ -269,8 +269,8 @@ export default function DashboardV3() {
                                                         style={{ objectFit: "contain" }}
                                                         src={tokenImage || tokenImage.default}
                                                         alt={item.symbol}
-                                                        width={40}
-                                                        height={51}
+                                                        width={32}
+                                                        height={32}
                                                     />
                                                 </div>
                                                 <div>{item.symbol}</div>
@@ -338,8 +338,8 @@ export default function DashboardV3() {
                                                     style={{ objectFit: "contain" }}
                                                     src={tokenImage || tokenImage.default}
                                                     alt={pairItem.symbol}
-                                                    width={40}
-                                                    height={51}
+                                                    width={32}
+                                                    height={32}
                                                 />
                                                 <span>{pairItem.name}</span>
                                             </div>
@@ -384,8 +384,9 @@ export default function DashboardV3() {
                     <ItemCard label='GLL APY' value='52.22%' icon={IconPercentage} />
                     <ItemCard label='GLL 24h Rewards' value='$521' icon={IconClaim} />
                 </div>
-                <div style={{ maxWidth: 500, margin: 'auto', marginTop: 80, }}>
-                    <Link to="/" className="btn-primary " >
+                <div style={{ maxWidth: 500, margin: 'auto', marginTop: 80,position:'relative' }}>
+                    <div style={{ position: 'absolute',zIndex:'-1', left:17,width:'90%', height: 48, background:'#f2c75c',opacity:'0.6',filter:'blur(41px)'}}></div>
+                    <Link to="" className="btn-primary " >
                         Invest Now
                     </Link>
                 </div>
