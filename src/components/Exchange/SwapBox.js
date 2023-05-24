@@ -2275,7 +2275,7 @@ export default function SwapBox(props) {
           </div>
         )}
 
-        {!isSwap && !isStopOrder && !hasExistingPosition && (
+        {/*!isSwap && !isStopOrder && !hasExistingPosition && (
           <Trailer
             leverageOption={leverageOption}
             tokenPriceInUsd={nextAveragePrice}
@@ -2288,7 +2288,7 @@ export default function SwapBox(props) {
             isTrailingEnabled={isTrailingEnabled}
             setIsTrailingEnabled={setIsTrailingEnabled}
           ></Trailer>
-        )}
+        )*/}
         {isStopOrder && (
           <div className="Exchange-swap-section Exchange-trigger-order-info">
             Take-profit and stop-loss orders can be set after opening a position. <br />
