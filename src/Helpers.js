@@ -101,6 +101,7 @@ export const INCREASE = "Increase";
 export const DECREASE = "Decrease";
 export const LONG = "Long";
 export const SHORT = "Short";
+export const INACTIVE = "Inactive";
 
 export const MARKET = "Market";
 export const LIMIT = "Limit";

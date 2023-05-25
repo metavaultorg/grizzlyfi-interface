@@ -31,7 +31,6 @@
 .Tab.block .Tab-option.active {
   opacity: 1;
   pointer-events: none;
-  background: #625df5;
   color: #fff;
 }
 
@@ -42,7 +41,8 @@
 .Tab.inline .Tab-option {
   cursor: pointer;
   display: inline-block;
-  margin-right: 1rem;
+  margin-right: 1.5rem;
+  font-weight: 600;
 }
 
 .Tab.inline .Tab-option:hover {

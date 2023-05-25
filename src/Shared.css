@@ -629,3 +629,11 @@ button.btn-link:hover .logout-icon {
 .w-full{
     width: 100%;
 }
+
+.x-splitter {
+  margin-left: -1rem;
+  margin-right: -1rem;
+  height: 1px;
+  opacity: 0.1;
+  background-color: #fff;
+}

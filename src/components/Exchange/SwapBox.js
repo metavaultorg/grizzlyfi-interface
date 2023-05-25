@@ -22,6 +22,7 @@ import {
   USDM_DECIMALS,
   LONG,
   SHORT,
+  INACTIVE,
   SWAP,
   MARKET,
   SWAP_ORDER_OPTIONS,
@@ -80,15 +81,17 @@ import Router from "../../abis/Router.json";
 import Token from "../../abis/Token.json";
 import WETH from "../../abis/WETH.json";
 
-import longImg from "../../img/long.svg";
-import shortImg from "../../img/short.svg";
-import swapImg from "../../img/swap.svg";
+import longImg from "../../assets/icons/icon-long.svg";
+import longGrayImg from "../../assets/icons/icon-long-gray.svg";
+import shortImg from "../../assets/icons/icon-short.svg";
+import shortGrayImg from "../../assets/icons/icon-short-gray.svg";
 import Trailer from "../Trailer/Trailer";
 
 const SWAP_ICONS = {
   [LONG]: longImg,
+  [LONG+INACTIVE]: longGrayImg,
   [SHORT]: shortImg,
-  [SWAP]: swapImg,
+  [SHORT+INACTIVE]: shortGrayImg,
 };
 const { AddressZero } = ethers.constants;
 
@@ -1907,7 +1910,9 @@ export default function SwapBox(props) {
             option={swapOption}
             onChange={onSwapOptionChange}
             className="Exchange-swap-option-tabs text-uppercase"
+            optionClassNames={{[LONG]: "long", [SHORT]: "short"}}
           />
+          <div className="Exchange-swap-box-splitter"></div>
           {flagOrdersEnabled && (
             <Tab
               options={orderOptions}
