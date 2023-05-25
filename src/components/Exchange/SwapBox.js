@@ -85,6 +85,7 @@ import longImg from "../../assets/icons/icon-long.svg";
 import longGrayImg from "../../assets/icons/icon-long-gray.svg";
 import shortImg from "../../assets/icons/icon-short.svg";
 import shortGrayImg from "../../assets/icons/icon-short-gray.svg";
+import swapImg from "../../assets/icons/icon-swap.svg";
 import Trailer from "../Trailer/Trailer";
 
 const SWAP_ICONS = {
@@ -232,10 +233,11 @@ export default function SwapBox(props) {
     [chainId, "Exchange-swap-leverage-option"],
     "2"
   );
-  const [isLeverageSliderEnabled, setIsLeverageSliderEnabled] = useLocalStorageSerializeKey(
+  /*const [isLeverageSliderEnabled, setIsLeverageSliderEnabled] = useLocalStorageSerializeKey(
     [chainId, "Exchange-swap-leverage-slider-enabled"],
     true
-  );
+  );*/
+  const isLeverageSliderEnabled = true;
 
   const hasLeverageOption = isLeverageSliderEnabled && !isNaN(parseFloat(leverageOption));
 
@@ -1928,17 +1930,17 @@ export default function SwapBox(props) {
           <React.Fragment>
             <div className="Exchange-swap-section">
               <div className="Exchange-swap-section-top">
-                <div className="muted">
+                <div className="muted Exchange-swap-left">
                   {fromUsdMin && (
-                    <div className="Exchange-swap-usd">
-                      Pay: {formatAmount(fromUsdMin, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)} USD
-                    </div>
+                    <>
+                      Pay: <span className="font-number">{formatAmount(fromUsdMin, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)} USD</span>
+                    </>
                   )}
                   {!fromUsdMin && "Pay"}
                 </div>
                 {fromBalance && (
-                  <div className="muted align-right clickable" onClick={setFromValueToMaximumAvailable}>
-                    Balance: {formatAmount(fromBalance, fromToken.decimals, 4, true)}
+                  <div className="muted Exchange-swap-right clickable" onClick={setFromValueToMaximumAvailable}>
+                    Balance: <span className="font-number">{formatAmount(fromBalance, fromToken.decimals, 4, true)}</span>
                   </div>
                 )}
               </div>
@@ -1948,13 +1950,13 @@ export default function SwapBox(props) {
                     type="number"
                     min="0"
                     placeholder="0.0"
-                    className="Exchange-swap-input"
+                    className="Exchange-swap-input font-number"
                     value={fromValue}
                     onChange={onFromValueChange}
                   />
                   {shouldShowMaxButton() && (
                     <div className="Exchange-swap-max" onClick={setFromValueToMaximumAvailable}>
-                      MAX
+                      <span>MAX</span>
                     </div>
                   )}
                 </div>
@@ -1974,24 +1976,24 @@ export default function SwapBox(props) {
             </div>
             <div className="Exchange-swap-ball-container">
               <div className="Exchange-swap-ball" onClick={switchTokens}>
-                <IoMdSwap className="Exchange-swap-ball-icon" />
+                <img src={swapImg} alt="" className="Exchange-swap-ball-icon" />
               </div>
             </div>
             <div className="Exchange-swap-section">
               <div className="Exchange-swap-section-top">
-                <div className="muted">
+                <div className="muted Exchange-swap-left">
                   {toUsdMax && (
-                    <div className="Exchange-swap-usd">
-                      {getToLabel()}: {formatAmount(toUsdMax, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)} USD
-                    </div>
+                    <>
+                      {getToLabel()}: <span className="font-number">{formatAmount(toUsdMax, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)} USD</span>
+                      </>
                   )}
                   {!toUsdMax && getToLabel()}
                 </div>
                 {toBalance && isSwap && (
-                  <div className="muted align-right">Balance: {formatAmount(toBalance, toToken.decimals, 4, true)}</div>
+                  <div className="muted Exchange-swap-right">Balance: <span className="font-number">{formatAmount(toBalance, toToken.decimals, 4, true)}</span></div>
                 )}
                 {(isLong || isShort) && hasLeverageOption && (
-                  <div className="muted align-right">Leverage: {parseFloat(leverageOption).toFixed(2)}x</div>
+                  <div className="muted Exchange-swap-right">Leverage: <span className="font-number">{parseFloat(leverageOption).toFixed(2)}x</span></div>
                 )}
               </div>
               <div className="Exchange-swap-section-bottom">
@@ -2000,7 +2002,7 @@ export default function SwapBox(props) {
                     type="number"
                     min="0"
                     placeholder="0.0"
-                    className="Exchange-swap-input"
+                    className="Exchange-swap-input font-number"
                     value={toValue}
                     onChange={onToValueChange}
                   />
@@ -2047,7 +2049,7 @@ export default function SwapBox(props) {
                   type="number"
                   min="0"
                   placeholder="0.0"
-                  className="Exchange-swap-input small"
+                  className="Exchange-swap-input small font-number"
                   value={triggerRatioValue}
                   onChange={onTriggerRatioChange}
                 />
@@ -2086,7 +2088,7 @@ export default function SwapBox(props) {
                   type="number"
                   min="0"
                   placeholder="0.0"
-                  className="Exchange-swap-input"
+                  className="Exchange-swap-input font-number"
                   value={triggerPriceValue}
                   onChange={onTriggerPriceChange}
                 />
@@ -2112,12 +2114,14 @@ export default function SwapBox(props) {
         )}
         {(isLong || isShort) && !isStopOrder && (
           <div className="Exchange-leverage-box">
+            {/*
             <div className="Exchange-leverage-slider-settings">
               <Checkbox isChecked={isLeverageSliderEnabled} setIsChecked={setIsLeverageSliderEnabled}>
                 <span className="muted">Leverage slider</span>
               </Checkbox>
             </div>
-            {isLeverageSliderEnabled && (
+        */}
+           {isLeverageSliderEnabled && (
               <div
                 className={cx("Exchange-leverage-slider", "App-slider", {
                   positive: isLong,
