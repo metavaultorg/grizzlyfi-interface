@@ -337,7 +337,7 @@ function UnstakeModal(props) {
           <div className="Modal-note">
             Unstaking will burn&nbsp;
             <a
-              style={{ color: "#ffaa27" }}
+              style={{ color: "#f2c75c" }}
               href=" https://docs.metavault.trade/rewards"
               target="_blank"
               rel="noopener noreferrer"

@@ -1170,7 +1170,7 @@ function TradersInfo({
                         </td>
                         <td data-label="Transaction">
                           <a
-                            style={{ color: "#ffaa27" }}
+                            style={{ color: "#f2c75c" }}
                             target="_blank"
                             rel="noopener noreferrer"
                             href={explorerURL + `tx/${rebate.transactionHash}`}

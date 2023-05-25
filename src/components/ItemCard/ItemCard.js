@@ -2,12 +2,12 @@ import React from 'react'
 import './ItemCard.css'
 
 
-export default function ItemCard({ icon, label, value, buttonEle,className }) {
+export default function ItemCard({ icon, label, value, buttonEle,className,style }) {
     return (
-        <div className={`item-card-container ${className}`}>
+        <div className={`item-card-container ${className}`} style={style}>
             <div className='left'>
                 <div className='icon-container'>
-                    <img src={icon} alt={label} />
+                    <img src={icon} alt='img' />
                 </div>
                 <div className='content-container'>
                     <div style={{fontSize:14,fontWeight:600,opacity:0.6}}>{label}</div>
@@ -15,7 +15,7 @@ export default function ItemCard({ icon, label, value, buttonEle,className }) {
                 </div>
             </div>
 
-                {buttonEle}
+            {buttonEle}
 
         </div>
     )

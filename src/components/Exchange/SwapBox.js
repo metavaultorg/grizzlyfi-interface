@@ -1115,11 +1115,11 @@ export default function SwapBox(props) {
             </p>
           )}
           <div style={{ display: "flex", alignItems: "center", flexDirection: "column", gap: "10px" }}>
-            <a style={{ textDecoration: "none", color: "#ffaa27" }} href={uniswapUrl} target="_blank" rel="noreferrer">
+            <a style={{ textDecoration: "none", color: "#f2c75c" }} href={uniswapUrl} target="_blank" rel="noreferrer">
               Buy {swapTokenSymbol} on Uniswap
             </a>
             <a
-              style={{ textDecoration: "none", color: "#ffaa27" }}
+              style={{ textDecoration: "none", color: "#f2c75c" }}
               href={kyberswapUrl}
               target="_blank"
               rel="noreferrer"

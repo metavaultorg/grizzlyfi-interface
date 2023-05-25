@@ -15,7 +15,7 @@
   justify-content: center;
   padding-left: 0;
   padding-right: 0;
-  width: 163px;
+  /* width: 163px; */
 }
 
 .App-header-user-address:hover {
@@ -30,9 +30,7 @@
   width: 100%;
   transform-origin: top right;
   border-radius: 10px;
-  /* background: #231f20; */
-  /* background: rgba(255, 255, 255, 0.15); */
-  background: #37356d;
+  background: #404040;
   list-style: none;
   cursor: pointer;
   outline: none;
@@ -61,7 +59,7 @@
   margin: 0px;
   margin-left: 10px;
   width: 100%;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  /* border-bottom: 1px solid rgba(255, 255, 255, 0.15); */
   padding: 15px 0;
 }
 

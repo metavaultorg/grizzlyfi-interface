@@ -37,16 +37,20 @@ button:hover{
   display: flex;
   justify-content: space-between;
   position: relative;
-  padding: 25px;
+  padding: 24px;
   backdrop-filter: blur(85px);
-  background-color: rgba(11, 8, 60, 0.1);
+  /* background-color: rgba(11, 8, 60, 0.1); */
 }
 
-@media (min-width: 1900px) {
+/* @media (min-width: 1900px) {
   .App-header.large {
     max-width: 1600px;
     margin: 0 auto;
   }
+} */
+.App-header.large {
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
 /* .App-header.large::after {
@@ -423,20 +427,37 @@ button:hover{
     margin-right: 15px;
   }
 }
-
+.App-header-balance{
+  border-radius: 16px;
+  background-color: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  width: 103px;
+  justify-content: center;
+  gap: 4px;
+}
+.App-header-network{
+  border-radius: 16px;
+  background-color: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  width: 48px;
+  height: 48px;
+  justify-content: center;
+}
 .App-header-user-address {
-  background: rgba(39, 39, 42, 1);
-  backdrop-filter: blur(60px);
-  height: 36px;
-  border-radius: 10px;
+  backdrop-filter: blur(28px);
+  border: solid 1px rgba(255, 255, 255, 0.09);
+  background-color: rgba(255, 255, 255, 0.04);
+  height: 48px;
+  border-radius: 18px;
   display: inline-flex;
   justify-content: center;
   align-items: center;
   color: white;
   position: relative;
-  padding: 26px 15px;
-  font-size: 15px;
-  line-height: 23px;
+  font-size: 16px;
+  padding: 8px;
 }
 
 .App-header-user-address:hover {
@@ -561,7 +582,7 @@ button:hover{
   font-size: 38px;
   line-height: 45.99px;
   font-weight: 700;
-  background: linear-gradient(to right, #fff4e2 0%, #ffaa27 30%);
+  background: linear-gradient(to right, #fff4e2 0%, #f2c75c 30%);
   color: transparent;
   -webkit-background-clip: text;
   background-clip: text;
@@ -725,6 +746,22 @@ button:hover{
   height: 1.4rem;
   vertical-align: middle;
 }
+.App-header-link-main .logo-text{
+  font-size: 12px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.5);
+  width: 72px;
+  height: 24px;
+  border-radius: 7px;
+  -webkit-backdrop-filter: blur(50px);
+  backdrop-filter: blur(50px);
+  border: solid 1px rgba(255, 255, 255, 0.2);
+  background-color: rgba(36, 36, 36, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 4px;
+}
 
 .App-header-link-main img.small {
   display: none;
@@ -743,12 +780,12 @@ button:hover{
 
 .App-header a:hover {
   opacity: 1;
-  color: #eee;
+  color: #f2c75c;
 }
 
 .App-header-container-left a {
   display: inline-block;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.5);
   font-size: 17px;
   line-height: 28px;
   font-weight: 600;
@@ -759,7 +796,6 @@ button:hover{
   .App-header-container-left a {
     /* padding: 18px 11px; */
     display: block;
-    color: #fff;
     font-size: 15px;
     line-height: 1.2rem;
     font-weight: normal;
@@ -767,18 +803,18 @@ button:hover{
 }
 
 .App-header-container-left a.active {
-  color: rgba(255, 255, 255, 1);
+  color: #f2c75c;
   position: relative;
 }
 
 .App-header-container-left a.active::after {
-  content: "";
+  /* content: "";
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  background: linear-gradient(to right, #fff4e2 0%, #ffaa27 100%);
-  height: 1px;
+  background: linear-gradient(to right, #fff4e2 0%, #f2c75c 100%);
+  height: 1px; */
 }
 
 .App-header-container-left a.disabled {
@@ -917,7 +953,7 @@ button:hover{
 
 a.App-cta,
 button.App-cta {
-  background: #ffaa27;
+  background: #f2c75c;
   border-radius: 24px;
   text-decoration: none;
   /* box-shadow: 0 0 4px 6px rgba(45,66,252,0.15); */
@@ -968,7 +1004,7 @@ button.App-button-option {
   border: none;
   font-size: 17px;
   line-height: 28px;
-  background: #ffaa27;
+  background: #f2c75c;
   width: 100%;
   font-weight: 600;
   font-family: "Inter", sans-serif;

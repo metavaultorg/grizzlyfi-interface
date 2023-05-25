@@ -148,7 +148,7 @@ export default function TokenSelector(props) {
                       {token.isNew && (
                         <span
                           style={{
-                            background: "#ffaa27",
+                            background: "#f2c75c",
                             fontWeight: "bold",
                             fontSize: 12,
                             padding: "0 10px",

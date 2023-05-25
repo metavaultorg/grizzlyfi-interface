@@ -188,12 +188,12 @@
 }
 
 .gradient {
-  background: linear-gradient(89.76deg, #ffaa27 -1.81%, #6461ff 74.59%) !important;
+  background: linear-gradient(89.76deg, #f2c75c -1.81%, #6461ff 74.59%) !important;
   color: #000 !important;
 }
 
 .gradient:hover {
-  background: #ffaa27 !important;
+  background: #f2c75c !important;
   color: #000 !important;
 }
 
@@ -232,7 +232,7 @@
 }
 
 .buy-mvx--btn {
-  background: #ffaa27;
+  background: #f2c75c;
   color: #141414;
   text-decoration: none;
   padding: 6.5px 12px;

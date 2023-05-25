@@ -118,7 +118,7 @@ export default function TokenCard() {
             >
               <div className="card-flex">
                 <Link
-                  style={{ background: "#ffaa27", color: "#000" }}
+                  style={{ background: "#f2c75c", color: "#000" }}
                   to="/buy_mvlp"
                   className="buy-polygon2 basis-212"
                   onClick={() => changeNetwork(POLYGON)}

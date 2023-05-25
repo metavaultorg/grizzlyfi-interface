@@ -12,7 +12,7 @@ import { Web3Provider } from "@ethersproject/providers";
 
 import TopRightArrColored from "./assets/icons/TopRightArrColored";
 import TopRightArrWhite from "./assets/icons/TopRightArrWhite";
-
+import Logo from './assets/logos/Logo.jsx'
 import { Switch, Route, NavLink, Redirect } from "react-router-dom";
 
 import {
@@ -98,6 +98,10 @@ import PositionRouter from "./abis/PositionRouter.json";
 import ReferralTerms from "./views/ReferralTerms/ReferralTerms";
 import { getImageUrl } from "./cloudinary/getImageUrl";
 import Earn from "./views/Earn/Earn";
+import IconProfile from './assets/icons/icon-profile.svg'
+import IconToken from './assets/icons/honey-token.svg'
+import IconBnb from './assets/icons/icon-bnb.svg'
+
 
 const safeMultisigConnector = new SafeAppConnector();
 
@@ -165,16 +169,15 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
           Home
         </a>
       </div>
-      {small && (
-        <div className="App-header-link-container">
-          <NavLink activeClassName="active" to="/trade">
-            Trade
-          </NavLink>
-        </div>
-      )}
+
       <div className="App-header-link-container">
         <NavLink activeClassName="active" to="/dashboard">
           Dashboard
+        </NavLink>
+      </div>
+      <div className="App-header-link-container">
+        <NavLink activeClassName="active" to="/trade">
+          Trade
         </NavLink>
       </div>
       <div className="App-header-link-container">
@@ -232,7 +235,7 @@ function AppHeaderUser({
 }) {
   const { chainId } = useChainId();
   const { active, account } = useWeb3React();
-  const showSelector = true;
+  const showSelector = false;
   const networkOptions = [
     {
       label: "Polygon Network",
@@ -285,7 +288,7 @@ function AppHeaderUser({
           showModal={showNetworkSelectorModal}
         />
       )}
-      <div className="App-header-user-link">
+      {/* <div className="App-header-user-link">
         <a href="https://bo.metavault.trade/" target="_blank" rel="noopener noreferrer" className="btn btn-gray">
           <span
             className="hover-white"
@@ -302,22 +305,31 @@ function AppHeaderUser({
             <TopRightArrWhite />
           </span>
         </a>
-      </div>
-      <div className="App-header-user-link">
+      </div> */}
+      {/* <div className="App-header-user-link">
         <NavLink disabled="disabled" className="btn btn-blue" to="/trade">
           Trade
         </NavLink>
-      </div>
+      </div> */}
       {active ? (
-        <div className="App-header-user-address">
-          <AddressDropdown
-            account={account}
-            small={small}
-            accountUrl={accountUrl}
-            disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
-            openSettings={openSettings}
-          />
+        <div style={{display:'flex',gap:8}}>
+          <div className="App-header-balance">
+            <img src={IconToken} alt="icon" width={24} />
+            $155.51
+          </div>
+          <div className="App-header-network"><img src={IconBnb} alt="icon" /></div>
+          <div className="App-header-user-address">
+            <img src={IconProfile} alt="icon" style={{ marginLeft: 8 }} />
+            <AddressDropdown
+              account={account}
+              small={small}
+              accountUrl={accountUrl}
+              disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
+              openSettings={openSettings}
+            />
+          </div>
         </div>
+        
       ) : (
         <button className={"btn btn-yellow btn-wallet"} onClick={() => setWalletModalVisible(true)}>
           {/* {small ? "Connect" : "Connect Wallet"} */}
@@ -685,7 +697,7 @@ function FullApp() {
             <div className="App-header large">
               <div className="App-header-container-left">
                 <a className="App-header-link-main" href="https://metavault.trade">
-                  <img
+                  {/* <img
                     style={{ width: "169px", height: "56px", flexBasis: "none" }}
                     src={getImageUrl({
                       path: "brandLogos/tradeLogoHorizontal",
@@ -694,10 +706,13 @@ function FullApp() {
                       height: 112,
                     })}
                     alt="Logo"
-                  />
+                  /> */}
+                  <Logo />
+                  <div className="logo-text">FUTURES</div>
                 </a>
-                <AppHeaderLinks />
+                
               </div>
+              <div className="App-header-container-left"><AppHeaderLinks /></div>
               <div className="App-header-container-right">
                 <AppHeaderUser
                   disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}

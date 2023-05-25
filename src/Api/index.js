@@ -1237,7 +1237,7 @@ export async function callContract(chainId, contract, method, params, opts) {
     helperToast.success(
       <div>
         {sentMsg}{" "}
-        <a style={{ color: "#ffaa27" }} href={txUrl} target="_blank" rel="noopener noreferrer">
+        <a style={{ color: "#f2c75c" }} href={txUrl} target="_blank" rel="noopener noreferrer">
           View status.
         </a>
         <br />

@@ -110,7 +110,7 @@ function NotFound() {
       <Link
         to={"/trade"}
         style={{
-          background: "#ffaa27",
+          background: "#f2c75c",
           padding: 16,
           textDecoration: "none",
           color: "black",

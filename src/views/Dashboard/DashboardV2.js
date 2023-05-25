@@ -422,7 +422,7 @@ export default function DashboardV2() {
     {
       name: "staked",
       value: stakedPercent,
-      color: "#ffaa27",
+      color: "#f2c75c",
     },
     {
       name: "in liquidity",
@@ -956,7 +956,7 @@ export default function DashboardV2() {
                                   {token.isNew && (
                                     <span
                                       style={{
-                                        background: "#ffaa27",
+                                        background: "#f2c75c",
                                         fontWeight: "bold",
                                         fontSize: 12,
                                         padding: "0 10px",

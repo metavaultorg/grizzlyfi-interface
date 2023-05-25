@@ -1995,7 +1995,7 @@ export function approveTokens({
       helperToast.success(
         <div>
           Approval submitted!{" "}
-          <a style={{ color: "#ffaa27" }} href={txUrl} target="_blank" rel="noopener noreferrer">
+          <a style={{ color: "#f2c75c" }} href={txUrl} target="_blank" rel="noopener noreferrer">
             View status.
           </a>
           <br />

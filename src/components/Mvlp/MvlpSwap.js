@@ -1093,7 +1093,7 @@ export default function MvlpSwap(props) {
                           {token.symbol === "BUSD" && (
                             <span
                               style={{
-                                background: "#ffaa27",
+                                background: "#f2c75c",
                                 fontWeight: "bold",
                                 fontSize: 12,
                                 padding: "0 10px",
@@ -1257,7 +1257,7 @@ export default function MvlpSwap(props) {
                     {token.symbol === "BUSD" && (
                       <span
                         style={{
-                          background: "#ffaa27",
+                          background: "#f2c75c",
                           fontWeight: "bold",
                           fontSize: 12,
                           padding: "0 10px",

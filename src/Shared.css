@@ -106,7 +106,8 @@ table.table-bordered tbody tr {
 tbody tr {
   -webkit-backdrop-filter: blur(50px);
   backdrop-filter: blur(50px);
-  background-color: rgba(38, 38, 38, 0.6);
+  /* background-color: rgba(38, 38, 38, 0.6); */
+  background: rgba(255, 255, 255, 0.05);
   height: 72px;
 }
 th{
@@ -206,7 +207,7 @@ ul li {
 
 a.plain {
   text-decoration: none;
-  color: #ffaa27 !important;
+  color: #f2c75c !important;
 }
 a.plain:hover {
   color: #ffc56b !important;
@@ -217,7 +218,7 @@ a.plain:hover {
 }
 
 .default-btn {
-  background: #ffaa27;
+  background: #f2c75c;
   border-radius: 10px;
   font-size: 15px;
   line-height: 23px;
@@ -311,6 +312,7 @@ button.btn-link:hover .logout-icon {
   display: flex;
   flex-direction: column;
   padding-bottom: 3rem;
+  margin-top: 24px;
 }
 
 .d-flex {
@@ -365,7 +367,7 @@ button.btn-link:hover .logout-icon {
   line-height: 64px;
   letter-spacing: -0.01em;
   color: transparent;
-  background: linear-gradient(to right, #fff4e2, #ffaa27);
+  background: linear-gradient(to right, #fff4e2, #f2c75c);
   background-clip: text;
   -webkit-background-clip: text;
   -moz-background-clip: text;
@@ -451,7 +453,7 @@ button.btn-link:hover .logout-icon {
 
 .btn-read-more {
   color: transparent;
-  background: linear-gradient(to right, #fff4e2, #ffaa27);
+  background: linear-gradient(to right, #fff4e2, #f2c75c);
   background-clip: text;
   -webkit-background-clip: text;
   font-weight: 700;
@@ -465,7 +467,7 @@ button.btn-link:hover .logout-icon {
 
 .btn-read-more:hover {
   color: transparent;
-  background: linear-gradient(to right, #fff4e2, #ffaa27);
+  background: linear-gradient(to right, #fff4e2, #f2c75c);
   background-clip: text;
   -webkit-background-clip: text;
   font-weight: 700;
