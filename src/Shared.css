@@ -4,7 +4,7 @@ body,
   margin: 0;
   padding: 0;
   color: white;
-  font-family: "Relative";
+  font-family: "Boston",sans-serif;
   letter-spacing: 0.5px;
   font-size: 16px;
   background: #191919;
@@ -636,4 +636,8 @@ button.btn-link:hover .logout-icon {
   height: 1px;
   opacity: 0.1;
   background-color: #fff;
+}
+
+.font-number {
+  font-family: "Montserrat",sans-serif; 
 }
