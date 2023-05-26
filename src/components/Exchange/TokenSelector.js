@@ -31,6 +31,7 @@ export default function TokenSelector(props) {
     showNewCaret = false,
     getTokenState = () => ({ disabled: false, message: null }),
     disableBodyScrollLock,
+    newStyle,
   } = props;
 
   const visibleTokens = tokens.filter((t) => !t.isTempHidden);
@@ -183,21 +184,39 @@ export default function TokenSelector(props) {
           })}
         </div>
       </Modal>
-      {selectedTokenLabel ? (
-        <div className="TokenSelector-box" onClick={() => setIsModalVisible(true)}>
-          {selectedTokenLabel}
-          {!showNewCaret && <BiChevronDown className="TokenSelector-caret" />}
-        </div>
-      ) : (
-        <div className="TokenSelector-box" onClick={() => setIsModalVisible(true)}>
-          {tokenInfo.symbol}
-          {showSymbolImage && (
-            <img src={tokenImage && tokenImage.default} alt={tokenInfo.symbol} className="TokenSelector-box-symbol" />
-          )}
-          {showNewCaret && <img src={dropDownIcon} alt="dropDownIcon" className="TokenSelector-box-caret" />}
-          {!showNewCaret && <BiChevronDown className="TokenSelector-caret" />}
-        </div>
-      )}
+      {newStyle ?
+        selectedTokenLabel ? (
+          <div className="TokenSelector-box" onClick={() => setIsModalVisible(true)}>
+            {selectedTokenLabel}
+            {!showNewCaret && <BiChevronDown className="TokenSelector-caret" />}
+          </div>
+        ) : (
+          <div className="TokenSelector-box" onClick={() => setIsModalVisible(true)}>
+            {showSymbolImage && (
+              <div className="selected-token-img-container">
+                <img src={tokenImage && tokenImage.default} alt={tokenInfo.symbol} width={18} height={18} />
+              </div>
+            )}
+            <span className="selected-token-text">{tokenInfo.symbol}</span>
+          </div>
+        )
+      :
+        selectedTokenLabel ? (
+          <div className="TokenSelector-box" onClick={() => setIsModalVisible(true)}>
+            {selectedTokenLabel}
+            {!showNewCaret && <BiChevronDown className="TokenSelector-caret" />}
+          </div>
+        ) : (
+          <div className="TokenSelector-box" onClick={() => setIsModalVisible(true)}>
+            {tokenInfo.symbol}
+            {showSymbolImage && (
+              <img src={tokenImage && tokenImage.default} alt={tokenInfo.symbol} className="TokenSelector-box-symbol" />
+            )}
+            {showNewCaret && <img src={dropDownIcon} alt="dropDownIcon" className="TokenSelector-box-caret" />}
+            {!showNewCaret && <BiChevronDown className="TokenSelector-caret" />}
+          </div>
+        )
+      }
     </div>
   );
 }

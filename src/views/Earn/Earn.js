@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import './Earn.css'
 import "../Exchange/Exchange.css";
 import ItemCard from '../../components/ItemCard/ItemCard'
@@ -6,16 +7,27 @@ import IconPercentage from '../../assets/icons/icon-percentage.svg'
 import IconMoney from '../../assets/icons/icon-investments-money.svg'
 import IconClaim from '../../assets/icons/icon-claim-reward.svg'
 import { getImageUrl } from "../../cloudinary/getImageUrl";
+import GllSwapBox from "./GllSwapBox";
 const tokenPairMarketList = [
   { name: 'BTC', symbol: 'BTC', value: '$456', amount: '1.54', utilization: '34', weight: '1', target: '123', volumeUsd: '56' },
   { name: 'ETH', symbol: 'ETH', value: '$456', amount: '1.62', utilization: '34', weight: '1', target: '123', volumeUsd: '56' },
   { name: 'BNB', symbol: 'DAI', value: '$456', amount: '2.52', utilization: '34', weight: '1', target: '123', volumeUsd: '56' },
   { name: 'USDT', symbol: 'USDT', value: '$456', amount: '1.62', utilization: '34', weight: '1', target: '123', volumeUsd: '56' },
 ]
-export default function Earn() {
+
+export default function Earn(props) {
+  const history = useHistory();
+  const [isBuying, setIsBuying] = useState(true);
+
+  useEffect(() => {
+    const hash = history.location.hash.replace("#", "");
+    const buying = hash === "redeem" ? false : true;
+    setIsBuying(buying);
+  }, [history.location.hash]);
+
   return (
     <div className="Earn Exchange page-layout">
-      <div className="section-header" style={{maxWidth:1006,margin:'0 auto'}}>
+      <div className="section-header" style={{ maxWidth: 1006, margin: '0 auto' }}>
         <h1>Grizzly Leverage Liquidity</h1>
         <p className="text-description" style={{ marginTop: 16, marginBottom: 48 }}>The Grizzly Leverage Liquidity tokens (GLL) is the counterparty to everyone trading with leverage. Deposit your favourite cryptocurrency and earn a solid yield which comes from the trading fees paid on Grizzly Trade. Earn like an exchange. </p>
       </div>
@@ -34,7 +46,9 @@ export default function Earn() {
           </div>
         </div>
         <div className='Exchange-right'>
-          <div className='Exchange-swap-box'>1231312313</div>
+          <div className='Exchange-swap-box'>
+            <GllSwapBox {...props} isBuying={isBuying} setIsBuying={setIsBuying} />
+          </div>
         </div>
       </div>
       <div className='earn-statistics'>
