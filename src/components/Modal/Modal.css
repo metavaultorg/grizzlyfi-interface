@@ -27,8 +27,11 @@
   max-width: 100%;
   max-height: 90vh;
   overflow: auto;
-  background: #1d1d47;
-  border-radius: 15px;
+  padding: 40px;
+  border-radius: 40px;
+  box-shadow: 0 6px 26px 0 rgba(0, 0, 0, 0.16);
+  border: solid 1px #3f3f3f;
+  background-color: #262626;
 }
 
 @media screen and (max-width:768px){
@@ -55,8 +58,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #393761;
-  padding: 30px;
+  /*background: #393761;*/
+  padding: 0px;
 }
 .Modal-body {
 }
@@ -75,26 +78,38 @@
 }
 
 .Modal-title {
-  margin: 0 auto;
+  /*margin: 0 auto;*/
   font-size: 24px;
-  line-height: 34px;
-  font-weight: 500;
+  font-weight: 600;
+  color: #fff;
 }
 
 .Modal-close-button {
-  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background-color: rgba(216,216,216,0.1);
+  cursor: pointer;
+}
+
+.Modal-close-button:hover {
+  filter: brightness(120%) saturate(120%);
 }
 
 .Modal-close-icon {
-  opacity: 0.6;
+  opacity: 0.7;
   cursor: pointer;
-  text-align: right;
+  text-align: center;
   display: inline-block;
 }
-
+/*
 .Modal-close-icon:hover {
-  opacity: 0.9;
-}
+  opacity: 1;
+}*/
 
 .Modal-note {
   margin-bottom: 1rem;

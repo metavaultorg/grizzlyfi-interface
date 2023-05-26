@@ -56,7 +56,7 @@ export default function Modal(props) {
             <div className="Modal-title-bar">
               <div className="Modal-title">{props.label}</div>
               <div className="Modal-close-button" onClick={() => setIsVisible(false)}>
-                <MdClose fontSize={20} className="Modal-close-icon" />
+                <MdClose fontSize={28} className="Modal-close-icon" />
               </div>
             </div>
             {/* <div className="d ivider" /> */}
