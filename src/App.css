@@ -1292,32 +1292,39 @@ button.App-button {
 }
 
 .App-slider .rc-slider-rail {
-  background: rgba(234, 234, 234, 0.15);
+  background-color: rgb(255,255,255,0.1);
+  height: 8px;
 }
 
 .App-slider .rc-slider-track {
-  background: #625df5;
+  height: 8px;
+  background: linear-gradient(to right, #d3a022 0%, #ffd364 101%);
 }
 
 .App-slider .rc-slider-dot {
-  border: none;
+  border-style: solid none solid none;
+  border-width: 8px;
+  border-color: #d8d8d8;
   border-radius: 1px;
   width: 2px;
   margin-left: -1px;
-  background-color: #fff;
+  background-color: rgba(0, 0, 0, 0);
+  opacity: 0.3;
+  height: 25px;
+  top:-8px;
 }
 
 .App-slider .rc-slider-dot-active {
-  background: #bfbfbe;
+/*  background: #bfbfbe;*/
 }
 
 .App-slider .rc-slider-handle {
-  background: #fff;
-  border: 2px solid #625df5;
   width: 24px;
   height: 24px;
-  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.15), 0px 1px 1px rgba(0, 0, 0, 0.16);
-  top: 0;
+  box-shadow: -9px 0 13px 0 rgba(0, 0, 0, 0.3), inset -1px 0 0 0 rgba(255, 255, 255, 0.2), inset 1px 0 0 0 rgba(0, 0, 0, 0.2);
+  border: solid 1px #7c7c7c;
+  background-color: #fff;
+  top: 2px;
 }
 
 .App-slider .rc-slider-handle:active {
@@ -1328,6 +1335,12 @@ button.App-button {
 .App-slider .rc-slider-mark-text-active {
   color: white;
   opacity: 0.5;
+  font-size: 10px;
+  font-weight: 500;
+  top:10px;
+}
+.font-number .rc-slider-mark-text {
+  font-family: "Montserrat",sans-serif; 
 }
 
 .App-slider .rc-slider-mark-text:hover,
