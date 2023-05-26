@@ -1,13 +1,57 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useWeb3React } from "@web3-react/core";
 import { useHistory } from "react-router-dom";
 import './Earn.css'
 import "../Exchange/Exchange.css";
+import useSWR from "swr";
 import ItemCard from '../../components/ItemCard/ItemCard'
 import IconPercentage from '../../assets/icons/icon-percentage.svg'
 import IconMoney from '../../assets/icons/icon-investments-money.svg'
 import IconClaim from '../../assets/icons/icon-claim-reward.svg'
 import { getImageUrl } from "../../cloudinary/getImageUrl";
 import GllSwapBox from "./GllSwapBox";
+import TooltipComponent from "../../components/Tooltip/Tooltip";
+import { getWhitelistedTokens, getTokenBySymbol } from "../../data/Tokens";
+import {
+  fetcher,
+  formatAmount,
+  formatKeyAmount,
+  expandDecimals,
+  bigNumberify,
+  numberWithCommas,
+  formatDate,
+  getServerUrl,
+  getChainName,
+  useChainId,
+  USD_DECIMALS,
+  MVXMVLP_DISPLAY_DECIMALS,
+  MVX_DECIMALS,
+  MVLP_DECIMALS,
+  BASIS_POINTS_DIVISOR,
+  POLYGON,
+  getTotalVolumeSum,
+  MVLPPOOLCOLORS,
+  getPageTitle,
+} from "../../Helpers";
+import {
+  useTotalMvxInLiquidity,
+  useMvxPrice,
+  useTotalMvxStaked,
+  useTotalMvxSupply,
+  useInfoTokens,
+  useMvdMvxTreasuryHoldings,
+  useMvdMvlpTreasuryHoldings,
+  useMvxMultisigHoldings,
+  useMvxReserveTimelockHoldings,
+  useMvxTeamVestingHoldings,
+  useProtocolOwnLiquidity,
+  useVestingContractHoldings,
+} from "../../Api";
+import { getContract } from "../../Addresses";
+import Vault from "../../abis/Vault.json";
+import AssetDropdown from "../Dashboard/AssetDropdown";
+
 const tokenPairMarketList = [
   { name: 'BTC', symbol: 'BTC', value: '$456', amount: '1.54', utilization: '34', weight: '1', target: '123', volumeUsd: '56' },
   { name: 'ETH', symbol: 'ETH', value: '$456', amount: '1.62', utilization: '34', weight: '1', target: '123', volumeUsd: '56' },
@@ -18,12 +62,109 @@ const tokenPairMarketList = [
 export default function Earn(props) {
   const history = useHistory();
   const [isBuying, setIsBuying] = useState(true);
+  const { active, library } = useWeb3React();
+  const { chainId } = useChainId();
+
+  const whitelistedTokens = getWhitelistedTokens(chainId);
+  const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
+  const tokenList = whitelistedTokens.filter((t) => !t.isWrapped);
+  const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
   useEffect(() => {
     const hash = history.location.hash.replace("#", "");
     const buying = hash === "redeem" ? false : true;
     setIsBuying(buying);
   }, [history.location.hash]);
+
+  const vaultAddress = getContract(chainId, "Vault");
+
+  const { data: totalTokenWeights } = useSWR(
+    [`MvlpSwap:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
+    {
+      fetcher: fetcher(library, Vault),
+    }
+  );
+
+  let adjustedUsdmSupply = bigNumberify(0);
+
+  for (let i = 0; i < tokenList.length; i++) {
+    const token = tokenList[i];
+    const tokenInfo = infoTokens[token.address];
+    if (tokenInfo && tokenInfo.usdmAmount) {
+      adjustedUsdmSupply = adjustedUsdmSupply.add(tokenInfo.usdmAmount);
+    }
+  }
+  const getWeightText = (tokenInfo) => {
+    if (
+      !tokenInfo.weight ||
+      !tokenInfo.usdmAmount ||
+      !adjustedUsdmSupply ||
+      adjustedUsdmSupply.eq(0) ||
+      !totalTokenWeights
+    ) {
+      return "...";
+    }
+
+    const currentWeightBps = tokenInfo.usdmAmount.mul(BASIS_POINTS_DIVISOR).div(adjustedUsdmSupply);
+    const targetWeightBps = tokenInfo.weight.mul(BASIS_POINTS_DIVISOR).div(totalTokenWeights);
+
+    const weightText = `${formatAmount(currentWeightBps, 2, 2, false)}% / ${formatAmount(
+      targetWeightBps,
+      2,
+      2,
+      false
+    )}%`;
+
+    return (
+      <TooltipComponent
+        handle={weightText}
+        position="right-bottom"
+        renderContent={() => {
+          return (
+            <>
+              Current Weight: {formatAmount(currentWeightBps, 2, 2, false)}%<br />
+              Target Weight: {formatAmount(targetWeightBps, 2, 2, false)}%<br />
+              <br />
+              {currentWeightBps.lt(targetWeightBps) && (
+                <div>
+                  {tokenInfo.symbol} is below its target weight.
+                  {/* <br />
+                  <br />
+                  Get lower fees to{" "}
+                  <Link to="/buy_mvlp" target="_blank" rel="noopener noreferrer">
+                    + liq.
+                  </Link>{" "}
+                  with {tokenInfo.symbol},&nbsp; and to{" "}
+                  <Link to="/trade" target="_blank" rel="noopener noreferrer">
+                    swap
+                  </Link>{" "}
+                  {tokenInfo.symbol} for other tokens. */}
+                </div>
+              )}
+              {currentWeightBps.gt(targetWeightBps) && (
+                <div>
+                  {tokenInfo.symbol} is above its target weight.
+                  {/* <br />
+                  <br />
+                  Get lower fees to{" "}
+                  <Link to="/trade" target="_blank" rel="noopener noreferrer">
+                    swap
+                  </Link>{" "}
+                  tokens for {tokenInfo.symbol}. */}
+                </div>
+              )}
+              {/* <br />
+              <div>
+                <a href="https://docs.metavault.trade/mvlp" target="_blank" rel="noopener noreferrer">
+                  More Info
+                </a>
+              </div> */}
+            </>
+          );
+        }}
+      />
+    );
+  };
 
   return (
     <div className="Earn Exchange page-layout">
@@ -47,7 +188,7 @@ export default function Earn(props) {
         </div>
         <div className='Exchange-right'>
           <div className='Exchange-swap-box'>
-            <GllSwapBox {...props} isBuying={isBuying} setIsBuying={setIsBuying} />
+            <GllSwapBox {...props} isBuying={isBuying} setIsBuying={setIsBuying} getWeightText={getWeightText}/>
           </div>
         </div>
       </div>
@@ -65,12 +206,19 @@ export default function Earn(props) {
               </tr>
             </thead>
             <tbody>
-              {tokenPairMarketList.map((assetItem, index) => {
+              {tokenList.map((token, index) => {
+                const tokenInfo = infoTokens[token.address];
+                let utilization = bigNumberify(0);
+                if (tokenInfo && tokenInfo.reservedAmount && tokenInfo.poolAmount && tokenInfo.poolAmount.gt(0)) {
+                  utilization = tokenInfo.reservedAmount.mul(BASIS_POINTS_DIVISOR).div(tokenInfo.poolAmount);
+                }
+                const maxUsdmAmount = tokenInfo.maxUsdmAmount;
+
                 var tokenImage = null;
 
                 try {
                   tokenImage = getImageUrl({
-                    path: `coins/others/${assetItem.symbol.toLowerCase()}-original`,
+                    path: `coins/others/${token.symbol.toLowerCase()}-original`,
                   });
                 } catch (error) {
                   console.error(error);
@@ -86,24 +234,37 @@ export default function Earn(props) {
                         <img
                           style={{ objectFit: "contain" }}
                           src={tokenImage || tokenImage.default}
-                          alt={assetItem.symbol}
+                          alt={token.symbol}
                           width={32}
                           height={32}
                         />
-                        <span>{assetItem.name}</span>
+                        <span>{token.name}</span>
+                        <AssetDropdown assetSymbol={token.symbol} assetInfo={token} />
                       </div>
                     </td>
-                    <td >{assetItem.amount}</td>
-                    <td>{assetItem.value}</td>
-                    <td>{assetItem.utilization}</td>
-                    <td>{assetItem.weight}/{assetItem.target}</td>
-
+                    <td>{formatKeyAmount(tokenInfo, "managedAmount", token.decimals, 2, true)}</td>
+                    <td>
+                    <TooltipComponent
+                            handle={`$${formatKeyAmount(tokenInfo, "managedUsd", USD_DECIMALS, 0, true)}`}
+                            position="right-bottom"
+                            renderContent={() => {
+                              return (
+                                <>
+                                  Pool Amount: {formatKeyAmount(tokenInfo, "managedAmount", token.decimals, 2, true)}{" "}
+                                  {token.symbol}
+                                  <br />
+                                  <br />
+                                  Max {tokenInfo.symbol} Capacity: ${formatAmount(maxUsdmAmount, 18, 0, true)}
+                                </>
+                              );
+                            }}
+                          />  
+                    </td>
+                    <td>{formatAmount(utilization, 2, 2, false)}%</td>
+                    <td>{getWeightText(tokenInfo)}</td>
                   </tr>
-
-
                 )
               }
-
               )}
             </tbody>
           </table>

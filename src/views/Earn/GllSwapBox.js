@@ -100,7 +100,7 @@ function getStakingData(stakingInfo) {
     return data;
 }
 export default function GllSwapBox(props) {
-    const { isBuying, setPendingTxns, connectWallet, setIsBuying } = props;
+    const { isBuying, setPendingTxns, connectWallet, setIsBuying, getWeightText } = props;
     const history = useHistory();
     const swapLabel = isBuying ? "+ LIQ." : "- LIQ.";
     const tabLabel = isBuying ? "Deposit" : "Withdraw";
@@ -109,11 +109,13 @@ export default function GllSwapBox(props) {
     const [savedSlippageAmount, setSavedSlippageAmount] = useLocalStorageSerializeKey(
         [chainId, SLIPPAGE_BPS_KEY],
         DEFAULT_SLIPPAGE_AMOUNT
-      );
+    );
 
     const tokens = getTokens(chainId);
     const whitelistedTokens = getWhitelistedTokens(chainId);
     const tokenList = whitelistedTokens.filter((t) => !t.isWrapped);
+    const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
+    
     const [swapValue, setSwapValue] = useState("");
     const [mvlpValue, setMvlpValue] = useState("");
     const [swapTokenAddress, setSwapTokenAddress] = useLocalStorageByChainId(
@@ -197,8 +199,6 @@ export default function GllSwapBox(props) {
             fetcher: fetcher(library, Vester),
         }
     );
-
-    const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, undefined);
 
     const { mvxPrice } = useMvxPrice({ polygon: chainId === POLYGON ? library : undefined }, active, infoTokens);
 
@@ -527,7 +527,7 @@ export default function GllSwapBox(props) {
             return isBuying ? `Providing...` : `is selling the ...`;
         }
 
-        return isBuying ? "+ LIQ." : "- LIQ.";
+        return isBuying ? "Deposit" : "Withdraw";
     };
 
     const approveFromToken = () => {
@@ -558,9 +558,9 @@ export default function GllSwapBox(props) {
         callContract(chainId, contract, method, params, {
             value,
             sentMsg: "Providing...",
-            failMsg: "+LIQ failed.",
+            failMsg: "Deposit failed.",
             successMsg: `${formatAmount(swapAmount, swapTokenInfo.decimals, 4, true)} ${swapTokenInfo.symbol
-                } provided for ${formatAmount(mvlpAmount, 18, 4, true)} MVLP !`,
+                } provided for ${formatAmount(mvlpAmount, 18, 4, true)} GLL !`,
             setPendingTxns,
         })
             .then(async () => { })
@@ -582,9 +582,9 @@ export default function GllSwapBox(props) {
                 : [swapTokenAddress, mvlpAmount, minOut, account];
 
         callContract(chainId, contract, method, params, {
-            sentMsg: "Sell submitted!",
-            failMsg: "Sell failed.",
-            successMsg: `${formatAmount(mvlpAmount, 18, 4, true)} MVLP sold for ${formatAmount(
+            sentMsg: "Withdraw submitted!",
+            failMsg: "Withdraw failed.",
+            successMsg: `${formatAmount(mvlpAmount, 18, 4, true)} GLL sold for ${formatAmount(
                 swapAmount,
                 swapTokenInfo.decimals,
                 4,
@@ -686,62 +686,62 @@ export default function GllSwapBox(props) {
                 className="Exchange-swap-option-tabs"
             />
             <div className="GllSwap-content">
-            <div className="GllSwap-buy-section">
-            <div className="GllSwap-text">How much collateral will you add to position?</div>
-                {isBuying && (
-                    <BuyInputSection
-                        topLeftLabel={`≈ `}
-                        topRightLabel={`Balance: `}
-                        tokenBalance={`${formatAmount(swapTokenBalance, swapToken.decimals, 4, true)}`}
-                        inputValue={swapValue}
-                        onInputValueChange={onSwapValueChange}
-                        showMaxButton={swapValue !== formatAmountFree(swapTokenBalance, swapToken.decimals, swapToken.decimals)}
-                        onClickTopRightLabel={fillMaxAmount}
-                        onClickMax={fillMaxAmount}
-                        selectedToken={swapToken}
-                        balance={payBalance}
-                    >
-                        <TokenSelector
-                            label="Pay"
-                            chainId={chainId}
-                            tokenAddress={swapTokenAddress}
-                            onSelectToken={onSelectSwapToken}
-                            tokens={whitelistedTokens}
-                            infoTokens={infoTokens}
-                            className="GllSwap-from-token"
-                            showSymbolImage={true}
-                            showTokenImgInDropdown={true}
-                            newStyle={true}
-                        />
-                    </BuyInputSection>
-                )}
+                <div className="GllSwap-buy-section">
+                    <div className="GllSwap-text">How much collateral will you add to position?</div>
+                    {isBuying && (
+                        <BuyInputSection
+                            topLeftLabel={`≈ `}
+                            topRightLabel={`Balance: `}
+                            tokenBalance={`${formatAmount(swapTokenBalance, swapToken.decimals, 4, true)}`}
+                            inputValue={swapValue}
+                            onInputValueChange={onSwapValueChange}
+                            showMaxButton={swapValue !== formatAmountFree(swapTokenBalance, swapToken.decimals, swapToken.decimals)}
+                            onClickTopRightLabel={fillMaxAmount}
+                            onClickMax={fillMaxAmount}
+                            selectedToken={swapToken}
+                            balance={payBalance}
+                        >
+                            <TokenSelector
+                                label="Pay"
+                                chainId={chainId}
+                                tokenAddress={swapTokenAddress}
+                                onSelectToken={onSelectSwapToken}
+                                tokens={whitelistedTokens}
+                                infoTokens={infoTokens}
+                                className="GllSwap-from-token"
+                                showSymbolImage={true}
+                                showTokenImgInDropdown={true}
+                                newStyle={true}
+                            />
+                        </BuyInputSection>
+                    )}
 
-                {!isBuying && (
-                    <BuyInputSection
-                        topLeftLabel={`≈ `}
-                        topRightLabel={`Available: `}
-                        tokenBalance={`${formatAmount(maxSellAmount, MVLP_DECIMALS, 4, true)}`}
-                        inputValue={mvlpValue}
-                        onInputValueChange={onMvlpValueChange}
-                        showMaxButton={mvlpValue !== formatAmountFree(maxSellAmount, MVLP_DECIMALS, MVLP_DECIMALS)}
-                        onClickTopRightLabel={fillMaxAmount}
-                        onClickMax={fillMaxAmount}
-                        balance={payBalance}
-                        defaultTokenName={"MVLP"}
-                    >
+                    {!isBuying && (
+                        <BuyInputSection
+                            topLeftLabel={`≈ `}
+                            topRightLabel={`Available: `}
+                            tokenBalance={`${formatAmount(maxSellAmount, MVLP_DECIMALS, 4, true)}`}
+                            inputValue={mvlpValue}
+                            onInputValueChange={onMvlpValueChange}
+                            showMaxButton={mvlpValue !== formatAmountFree(maxSellAmount, MVLP_DECIMALS, MVLP_DECIMALS)}
+                            onClickTopRightLabel={fillMaxAmount}
+                            onClickMax={fillMaxAmount}
+                            balance={payBalance}
+                            defaultTokenName={"GLL"}
+                        >
                             <div className="selected-token">
                                 <div className="selected-token-img-container">
                                     <img src={gll24Icon} alt="gll24Icon" width={18} height={18} />
                                 </div>
                                 <span className="selected-token-text">GLL</span>
                             </div>
-                    </BuyInputSection>
-                )}
-            </div>
+                        </BuyInputSection>
+                    )}
+                </div>
                 <div className="GllSwap-dividing">
-                    <div className="GllSwap-dividing-line"/>
+                    <div className="GllSwap-dividing-line" />
                     <div className="GllSwap-next">
-                        <img src={IconNext} alt="" width={16}/>
+                        <img src={IconNext} alt="" width={16} />
                         {/* <img src={IconNext} alt="" width={16}/> */}
                     </div>
                 </div>
@@ -768,7 +768,7 @@ export default function GllSwapBox(props) {
                             inputValue={mvlpValue}
                             onInputValueChange={onMvlpValueChange}
                             balance={receiveBalance}
-                            defaultTokenName={"MVLP"}
+                            defaultTokenName={"GLL"}
                         >
                             <div className="selected-token">
                                 <div className="selected-token-img-container">
@@ -807,13 +807,16 @@ export default function GllSwapBox(props) {
                 <div className="GllSwap-data">
                     <div className="Exchange-info-row">
                         <div className="Exchange-info-label">Slippage</div>
-                        <div>{(parseInt(savedSlippageAmount)/BASIS_POINTS_DIVISOR)*100}%</div>
+                        <div>{(parseInt(savedSlippageAmount) / BASIS_POINTS_DIVISOR) * 100}%</div>
                     </div>
                     <div className="Exchange-info-row">
                         <div className="Exchange-info-label">Minimum Received</div>
+                        {isBuying && mvlpAmount && <div>{formatAmountFree(mvlpAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR), MVLP_DECIMALS, 2)} GLL</div>}
+                        {!isBuying && mvlpAmount && <div>{formatAmountFree(swapAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR), swapToken.decimals, swapToken.displayDecimals)} {swapToken.symbol}</div>}
                     </div>
                     <div className="Exchange-info-row">
                         <div className="Exchange-info-label">Weight / Target</div>
+                        {getWeightText(infoTokens[swapToken.address])}
                     </div>
                     <div className="Exchange-info-row">
                         <div className="Exchange-info-label">{feeBasisPoints > 50 ? "WARNING: High Fees" : "Fees"}</div>
@@ -852,7 +855,7 @@ export default function GllSwapBox(props) {
                             )}
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
 

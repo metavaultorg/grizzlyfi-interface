@@ -8,6 +8,12 @@
     border: solid 1px #2b2b2b;
     background-color: #1f1f1f;
 }
+.earn-statistics tbody tr{
+    backdrop-filter: none;
+}
+.earn-statistics .dropdown-arrow {
+    margin-left: -0.5rem;
+}
 .earn-info {
     width: 100%;
     max-width: 912px;
