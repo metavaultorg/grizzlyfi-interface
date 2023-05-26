@@ -1,13 +1,12 @@
 .PositionDropdown-dots-icon {
+  padding: 12px 12px 12px;
   font-size: 1rem;
   border: none;
   color: rgba(255, 255, 255, 0.7);
   display: inline-flex;
   align-items: center;
-  margin-top: 0.3rem;
-  background: rgba(255, 255, 255, 0);
-  border-radius: 2rem;
-  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 13px;
 }
 
 .PositionDropdown-dots-icon:hover {
@@ -20,6 +19,16 @@
 }
 
 .PositionDropdown-extra-options .menu-items {
-  top: 1rem;
-  min-width: 15.5rem;
+  top: 0.5rem;
+  min-width: 224px;
+  padding: 16px 0px 16px 0px;
+}
+.PositionDropdown-extra-options .menu-item {
+  padding-left: 24px;
+  border-radius: 0px;
+  opacity: 0.5;
+  font-size: 16px;
+}
+.PositionDropdown-extra-options .menu-item > p {
+  padding: 8px 0px;
 }

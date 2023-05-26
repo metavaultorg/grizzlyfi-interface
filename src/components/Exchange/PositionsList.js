@@ -7,6 +7,10 @@ import PositionEditor from "./PositionEditor";
 import OrdersToa from "./OrdersToa";
 
 import { ImSpinner2 } from "react-icons/im";
+import IconNoPosition from "../../assets/icons/no-open-position.png";
+import longImg from "../../assets/icons/icon-long.svg";
+import shortImg from "../../assets/icons/icon-short.svg";
+import { getImageUrl } from "../../cloudinary/getImageUrl";
 
 import {
   helperToast,
@@ -280,10 +284,13 @@ export default function PositionsList(props) {
         <div className="Exchange-list small">
           <div>
             {positions.length === 0 && positionsDataIsLoading && (
-              <div className="Exchange-empty-positions-list-note App-card position-query">Loading...</div>
+              <div className="Exchange-empty-positions-list-note position-query">Loading...</div>
             )}
             {positions.length === 0 && !positionsDataIsLoading && (
-              <div className="Exchange-empty-positions-list-note App-card position-query">No open positions</div>
+              <div className="Exchange-empty-positions-list-note position-query" style={{background: 'none'}}>
+                <span>No open positions</span>
+                <img src={IconNoPosition} alt=""/>
+              </div>
             )}
             {positions.map((position) => {
               const positionOrders = getOrdersForPosition(account, position, orders, nativeTokenAddress, trailingStopOrders);
@@ -310,16 +317,11 @@ export default function PositionsList(props) {
                   <div className="App-card-content">
                     <div className="App-card-row">
                       <div className="label">Leverage</div>
-                      <div>
-                        {formatAmount(position.leverage, 4, 2, true)}x&nbsp;
-                        <span
-                          className={cx("Exchange-list-side", {
-                            positive: position.isLong,
-                            negative: !position.isLong,
-                          })}
-                        >
-                          {position.isLong ? "Long" : "Short"}
-                        </span>
+                      <div className="Exchange-list-info-label">
+                        <img src={position.isLong ? longImg : shortImg} alt="" />
+                        {position.leverage && (
+                          <span className="">{formatAmount(position.leverage, 4, 2, true)}x&nbsp;</span>
+                        )}
                       </div>
                     </div>
                     <div className="App-card-row">
@@ -523,16 +525,19 @@ export default function PositionsList(props) {
             <th></th>
           </tr>
           {positions.length === 0 && positionsDataIsLoading && (
-            <tr>
+            <tr style={{background: "none"}}>
               <td colSpan="15">
                 <div className="Exchange-empty-positions-list-note">Loading...</div>
               </td>
             </tr>
           )}
           {positions.length === 0 && !positionsDataIsLoading && (
-            <tr>
+            <tr style={{background: "none"}}>
               <td colSpan="15">
-                <div className="Exchange-empty-positions-list-note">No open positions</div>
+                <div className="Exchange-empty-positions-list-note">
+                  <span>No open positions</span>
+                  <img src={IconNoPosition} alt=""/>
+                </div>
               </td>
             </tr>
           )}
@@ -553,20 +558,39 @@ export default function PositionsList(props) {
               borrowFeeText = `Borrow Fee / Day: $${formatAmount(borrowFeeRate, USD_DECIMALS, USD_DISPLAY_DECIMALS)}`;
             }
 
+            var tokenImage = null;
+
+            try {
+              tokenImage = getImageUrl({
+                path: `coins/others/${position.indexToken.symbol.toLowerCase()}-original`,
+              });
+            } catch (error) {
+              console.error(error);
+            }
+
             return (
               <tr key={position.key}>
                 <td className="clickable" onClick={() => onPositionClick(position)}>
-                  <div className="Exchange-list-title">
-                    {position.indexToken.symbol}
-                    {position.hasPendingChanges && <ImSpinner2 className="spin position-loading-icon" />}
-                  </div>
-                  <div className="Exchange-list-info-label">
-                    {position.leverage && (
-                      <span className="muted">{formatAmount(position.leverage, 4, 2, true)}x&nbsp;</span>
-                    )}
-                    <span className={cx({ positive: position.isLong, negative: !position.isLong })}>
-                      {position.isLong ? "Long" : "Short"}
-                    </span>
+                  <div className="Exchange-list-asset">
+                      <img
+                          style={{ objectFit: "contain" }}
+                          src={tokenImage || tokenImage.default}
+                          alt={position.indexToken.symbol}
+                          width={32}
+                          height={32}
+                        />
+                    <div>
+                      <div className="Exchange-list-title">
+                        {position.indexToken.symbol}
+                        {position.hasPendingChanges && <ImSpinner2 className="spin position-loading-icon" />}
+                      </div>
+                      <div className="Exchange-list-info-label">
+                        <img src={position.isLong? longImg: shortImg} alt=""/>
+                        {position.leverage && (
+                          <span className="font-number">{formatAmount(position.leverage, 4, 2, true)}x&nbsp;</span>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </td>
                 <td>
@@ -617,7 +641,7 @@ export default function PositionsList(props) {
                   )}
                 </td>
                 <td>
-                  <div>${formatAmount(position.size, USD_DECIMALS, 2, true)}</div>
+                  <div className="font-number">${formatAmount(position.size, USD_DECIMALS, 2, true)}</div>
                   {positionOrders.length > 0 && (
                     <div onClick={() => setListSection && setListSection("Orders")}>
                       <Tooltip
@@ -706,10 +730,10 @@ export default function PositionsList(props) {
                     }}
                   />
                 </td>
-                <td className="clickable" onClick={() => onPositionClick(position)}>
+                <td className="clickable font-number" onClick={() => onPositionClick(position)}>
                   ${formatAmount(position.averagePrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}
                 </td>
-                <td className="clickable" onClick={() => onPositionClick(position)}>
+                <td className="clickable font-number" onClick={() => onPositionClick(position)}>
                   ${formatAmount(liquidationPrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}
                 </td>
 

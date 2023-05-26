@@ -24,7 +24,11 @@
 }
 
 .Exchange-empty-positions-list-note {
-  padding-bottom: 0.3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
 }
 
 .position-loading-icon {
@@ -55,6 +59,12 @@
   white-space: nowrap;
 }
 
+.Exchange-lists {
+  border-radius: 30px;
+  background: #1f1f1f;
+  padding: 24px 16px 16px;
+  margin-top: 8px;
+}
 .Exchange-lists.large {
   display: block;
 }
@@ -435,7 +445,7 @@
 
 .Exchange-list {
   width: 100%;
-  font-family: "Inter", sans-serif;
+  /* font-family: "Inter", sans-serif; */
 }
 
 .Position-list-order {
@@ -458,21 +468,22 @@
 
 button.Exchange-list-action {
   font-size: 0.95rem;
-  padding: 0;
-  border-radius: 3px;
-  background: none;
+  padding: 11px 16px;
+  border-radius: 13px;
+  background: rgb(255, 123, 65, 0.05);
   border: none;
-  color: rgba(255, 255, 255, 0.7);
-  margin-right: 1rem;
+  color: #ff7b41;
+  /* margin-right: 1rem; */
 }
 
 button.Exchange-list-action:hover {
-  color: rgba(255, 255, 255, 1);
+  background: rgb(255, 123, 65, 0.1);
 }
 
 table.Exchange-list {
-  border-collapse: collapse;
+  border-collapse: separate;
   border-color: transparent;
+  border-spacing: 0px 8px;
 }
 
 table.Exchange-list th,
@@ -481,7 +492,7 @@ table.Exchange-list td {
   text-align: left;
   padding: 0.7rem;
   padding-left: 1rem;
-  border-radius: 15px;
+  font-size: 16px;
 }
 table.Exchange-list.Orders th,
 table.Exchange-list.Orders td {
@@ -490,7 +501,7 @@ table.Exchange-list.Orders td {
 }
 
 table.Exchange-list tr {
-  border-bottom: 1px solid rgba(234, 234, 234, 0.15);
+  /* border-bottom: 1px solid rgba(234, 234, 234, 0.15); */
 }
 
 table.Exchange-list tr:last-child {
@@ -501,15 +512,17 @@ table.Exchange-list tr:hover {
 }
 
 table.Exchange-list tr.Exchange-list-header {
-  background: none;
+  background: #242424;
+  border-radius: 17px;
   width: 100%;
+  height: 50px;
 }
 
 .table-normalizer {
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 15px;
-  background: rgba(118, 118, 128, 0.24);
+  /* background: rgba(118, 118, 128, 0.24); */
   /* margin-top: 60px; */
   -webkit-border-radius: 15px;
   -moz-border-radius: 15px;
@@ -522,8 +535,13 @@ table.Exchange-list tr.Exchange-list-header th {
   padding-bottom: 0.9rem;
 }
 
-table.Exchange-list th {
-  opacity: 0.7;
+table.Exchange-list th:first-child {
+  border-top-left-radius: 17px;
+  border-bottom-left-radius: 17px;
+}
+table.Exchange-list th:last-child {
+  border-top-right-radius: 17px;
+  border-bottom-right-radius: 17px;
 }
 
 .Exchange-leverage-box {
@@ -895,13 +913,27 @@ table.Exchange-list-small td {
   width: 2rem;
   display: inline-block;
   white-space: nowrap;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.Exchange-list .Tooltip-handle {
+  font-size: 16px;
 }
 
 .Exchange-list-info-label {
-  font-size: 0.9rem;
-  margin-top: 0.2rem;
+  display: flex;
+  gap: 4px;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #fff;
 }
 
+.Exchange-list-asset {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
 .Exchange-list-muted {
   font-size: 0.9rem;
 }
