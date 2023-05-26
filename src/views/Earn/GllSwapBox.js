@@ -453,7 +453,7 @@ export default function GllSwapBox(props) {
 
         if (!isBuying) {
             if (maxSellAmount && mvlpAmount && mvlpAmount.gt(maxSellAmount)) {
-                return [`Insufficient MVLP Balance`];
+                return [`Insufficient GLL Balance`];
             }
 
             const swapTokenInfo = getTokenInfo(infoTokens, swapTokenAddress);
@@ -677,7 +677,7 @@ export default function GllSwapBox(props) {
             <ItemCard
                 className='col-span-2'
                 label='Current Deposit'
-                value={`${formatAmount(mvlpBalance, MVLP_DECIMALS, 4, true)} MVLP (~$${formatAmount(mvlpBalanceUsd, USD_DECIMALS, 2, true)})`}
+                value={`${formatAmount(mvlpBalance, MVLP_DECIMALS, 4, true)} GLL (~$${formatAmount(mvlpBalanceUsd, USD_DECIMALS, 2, true)})`}
                 icon={IconMoney} />
             <Tab
                 options={["Deposit", "Withdraw"]}
@@ -741,8 +741,8 @@ export default function GllSwapBox(props) {
                 <div className="GllSwap-dividing">
                     <div className="GllSwap-dividing-line" />
                     <div className="GllSwap-next">
+                        <img src={IconNext} alt="" width={16} style={{marginBottom:"-8px",opacity:"0.3"}}/>
                         <img src={IconNext} alt="" width={16} />
-                        {/* <img src={IconNext} alt="" width={16}/> */}
                     </div>
                 </div>
                 {/* <div className="AppOrder-ball-container">
