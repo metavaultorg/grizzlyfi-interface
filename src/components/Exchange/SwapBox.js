@@ -2514,7 +2514,8 @@ export default function SwapBox(props) {
       )}
       <div className="Exchange-swap-market-box App-box App-box-border">
         <div className="Exchange-swap-market-box-title">Useful Links</div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }} className="Exchange-info-row">
+        <div className="App-card-divider"></div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 20 }} className="Exchange-info-row">
           <div className="Exchange-info-label-button">
             <a href=" https://docs.metavault.trade/trading" target="_blank" rel="noopener noreferrer">
               Trading guide
