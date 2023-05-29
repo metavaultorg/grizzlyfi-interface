@@ -11,7 +11,7 @@ export default function ItemCard({ icon, label, value, buttonEle,className,style
                 </div>
                 <div className='content-container'>
                     <div style={{fontSize:14,fontWeight:600,opacity:0.6}}>{label}</div>
-                    <div style={{fontSize:24,fontWeight:500}}>{value}</div>
+                    <div className='font-number' style={{fontSize:24,fontWeight:500}}>{value}</div>
                 </div>
             </div>
 

@@ -674,11 +674,20 @@ export default function GllSwapBox(props) {
 
     return (
         <div className="GllSwap-box App-box basis-mobile">
-            <ItemCard
-                className='col-span-2'
-                label='Current Deposit'
-                value={`${formatAmount(mvlpBalance, MVLP_DECIMALS, 4, true)} GLL (~$${formatAmount(mvlpBalanceUsd, USD_DECIMALS, 2, true)})`}
-                icon={IconMoney} />
+            {mvlpBalance && mvlpBalance.gt(0) ?
+                <ItemCard
+                    className='col-span-2'
+                    label='Current Deposit'
+                    value={`$${formatAmount(mvlpBalance, MVLP_DECIMALS, 4, true)} GLL (~$${formatAmount(mvlpBalanceUsd, USD_DECIMALS, 2, true)})`}
+                    icon={IconMoney} />
+                :
+                <ItemCard
+                    style={{ opacity: "0.5" }}
+                    className='col-span-2'
+                    label='Your Total Deposits'
+                    value={`${formatAmount(0, USD_DECIMALS, 2, true)}`}
+                    icon={IconMoney} />
+            }
             <Tab
                 options={["Deposit", "Withdraw"]}
                 option={tabLabel}
@@ -807,12 +816,12 @@ export default function GllSwapBox(props) {
                 <div className="GllSwap-data">
                     <div className="Exchange-info-row">
                         <div className="Exchange-info-label">Slippage</div>
-                        <div>{(parseInt(savedSlippageAmount) / BASIS_POINTS_DIVISOR) * 100}%</div>
+                        <div className="font-number">{(parseInt(savedSlippageAmount) / BASIS_POINTS_DIVISOR) * 100}%</div>
                     </div>
                     <div className="Exchange-info-row">
                         <div className="Exchange-info-label">Minimum Received</div>
-                        {isBuying && mvlpAmount && <div>{formatAmountFree(mvlpAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR), MVLP_DECIMALS, 2)} GLL</div>}
-                        {!isBuying && mvlpAmount && <div>{formatAmountFree(swapAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR), swapToken.decimals, swapToken.displayDecimals)} {swapToken.symbol}</div>}
+                        {isBuying && mvlpAmount && <div className="font-number">{formatAmountFree(mvlpAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR), MVLP_DECIMALS, 2)} GLL</div>}
+                        {!isBuying && mvlpAmount && <div className="font-number">{formatAmountFree(swapAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR), swapToken.decimals, swapToken.displayDecimals)} {swapToken.symbol}</div>}
                     </div>
                     <div className="Exchange-info-row">
                         <div className="Exchange-info-label">Weight / Target</div>
@@ -825,6 +834,7 @@ export default function GllSwapBox(props) {
                                 <Tooltip
                                     handle={isBuying && isSwapTokenCapReached ? "NA" : feePercentageText}
                                     position="right-bottom"
+                                    handleClassName="font-number"
                                     renderContent={() => {
                                         return (
                                             <>
@@ -841,6 +851,7 @@ export default function GllSwapBox(props) {
                                 <Tooltip
                                     handle={feePercentageText}
                                     position="right-bottom"
+                                    handleClassName="font-number"
                                     renderContent={() => {
                                         return (
                                             <>

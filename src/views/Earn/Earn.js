@@ -119,6 +119,7 @@ export default function Earn(props) {
       <TooltipComponent
         handle={weightText}
         position="right-bottom"
+        handleClassName="font-number"
         renderContent={() => {
           return (
             <>
@@ -242,11 +243,12 @@ export default function Earn(props) {
                         <AssetDropdown assetSymbol={token.symbol} assetInfo={token} />
                       </div>
                     </td>
-                    <td>{formatKeyAmount(tokenInfo, "managedAmount", token.decimals, 2, true)}</td>
+                    <td className="font-number">{formatKeyAmount(tokenInfo, "managedAmount", token.decimals, 2, true)}</td>
                     <td>
                     <TooltipComponent
                             handle={`$${formatKeyAmount(tokenInfo, "managedUsd", USD_DECIMALS, 0, true)}`}
                             position="right-bottom"
+                            handleClassName="font-number"
                             renderContent={() => {
                               return (
                                 <>
@@ -260,7 +262,7 @@ export default function Earn(props) {
                             }}
                           />  
                     </td>
-                    <td>{formatAmount(utilization, 2, 2, false)}%</td>
+                    <td className="font-number">{formatAmount(utilization, 2, 2, false)}%</td>
                     <td>{getWeightText(tokenInfo)}</td>
                   </tr>
                 )

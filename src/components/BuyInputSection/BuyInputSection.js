@@ -27,7 +27,7 @@ export default function BuyInputSection(props) {
                 type="number"
                 min="0"
                 placeholder="0.0"
-                className="Exchange-swap-input"
+                className="Exchange-swap-input font-number"
                 value={inputValue}
                 onChange={onInputValueChange}
               />
@@ -36,7 +36,7 @@ export default function BuyInputSection(props) {
           </div>
         </div>
         <div className="Exchange-swap-section-top">
-          <div className="muted">
+          <div className="muted font-number">
             {topLeftLabel}{balance}
           </div>
           {/* <div className={cx("align-right", { clickable: onClickTopRightLabel })} onClick={onClickTopRightLabel}>
