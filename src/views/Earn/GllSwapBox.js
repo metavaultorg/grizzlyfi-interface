@@ -113,9 +113,8 @@ export default function GllSwapBox(props) {
 
     const tokens = getTokens(chainId);
     const whitelistedTokens = getWhitelistedTokens(chainId);
+    const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
     const tokenList = whitelistedTokens.filter((t) => !t.isWrapped);
-    const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
-    
     const [swapValue, setSwapValue] = useState("");
     const [mvlpValue, setMvlpValue] = useState("");
     const [swapTokenAddress, setSwapTokenAddress] = useLocalStorageByChainId(
@@ -159,6 +158,12 @@ export default function GllSwapBox(props) {
             fetcher: fetcher(library, Reader, [tokensForBalanceAndSupplyQuery]),
         }
     );
+
+    const { data: fundingRateInfo } = useSWR([active, chainId, readerAddress, "getFundingRates"], {
+        fetcher: fetcher(library, Reader, [vaultAddress, nativeTokenAddress, whitelistedTokenAddresses]),
+    });
+
+    const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, fundingRateInfo);
 
     const { data: aums } = useSWR([`MvlpSwap:getAums:${active}`, chainId, mvlpManagerAddress, "getAums"], {
         fetcher: fetcher(library, MvlpManager),
@@ -750,7 +755,7 @@ export default function GllSwapBox(props) {
                 <div className="GllSwap-dividing">
                     <div className="GllSwap-dividing-line" />
                     <div className="GllSwap-next">
-                        <img src={IconNext} alt="" width={16} style={{marginBottom:"-8px",opacity:"0.3"}}/>
+                        <img src={IconNext} alt="" width={16} style={{ marginBottom: "-8px", opacity: "0.3" }} />
                         <img src={IconNext} alt="" width={16} />
                     </div>
                 </div>

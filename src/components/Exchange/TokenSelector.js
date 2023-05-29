@@ -54,7 +54,9 @@ export default function TokenSelector(props) {
   var tokenImage = null;
 
   try {
-    tokenImage = require("../../img/ic_" + tokenInfo.symbol.toLowerCase() + "_24.svg");
+    tokenImage = getImageUrl({
+      path: `coins/others/${tokenInfo.symbol.toLowerCase()}-original`,
+    });
   } catch (error) {
     console.error(error);
   }
@@ -194,7 +196,7 @@ export default function TokenSelector(props) {
           <div className="TokenSelector-box" onClick={() => setIsModalVisible(true)}>
             {showSymbolImage && (
               <div className="selected-token-img-container">
-                <img src={tokenImage && tokenImage.default} alt={tokenInfo.symbol} width={18} height={18} />
+                <img src={tokenImage} alt={tokenInfo.symbol} width={18} height={18} />
               </div>
             )}
             <span className="selected-token-text">{tokenInfo.symbol}</span>
@@ -210,7 +212,7 @@ export default function TokenSelector(props) {
           <div className="TokenSelector-box" onClick={() => setIsModalVisible(true)}>
             {tokenInfo.symbol}
             {showSymbolImage && (
-              <img src={tokenImage && tokenImage.default} alt={tokenInfo.symbol} className="TokenSelector-box-symbol" />
+              <img src={tokenImage} alt={tokenInfo.symbol} className="TokenSelector-box-symbol" />
             )}
             {showNewCaret && <img src={dropDownIcon} alt="dropDownIcon" className="TokenSelector-box-caret" />}
             {!showNewCaret && <BiChevronDown className="TokenSelector-caret" />}

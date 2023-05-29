@@ -26,6 +26,7 @@ import OrderEditor from "./OrderEditor";
 
 import "./OrdersList.css";
 import { BigNumber } from "ethers";
+import IconNoPosition from "../../assets/icons/no-open-position.png";
 
 function getPositionForOrder(account, order, positionsMap) {
   const key = getPositionKey(account, order.collateralToken, order.indexToken, order.isLong);
@@ -107,9 +108,14 @@ export default function OrdersList(props) {
     }
 
     return (
-      <tr>
-        <td colSpan="5">No open orders</td>
-      </tr>
+      <tr style={{background: "none"}}>
+              <td colSpan="15">
+                <div className="Exchange-empty-positions-list-note">
+                  <span>No open orders</span>
+                  <img src={IconNoPosition} alt=""/>
+                </div>
+              </td>
+            </tr>
     );
   }, [orders]);
 
@@ -536,7 +542,10 @@ export default function OrdersList(props) {
       </table>
       <div className="Exchange-list Orders small">
         {(!orders || orders.length === 0) && (
-          <div className="Exchange-empty-positions-list-note App-card p-3">No open orders</div>
+          <div className="Exchange-empty-positions-list-note p-3" style={{ background: "none" }}>
+            <span>No open orders</span>
+            <img src={IconNoPosition} alt=""/>
+          </div>
         )}
         {renderSmallList()}
       </div>
