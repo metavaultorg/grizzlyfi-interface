@@ -912,7 +912,7 @@ function FullApp() {
             <span style={{ marginLeft: 5 }}>Include PnL in leverage display</span>
           </Checkbox>
         </div>
-        <div style={{ padding: "10px" }} className="Exchange-settings-row">
+        <div className="Exchange-settings-row">
           <button className="App-cta Exchange-swap-button text-uppercase" onClick={saveAndCloseSettings}>
             Save
           </button>
