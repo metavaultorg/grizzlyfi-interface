@@ -66,12 +66,11 @@ a.btn {
 }
 
 .btn-yellow, .btn-yellow>span {
-  background: #f2c75c;
-  color: black;
+  box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.2);
+  background-image: linear-gradient(to bottom, #f2c75c, #cb9612);
+  color: #fff !important;
   border: none;
-}
-.btn-yellow:hover {
-  background: #ffc56b;
+  font-size: 16px;
 }
 
 .btn-blue:hover {
