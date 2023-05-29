@@ -181,46 +181,39 @@ export default function AddTrailingStopEditor(props) {
   };
 
   return (
-    <div className="PositionEditor">
+    <div className="PositionEditor AddTrailingStopEditor">
       {position && (
         <Modal isVisible={isVisible} setIsVisible={setIsVisible} label={title}>
-          <div style={{ marginTop: "10px", padding: 10 }}>
-            <div>
-              <div className="PositionEditor-info-box">
-                <div className="trailing-box" style={{ paddingLeft: "16px", paddingRight: "16px" }}>
-                  <div className="trailing-header">
-                    <div style={{ display: "flex" }}>
-                      Trailing Stop{" "}
-                      <p style={{ color: "green", marginLeft: "3px" }}>
-                        (
-                        {trailingStopPriceLabel.gt(0)
-                          ? trailingStopMark + "% - " + formatAmount(
-                              trailingStopPriceLabel,
-                              USD_DECIMALS,
-                              position.indexToken.displayDecimals,
-                              true
-                            )+"$"
-                          : "..."}
-                        )
-                      </p>
-                    </div>
-                  </div>
-                  <div className="Exchange-leverage-slider App-slider negative">
-                    <Slider
-                      min={0}
-                      max={Object.keys(trailingStopPrices)[Object.keys(trailingStopPrices).length - 1]}
-                      step={0.1}
-                      marks={trailingStopPrices}
-                      handle={sliderHandle}
-                      onChange={(value) => {
-                        setTrailingStopMark(value);
-                      }}
-                      value={trailingStopMark}
-                      defaultValue={trailingStopMark}
-                    />
-                  </div>
+          <div style={{ marginTop: "48px" }}>
+            <div className="PositionEditor-info-box">
+              <div className="trailing-box">
+                <div className="trailing-header">
+                  <span className="positive font-number trailing-percentage">
+                    {trailingStopPriceLabel.gt(0) ? trailingStopMark + "%" : "..."}
+                  </span>
+                  <span className="font-number trailing-price">
+                    {trailingStopPriceLabel.gt(0)
+                      ? "$" +
+                        formatAmount(trailingStopPriceLabel, USD_DECIMALS, position.indexToken.displayDecimals, true)
+                      : "..."}
+                  </span>
                 </div>
-                <div class="divider"></div>
+                <div className="Exchange-leverage-slider App-slider negative">
+                  <Slider
+                    min={0}
+                    max={Object.keys(trailingStopPrices)[Object.keys(trailingStopPrices).length - 1]}
+                    step={0.1}
+                    marks={trailingStopPrices}
+                    handle={sliderHandle}
+                    onChange={(value) => {
+                      setTrailingStopMark(value);
+                    }}
+                    value={trailingStopMark}
+                    defaultValue={trailingStopMark}
+                  />
+                </div>
+              </div>
+              <div className="trailing-info-box">
                 <div className="Exchange-info-row">
                   <div className="Exchange-info-label">Size</div>
                   <div className="align-right">{formatAmount(position.size, USD_DECIMALS, 2, true)} USD</div>
@@ -245,10 +238,11 @@ export default function AddTrailingStopEditor(props) {
                     )}
                   </div>
                 </div>
-                {/* RECEIVE TOKEN */}
-
-                <div className="Exchange-info-row PositionSeller-receive-row top-line">
-                  Receive
+              </div>
+              {/* RECEIVE TOKEN */}
+              <div className="trailing-info-box">
+                <div className="Exchange-info-row">
+                <div className="Exchange-info-label">Receive</div>
                   {receiveToken && (
                     <div className="align-right">
                       <TokenSelector
@@ -282,16 +276,11 @@ export default function AddTrailingStopEditor(props) {
                   </div>
                 </div>
               </div>
-
-              <div className="Exchange-swap-button-container">
-                <button
-                  className="App-cta Exchange-swap-button"
-                  onClick={onClickPrimary}
-                  disabled={!isPrimaryEnabled()}
-                >
-                  {getPrimaryText()}
-                </button>
-              </div>
+            </div>
+            <div className="Exchange-swap-button-container">
+              <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
+                {getPrimaryText()}
+              </button>
             </div>
           </div>
         </Modal>

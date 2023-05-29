@@ -216,7 +216,7 @@
 
 .PositionEditor-info-box {
   margin-bottom: 0.7rem;
-  padding-left: 0.7rem;
+  /*padding-left: 0.7rem;*/
 }
 
 .PositionEditor-keep-leverage-settings .Checkbox {
@@ -413,9 +413,9 @@
 }
 
 .PositionEditor .Modal-content .Modal-body {
-  overscroll-behavior: smooth;
+  /*overscroll-behavior: smooth;*/
   max-height: calc(80vh - 2rem);
-  overflow-y: auto;
+  /*overflow-y: auto;*/
 }
 
 .PositionEditor .Modal-content {

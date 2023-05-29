@@ -1,53 +1,121 @@
-.trailing-header{
-    display: flex;
-    justify-content: space-between;
+.PositionEditor.AddTrailingStopEditor .Modal-content {
+  width: 600px;
+}
+
+@media (max-width: 660px) {
+  .PositionEditor.AddTrailingStopEditor .Modal-content {
+    width: 90vw;
+  }
+}
+
+.trailing-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.PositionEditor .trailing-header {
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 11px;
+  padding-bottom: 11px;
+  border-radius: 25px;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.PositionEditor .trailing-header span {
+  display: flex;
+  /*align-items: center;*/
+  justify-content: center;
+}
+
+.PositionEditor .trailing-header .trailing-percentage {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.33;
+}
+
+.PositionEditor .trailing-header .trailing-price {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.PositionEditor .Exchange-leverage-slider {
+  margin-top: 8px;
+  margin-bottom: 16px;
+  height: 88px;
+  padding: 24px;
+  padding-top: 24px;
+  padding-bottom: 24px;
+  border-radius: 19px;
+  background-color: rgba(216, 216, 216, 0.05);
+}
+
+.PositionEditor .trailing-info-box {
+  margin: 16px 0 8px;
+  padding: 24px 24px 8px 24px;
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.PositionEditor .Exchange-info-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.PositionEditor .Exchange-info-row {
+  margin: 0 0 16px 0;
+}
+
+.PositionEditor .Exchange-swap-button-container {
+  margin-top: 16px;
 }
 
 .box-select {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    /* margin: 0px; */
-    /* background-color: #7676803d;
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  /* margin: 0px; */
+  /* background-color: #7676803d;
     border-radius: 3px;
     padding: 1rem;
     padding-left: 0.7rem; */
 }
 
 .box-select.Exchange-swap-section {
-    padding-top: 3px;
-    padding-bottom: 1px;
+  padding-top: 3px;
+  padding-bottom: 1px;
 }
 
-.box-select>div {
-    opacity: 0.7;
-    cursor: pointer;
+.box-select > div {
+  opacity: 0.7;
+  cursor: pointer;
 }
 
-.box-select>div.active {
-    opacity: 1;
+.box-select > div.active {
+  opacity: 1;
 }
 
-.box-select>input {
-    border-radius: 0 4px 4px;
-    flex-basis: 20%;
-    max-width: 20%;
-    font-size: 12px;
-    height: 20px;
-    padding: 0;
-    border: 1px solid transparent;
+.box-select > input {
+  border-radius: 0 4px 4px;
+  flex-basis: 20%;
+  max-width: 20%;
+  font-size: 12px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid transparent;
 }
 
-.take-profit-input-box{
-
+.take-profit-input-box {
 }
 
-.take-profit-input{
-    height: auto;
-    width: 25%;
-    max-width: 100px;
-    height: 20px;
-    font-size: 16px;
-    background-color: #51506b;
-    border-radius: 3px;
+.take-profit-input {
+  height: auto;
+  width: 25%;
+  max-width: 100px;
+  height: 20px;
+  font-size: 16px;
+  background-color: #51506b;
+  border-radius: 3px;
 }
