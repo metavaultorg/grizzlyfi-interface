@@ -19,6 +19,7 @@ import { useLiquidationsData, useTradesFromGraph } from "../../Api";
 import { getContract } from "../../Addresses";
 
 import "./TradeHistory.css";
+import IconNoPosition from "../../assets/icons/no-open-position.png";
 
 const { AddressZero } = ethers.constants;
 
@@ -429,7 +430,10 @@ export default function TradeHistory(props) {
 
   return (
     <div className="TradeHistory">
-      {tradesWithMessages.length === 0 && <div className="TradeHistory-row App-box">No trades yet</div>}
+      {tradesWithMessages.length === 0 && <div className="TradeHistory-empty-row">
+        <span>No trades yet</span>
+        <img src={IconNoPosition} alt="" />
+      </div>}
       {tradesWithMessages.length > 0 &&
         tradesWithMessages.map((trade, index) => {
           const tradeData = trade
@@ -442,7 +446,7 @@ export default function TradeHistory(props) {
           }
 
           return (
-            <div className="TradeHistory-row App-box App-box-border" key={index}>
+            <div className="TradeHistory-row" key={index}>
               <div>
                 <div className="muted TradeHistory-time">
                   {formatDateTime(tradeData.timestamp)}

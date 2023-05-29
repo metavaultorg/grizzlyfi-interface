@@ -110,7 +110,7 @@ export default function OrdersList(props) {
       <tr style={{background: "none"}}>
               <td colSpan="15">
                 <div className="Exchange-empty-positions-list-note">
-                  <span>No Open Orders</span>
+                  <span>No open orders</span>
                   <img src={IconNoPosition} alt=""/>
                 </div>
               </td>
@@ -547,7 +547,7 @@ export default function OrdersList(props) {
       <div className="Exchange-list Orders small">
         {(!orders || orders.length === 0) && (
           <div className="Exchange-empty-positions-list-note p-3" style={{ background: "none" }}>
-            <span>No Open Orders</span>
+            <span>No open orders</span>
             <img src={IconNoPosition} alt=""/>
           </div>
         )}

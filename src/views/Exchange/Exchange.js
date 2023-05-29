@@ -792,7 +792,7 @@ export const Exchange = forwardRef((props, ref) => {
       });
   };
 
-  const LIST_SECTIONS = ["Positions", flagOrdersEnabled ? "Orders" : undefined, "Trades"].filter(Boolean);
+  const LIST_SECTIONS = ["Positions", flagOrdersEnabled ? "Orders" : undefined, "History"].filter(Boolean);
   let [listSection, setListSection] = useLocalStorageByChainId(chainId, "List-section-v2", LIST_SECTIONS[0]);
   const LIST_SECTIONS_LABELS = {
     Orders: orders.length ? `Orders (${orders.length})` : undefined,
@@ -903,7 +903,7 @@ export const Exchange = forwardRef((props, ref) => {
             setCancelOrderIdList={setCancelOrderIdList}
           />
         )}
-        {listSection === "Trades" && (
+        {listSection === "History" && (
           <TradeHistory
             account={account}
             forSingleAccount={true}
