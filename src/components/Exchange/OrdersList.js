@@ -25,7 +25,6 @@ import Tooltip from "../Tooltip/Tooltip";
 import OrderEditor from "./OrderEditor";
 
 import "./OrdersList.css";
-import { BigNumber } from "ethers";
 import IconNoPosition from "../../assets/icons/no-open-position.png";
 
 function getPositionForOrder(account, order, positionsMap) {
@@ -111,7 +110,7 @@ export default function OrdersList(props) {
       <tr style={{background: "none"}}>
               <td colSpan="15">
                 <div className="Exchange-empty-positions-list-note">
-                  <span>No open orders</span>
+                  <span>No Open Orders</span>
                   <img src={IconNoPosition} alt=""/>
                 </div>
               </td>
@@ -179,6 +178,7 @@ export default function OrdersList(props) {
             <td>
               <Tooltip
                 handle={getExchangeRateDisplay(order.triggerRatio, fromTokenInfo, toTokenInfo)}
+                handleClassName="font-number"
                 renderContent={() => `
                   You will receive at least ${formatAmount(
                     order.minOut,
@@ -191,7 +191,7 @@ export default function OrdersList(props) {
                 `}
               />
             </td>
-            <td>{getExchangeRateDisplay(markExchangeRate, fromTokenInfo, toTokenInfo, true)}</td>
+            <td className="font-number">{getExchangeRateDisplay(markExchangeRate, fromTokenInfo, toTokenInfo, true)}</td>
             {!hideActions && renderActions(order)}
           </tr>
         );
@@ -272,7 +272,7 @@ export default function OrdersList(props) {
             &nbsp;{byWord} ${formatAmount(orderSizeDelta, USD_DECIMALS, 2, true)} {receive}
             {error && <div className="Exchange-list-item-error">{error}</div>}
           </td>
-          <td>
+          <td className="font-number">
             {triggerPricePrefix}
             {trailingStopRefPrice.gt(0) && (
               <>
@@ -294,6 +294,7 @@ export default function OrdersList(props) {
             <Tooltip
               handle={formatAmount(markPrice, USD_DECIMALS, indexToken.displayDecimals, true)}
               position="right-bottom"
+              handleClassName="font-number"
               renderContent={() => {
                 return (
                   <>
@@ -343,6 +344,7 @@ export default function OrdersList(props) {
                   <Tooltip
                     position="right-bottom"
                     handle={getExchangeRateDisplay(order.triggerRatio, fromTokenInfo, toTokenInfo)}
+                    handleClassName="font-number"
                     renderContent={() => `
                     You will receive at least ${formatAmount(
                       order.minOut,
@@ -358,7 +360,7 @@ export default function OrdersList(props) {
               </div>
               <div className="App-card-row">
                 <div className="label">Mkt. Price</div>
-                <div>{getExchangeRateDisplay(markExchangeRate, fromTokenInfo, toTokenInfo)}</div>
+                <div className="font-number">{getExchangeRateDisplay(markExchangeRate, fromTokenInfo, toTokenInfo)}</div>
               </div>
               {!hideActions && (
                 <>
@@ -468,7 +470,7 @@ export default function OrdersList(props) {
             </div>
             <div className="App-card-row">
               <div className="label">Price</div>
-              <div>
+              <div className="font-number">
               {triggerPricePrefix}
               {trailingStopRefPrice.gt(0) && (
                 <>
@@ -476,6 +478,7 @@ export default function OrdersList(props) {
                   <Tooltip
                     handle={formatAmount(orderTriggerPrice, USD_DECIMALS, indexToken.displayDecimals, true)}
                     position="right-bottom"
+                    handleClassName="font-number"
                     renderContent={() => {
                       return <>{trailingStopContent}</>;
                     }}
@@ -493,6 +496,7 @@ export default function OrdersList(props) {
                 <Tooltip
                   handle={formatAmount(markPrice, USD_DECIMALS, indexToken.displayDecimals, true)}
                   position="right-bottom"
+                  handleClassName="font-number"
                   renderContent={() => {
                     return (
                       <>
@@ -543,7 +547,7 @@ export default function OrdersList(props) {
       <div className="Exchange-list Orders small">
         {(!orders || orders.length === 0) && (
           <div className="Exchange-empty-positions-list-note p-3" style={{ background: "none" }}>
-            <span>No open orders</span>
+            <span>No Open Orders</span>
             <img src={IconNoPosition} alt=""/>
           </div>
         )}

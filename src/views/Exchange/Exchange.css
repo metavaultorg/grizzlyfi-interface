@@ -501,7 +501,7 @@ table.Exchange-list.Orders td {
 }
 
 table.Exchange-list tr {
-  /* border-bottom: 1px solid rgba(234, 234, 234, 0.15); */
+  backdrop-filter: none;
 }
 
 table.Exchange-list tr:last-child {
