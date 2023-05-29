@@ -320,13 +320,13 @@ export default function PositionsList(props) {
                       <div className="Exchange-list-info-label">
                         <img src={position.isLong ? longImg : shortImg} alt="" />
                         {position.leverage && (
-                          <span className="">{formatAmount(position.leverage, 4, 2, true)}x&nbsp;</span>
+                          <span className="font-number">{formatAmount(position.leverage, 4, 2, true)}x&nbsp;</span>
                         )}
                       </div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">Size</div>
-                      <div>${formatAmount(position.size, USD_DECIMALS, 2, true)}</div>
+                      <div className="font-number">${formatAmount(position.size, USD_DECIMALS, 2, true)}</div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">Collateral</div>
@@ -339,7 +339,7 @@ export default function PositionsList(props) {
                             true
                           )}`}
                           position="right-bottom"
-                          handleClassName={cx("plain", { negative: position.hasLowCollateral })}
+                          handleClassName={cx("plain", "font-number", { negative: position.hasLowCollateral })}
                           renderContent={() => {
                             return (
                               <>
@@ -369,7 +369,7 @@ export default function PositionsList(props) {
                       <div className="label">PnL</div>
                       <div>
                         <span
-                          className={cx("Exchange-list-info-label", {
+                          className={cx("Exchange-list-info-label", "font-number", {
                             positive: hasPositionProfit && positionDelta.gt(0),
                             negative: !hasPositionProfit && positionDelta.gt(0),
                             muted: positionDelta.eq(0),
@@ -385,7 +385,7 @@ export default function PositionsList(props) {
                         <Tooltip
                           handle={`$${formatAmount(position.netValue, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}`}
                           position="right-bottom"
-                          handleClassName="plain"
+                          handleClassName="plain font-number"
                           renderContent={() => {
                             return (
                               <>
@@ -432,7 +432,7 @@ export default function PositionsList(props) {
                                   className="order-error"
                                   handle={orderText()}
                                   position="right-bottom"
-                                  handleClassName="plain"
+                                  handleClassName="plain font-number"
                                   renderContent={() => <span className="negative">{order.error}</span>}
                                 />
                               </div>
@@ -452,19 +452,19 @@ export default function PositionsList(props) {
                   <div className="App-card-content">
                     <div className="App-card-row">
                       <div className="label">Mkt. Price</div>
-                      <div>
+                      <div className="font-number">
                         ${formatAmount(position.markPrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}
                       </div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">Entry Price</div>
-                      <div>
+                      <div className="font-number">
                         ${formatAmount(position.averagePrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}
                       </div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">Liq. Price</div>
-                      <div>
+                      <div className="font-number">
                         ${formatAmount(liquidationPrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}
                       </div>
                     </div>
@@ -495,7 +495,7 @@ export default function PositionsList(props) {
                     </button>
                     }
                     <button
-                      className="Exchange-list-action App-button-option App-card-option"
+                      className="App-button-option App-card-option"
                       onClick={() => {
                         setPositionToShare(position);
                         setIsPositionShareModalOpen(true);
@@ -600,7 +600,7 @@ export default function PositionsList(props) {
                       <Tooltip
                         handle={`$${formatAmount(position.netValue, USD_DECIMALS, 2, true)}`}
                         position="left-bottom"
-                        handleClassName="plain"
+                        handleClassName="plain font-number"
                         renderContent={() => {
                           return (
                             <>
@@ -630,7 +630,7 @@ export default function PositionsList(props) {
                   </div>
                   {position.deltaStr && (
                     <div
-                      className={cx("Exchange-list-info-label", {
+                      className={cx("Exchange-list-info-label","font-number", {
                         positive: hasPositionProfit && positionDelta.gt(0),
                         negative: !hasPositionProfit && positionDelta.gt(0),
                         muted: positionDelta.eq(0),
@@ -683,7 +683,7 @@ export default function PositionsList(props) {
                   <Tooltip
                     handle={`$${formatAmount(position.collateralAfterFee, USD_DECIMALS, 2, true)}`}
                     position="left-bottom"
-                    handleClassName={cx("plain", { negative: position.hasLowCollateral })}
+                    handleClassName={cx("plain","font-number", { negative: position.hasLowCollateral })}
                     renderContent={() => {
                       return (
                         <>
@@ -716,7 +716,7 @@ export default function PositionsList(props) {
                       true
                     )}`}
                     position="left-bottom"
-                    handleClassName="plain clickable"
+                    handleClassName="plain clickable font-number"
                     renderContent={() => {
                       return (
                         <>
