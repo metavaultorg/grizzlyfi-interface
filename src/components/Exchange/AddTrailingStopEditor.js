@@ -216,11 +216,11 @@ export default function AddTrailingStopEditor(props) {
               <div className="trailing-info-box">
                 <div className="Exchange-info-row">
                   <div className="Exchange-info-label">Size</div>
-                  <div className="align-right">{formatAmount(position.size, USD_DECIMALS, 2, true)} USD</div>
+                  <div className="align-right font-number">${formatAmount(position.size, USD_DECIMALS, 2, true)}</div>
                 </div>
                 <div className="Exchange-info-row">
                   <div className="Exchange-info-label">Trailing Stop Fee</div>
-                  <div className="align-right">
+                  <div className="align-right font-number">
                     {!trailingStopFeeUsd && "-"}
                     {trailingStopFeeUsd && (
                       <Tooltip
@@ -270,7 +270,7 @@ export default function AddTrailingStopEditor(props) {
                 </div>
                 <div className="Exchange-info-row">
                   <div className="Exchange-info-label">Execution Fee</div>
-                  <div className="align-right">
+                  <div className="align-right font-number">
                     {formatAmount(getConstant(chainId, "TRAILING_STOP_EXECUTION_GAS_FEE"), 18, 2)}{" "}
                     {getNativeToken(chainId).symbol}
                   </div>
