@@ -213,7 +213,7 @@ export default function BeginAccountTransfer(props) {
   const pendingTransferLink = `/complete_account_transfer/${account}/${pendingReceiver}`;
 
   return (
-    <div className="BeginAccountTransfer Page page-layout">
+    <div className="Page page-layout">
       <Modal
         isVisible={isTransferSubmittedModalVisible}
         setIsVisible={setIsTransferSubmittedModalVisible}
@@ -226,54 +226,56 @@ export default function BeginAccountTransfer(props) {
           Continue
         </Link>
       </Modal>
-      <div className="Page-title-section">
-        <div className="Page-title">Transfer Account</div>
-        <div className="Page-description">
-          Please only use this for full account transfers.
-          <br />
-          This will transfer all your MVX, esMVX, MVLP and Multiplier Points to your new account.
-          <br />
-          Transfers are only supported if the receiving account has not staked MVX or MVLP tokens before.
-          <br />
-          Transfers are one-way, you will not be able to transfer staked tokens back to the sending account.
-        </div>
-        {hasPendingReceiver && (
+      <div className="BeginAccountTransfer">
+        <div className="Page-title-section">
+          <div className="Page-title">Transfer Account</div>
           <div className="Page-description">
-            You have a <Link to={pendingTransferLink}>pending transfer</Link> to {pendingReceiver}.
+            Please only use this for full account transfers.
+            <br />
+            This will transfer all your GLL and Multiplier Points to your new account.
+            <br />
+            Transfers are only supported if the receiving account has not staked GLL token before.
+            <br />
+            Transfers are one-way, you will not be able to transfer staked tokens back to the sending account.
           </div>
-        )}
-      </div>
-      <div style={{ padding: "24px 0 0 0" }} className="Page-content">
-        <div className="input-form">
-          <div className="input-row">
-            <div>
-              <input
-                type="text"
-                value={receiver}
-                onChange={(e) => setReceiver(e.target.value)}
-                className="text-input"
-                placeholder="Receiver Address"
-              />
+          {hasPendingReceiver && (
+            <div className="Page-description">
+              You have a <Link to={pendingTransferLink}>pending transfer</Link> to {pendingReceiver}.
             </div>
-          </div>
-          <div className="BeginAccountTransfer-validations">
-            <ValidationRow isValid={!hasVestedMvx}>
-              Sender has withdrawn all tokens from MVX Vesting Vault
-            </ValidationRow>
-            <ValidationRow isValid={!hasVestedMvlp}>
-              Sender has withdrawn all tokens from MVLP Vesting Vault
-            </ValidationRow>
-            <ValidationRow isValid={!hasStakedMvx}>Receiver has not staked MVX tokens before</ValidationRow>
-            <ValidationRow isValid={!hasStakedMvlp}>Receiver has not staked MVLP tokens before</ValidationRow>
-          </div>
-          <div className="input-row">
-            <button
-              className="App-cta Exchange-swap-button"
-              disabled={!isPrimaryEnabled()}
-              onClick={() => onClickPrimary()}
-            >
-              {getPrimaryText()}
-            </button>
+          )}
+        </div>
+        <div style={{ padding: "24px 0 0 0" }} className="Page-content">
+          <div className="">
+            <div className="input-row">
+              <div>
+                <input
+                  type="text"
+                  value={receiver}
+                  onChange={(e) => setReceiver(e.target.value)}
+                  className="text-input"
+                  placeholder="Receiver Address"
+                />
+              </div>
+            </div>
+            <div className="BeginAccountTransfer-validations">
+              {/* <ValidationRow isValid={!hasVestedMvx}>
+                Sender has withdrawn all tokens from MVX Vesting Vault
+              </ValidationRow> */}
+              <ValidationRow isValid={!hasVestedMvlp}>
+                Sender has withdrawn all tokens from GLL Vesting Vault
+              </ValidationRow>
+              {/* <ValidationRow isValid={!hasStakedMvx}>Receiver has not staked MVX tokens before</ValidationRow> */}
+              <ValidationRow isValid={!hasStakedMvlp}>Receiver has not staked GLL tokens before</ValidationRow>
+            </div>
+            <div className="input-row">
+              <button
+                className="App-cta Exchange-swap-button"
+                disabled={!isPrimaryEnabled()}
+                onClick={() => onClickPrimary()}
+              >
+                {getPrimaryText()}
+              </button>
+            </div>
           </div>
         </div>
       </div>

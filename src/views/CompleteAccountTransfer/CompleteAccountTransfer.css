@@ -2,3 +2,26 @@
   display: block;
   text-align: center;
 }
+
+.CompleteAccountTransfer {
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 30px;
+  padding: 24px;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #262626;
+}
+.CompleteAccountTransfer .Page-title {
+  color: #fff;
+  margin-bottom: 8px;
+}
+.CompleteAccountTransfer .Page-description {
+  color: #fff;
+  opacity: 0.5;
+}
+.CompleteAccountTransfer .Page-title-section {
+  margin-bottom: 40px;
+}

@@ -76,7 +76,7 @@ export default function CompleteAccountTransfer(props) {
   };
 
   return (
-    <div className="CompleteAccountTransfer Page page-layout">
+    <div className="Page page-layout">
       <Modal
         isVisible={isTransferSubmittedModalVisible}
         setIsVisible={setIsTransferSubmittedModalVisible}
@@ -89,44 +89,40 @@ export default function CompleteAccountTransfer(props) {
           Continue
         </Link>
       </Modal>
-      <div className="Page-title-section">
-        <div className="Page-title">Complete Account Transfer</div>
-        {!isCorrectAccount && (
-          <div className="Page-description">
-            To complete the transfer, you must switch your connected account to {receiver}.
-            <br />
-            <br />
-            You will need to be on this page to accept the transfer,{" "}
-            <span
-              onClick={() => {
-                copyToClipboard(window.location.href);
-                helperToast.success("Link copied to your clipboard");
-              }}
-            >
-              click here
-            </span>{" "}
-            to copy the link to this page if needed.
-            <br />
-            <br />
-          </div>
-        )}
+      <div className="CompleteAccountTransfer">
+        <div className="Page-title-section">
+          <div className="Page-title">Complete Account Transfer</div>
+          {!isCorrectAccount && (
+            <div className="Page-description">
+              To complete the transfer, you must switch your connected account to {receiver}.
+              <br />
+              <br />
+              You will need to be on this page to accept the transfer,{" "}
+              <span
+                onClick={() => {
+                  copyToClipboard(window.location.href);
+                  helperToast.success("Link copied to your clipboard");
+                }}
+              >
+                click here
+              </span>{" "}
+              to copy the link to this page if needed.
+              <br />
+              <br />
+            </div>
+          )}
+          {isCorrectAccount && (
+            <div className="Page-description">
+              You have a pending transfer from {sender}.<br />
+            </div>
+          )}
+        </div>
         {isCorrectAccount && (
-          <div className="Page-description">
-            You have a pending transfer from {sender}.<br />
-          </div>
+          <button className="App-cta Exchange-swap-button" disabled={!isPrimaryEnabled()} onClick={onClickPrimary}>
+            {getPrimaryText()}
+          </button>
         )}
       </div>
-      {isCorrectAccount && (
-        <div className="Page-content">
-          <div className="input-form">
-            <div className="input-row">
-              <button className="App-cta Exchange-swap-button" disabled={!isPrimaryEnabled()} onClick={onClickPrimary}>
-                {getPrimaryText()}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
       <Footer />
     </div>
   );
