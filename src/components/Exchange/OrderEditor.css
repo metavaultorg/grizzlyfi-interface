@@ -1,0 +1,22 @@
+.OrderEditor .Modal-body {
+    margin-top: 32px;
+}
+
+.OrderEditor .Exchange-swap-section {
+    margin-bottom: 24px;    
+}
+
+.OrderEditor .Exchange-info-row {
+    margin: 0;
+}
+
+.OrderEditor .Exchange-swap-button-container {
+    padding: 0;
+    margin-top: 40px;
+}
+
+@media screen and (max-width: 768px) {
+    .OrderEditor .Modal-content {
+        overflow-y: unset;
+    }
+}

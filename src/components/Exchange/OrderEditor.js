@@ -34,6 +34,7 @@ import ExchangeInfoRow from "./ExchangeInfoRow";
 import { getContract } from "../../Addresses";
 import { sliderHandle, trailingStopPrices } from "../Trailer/Trailer";
 import { BigNumber } from "ethers";
+import "./OrderEditor.css";
 
 export default function OrderEditor(props) {
   const {
@@ -301,7 +302,7 @@ export default function OrderEditor(props) {
     return (
       <Modal
         isVisible={true}
-        className="Exchange-list-modal"
+        className="Exchange-list-modal OrderEditor"
         setIsVisible={() => setEditingOrder(null)}
         label="Edit order"
       >

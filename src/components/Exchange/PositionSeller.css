@@ -1,5 +1,9 @@
 .PositionEditor .PositionSeller-modal .Modal-content .Modal-body {
-  padding-right: 0.7rem;
+  /*padding-right: 0.7rem;*/
+}
+
+.PositionEditor .PositionSeller-modal .Modal-content {
+  width: 600px;
 }
 
 .PositionSeller-token-selector .Modal .Modal-content {

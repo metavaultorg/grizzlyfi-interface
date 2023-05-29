@@ -84,6 +84,9 @@
 
 .Modal-title {
   /*margin: 0 auto;*/
+  display: flex;
+  gap: 8px;
+  align-items: center;
   font-size: 24px;
   font-weight: 600;
   color: #fff;

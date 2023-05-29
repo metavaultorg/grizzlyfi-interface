@@ -56,6 +56,7 @@ import Tooltip from "../Tooltip/Tooltip";
 import TokenSelector from "./TokenSelector";
 import { getTokens } from "../../data/Tokens";
 import "./PositionSeller.css";
+import { tokenImage24 } from "../../Helpers";
 
 const { AddressZero } = ethers.constants;
 const ORDER_SIZE_DUST_USD = expandDecimals(1, USD_DECIMALS - 1); // $0.10
@@ -302,7 +303,13 @@ export default function PositionSeller(props) {
     fromAmount = parseValue(fromValue, USD_DECIMALS);
     sizeDelta = fromAmount;
 
-    title = `Close ${position.isLong ? "Long" : "Short"} ${position.indexToken.symbol}`;
+    //title = `Close ${position.isLong ? "Long" : "Short"} ${position.indexToken.symbol}`;
+    title = () => {
+      return (<>
+      <img src={tokenImage24(position.indexToken.symbol.toLowerCase())} alt=" "/>
+      Close {position.isLong ? "Long" : "Short"} {position.indexToken.symbol}
+      </>)
+    }
     collateralToken = position.collateralToken;
     liquidationPrice = getLiquidationPrice(position);
 
@@ -826,7 +833,7 @@ export default function PositionSeller(props) {
   return (
     <div className="PositionEditor">
       {position && (
-        <Modal className="PositionSeller-modal" isVisible={isVisible} setIsVisible={setIsVisible} label={title}>
+        <Modal className="PositionSeller-modal" isVisible={isVisible} setIsVisible={setIsVisible} label={title()}>
           {flagOrdersEnabled && (
             <div style={{ paddingLeft: "0.7rem", marginTop: 10 }}>
               <Tab

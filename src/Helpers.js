@@ -2651,6 +2651,17 @@ export function getTradePageUrl() {
   return "https://app.metavault.trade/trade";
 }
 
+export function tokenImage24(name) {
+  let tokenImage = null;
+  try {
+    tokenImage = require("./img/ic_" + name + "_24svg");
+  } catch (error) {
+    tokenImage = require("./img/ic_matic_24.svg");
+    console.error(error);
+  }
+  return tokenImage && tokenImage.default;
+}
+
 export function importImage(name) {
   let tokenImage = null;
   try {
