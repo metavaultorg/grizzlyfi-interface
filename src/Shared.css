@@ -620,7 +620,7 @@ button.btn-link:hover .logout-icon {
     -webkit-backdrop-filter: blur(50px);
     backdrop-filter: blur(50px);
     border: solid 1px rgba(255, 255, 255, 0.2);
-    /* background-color: rgba(36, 36, 36, 0.6); */
+    background-color: rgba(36, 36, 36, 0.6);
 }
 
 .text-description{

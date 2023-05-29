@@ -397,7 +397,7 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
                 marginTop: 15,
                 textDecoration: "none",
                 padding: 15,
-                color: "#FFAA27",
+                color: "#f2c75c",
                 borderRadius: 15,
               }}
               href="https://docs.metavault.trade/referral-program"
@@ -424,7 +424,7 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
                 marginTop: 15,
                 textDecoration: "none",
                 padding: 15,
-                color: "#FFAA27",
+                color: "#f2c75c",
                 borderRadius: 15,
               }}
               href="https://stats.metavault.trade/referrals"

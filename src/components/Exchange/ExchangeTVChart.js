@@ -204,7 +204,7 @@ export default function ExchangeTVChart(props) {
           let title = `${order.type === INCREASE ? "Inc." : "Dec."} ${tokenSymbol} ${
             order.isLong ? "Long" : "Short"
           }`;
-          const color = "#FFAA27";
+          const color = "#f2c75c";
           let orderTriggerPrice = order.triggerPrice;
 
           if(order.orderType && order.orderType.toNumber()=== 3 && trailingStopOrders){
@@ -232,8 +232,8 @@ export default function ExchangeTVChart(props) {
                 .createPositionLine()
                 .setPrice(parseFloat(formatAmount(orderTriggerPrice, USD_DECIMALS, indexToken.displayDecimals)))
                 .setLineColor(color)
-                .setBodyBorderColor("#FFAA27")
-                .setBodyBackgroundColor("#FFAA27")
+                .setBodyBorderColor("#f2c75c")
+                .setBodyBackgroundColor("#f2c75c")
                 .setBodyTextColor("rgb(0, 0, 0)")
                 .setLineStyle(1)
                 .setLineLength(10)
@@ -244,7 +244,7 @@ export default function ExchangeTVChart(props) {
         });
       }
       if (positions && positions.length > 0) {
-        const color = "#FFAA27";
+        const color = "#f2c75c";
 
         positions.forEach((position) => {
           if (window.tvWidget && window.tvWidget._ready && marketName.startsWith(position.indexToken.symbol))
@@ -256,8 +256,8 @@ export default function ExchangeTVChart(props) {
                   parseFloat(formatAmount(position.averagePrice, USD_DECIMALS, position.indexToken.displayDecimals))
                 )
                 .setLineColor(color)
-                .setBodyBorderColor("#FFAA27")
-                .setBodyBackgroundColor("#FFAA27")
+                .setBodyBorderColor("#f2c75c")
+                .setBodyBackgroundColor("#f2c75c")
                 .setBodyTextColor("rgb(0, 0, 0)")
                 .setLineStyle(1)
                 .setLineLength(10)
@@ -280,8 +280,8 @@ export default function ExchangeTVChart(props) {
                 .createPositionLine()
                 .setPrice(formatAmount(liquidationPrice, USD_DECIMALS, position.indexToken.displayDecimals))
                 .setLineColor(color)
-                .setBodyBorderColor("#FFAA27")
-                .setBodyBackgroundColor("#FFAA27")
+                .setBodyBorderColor("#f2c75c")
+                .setBodyBackgroundColor("#f2c75c")
                 .setBodyTextColor("rgb(0, 0, 0)")
                 .setLineStyle(1)
                 .setLineLength(10)
@@ -411,7 +411,7 @@ export default function ExchangeTVChart(props) {
           </div>
         </div>
       </div>
-      <div style={{ background: "#2A285D", marginTop: 60 }} className="ExchangeChart-bottom App-box App-box-border">
+      <div style={{ background: "#1f1f1f", marginTop: 60 }} className="ExchangeChart-bottom App-box App-box-border">
         <div className="ExchangeChart-bottom-header">
           <div className="ExchangeChart-bottom-controls"></div>
         </div>

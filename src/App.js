@@ -152,7 +152,7 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
             href="https://metavault.trade"
             rel="noopener noreferrer"
           >
-            <img
+            {/* <img
               style={{ width: 21, height: 21 }}
               src={getImageUrl({
                 path: "brandLogos/tradeLogomark",
@@ -160,7 +160,8 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
                 height: 21,
               })}
               alt=""
-            />
+            /> */}
+            <Logo />
           </a>
         </div>
       )}
@@ -736,14 +737,15 @@ function FullApp() {
                     {isDrawerVisible && <FaTimes className="App-header-menu-icon" />}
                   </div>
                   <div className="App-header-link-main clickable" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
-                    <img
+                    {/* <img
                       width={24}
                       height={24}
                       src={getImageUrl({
                         path: "brandLogos/tradeLogomark",
                       })}
                       alt="Trade Logo"
-                    />
+                    /> */}
+                    <Logo />
                   </div>
                 </div>
                 <div className="App-header-container-right">

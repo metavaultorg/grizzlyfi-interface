@@ -15,6 +15,7 @@ import TopRightArr from "../../assets/icons/TopRightArrColored";
 import { NavLink } from "react-router-dom";
 
 export default function Footer() {
+  return null
   return (
     <div className="Footer-exchange">
       <div className="footer-header">

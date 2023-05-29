@@ -38,7 +38,7 @@ function Icon({ width, height }) {
       <path fill="url(#paint10_linear_2042_9472)" d="M83 57.8l25.762 26.045v25.008L83 82.808V57.8z"></path>
       <path fill="url(#paint11_linear_2042_9472)" d="M32 82.419l25.238-25.422V32L32 57.42V82.42z"></path>
       <path fill="#D28A1C" d="M82.895 83.053l25.867-26.045V32L82.895 58.045v25.008z"></path>
-      <path fill="#FFAA27" d="M83 83.053L57.238 57.008V32L83 58.045v25.008z"></path>
+      <path fill="#f2c75c" d="M83 83.053L57.238 57.008V32L83 58.045v25.008z"></path>
       <path
         fill="url(#paint12_linear_2042_9472)"
         fillRule="evenodd"
@@ -151,9 +151,9 @@ function Icon({ width, height }) {
           y2="153.646"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#FFAA27"></stop>
-          <stop offset="0.21" stopColor="#FFAA27"></stop>
-          <stop offset="0.49" stopColor="#FFAA27"></stop>
+          <stop stopColor="#f2c75c"></stop>
+          <stop offset="0.21" stopColor="#f2c75c"></stop>
+          <stop offset="0.49" stopColor="#f2c75c"></stop>
           <stop offset="0.855" stopColor="#5547BF"></stop>
           <stop offset="1" stopColor="#180D65"></stop>
         </linearGradient>
@@ -176,9 +176,9 @@ function Icon({ width, height }) {
           y2="121.524"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#FFAA27"></stop>
-          <stop offset="0.21" stopColor="#FFAA27"></stop>
-          <stop offset="0.49" stopColor="#FFAA27"></stop>
+          <stop stopColor="#f2c75c"></stop>
+          <stop offset="0.21" stopColor="#f2c75c"></stop>
+          <stop offset="0.49" stopColor="#f2c75c"></stop>
           <stop offset="1" stopColor="#8679E8"></stop>
         </linearGradient>
         <linearGradient

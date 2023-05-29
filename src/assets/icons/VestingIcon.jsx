@@ -55,7 +55,7 @@ function Icon({ width, height }) {
           gradientUnits="userSpaceOnUse"
         >
           <stop offset="0.002" stopColor="#7B61FF"></stop>
-          <stop offset="1" stopColor="#FFAA27" stopOpacity="0.2"></stop>
+          <stop offset="1" stopColor="#f2c75c" stopOpacity="0.2"></stop>
         </linearGradient>
         <linearGradient
           id="paint1_linear_2848_18408"
@@ -66,7 +66,7 @@ function Icon({ width, height }) {
           gradientUnits="userSpaceOnUse"
         >
           <stop offset="0.002" stopColor="#FFF9F0"></stop>
-          <stop offset="1" stopColor="#FFAA27"></stop>
+          <stop offset="1" stopColor="#f2c75c"></stop>
         </linearGradient>
         <linearGradient
           id="paint2_linear_2848_18408"
@@ -77,7 +77,7 @@ function Icon({ width, height }) {
           gradientUnits="userSpaceOnUse"
         >
           <stop offset="0.002" stopColor="#FFF9F0"></stop>
-          <stop offset="1" stopColor="#FFAA27"></stop>
+          <stop offset="1" stopColor="#f2c75c"></stop>
         </linearGradient>
         <linearGradient
           id="paint3_linear_2848_18408"
@@ -88,7 +88,7 @@ function Icon({ width, height }) {
           gradientUnits="userSpaceOnUse"
         >
           <stop offset="0.002" stopColor="#FFF9F0"></stop>
-          <stop offset="1" stopColor="#FFAA27"></stop>
+          <stop offset="1" stopColor="#f2c75c"></stop>
         </linearGradient>
         <linearGradient
           id="paint4_linear_2848_18408"
@@ -99,7 +99,7 @@ function Icon({ width, height }) {
           gradientUnits="userSpaceOnUse"
         >
           <stop offset="0.002" stopColor="#FFF9F0"></stop>
-          <stop offset="1" stopColor="#FFAA27"></stop>
+          <stop offset="1" stopColor="#f2c75c"></stop>
         </linearGradient>
         <linearGradient
           id="paint5_linear_2848_18408"
@@ -110,7 +110,7 @@ function Icon({ width, height }) {
           gradientUnits="userSpaceOnUse"
         >
           <stop offset="0.002" stopColor="#FFF9F0"></stop>
-          <stop offset="1" stopColor="#FFAA27"></stop>
+          <stop offset="1" stopColor="#f2c75c"></stop>
         </linearGradient>
         <linearGradient
           id="paint6_linear_2848_18408"
@@ -121,7 +121,7 @@ function Icon({ width, height }) {
           gradientUnits="userSpaceOnUse"
         >
           <stop offset="0.002" stopColor="#7B61FF"></stop>
-          <stop offset="1" stopColor="#FFAA27"></stop>
+          <stop offset="1" stopColor="#f2c75c"></stop>
         </linearGradient>
         <linearGradient
           id="paint7_linear_2848_18408"

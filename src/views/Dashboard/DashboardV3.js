@@ -79,7 +79,8 @@ import IconShort from '../../assets/icons/icon-short.svg'
 import IconToken from '../../assets/icons/honey-token.svg'
 import LiquidityPng from '../../assets/liquidity.png'
 import IconDown from '../../assets/icons/icon-down.svg'
-
+import Lottie from "lottie-react";
+import animationData from './animation_1.json'
 const { AddressZero } = ethers.constants;
 
 const tokenPairMarketList = [
@@ -92,6 +93,7 @@ const positionList = [
     { symbol: 'ETH', isLong: true, levarage: '15.4', marketPrice: '0.9611', change: '-8.05', entryPrice: '0.96', liqPrice: '1.05', colleteral: '10.43', pnl: '-804', },
     { symbol: 'BTC', isLong: false, levarage: '15.4', marketPrice: '0.9611', change: '41.5', entryPrice: '0.96', liqPrice: '1.05', colleteral: '10.43', pnl: '104.41', }
 ]
+
 
 export default function DashboardV3() {
 
@@ -297,10 +299,10 @@ export default function DashboardV3() {
                 <div className="section section-noinvestments">
                     <div className="section-header">
                         <h1>No investment Yet</h1>
-                        <p className="text-description" style={{ marginTop: 16 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas varius tortor nibh, sit amet tempor nibh finibus et. Aenean eu enim justo. Vestibulum aliquam hendrerit molestie. Mauris </p>
+                        <p className="text-description" style={{ margin:'16px auto 56px',maxWidth:658, }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas varius tortor nibh, sit amet tempor nibh finibus et. Aenean eu enim justo. Vestibulum aliquam hendrerit molestie. Mauris </p>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 12, marginTop: 56 }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 12,}}>
                         <div className="invest-card">
                             <img />
                             <h1>Start Trading</h1>
@@ -561,7 +563,8 @@ export default function DashboardV3() {
 
             <div className=" section leverage-liquidity-container">
                 <div style={{ textAlign: 'center' }}>
-                    <img src={LiquidityPng} alt="liquidity" />
+                    {/* <img src={LiquidityPng} alt="liquidity" /> */}
+                    <Lottie animationData={animationData} loop={true} style={{height:445}} />
                 </div>
                 <div className="section-header" >
                     <h1>Grizzly Leverage Liquidity</h1>

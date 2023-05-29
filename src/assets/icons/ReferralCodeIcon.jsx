@@ -38,7 +38,7 @@ function Icon() {
           gradientUnits="userSpaceOnUse"
         >
           <stop offset="0.002" stopColor="#FFF9F0"></stop>
-          <stop offset="1" stopColor="#FFAA27"></stop>
+          <stop offset="1" stopColor="#f2c75c"></stop>
         </linearGradient>
         <linearGradient
           id="paint1_linear_3208_2856"

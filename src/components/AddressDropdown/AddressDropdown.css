@@ -29,7 +29,7 @@
   min-width: 186px;
   width: 100%;
   transform-origin: top right;
-  border-radius: 10px;
+  border-radius: 12px;
   background: #404040;
   list-style: none;
   cursor: pointer;
@@ -45,7 +45,7 @@
   font-size: 14px;
   padding-bottom: 0;
   /* border: 1px solid transparent; */
-  border-radius: 4px;
+  border-radius: 12px;
   padding-left: 15px;
 }
 .menu-item:hover {

@@ -599,7 +599,7 @@ export default function PositionsList(props) {
                     {position.netValue && (
                       <Tooltip
                         handle={`$${formatAmount(position.netValue, USD_DECIMALS, 2, true)}`}
-                        position="left-bottom"
+                        position="center-bottom"
                         handleClassName="plain font-number"
                         renderContent={() => {
                           return (

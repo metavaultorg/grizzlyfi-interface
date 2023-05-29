@@ -96,7 +96,7 @@ function Icon() {
           gradientUnits="userSpaceOnUse"
         >
           <stop offset="0.002" stopColor="#FFF9F0"></stop>
-          <stop offset="1" stopColor="#FFAA27"></stop>
+          <stop offset="1" stopColor="#f2c75c"></stop>
         </linearGradient>
         <linearGradient
           id="paint2_linear_3208_2881"
@@ -128,8 +128,8 @@ function Icon() {
           gradientTransform="matrix(-15.615 0 0 -15.616 19.15 23.183)"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#FFAA27"></stop>
-          <stop offset="0.2" stopColor="#FFAA27"></stop>
+          <stop stopColor="#f2c75c"></stop>
+          <stop offset="0.2" stopColor="#f2c75c"></stop>
           <stop offset="0.42" stopColor="#FFC367"></stop>
           <stop offset="0.63" stopColor="#FFD087"></stop>
           <stop offset="0.83" stopColor="#FFE3B8"></stop>

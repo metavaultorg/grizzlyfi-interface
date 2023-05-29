@@ -117,7 +117,7 @@ function Icon() {
           gradientUnits="userSpaceOnUse"
         >
           <stop offset="0.002" stopColor="#7B61FF"></stop>
-          <stop offset="1" stopColor="#FFAA27"></stop>
+          <stop offset="1" stopColor="#f2c75c"></stop>
         </linearGradient>
         <radialGradient
           id="paint1_radial_2637_7110"
@@ -139,7 +139,7 @@ function Icon() {
           gradientUnits="userSpaceOnUse"
         >
           <stop offset="0.002" stopColor="#FFF4E2"></stop>
-          <stop offset="1" stopColor="#FFAA27"></stop>
+          <stop offset="1" stopColor="#f2c75c"></stop>
         </linearGradient>
         <linearGradient
           id="paint3_linear_2637_7110"
@@ -161,8 +161,8 @@ function Icon() {
           y2="39.282"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#FFAA27"></stop>
-          <stop offset="1" stopColor="#FFAA27"></stop>
+          <stop stopColor="#f2c75c"></stop>
+          <stop offset="1" stopColor="#f2c75c"></stop>
         </linearGradient>
         <linearGradient
           id="paint5_linear_2637_7110"
@@ -173,7 +173,7 @@ function Icon() {
           gradientUnits="userSpaceOnUse"
         >
           <stop offset="0.002" stopColor="#FFF4E2"></stop>
-          <stop offset="1" stopColor="#FFAA27"></stop>
+          <stop offset="1" stopColor="#f2c75c"></stop>
         </linearGradient>
         <linearGradient
           id="paint6_linear_2637_7110"
@@ -195,8 +195,8 @@ function Icon() {
           y2="37.36"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#FFAA27"></stop>
-          <stop offset="1" stopColor="#FFAA27"></stop>
+          <stop stopColor="#f2c75c"></stop>
+          <stop offset="1" stopColor="#f2c75c"></stop>
         </linearGradient>
         <clipPath id="clip0_2637_7110">
           <path fill="#fff" d="M0 0H48V34H0z" transform="translate(7 12)"></path>

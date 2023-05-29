@@ -26,7 +26,7 @@ function Icon() {
           gradientUnits="userSpaceOnUse"
         >
           <stop offset="0.002" stopColor="#FFF4E2"></stop>
-          <stop offset="1" stopColor="#FFAA27"></stop>
+          <stop offset="1" stopColor="#f2c75c"></stop>
         </linearGradient>
       </defs>
     </svg>

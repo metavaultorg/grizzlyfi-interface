@@ -5,7 +5,7 @@ import cx from "classnames";
 import "./ChartTokenSelector.css";
 import { getTokens, getWhitelistedTokens } from "../../data/Tokens";
 import { LONG, SHORT, SWAP } from "../../Helpers";
-
+import { getImageUrl } from "../../cloudinary/getImageUrl";
 export default function ChartTokenSelector(props) {
   const { chainId, selectedToken, onSelectToken, swapOption } = props;
 
@@ -34,7 +34,12 @@ export default function ChartTokenSelector(props) {
   return (
     <Menu>
       <Menu.Button as="div" disabled={isSwap}>
-        <button className={cx("App-cta small transparent chart-token-selector flex", { "default-cursor": isSwap })}>
+        <button
+          className={cx("App-cta small transparent chart-token-selector flex", { "default-cursor": isSwap })}
+        >
+          <img src={getImageUrl({
+            path: `coins/others/${value.symbol.toLowerCase()}-original`,
+          })} alt={value.name} className="token-logo"  width={48} />
           <span className="chart-token-selector--current">{value.symbol} / USD</span>
           {!isSwap && <img style={{ width: 14, height: 14 }} src={FaChevronDown} alt="chevron down" />}
         </button>
@@ -49,7 +54,7 @@ export default function ChartTokenSelector(props) {
                   onSelect(option);
                 }}
               >
-                <span style={{ marginLeft: 5 }} className="token-label">
+                <span style={{ marginLeft: 5,padding:'15px 0' }} className="token-label">
                   {option.symbol} / USD
                 </span>
               </div>

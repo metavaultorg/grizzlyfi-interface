@@ -8,8 +8,8 @@ function Icon() {
         height="17.5"
         x="3.25"
         y="3.25"
-        fill="#625DF5"
-        stroke="#625DF5"
+        fill="#cb9612"
+        stroke="#cb9612"
         strokeWidth="2.5"
         rx="2.75"
       ></rect>

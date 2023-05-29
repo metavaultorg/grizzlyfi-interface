@@ -82,7 +82,7 @@ const s = class {
     }
     "Dark" === this._options.theme &&
       void 0 === this._options.loading_screen &&
-      (this._options.loading_screen = { backgroundColor: "#131722" }),
+      (this._options.loading_screen = { backgroundColor: "#1f1f1f" }),
       this._options.debug &&
         (n || ((n = !0), console.log("Using CL v22.032 (internal id e2a841ff @ 2022-07-06T11:53:07.702Z)"))),
       this._create();

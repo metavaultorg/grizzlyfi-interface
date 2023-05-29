@@ -14,7 +14,7 @@
 <path d="M83.0004 57.8L108.762 83.845V108.853L83.0004 82.8079V57.8Z" fill="url(#paint10_linear_3435_21194)"/>
 <path d="M32 82.4186L57.2382 56.9973V32L32 57.4208V82.4186Z" fill="url(#paint11_linear_3435_21194)"/>
 <path d="M82.8955 83.0528L108.762 57.0079V32L82.8955 58.045V83.0528Z" fill="#D28A1C"/>
-<path d="M83.0001 83.0528L57.2383 57.0079V32L83.0001 58.045V83.0528Z" fill="#FFAA27"/>
+<path d="M83.0001 83.0528L57.2383 57.0079V32L83.0001 58.045V83.0528Z" fill="#f2c75c"/>
 <g style="mix-blend-mode:overlay">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M56.2002 29.5858L83.0002 56.3858L109.8 29.5858V57.6007L97.5682 70.4152L109.8 83.8122V111.814L83.0002 85.0143L56.2002 111.814V83.8054L68.717 70.4154L56.2002 57.6075V29.5858ZM58.2002 34.4142V56.7925L71.4834 70.3847L58.2002 84.5947V106.986L83.0002 82.1858L107.8 106.986V84.5879L94.8322 70.3849L107.8 56.7994V34.4142L83.0002 59.2142L58.2002 34.4142Z" fill="url(#paint12_linear_3435_21194)"/>
 </g>
@@ -63,9 +63,9 @@
 <stop offset="1" stop-color="#67686F"/>
 </linearGradient>
 <linearGradient id="paint6_linear_3435_21194" x1="207.125" y1="20" x2="66.2633" y2="153.646" gradientUnits="userSpaceOnUse">
-<stop stop-color="#FFAA27"/>
-<stop offset="0.21" stop-color="#FFAA27"/>
-<stop offset="0.49" stop-color="#FFAA27"/>
+<stop stop-color="#f2c75c"/>
+<stop offset="0.21" stop-color="#f2c75c"/>
+<stop offset="0.49" stop-color="#f2c75c"/>
 <stop offset="0.855271" stop-color="#5547BF"/>
 <stop offset="1" stop-color="#180D65"/>
 </linearGradient>
@@ -74,9 +74,9 @@
 <stop offset="1" stop-color="#FFC772" stop-opacity="0.47"/>
 </linearGradient>
 <linearGradient id="paint8_linear_3435_21194" x1="-17.5" y1="8.00005" x2="80.1175" y2="121.524" gradientUnits="userSpaceOnUse">
-<stop stop-color="#FFAA27"/>
-<stop offset="0.21" stop-color="#FFAA27"/>
-<stop offset="0.49" stop-color="#FFAA27"/>
+<stop stop-color="#f2c75c"/>
+<stop offset="0.21" stop-color="#f2c75c"/>
+<stop offset="0.49" stop-color="#f2c75c"/>
 <stop offset="1" stop-color="#8679E8"/>
 </linearGradient>
 <linearGradient id="paint9_linear_3435_21194" x1="56.6295" y1="100.125" x2="76.0608" y2="82.7878" gradientUnits="userSpaceOnUse">

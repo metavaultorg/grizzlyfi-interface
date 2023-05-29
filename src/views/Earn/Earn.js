@@ -52,12 +52,6 @@ import { getContract } from "../../Addresses";
 import Vault from "../../abis/Vault.json";
 import AssetDropdown from "../Dashboard/AssetDropdown";
 
-const tokenPairMarketList = [
-  { name: 'BTC', symbol: 'BTC', value: '$456', amount: '1.54', utilization: '34', weight: '1', target: '123', volumeUsd: '56' },
-  { name: 'ETH', symbol: 'ETH', value: '$456', amount: '1.62', utilization: '34', weight: '1', target: '123', volumeUsd: '56' },
-  { name: 'BNB', symbol: 'DAI', value: '$456', amount: '2.52', utilization: '34', weight: '1', target: '123', volumeUsd: '56' },
-  { name: 'USDT', symbol: 'USDT', value: '$456', amount: '1.62', utilization: '34', weight: '1', target: '123', volumeUsd: '56' },
-]
 
 export default function Earn(props) {
   const history = useHistory();

@@ -51,14 +51,15 @@ export class TVChartContainer extends React.PureComponent {
       custom_css_url: "./themed.css",
       overrides: {
         // "mainSeriesProperties.showCountdown": true,
-        "paneProperties.backgroundGradientStartColor": "#0B083C",
-        "paneProperties.backgroundGradientEndColor": "#0B083C",
-        "paneProperties.vertGridProperties.color": "#363c4e",
-        "paneProperties.horzGridProperties.color": "#363c4e",
+        "paneProperties.backgroundGradientStartColor": "#1f1f1f",
+        "paneProperties.backgroundGradientEndColor": "#1f1f1f",
+        "paneProperties.vertGridProperties.color": "#2b2b2b",
+        "paneProperties.horzGridProperties.color": "#2b2b2b",
         // "symbolWatermarkProperties.transparency": 90,
         // "scalesProperties.textColor": "#AAA",
         "mainSeriesProperties.candleStyle.wickUpColor": "#0ecc83",
         "mainSeriesProperties.candleStyle.wickDownColor": "#fa3c58",
+
       },
       time_frames: [
         { text: "1y", resolution: "1D", description: "1 Year" },

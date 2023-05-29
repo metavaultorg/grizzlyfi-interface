@@ -29,14 +29,14 @@ const Illustration = () => {
           fill="#625DF5"
           d="M157.872 149.678h-26.851v8.215h26.851v-8.215zM294.402 149.656h-21.34v8.214h21.34v-8.214zM38.254 198.239v8.214h65.26l5.674-8.214H38.254z"
         ></path>
-        <path fill="#FFAA27" d="M281.941 189.234v8.214h31.522l5.673-8.214h-37.195z"></path>
+        <path fill="#f2c75c" d="M281.941 189.234v8.214h31.522l5.673-8.214h-37.195z"></path>
         <path fill="#5117FF" d="M336.796 282.343h-48.151v8.214h48.151v-8.214z"></path>
         <path fill="#625DF5" d="M454.298 194.773h-59.665v10.293h59.665v-10.293z"></path>
-        <path fill="#FFAA27" d="M507.999 249.659h-59.665v8.214h59.665v-8.214z"></path>
+        <path fill="#f2c75c" d="M507.999 249.659h-59.665v8.214h59.665v-8.214z"></path>
         <path fill="#625DF5" d="M59.665 267.096H0v9.268h59.665v-9.268z"></path>
         <path fill="#5117FF" d="M90.674 244.643H55.553v9.268h35.121v-9.268z"></path>
         <path fill="#625DF5" d="M383.036 185.383v-8.214h-20.303l-5.456 8.214h25.759z"></path>
-        <path fill="#FFAA27" d="M101.273 173.257h-21.34v9.184h21.34v-9.184z"></path>
+        <path fill="#f2c75c" d="M101.273 173.257h-21.34v9.184h21.34v-9.184z"></path>
         <path
           fill="#5117FF"
           d="M463.878 222.737h-21.339v8.209h21.339v-8.209zM35.947 224.977h-21.34v10.265h21.34v-10.265z"
@@ -78,7 +78,7 @@ const Illustration = () => {
           gradientUnits="userSpaceOnUse"
         >
           <stop offset="0.002" stopColor="#7B61FF"></stop>
-          <stop offset="1" stopColor="#FFAA27"></stop>
+          <stop offset="1" stopColor="#f2c75c"></stop>
         </linearGradient>
         <clipPath id="clip0_2972_19883">
           <path fill="#fff" d="M0 0H508V308H0z"></path>
