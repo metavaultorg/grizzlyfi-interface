@@ -800,7 +800,7 @@ function FullApp() {
             </Route>
             <Route exact path="/earn">
               {/* <Stake setPendingTxns={setPendingTxns} connectWallet={connectWallet} /> */}
-              <Earn />
+              <Earn setPendingTxns={setPendingTxns} connectWallet={connectWallet} />
             </Route>
             <Route exact path="/buy">
               <Buy
