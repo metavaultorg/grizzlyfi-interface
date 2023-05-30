@@ -1,7 +1,7 @@
 .asset-menu-items {
   position: absolute;
-  border-radius: 15px;
-  background: #02020F;
+  border-radius: 12px;
+  background: #404040;
   outline: none;
   z-index: 100;
   font-size: 14px;
@@ -27,12 +27,11 @@
   color: #fff;
   text-decoration: none;
   padding: 5px;
-  background: #02020F;
 }
 .asset-item:hover {
-  background: #363640;
+  background: rgba(255, 255, 255, 0.15) !important;
   border-radius: 4px 4px 0 0;
-  color: white !important;
+  color: #eee !important;
 }
 .asset-item p {
   margin: 0;

@@ -51,7 +51,7 @@ import {
 import { getContract } from "../../Addresses";
 import Vault from "../../abis/Vault.json";
 import AssetDropdown from "../Dashboard/AssetDropdown";
-
+import cx from "classnames";
 
 export default function Earn(props) {
   const history = useHistory();
@@ -169,10 +169,10 @@ export default function Earn(props) {
       </div>
       <div className='Exchange-content'>
         <div className='Exchange-left'>
-          <div className="earn-info flex" >
-            <ItemCard className='earn-item-card ' label='APR' value={`$123`} icon={IconPercentage} />
-            <ItemCard style={{minWidth:298}} className='earn-item-card ' label='Assets Under Management' value={`$123`} icon={IconMoney} />
-            <ItemCard style={{ width:'-webkit-fill-available',minWidth:320}} className='earn-item-card ' label='Claimable Rewards' value='$92.21' icon={IconClaim} buttonEle={<button
+          <div className="info-card-section" style={{maxWidth:912}}>
+            <ItemCard style={{ minWidth: 218 }} label='APR' value={`$123`} icon={IconPercentage} />
+            <ItemCard style={{ minWidth: 298 }}  label='Assets Under Management' value={`$123`} icon={IconMoney} />
+            <ItemCard style={{ width: '-webkit-fill-available', minWidth: 320 }}  label='Claimable Rewards' value='$92.21' icon={IconClaim} buttonEle={<button
               className="btn-secondary "
               style={{ width: 75, height: 32 }}
             >
@@ -189,7 +189,7 @@ export default function Earn(props) {
       </div>
       <div className='earn-statistics'>
         <div className="inner-card-title">GLL Statistics</div>
-        <div className="">
+        <div className="list-table">
           <table style={{ width: '100%', textAlign: 'left', borderSpacing: '0px 10px' }} cellspacing="0" cellpadding="0">
             <thead>
               <tr>
@@ -264,6 +264,86 @@ export default function Earn(props) {
               )}
             </tbody>
           </table>
+        </div>
+        <div className="token-grid">
+          {tokenList.map((token, index) => {
+            const tokenInfo = infoTokens[token.address];
+            let utilization = bigNumberify(0);
+            if (tokenInfo && tokenInfo.reservedAmount && tokenInfo.poolAmount && tokenInfo.poolAmount.gt(0)) {
+              utilization = tokenInfo.reservedAmount.mul(BASIS_POINTS_DIVISOR).div(tokenInfo.poolAmount);
+            }
+            const maxUsdmAmount = tokenInfo.maxUsdmAmount;
+
+            var tokenImage = null;
+
+            try {
+              tokenImage = getImageUrl({
+                path: `coins/others/${token.symbol.toLowerCase()}-original`,
+              });
+            } catch (error) {
+              console.error(error);
+            }
+            return (
+
+              <div
+                className="App-card" key={token.name}
+              >
+                <div className="App-card-title">
+                  <div style={{ display: "flex", alignItems: 'center', gap: 16 }}>
+                    <img
+                      style={{ objectFit: "contain" }}
+                      src={tokenImage || tokenImage.default}
+                      alt={token.symbol}
+                      width={32}
+                      height={32}
+                    />
+                    <span>{token.name}</span>
+                    <AssetDropdown assetSymbol={token.symbol} assetInfo={token} />
+                  </div>
+                </div>
+                <div className="App-card-divider"></div>
+                <div className="App-card-content">
+                  <div className="App-card-row">
+                    <div className="label">Amount </div>
+                    <div className="font-number">
+                      {formatKeyAmount(tokenInfo, "managedAmount", token.decimals, 2, true)}
+                    </div>
+                  </div>
+                  <div className="App-card-row">
+                    <div className="label">Value </div>
+                    <div>
+                      <TooltipComponent
+                        handle={`$${formatKeyAmount(tokenInfo, "managedUsd", USD_DECIMALS, 0, true)}`}
+                        position="right-bottom"
+                        handleClassName="font-number"
+                        renderContent={() => {
+                          return (
+                            <>
+                              Pool Amount: {formatKeyAmount(tokenInfo, "managedAmount", token.decimals, 2, true)}{" "}
+                              {token.symbol}
+                              <br />
+                              <br />
+                              Max {tokenInfo.symbol} Capacity: ${formatAmount(maxUsdmAmount, 18, 0, true)}
+                            </>
+                          );
+                        }}
+                      />  
+                    </div>
+                  </div>
+                  <div className="App-card-row">
+                    <div className="label">Utilization </div>
+                    <div className="font-number">{formatAmount(utilization, 2, 2, false)}%</div>
+                  </div>
+                  <div className="App-card-row">
+                    <div className="label">Weight/Target </div>
+                    <div className="font-number">{getWeightText(tokenInfo)}</div>
+                  </div>
+                </div>
+                
+              </div>
+            )
+          }
+          )}
         </div>
       </div>
     </div>

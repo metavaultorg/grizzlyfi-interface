@@ -10,3 +10,12 @@
     font-weight: bold;
     font-family: Boston;
 }
+@media (max-width: 1100px){
+  .inner-card {
+    padding: 0;
+    border-radius: 0;
+    border: none;
+    background-color: transparent;
+    margin-top: 16px;
+  }
+}

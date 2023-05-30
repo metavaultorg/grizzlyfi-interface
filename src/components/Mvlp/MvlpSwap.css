@@ -297,11 +297,14 @@
     margin-top: 0.5rem;
   }
 }
-@media (max-width: 510px) {
+@media (max-width: 768px) {
   .token-grid {
     display: grid;
     grid-template-columns: 1fr;
     grid-gap: 1rem;
     margin-top: 0.5rem;
   }
+}
+.token-grid .App-card{
+  border: none !important;
 }
