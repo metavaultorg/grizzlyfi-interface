@@ -12,6 +12,7 @@
   border-radius: 22px;
   background-color: rgba(0,0,0,0.1);
   margin-top: 32px;
+  gap: 8px
 }
 
 .PositionEditor .PositionSeller-modal .Modal-content .Tab.block .Tab-option.active {
