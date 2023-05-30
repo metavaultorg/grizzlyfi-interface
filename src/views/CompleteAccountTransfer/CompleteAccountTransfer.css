@@ -7,7 +7,7 @@
   margin-left: auto;
   margin-right: auto;
   border-radius: 30px;
-  padding: 24px;
+  padding: 40px;
   max-width: 560px;
   display: flex;
   flex-direction: column;
@@ -16,7 +16,7 @@
 }
 .CompleteAccountTransfer .Page-title {
   color: #fff;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
 }
 .CompleteAccountTransfer .Page-description {
   color: #fff;
