@@ -643,3 +643,8 @@ button.btn-link:hover .logout-icon {
 .font-number {
   font-family: "Montserrat",sans-serif; 
 }
+
+.vcenter {
+  display: flex;
+  align-items: center;
+}

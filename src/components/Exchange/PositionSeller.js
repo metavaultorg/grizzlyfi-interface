@@ -57,6 +57,7 @@ import TokenSelector from "./TokenSelector";
 import { getTokens } from "../../data/Tokens";
 import "./PositionSeller.css";
 import { tokenImage24 } from "../../Helpers";
+import AutosizeInput from 'react-input-autosize';
 
 const { AddressZero } = ethers.constants;
 const ORDER_SIZE_DUST_USD = expandDecimals(1, USD_DECIMALS - 1); // $0.10
@@ -835,86 +836,57 @@ export default function PositionSeller(props) {
       {position && (
         <Modal className="PositionSeller-modal" isVisible={isVisible} setIsVisible={setIsVisible} label={title()}>
           {flagOrdersEnabled && (
-            <div style={{ paddingLeft: "0.7rem", marginTop: 10 }}>
-              <Tab
-                options={orderOptions}
-                option={orderOption}
-                optionLabels={orderOptionLabels}
-                onChange={onOrderOptionChange}
+            <Tab
+              options={orderOptions}
+              option={orderOption}
+              optionLabels={orderOptionLabels}
+              onChange={onOrderOptionChange}
               />
-            </div>
           )}
-          <div style={{ paddingLeft: "0.7rem" }}>
-            <div className="Exchange-swap-section">
-              <div className="Exchange-swap-section-top">
-                <div className="muted">
-                  {convertedAmountFormatted && (
-                    <div className="Exchange-swap-usd">
-                      Close: {convertedAmountFormatted} {position.collateralToken.symbol}
-                    </div>
-                  )}
-                  {!convertedAmountFormatted && "Close"}
-                </div>
-                {maxAmount && (
-                  <div className="muted align-right clickable" onClick={() => setFromValue(maxAmountFormattedFree)}>
-                    Max: {maxAmountFormatted}
-                  </div>
-                )}
-              </div>
-              <div className="Exchange-swap-section-bottom">
-                <div className="Exchange-swap-input-container">
-                  <input
-                    type="number"
-                    min="0"
-                    placeholder="0.0"
-                    className="Exchange-swap-input"
-                    value={fromValue}
-                    onChange={(e) => setFromValue(e.target.value)}
-                  />
-                  {fromValue !== maxAmountFormattedFree && (
-                    <div
-                      className="Exchange-swap-max"
-                      onClick={() => {
-                        setFromValue(maxAmountFormattedFree);
-                      }}
-                    >
-                      MAX
-                    </div>
-                  )}
-                </div>
-                <div className="PositionEditor-token-symbol">USD</div>
-              </div>
+          <div className="section-label">Close Amount</div>
+          <div className="Exchange-swap-section">
+            <div className="vcenter">
+              <AutosizeInput
+                type="number"
+                min="0"
+                placeholder="0.00"
+                className="Exchange-swap-input font-number"
+                value={fromValue}
+                onChange={(e) => setFromValue(e.target.value)}
+              />
+              <span className="Exchange-swap-input">USD</span>
             </div>
+            {maxAmount && (
+              <div className="align-right clickable max" onClick={() => setFromValue(maxAmountFormattedFree)}>
+                Max &nbsp; <span className="font-number">{maxAmountFormatted}</span>
+              </div>
+            )}
           </div>
           {orderOption === STOP && (
-            <div style={{ paddingLeft: "0.7rem" }}>
+            <div style={{ }}>
+              <div className="section-label">Trigger Price</div>
               <div className="Exchange-swap-section">
-                <div className="Exchange-swap-section-top">
-                  <div className="muted">Price</div>
-                  <div
-                    className="muted align-right clickable"
+                <div className="vcenter">
+                  <AutosizeInput
+                    type="number"
+                    min="0"
+                    placeholder="0.00"
+                    className="Exchange-swap-input font-number"
+                    value={triggerPriceValue}
+                    onChange={onTriggerPriceChange}
+                  />
+                  <span className="Exchange-swap-input">USD</span>
+                </div>
+                <div
+                    className="align-right clickable max"
                     onClick={() => {
                       setTriggerPriceValue(
                         formatAmountFree(position.markPrice, USD_DECIMALS, position.indexToken.displayDecimals)
                       );
                     }}
                   >
-                    Mark: {formatAmount(position.markPrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}
+                    Mark &nbsp; <span className="font-number">{formatAmount(position.markPrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}</span>
                   </div>
-                </div>
-                <div className="Exchange-swap-section-bottom">
-                  <div className="Exchange-swap-input-container">
-                    <input
-                      type="number"
-                      min="0"
-                      placeholder="0.0"
-                      className="Exchange-swap-input"
-                      value={triggerPriceValue}
-                      onChange={onTriggerPriceChange}
-                    />
-                  </div>
-                  <div className="PositionEditor-token-symbol">USD</div>
-                </div>
               </div>
             </div>
           )}
@@ -927,13 +899,13 @@ export default function PositionSeller(props) {
             {hasPendingProfit && orderOption !== STOP && (
               <div className="PositionEditor-accept-profit-warning">
                 <Checkbox isChecked={isProfitWarningAccepted} setIsChecked={setIsProfitWarningAccepted}>
-                  <span className="muted">Forfeit profit</span>
+                  <span>Forfeit profit</span>
                 </Checkbox>
               </div>
             )}
             <div className="PositionEditor-keep-leverage-settings">
               <Checkbox isChecked={keepLeverage} setIsChecked={setKeepLeverage}>
-                <span style={{ marginLeft: 0, padding: 0 }} className="muted font-sm">
+                <span>
                   Keep leverage at {formatAmount(position.leverage, 4, 2)}x
                 </span>
               </Checkbox>
@@ -941,7 +913,7 @@ export default function PositionSeller(props) {
             {orderOption === MARKET && (
               <div className="PositionEditor-allow-higher-slippage">
                 <Checkbox isChecked={isHigherSlippageAllowed} setIsChecked={setIsHigherSlippageAllowed}>
-                  <span className="muted font-sm">Allow up to 1% slippage</span>
+                  <span>Allow up to 1% slippage</span>
                 </Checkbox>
               </div>
             )}
@@ -969,7 +941,7 @@ export default function PositionSeller(props) {
             {orderOption === STOP && (
               <div className="Exchange-info-row">
                 <div className="Exchange-info-label">Trigger Price</div>
-                <div className="align-right">
+                <div className="align-right font-number">
                   {!triggerPriceUsd && "-"}
                   {triggerPriceUsd &&
                     `${triggerPricePrefix} ${formatAmount(
@@ -981,21 +953,23 @@ export default function PositionSeller(props) {
                 </div>
               </div>
             )}
-            <div className="Exchange-info-row top-line">
+          </div>
+          <div className="PositionEditor-info-box">
+            <div className="Exchange-info-row">
               <div className="Exchange-info-label">Mkt. Price</div>
-              <div className="align-right">
+              <div className="align-right font-number">
                 ${formatAmount(position.markPrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}
               </div>
             </div>
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">Entry Price</div>
-              <div className="align-right">
+              <div className="align-right font-number">
                 ${formatAmount(position.averagePrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}
               </div>
             </div>
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">Liq. Price</div>
-              <div className="align-right">
+              <div className="align-right font-number">
                 {isClosing && orderOption !== STOP && "-"}
                 {(!isClosing || orderOption === STOP) && (
                   <div>
@@ -1020,9 +994,9 @@ export default function PositionSeller(props) {
                 )}
               </div>
             </div>
-            <div className="Exchange-info-row top-line">
+            <div className="Exchange-info-row">
               <div className="Exchange-info-label">Size</div>
-              <div className="align-right">
+              <div className="align-right font-number">
                 {position && position.size && fromAmount && (
                   <div>
                     <div className="inline-block muted">
@@ -1039,7 +1013,7 @@ export default function PositionSeller(props) {
             </div>
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">Collateral</div>
-              <div className="align-right">
+              <div className="align-right font-number">
                 {nextCollateral && !nextCollateral.eq(position.collateral) ? (
                   <div>
                     <div className="inline-block muted">
@@ -1056,7 +1030,7 @@ export default function PositionSeller(props) {
             {!keepLeverage && (
               <div className="Exchange-info-row">
                 <div className="Exchange-info-label">Leverage</div>
-                <div className="align-right">
+                <div className="align-right font-number">
                   {isClosing && "-"}
                   {!isClosing && (
                     <div>
@@ -1077,14 +1051,14 @@ export default function PositionSeller(props) {
             )}
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">PnL</div>
-              <div className="align-right">
+              <div className="align-right font-number">
                 {deltaStr} ({deltaPercentageStr})
               </div>
             </div>
 
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">Fees</div>
-              <div className="align-right">
+              <div className="align-right font-number">
                 <Tooltip
                   position="right-top"
                   className="PositionSeller-fees-tooltip"
@@ -1132,7 +1106,9 @@ export default function PositionSeller(props) {
                 />
               </div>
             </div>
-            <div className="Exchange-info-row PositionSeller-receive-row top-line">
+          </div>
+
+          <div className="Exchange-info-row PositionSeller-receive-row">
               {orderOption === MARKET && receiveToken && <div className="Exchange-info-label">Receive</div>}
               {orderOption === STOP && receiveToken && (
                 <Tooltip
@@ -1209,7 +1185,7 @@ export default function PositionSeller(props) {
                     infoTokens={infoTokens}
                     showTokenImgInDropdown={true}
                     selectedTokenLabel={
-                      <span className="PositionSelector-selected-receive-token">
+                      <span className="PositionSelector-selected-receive-token font-number">
                         {formatAmount(convertedReceiveAmount, receiveToken.decimals, 4, true)}&nbsp;
                         {receiveToken.symbol} (${formatAmount(receiveAmount, USD_DECIMALS, 2, true)})
                       </span>
@@ -1217,9 +1193,8 @@ export default function PositionSeller(props) {
                   />
                 </div>
               )}
-            </div>
           </div>
-          <div style={{ paddingLeft: 10.85, paddingRight: 0 }} className="Exchange-swap-button-container">
+          <div className="Exchange-swap-button-container">
             <button className="App-cta Exchange-swap-button" onClick={onClickPrimary} disabled={!isPrimaryEnabled()}>
               {getPrimaryText()}
             </button>

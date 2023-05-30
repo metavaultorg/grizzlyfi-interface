@@ -239,8 +239,8 @@
   grid-template-columns: 1fr auto;
   direction: rtl;
   font-size: 0.9rem;
-  margin-bottom: 0.3rem;
-  padding: 10px 0;
+  /*margin-bottom: 0.3rem;*/
+  /*padding: 10px 0;*/
 }
 
 .PositionEditor-accept-profit-warning .Checkbox {
