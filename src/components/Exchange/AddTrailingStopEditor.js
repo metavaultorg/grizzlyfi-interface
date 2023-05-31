@@ -184,8 +184,8 @@ export default function AddTrailingStopEditor(props) {
     <div className="PositionEditor AddTrailingStopEditor">
       {position && (
         <Modal isVisible={isVisible} setIsVisible={setIsVisible} label={title}>
-          <div style={{ marginTop: "48px" }}>
-            <div className="PositionEditor-info-box">
+          <div style={{ marginTop: "32px" }}>
+            <div className="">
               <div className="trailing-box">
                 <div className="trailing-header">
                   <span className="positive font-number trailing-percentage">

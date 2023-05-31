@@ -38,6 +38,7 @@ import { getNativeToken, getToken, getTokens, getWrappedToken } from "../../data
 import "./ConfirmationBox.css";
 import TokenSelector from "./TokenSelector";
 import { getSwapLimits, getTokenAmount } from "./PositionSeller";
+import IconNext from '../../assets/icons/icon-next-left.svg'
 
 const HIGH_SPREAD_THRESHOLD = expandDecimals(1, USD_DECIMALS).div(100); // 1%;
 
@@ -224,7 +225,7 @@ export default function ConfirmationBox(props) {
       if (isSwap) {
         return title;
       }
-      const action = isMarketOrder ? (isLong ? "Long" : "Short") : "Create Order";
+      const action = isMarketOrder ? (isLong ? "Confirm Long" : "Confirm Short") : "Create Order";
 
       if (
         isMarketOrder &&
@@ -275,7 +276,7 @@ export default function ConfirmationBox(props) {
     if (spread && spread.isHigh) {
       return (
         <div className="Confirmation-box-warning">
-          The spread is > 1%, please ensure the trade details are acceptable before comfirming
+          The spread is &gt; 1%, please ensure the trade details are acceptable before comfirming
         </div>
       );
     }
@@ -406,16 +407,31 @@ export default function ConfirmationBox(props) {
     }
 
     return (
-      <div className="Confirmation-box-main">
-        <span>
-          Pay&nbsp;{formatAmount(fromAmount, fromToken.decimals, 4, true)} {fromToken.symbol} ($
-          {formatAmount(fromUsdMin, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)})
-        </span>
-        <div className="Confirmation-box-main-icon"></div>
-        <div>
-          {isLong ? "Long" : "Short"}&nbsp;
-          {formatAmount(toAmount, toToken.decimals, 4, true)} {toToken.symbol} ($
-          {formatAmount(toUsdMax, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)})
+      <div className="Confirmation-box-top">
+        <div className="Confirmation-box-top-label"><span>Pay</span><span>{isLong ? "Long" : "Short"}</span></div>
+        <div className="Confirmation-box-top-token-row">
+          <div className="Confirmation-box-top-token-box">
+            <span className="token font-number">
+              {formatAmount(fromAmount, fromToken.decimals, 4, true)} {fromToken.symbol}
+            </span>
+            <span className="usd font-number">
+              ${formatAmount(fromUsdMin, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}
+            </span>
+          </div>
+          <div className="Swap-next-container">
+            <div className="Swap-next">
+              <img src={IconNext} alt="" width={16} style={{ marginBottom: "-8px", opacity: "0.3" }} />
+              <img src={IconNext} alt="" width={16} />
+            </div>
+          </div>
+          <div className="Confirmation-box-top-token-box">
+            <span className={cx("token font-number", isLong ? "positive" : "negative")}>
+              {formatAmount(toAmount, toToken.decimals, 4, true)} {toToken.symbol}
+            </span>
+            <span className="usd font-number">
+              ${formatAmount(toUsdMax, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}
+            </span>
+          </div>
         </div>
       </div>
     );
@@ -512,6 +528,10 @@ export default function ConfirmationBox(props) {
           {renderFeeWarning()}
           {renderMinProfitWarning()}
           {renderExistingOrderWarning()}
+
+          {/* section seperator */}
+          <div style={{height:8}} />
+          <div className="Confirmation-box-info-box">
           {hasPendingProfit && isMarketOrder && (
             <div className="PositionEditor-accept-profit-warning">
               <Checkbox isChecked={isProfitWarningAccepted} setIsChecked={setIsProfitWarningAccepted}>
@@ -581,8 +601,12 @@ export default function ConfirmationBox(props) {
               }}
             />
           </ExchangeInfoRow>
+          </div>
+          {/* section seperator */}
+          <div style={{height:8}} />
+          <div className="Confirmation-box-info-box">
           {showSpread && (
-            <ExchangeInfoRow label="Spread" isWarning={spread.isHigh} isTop={true}>
+            <ExchangeInfoRow label="Spread" isWarning={spread.isHigh} isTop={false}>
               {formatAmount(spread.value.mul(100), USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}%
             </ExchangeInfoRow>
           )}
@@ -722,6 +746,7 @@ export default function ConfirmationBox(props) {
             </div>
           )}
           {renderExecutionFee()}
+          </div>
         </div>
       </>
     );
@@ -834,9 +859,9 @@ export default function ConfirmationBox(props) {
       <Modal isVisible={true} setIsVisible={() => setIsConfirming(false)} label={title}>
         {isSwap && renderSwapSection()}
         {!isSwap && renderMarginSection()}
-        <div style={{ padding: 10 }} className="Confirmation-box-row">
+        <div style={{ marginTop: 40 }} className="Confirmation-box-row">
           <button
-            style={{ fontWeight: "bold" }}
+            style={{ }}
             onClick={onConfirmationClick}
             className="App-cta Confirmation-box-button text-uppercase"
             disabled={!isPrimaryEnabled()}

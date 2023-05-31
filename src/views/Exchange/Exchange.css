@@ -233,7 +233,8 @@
   /*padding-left: 0.7rem;*/
 }
 
-.PositionEditor .Modal-content .PositionEditor-info-box {
+.PositionEditor .Modal-content .PositionEditor-info-box,
+.Confirmation-box .Modal-content .Confirmation-box-info-box {
   display: flex;
   flex-direction: column;
   padding: 24px;
@@ -241,17 +242,19 @@
   background-color: rgba(255,255,255,0.02);
   gap: 16px;
 }
-.PositionEditor .Modal-content .PositionEditor-info-box .Exchange-info-row {
+.PositionEditor .Modal-content .PositionEditor-info-box .Exchange-info-row,
+.Confirmation-box .Modal-content .Confirmation-box-info-box .Exchange-info-row {
   margin: 0;
 }
 .PositionEditor .Modal-content .PositionEditor-info-box span,
-.PositionEditor .Modal-content .PositionEditor-info-box .Exchange-info-label {
+.PositionEditor .Modal-content .PositionEditor-info-box .Exchange-info-label,
+.Confirmation-box .Modal-content .Confirmation-box-info-box  .Exchange-info-label,
+.Confirmation-box .Modal-content .Confirmation-box-info-box  .PositionEditor-allow-higher-slippage span {
   opacity: 1;
   font-size: 16px;
   font-weight: 600;
   color: rgba(255,255,255,0.6);
 }
-
 
 .PositionEditor-keep-leverage-settings .Checkbox {
   width: 100%;
@@ -906,7 +909,8 @@ input.Exchange-swap-input.small {
   padding: 16px 0px 0px 0px;
 }
 
-.App-cta.Exchange-swap-button {
+.App-cta.Exchange-swap-button,
+.App-cta.Confirmation-box-button {
   display: block;
   width: 100%;
   color: #fff;
@@ -1019,7 +1023,7 @@ table.Exchange-list-small td {
   text-align: center;
   display: flex;
   flex-direction: column;
-  margin: 1rem 0 1.5rem;
+  margin: 32px 0 1.5rem;
 }
 .Confirmation-box-main-icon {
   margin: 5px 0;
@@ -1032,17 +1036,17 @@ table.Exchange-list-small td {
 }
 
 .Confirmation-box .Modal-content {
-  width: 22rem;
+  width: 600px;
 }
 
 .Confirmation-box-row {
   margin-top: 1rem;
 }
 
-.Confirmation-box-button {
+/*.Confirmation-box-button {
   margin-top: 10px;
   width: 100%;
-}
+}*/
 
 .Exchange-footer {
   text-align: center;
