@@ -417,13 +417,14 @@
 }
 
 .PositionEditor .Modal-content {
-  width: 27rem;
+  width: 600px;
   position: absolute;
   max-height: 80vh;
   overflow: hidden;
   border: none;
   top: auto;
   bottom: auto;
+  overflow-y: auto;
 }
 
 .PositionEditor .Modal-content .Modal-body {
@@ -443,6 +444,33 @@
 .PositionEditor-token-symbol {
   font-size: 1.35rem;
   text-align: right;
+}
+
+.PositionEditor .Modal-content .Tab.block {
+  padding: 8px;
+  border-radius: 22px;
+  background-color: rgba(0, 0, 0, 0.1);
+  margin-top: 32px;
+  gap: 8px
+}
+
+.PositionEditor .Modal-content .Tab.block .Tab-option.active {
+  background-color: #fff;
+  color: #1a1a1a;
+}
+
+.PositionEditor .Modal-content .Tab.block .Tab-option {
+  opacity: 1;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 17px;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.PositionEditor .Modal-content .Tab.block .Tab-option:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .ExchangeChart-container {

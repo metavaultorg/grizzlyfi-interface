@@ -1,38 +1,4 @@
-.PositionEditor .PositionSeller-modal .Modal-content .Modal-body {
-  /*padding-right: 0.7rem;*/
-}
 
-.PositionEditor .PositionSeller-modal .Modal-content {
-  width: 600px;
-  overflow-y: auto;
-}
-
-.PositionEditor .PositionSeller-modal .Modal-content .Tab.block {
-  padding: 8px;
-  border-radius: 22px;
-  background-color: rgba(0,0,0,0.1);
-  margin-top: 32px;
-  gap: 8px
-}
-
-.PositionEditor .PositionSeller-modal .Modal-content .Tab.block .Tab-option.active {
-  background-color: #fff;
-  color: #1a1a1a;
-}
-
-.PositionEditor .PositionSeller-modal .Modal-content .Tab.block .Tab-option {
-  opacity: 1;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 17px;
-  background-color: rgba(255,255,255,0.05);
-  color: rgba(255,255,255,0.5);
-}
-
-.PositionEditor .PositionSeller-modal .Modal-content .Tab.block .Tab-option:hover {
-  background-color: rgba(255,255,255,0.2);
-  color: rgba(255,255,255,0.8);
-}
 .PositionEditor .PositionSeller-modal .Modal-content .Exchange-swap-input input {
   font-size: 24px;
   font-weight: 600;

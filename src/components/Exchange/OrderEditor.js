@@ -35,6 +35,7 @@ import { getContract } from "../../Addresses";
 import { sliderHandle, trailingStopPrices } from "../Trailer/Trailer";
 import { BigNumber } from "ethers";
 import "./OrderEditor.css";
+import AutosizeInput from 'react-input-autosize';
 
 export default function OrderEditor(props) {
   const {
@@ -300,46 +301,29 @@ export default function OrderEditor(props) {
   if (order.type !== SWAP) {
     const triggerPricePrefix = order.triggerAboveThreshold ? TRIGGER_PREFIX_ABOVE : TRIGGER_PREFIX_BELOW;
     return (
-      <Modal
-        isVisible={true}
-        className="Exchange-list-modal OrderEditor"
-        setIsVisible={() => setEditingOrder(null)}
-        label="Edit order"
-      >
-        {renderMinProfitWarning()}
-        <div className="Exchange-swap-section">
+      <div className="PositionEditor">
+        <Modal
+          isVisible={true}
+          className="OrderEditor"
+          setIsVisible={() => setEditingOrder(null)}
+          label="Edit order"
+        >
+          {renderMinProfitWarning()}
+          <div style={{ height: 32 }}></div>
           {isTrailingStop ? (
-            <div className="Exchange-swap-section-top">
-              <div style={{ display: "flex" }}>
-                Trailing Stop Percentage{" "}
-                <p style={{ color: "green", marginLeft: "3px" }}>
-                  (
+            <div>
+              <div className="trailing-header">
+                <span className="positive font-number trailing-percentage">
+                  {trailingStopPriceLabel.gt(0) ? trailingStopPercentageValue + "%" : "..."}
+                </span>
+                <span className="font-number trailing-price">
                   {trailingStopPriceLabel.gt(0)
-                    ? trailingStopPercentageValue + "% - " +formatAmount(trailingStopPriceLabel, USD_DECIMALS, position.indexToken.displayDecimals, true)+"$"
+                    ? "$" +
+                    formatAmount(trailingStopPriceLabel, USD_DECIMALS, position.indexToken.displayDecimals, true)
                     : "..."}
-                  )
-                </p>
+                </span>
               </div>
-            </div>
-          ) : (
-            <div className="Exchange-swap-section-top">
-              <div className="muted">Price</div>
-              <div
-                className="muted align-right clickable"
-                onClick={() => {
-                  setTriggerPriceValue(
-                    formatAmountFree(indexTokenMarkPrice, USD_DECIMALS, order.indexToken.displayDecimals)
-                  );
-                }}
-              >
-                Mark: {formatAmount(indexTokenMarkPrice, USD_DECIMALS, order.indexToken.displayDecimals)}
-              </div>
-            </div>
-          )}
-
-          <div className="Exchange-swap-section-bottom">
-            {isTrailingStop ? (
-              <div className="trailing-box" style={{ paddingLeft: "16px", paddingRight: "16px" }}>
+              <div className="trailing-box">
                 <div className="Exchange-leverage-slider App-slider negative">
                   <Slider
                     min={0}
@@ -355,68 +339,83 @@ export default function OrderEditor(props) {
                   />
                 </div>
               </div>
-            ) : (
-              <>
-                <div className="Exchange-swap-input-container">
-                  <input
+            </div>
+          ) : (
+            <div style={{}}>
+              <div className="Exchange-swap-section">
+                <div className="vcenter">
+                  <AutosizeInput
                     type="number"
                     min="0"
-                    placeholder="0.0"
-                    className="Exchange-swap-input"
+                    placeholder="0.00"
+                    className="Exchange-swap-input font-number"
                     value={triggerPriceValue}
                     onChange={onTriggerPriceChange}
                   />
+                  <span className="Exchange-swap-input">USD</span>
                 </div>
-                <div className="PositionEditor-token-symbol">USD</div>
-              </>
-            )}
-          </div>
-        </div>
-        {!isTrailingStop && (
-          <ExchangeInfoRow label="Price">
-            {triggerPrice && !triggerPrice.eq(order.triggerPrice) ? (
-              <>
-                <span className="muted">
+                <div
+                  className="align-right clickable max"
+                  onClick={() => {
+                    setTriggerPriceValue(
+                      formatAmountFree(position.markPrice, USD_DECIMALS, position.indexToken.displayDecimals)
+                    );
+                  }}
+                >
+                  Mark &nbsp; <span className="font-number">{formatAmount(position.markPrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {!isTrailingStop && (
+            <ExchangeInfoRow label="Price">
+              {triggerPrice && !triggerPrice.eq(order.triggerPrice) ? (
+                <>
+                  <span className="muted font-number">
+                    {triggerPricePrefix}{" "}
+                    {formatAmount(order.triggerPrice, USD_DECIMALS, order.indexToken.displayDecimals, true)}
+                  </span>
+                  &nbsp;
+                  <BsArrowRight />
+                  &nbsp;
+                  {triggerPricePrefix}{" "}
+                  {formatAmount(triggerPrice, USD_DECIMALS, order.indexToken.displayDecimals, true)}
+                </>
+              ) : (
+                <span className="font-number">
                   {triggerPricePrefix}{" "}
                   {formatAmount(order.triggerPrice, USD_DECIMALS, order.indexToken.displayDecimals, true)}
                 </span>
-                &nbsp;
-                <BsArrowRight />
-                &nbsp;
-                {triggerPricePrefix} {formatAmount(triggerPrice, USD_DECIMALS, order.indexToken.displayDecimals, true)}
-              </>
-            ) : (
-              <span>
-                {triggerPricePrefix}{" "}
-                {formatAmount(order.triggerPrice, USD_DECIMALS, order.indexToken.displayDecimals, true)}
-              </span>
-            )}
-          </ExchangeInfoRow>
-        )}
-        {!isTrailingStop && liquidationPrice && (
-          <div className="Exchange-info-row">
-            <div className="Exchange-info-label">Liq. Price</div>
-            <div className="align-right">{`$${formatAmount(
-              liquidationPrice,
-              USD_DECIMALS,
-              order.indexToken.displayDecimals,
-              true
-            )}`}</div>
+              )}
+            </ExchangeInfoRow>
+          )}
+          {!isTrailingStop && liquidationPrice && (
+            <div className="Exchange-info-row">
+              <div className="Exchange-info-label">Liq. Price</div>
+              <div className="align-right font-number">{`$${formatAmount(
+                liquidationPrice,
+                USD_DECIMALS,
+                order.indexToken.displayDecimals,
+                true
+              )}`}</div>
+            </div>
+          )}
+          <div className="Exchange-swap-button-container">
+            <button
+              className="App-cta Exchange-swap-button Exchange-list-modal-button"
+              onClick={onClickPrimary}
+              disabled={!isPrimaryEnabled()}
+            >
+              {getPrimaryText()}
+            </button>
           </div>
-        )}
-        <div className="Exchange-swap-button-container">
-          <button
-            className="App-cta Exchange-swap-button Exchange-list-modal-button"
-            onClick={onClickPrimary}
-            disabled={!isPrimaryEnabled()}
-          >
-            {getPrimaryText()}
-          </button>
-        </div>
-      </Modal>
+        </Modal>
+      </div>
     );
   }
 
+  // SWAP content
   return (
     <Modal
       isVisible={true}
@@ -500,7 +499,7 @@ export default function OrderEditor(props) {
       {fromTokenInfo && (
         <div className="Exchange-info-row">
           <div className="Exchange-info-label">{fromTokenInfo.symbol} price</div>
-          <div className="align-right">
+          <div className="align-right font-number">
             {formatAmount(fromTokenInfo.minPrice, USD_DECIMALS, fromTokenInfo.displayDecimals, true)} USD
           </div>
         </div>
@@ -508,7 +507,7 @@ export default function OrderEditor(props) {
       {toTokenInfo && (
         <div className="Exchange-info-row">
           <div className="Exchange-info-label">{toTokenInfo.symbol} price</div>
-          <div className="align-right">
+          <div className="align-right font-number">
             {formatAmount(toTokenInfo.maxPrice, USD_DECIMALS, toTokenInfo.displayDecimals, true)} USD
           </div>
         </div>
