@@ -7,33 +7,142 @@ html {
     font-family: "Inter var", sans-serif;
   }
 }
-/* .position-share-modal .Modal-content {
-  min-width: 377px;
-  width: 40rem;
-} */
+
+.position-share-modal .Modal-content {
+  padding: 0px;
+  border: none;
+  border-radius: 46px;
+}
+.position-share-modal .Modal-title-bar {
+  display: none;
+}
+.position-share-modal .Modal-close-button {
+  position: absolute;
+  z-index: 10;
+  right: 40px;
+  top: 40px;
+}
+
 .position-share-modal .actions {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  padding: 15px;
+  padding: 40px;
   gap: 10px;
 }
 
-.position-share-modal button,
-.position-share-modal a {
-  background: none;
-  color: white;
-  font-size: 1.45rem;
-  border: none;
-  opacity: 0.9;
+.share-modal {
+  background-size: cover;
+  width: 800px;
+}
+
+.share-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding-top: 19px;
+  padding-bottom: 19px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border-radius: 24px;
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .share-infos {
-  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.share-token-infos {
+display: flex;
+gap: 24px;
+align-items: center;
+/* justify-content: flex-start; */
+}
+
+.share-token {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 26px;
+}
+
+.share-token-long {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 24px;
+  font-weight: bold;
+}
+.share-token-leverage {
+  border-radius: 10px;
+  padding: 7px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 18px;
+}
+
+.share-delta {
+  font-size: 80px;
+  font-weight: 600;
+  line-height: 97px;
+}
+
+.share-price {
+  display: flex;
+  gap: 12px;
+}
+.share-price-entry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.share-price-entry-label {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 18px;
+  opacity: 0.5;
+  display: inline;
+  flex-wrap: nowrap;
+  width: 90px;
+}
+
+.share-referral {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.share-referral-label {
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.6;
+  margin-bottom: 8px;
+  width: 110px;
+}
+.share-referral-value {
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.share-referral-qrcode {
+  padding: 16px 16px 16px 16px;
+  border-radius: 24px;
+  border: solid 1px rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .position-share-modal button:hover,
 .position-share-modal a:hover {
-  opacity: 1;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .position-share-modal button:active,
@@ -54,103 +163,43 @@ html {
   flex-direction: column;
   justify-content: space-between;
   box-sizing: border-box;
+  padding: 40px 40px 40px 40px;
+  border-radius: 40px;
+  overflow: hidden;
 }
 
 .position-share .logo {
-  width: 8rem;
-}
-.position-share .info {
-  list-style: none;
-  color: white;
-  font-size: 1.25rem;
   display: flex;
-  padding-left: 0;
-  margin: 1.25rem 0 0 0;
-  border-right: "1px solid #EAEAEA26";
-  padding-right: 22;
-  padding-top: 11;
-}
-.position-share .info li {
-  margin-right: 1rem;
-  padding-bottom: 0;
-  font-family: "Inter", sans-serif;
-}
-.position-share .info > .sidefalse {
-  color: #ff7b41;
-  font-weight: 800;
-  font-family: "Inter", sans-serif;
-}
-.position-share .info > .sidetrue {
-  color: #79ffab;
-  font-weight: 800;
-  font-family: "Inter", sans-serif;
 }
 
-.position-share .pnl {
+.position-share .logo-text {
+  font-size: 12px;
   font-weight: bold;
-  font-size: 3.25rem;
-  margin: 0.5rem 0 0 0;
-  font-family: "Inter", sans-serif;
-}
-
-.position-share .prices {
-  max-width: 20rem;
+  color: rgba(255, 255, 255, 0.5);
+  width: 72px;
+  height: 24px;
+  border-radius: 7px;
+  -webkit-backdrop-filter: blur(50px);
+  backdrop-filter: blur(50px);
+  border: solid 1px rgba(255, 255, 255, 0.2);
+  background-color: rgba(36, 36, 36, 0.1);
   display: flex;
-  margin-top: 1rem;
-  justify-content: space-between;
-  font-family: "Inter", sans-serif;
-}
-.position-share .prices p {
-  margin: 0;
-  font-size: 1.1rem;
-  font-family: "Inter", sans-serif;
-}
-
-.position-share .prices p.price {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-top: 0.25rem;
-  font-family: "Inter", sans-serif;
-}
-.position-share .prices div {
-  display: flex;
-  flex-direction: column;
-}
-.position-share .referral-code {
-  display: flex;
-  margin-top: 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  max-width: 18rem;
-  border-radius: 5px;
   align-items: center;
-  padding: 0.5rem;
-}
-.position-share .referral-code div {
-  display: flex;
-  flex-direction: column;
-}
-.position-share .referral-code .label {
-  font-size: 0.9rem;
-  line-height: 1;
-  font-family: "Inter", sans-serif;
-}
-.position-share .referral-code .referral-code-info {
-  margin-left: 1rem;
-  font-family: "Inter", sans-serif;
+  justify-content: center;
+  margin-left: 4px;
 }
 
-.position-share .referral-code img {
-  width: 30px;
-  height: 30px;
-  margin-right: 1rem;
+.position-share .sidefalse {
+  color: #ff7b41;
 }
-.position-share .referral-code p {
-  margin: 0;
-  font-family: "Inter", sans-serif;
+.position-share .sidetrue {
+  color: #79ffab;
 }
-.position-share .code {
-  font-weight: 500;
-  line-height: 1;
+.position-share .bgsidefalse {
+  background: rgb(255, 123, 65, 0.1);
+}
+.position-share .bgsidetrue {
+  background: rgb(121, 255, 171, 0.1);
 }
 
 .tweet-link-container.disabled {
@@ -161,11 +210,11 @@ html {
   justify-content: center;
 }
 
-a.App-button-option.tweet-link {
+.tweet-link {
   text-decoration: none;
   width: 100%;
 }
-a.App-button-option.tweet-link.disabled {
+.tweet-link.disabled {
   pointer-events: none;
 }
 
@@ -177,8 +226,8 @@ a.App-button-option.tweet-link.disabled {
 }
 .image-overlay-wrapper {
   position: absolute;
-  bottom: 0;
   right: 0;
+  bottom: 0;
   background: #00000055;
   color: #fff;
   display: inline-flex;
@@ -203,76 +252,102 @@ a.App-button-option.tweet-link.disabled {
   margin-left: 0.5rem;
 }
 
-@media (max-width: 400px) {
-  /* .position-share-modal .Modal-body {
-    margin: 1rem;
-  } */
-
-  .position-share .info {
-    margin-top: 0.75rem;
-    font-size: 1rem;
-  }
-  .position-share .pnl {
-    font-size: 2rem;
-  }
-  .position-share .prices {
-    max-width: 14rem;
-    margin-top: 0.5rem;
-  }
-  .position-share .prices p {
-    font-size: 0.9rem;
-  }
-  .position-share .prices p.price {
-    font-size: 1rem;
-  }
-  .position-share .referral-code {
-    margin-top: 1rem;
-    width: 12rem;
-  }
-  .position-share .referral-code .label {
-    font-size: 0.8rem;
-  }
-  .position-share .referral-code p {
-    font-size: 1rem;
-  }
-  .position-share-modal .actions {
-    transform: scale(0.8);
-  }
+.share-dividing-line {
+  height: 1px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
 }
 
-.share {
-  background: rgba(255, 255, 255, 0.15) !important;
-  backdrop-filter: blur(60px) !important;
-  color: white !important;
-  border-radius: 10px !important;
-}
-
-.share:hover {
-  background: rgba(118, 118, 128, 0.54) !important;
+@media (max-width: 800px) {
+  .share-infos {
+    justify-content: center;
+  }
+  .share-modal {
+    width: 560px;
+  }
+  .share-action span{
+    display: none;
+  }
 }
 
 @media (max-width: 600px) {
   .position-share-modal .Modal-content {
-    max-width: 377px;
+    /* max-width: 377px; */
   }
 
-  .position-share {
-    background-size: auto;
+  .share-modal {
+    width: 560px;
   }
 }
 
-.bg-card--backdrop {
-  background-color: #08082f80;
-}
-
-@media screen and (max-width: 613px) {
+@media (max-width: 400px) {
+  .position-share-modal .actions {
+    /* transform: scale(0.8); */
+  }
+  .share-modal {
+    width: 380px;
+  }
   .share-infos {
-    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .share-delta {
+    font-size: 32px;
+    line-height: 32px;
+  }
+  .position-share{
+    padding: 20px 20px;
+  }
+  .share-token-infos {
+    gap: 12px;
+  }
+  .share-token {
+    font-size: 14px;
+    gap: 8px;
+  }
+  .share-token img{
+    width: 32px;
+    height: 32px;
+  }
+  .share-token-long {
+    font-size: 16px;
+  }
+  .share-price-entry {
+    flex-direction: column;
+    align-items: baseline;
+    font-size: 14px;
+  }
+  .share-referral {
+    margin-top: 0px;
+  }
+  .share-referral-qrcode {
+    padding: 12px;
+  }
+  .share-referral-qrcode >svg {
+    width: 40px;
+    height: 40px;
   }
 
-  .info {
-    border: none;
-    padding: 0;
-    align-items: center;
+  .share-referral-label {
+    font-size: 12px;
+  }
+  .share-referral-value {
+    font-size: 16px;
+  }
+  .position-share-modal .actions {
+    padding: 16px 16px;
+  }
+  .share-action {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .share-action >img{
+    width: 20px;
+    height: 20px;
+  }
+  .position-share-modal .Modal-close-button {
+    top: 10px;
+    right: 10px;
+    transform: scale(0.5);
   }
 }
