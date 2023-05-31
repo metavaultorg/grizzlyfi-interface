@@ -29,6 +29,8 @@ import { callContract } from "../../Api";
 
 import PositionRouter from "../../abis/PositionRouter.json";
 import Token from "../../abis/Token.json";
+import { tokenImage24 } from "../../Helpers";
+import "./PositionEditor.css";
 
 const DEPOSIT = "Deposit";
 const WITHDRAW = "Withdraw";
@@ -106,7 +108,12 @@ export default function PositionEditor(props) {
   let title;
   let collateralDelta;
   if (position) {
-    title = `Edit ${position.isLong ? "Long" : "Short"} ${position.indexToken.symbol}`;
+    title = () => {
+      return (<>
+      <img src={tokenImage24(position.indexToken.symbol.toLowerCase())} alt=" "/>
+      Edit {position.isLong ? "Long" : "Short"} {position.indexToken.symbol}
+      </>)
+    }
     collateralToken = position.collateralToken;
     liquidationPrice = getLiquidationPrice(position);
 
@@ -449,65 +456,61 @@ export default function PositionEditor(props) {
   return (
     <div className="PositionEditor">
       {position && (
-        <Modal isVisible={isVisible} setIsVisible={setIsVisible} label={title}>
-          <div style={{ marginTop: "10px", padding: 10 }}>
+        <Modal isVisible={isVisible} setIsVisible={setIsVisible} label={title()} className="EditPosition">
+          <div style={{ }}>
             <Tab options={EDIT_OPTIONS} option={option} setOption={setOption} onChange={resetForm} />
             {(isDeposit || isWithdrawal) && (
               <div>
+                <span className="prompt">
+                  {isDeposit && "How much collateral will you add to the position?"}
+                  {isWithdrawal && "How much collateral will you widthdraw from the position?"}
+                </span>
                 <div className="Exchange-swap-section">
-                  <div className="Exchange-swap-section-top">
-                    <div className="muted">
-                      {convertedAmountFormatted && (
-                        <div className="Exchange-swap-usd">
-                          {isDeposit ? "Deposit" : "Withdraw"}: {convertedAmountFormatted}{" "}
+                      <div className="Exchange-swap-input-container">
+                        <input
+                          type="number"
+                          min="0"
+                          placeholder="0.0"
+                          className="Exchange-swap-input"
+                          value={fromValue}
+                          onChange={(e) => setFromValue(e.target.value)}
+                        />
+                        <div className="Exchange-swap-usd font-number">
+                          ≈ {convertedAmountFormatted??0.00}{" "}
                           {isDeposit ? "USD" : position.collateralToken.symbol}
                         </div>
-                      )}
-                      {!convertedAmountFormatted && `${isDeposit ? "Deposit" : "Withdraw"}`}
-                    </div>
-                    {maxAmount && (
-                      <div className="muted align-right clickable" onClick={() => setFromValue(maxAmountFormattedFree)}>
-                        Max: {maxAmountFormatted}
                       </div>
-                    )}
-                  </div>
-                  <div className="Exchange-swap-section-bottom">
-                    <div className="Exchange-swap-input-container">
-                      <input
-                        type="number"
-                        min="0"
-                        placeholder="0.0"
-                        className="Exchange-swap-input"
-                        value={fromValue}
-                        onChange={(e) => setFromValue(e.target.value)}
-                      />
-                      {fromValue !== maxAmountFormattedFree && (
-                        <div
-                          className="Exchange-swap-max"
-                          onClick={() => {
-                            setFromValue(maxAmountFormattedFree);
-                          }}
-                        >
-                          MAX
+                      <div className="Exchange-swap-input-right">
+                        {fromValue !== maxAmountFormattedFree && (
+                            <div
+                              className="Exchange-swap-max"
+                              onClick={() => {
+                                setFromValue(maxAmountFormattedFree);
+                              }}
+                            >
+                              MAX
+                            </div>
+                          )}
+                        <div className="PositionEditor-token-symbol">
+                          {isDeposit ? <>
+                            <img src={tokenImage24(position.collateralToken.symbol.toLowerCase())} style={{ height: 32, width: 32 }} alt=" " />
+                            <div style={{ width: 8 }}></div> {position.collateralToken.symbol}</>
+                            : "USD"}
                         </div>
-                      )}
-                    </div>
-                    <div className="PositionEditor-token-symbol">
-                      {isDeposit ? position.collateralToken.symbol : "USD"}
-                    </div>
-                  </div>
+                      </div>
                 </div>
+                <div style={{height:16}}></div>
                 <div className="PositionEditor-info-box">
                   <div className="Exchange-info-row">
                     <div className="Exchange-info-label">Size</div>
-                    <div className="align-right">{formatAmount(position.size, USD_DECIMALS, 2, true)} USD</div>
+                    <div className="align-right font-number">{formatAmount(position.size, USD_DECIMALS, 2, true)} USD</div>
                   </div>
                   <div className="Exchange-info-row">
                     <div className="Exchange-info-label">Collateral</div>
-                    <div className="align-right">
+                    <div className="align-right font-number">
                       {!nextCollateral && <div>${formatAmount(position.collateral, USD_DECIMALS, 2, true)}</div>}
                       {nextCollateral && (
-                        <div>
+                        <div className="font-number">
                           <div className="inline-block muted">
                             ${formatAmount(position.collateral, USD_DECIMALS, 2, true)}
                             <BsArrowRight className="transition-arrow" />
@@ -519,10 +522,10 @@ export default function PositionEditor(props) {
                   </div>
                   <div className="Exchange-info-row">
                     <div className="Exchange-info-label">Leverage</div>
-                    <div className="align-right">
+                    <div className="align-right font-number">
                       {!nextLeverage && <div>{formatAmount(position.leverage, 4, 2, true)}x</div>}
                       {nextLeverage && (
-                        <div>
+                        <div className="font-number">
                           <div className="inline-block muted">
                             {formatAmount(position.leverage, 4, 2, true)}x
                             <BsArrowRight className="transition-arrow" />
@@ -534,13 +537,13 @@ export default function PositionEditor(props) {
                   </div>
                   <div className="Exchange-info-row">
                     <div className="Exchange-info-label">Mkt. Price</div>
-                    <div className="align-right">
+                    <div className="align-right font-number">
                       ${formatAmount(position.markPrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}
                     </div>
                   </div>
                   <div className="Exchange-info-row">
                     <div className="Exchange-info-label">Liq. Price</div>
-                    <div className="align-right">
+                    <div className="align-right font-number">
                       {!nextLiquidationPrice && (
                         <div>
                           {!fromAmount &&

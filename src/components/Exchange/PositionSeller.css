@@ -46,27 +46,6 @@
   color: rgba(255,255,255,0.5);
 }
 
-.PositionEditor .PositionSeller-modal .Modal-content .PositionEditor-info-box {
-  display: flex;
-  flex-direction: column;
-  padding: 24px;
-  border-radius: 20px;
-  background-color: rgba(255,255,255,0.02);
-  gap: 16px;
-}
-
-.PositionEditor .PositionSeller-modal .Modal-content .PositionEditor-info-box span,
-.PositionEditor .PositionSeller-modal .Modal-content .PositionEditor-info-box .Exchange-info-label {
-  opacity: 1;
-  font-size: 16px;
-  font-weight: 600;
-  color: rgba(255,255,255,0.6);
-}
-
-.PositionEditor .PositionSeller-modal .Modal-content .PositionEditor-info-box .Exchange-info-row {
-  margin: 0;
-}
-
 .PositionEditor .PositionSeller-modal .Modal-content .PositionEditor-info-box .Exchange-info-row .font-number .Tooltip-handle {
   font-size: 18px;
   font-weight: 500;

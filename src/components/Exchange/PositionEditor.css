@@ -1,0 +1,68 @@
+.PositionEditor .EditPosition .Modal-content span.prompt {
+    font-size: 16px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    margin-left: 16px;
+    margin-bottom: 8px;
+}
+
+.PositionEditor .EditPosition .Modal-content .Exchange-swap-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 8px 0 0;
+    padding: 8px 8px 8px 24px;
+    border-radius: 25px;
+    border: solid 1px rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.PositionEditor .EditPosition .Modal-content .Exchange-swap-section .Exchange-swap-input-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.PositionEditor .EditPosition .Modal-content .Exchange-swap-section .Exchange-swap-input-container .Exchange-swap-input {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.33;
+    color: #fff;
+}
+
+.PositionEditor .EditPosition .Modal-content .Exchange-swap-section .Exchange-swap-input-right {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+}
+
+.PositionEditor .EditPosition .Modal-content .Exchange-swap-section .Exchange-swap-max {
+    display: flex;
+    padding: 0 16px 0 16px;
+    justify-content: center;
+    position: unset;
+    height: auto;
+    border-radius: 20px;
+    background-color: rgba(255,255,255,0.1);
+    align-items: center;
+    font-size: 16px;
+    color: rgba(255,255,255,0.5);
+    font-weight: normal;
+}
+
+.PositionEditor .EditPosition .Modal-content .Exchange-swap-section .PositionEditor-token-symbol {
+    display: flex;
+    padding: 8px;
+    min-width: 112px;
+    height: auto;
+    border-radius: 20px;
+    background-color: rgba(255,255,255,0.1);
+    align-items: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.PositionEditor .EditPosition .Modal-content .Exchange-swap-section .Exchange-swap-input-container .Exchange-swap-usd {
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+}
