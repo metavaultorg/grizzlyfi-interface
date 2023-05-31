@@ -41,7 +41,7 @@ export default function OrdersToa(props) {
 
   return (
     <Modal setIsVisible={setIsVisible} isVisible={true} label="Enable Orders" className="Orders-toa" zIndex="1000">
-      <div style={{ padding: 10 }}>
+      <div className="Orders-toa-content">
         Note that orders are not guaranteed to be executed.
         <br />
         <br />
@@ -57,7 +57,7 @@ export default function OrdersToa(props) {
         <br />
         <div className="Orders-toa-accept-rules">
           <Checkbox isChecked={isChecked} setIsChecked={setIsChecked}>
-            <span className="muted">
+            <span>
               Accept that orders are not guaranteed to execute and trigger orders may not settle at the trigger price
             </span>
           </Checkbox>
