@@ -10,6 +10,7 @@ import { BiChevronDown } from "react-icons/bi";
 import Modal from "../Modal/Modal";
 
 import dropDownIcon from "../../img/DROP_DOWN.svg";
+import IconSearch from "../../assets/icons/icon-search-new.svg";
 import "./TokenSelector.css";
 import TooltipWithPortal from "../Tooltip/TooltipWithPortal";
 import { getImageUrl } from "../../cloudinary/getImageUrl";
@@ -88,6 +89,7 @@ export default function TokenSelector(props) {
       >
         <div className="TokenSelector-tokens">
           <div className="TokenSelector-token-row TokenSelector-token-input-row">
+            <img src={IconSearch} alt=""/>
             <input
               type="text"
               placeholder="Search Token"
@@ -168,7 +170,7 @@ export default function TokenSelector(props) {
                 </div>
                 <div className="Token-balance">
                   {showBalances && balance && (
-                    <div className="Token-text">
+                    <div className="Token-text font-number">
                       {balance.gt(0) && formatAmount(balance, token.decimals, 4, true)}
                       {balance.eq(0) && "-"}
                     </div>
@@ -177,7 +179,7 @@ export default function TokenSelector(props) {
                     {mintAmount && <div>Mintable: {formatAmount(mintAmount, token.decimals, 2, true)} USDM</div>}
                     {showMintingCap && !mintAmount && <div>-</div>}
                     {!showMintingCap && showBalances && balanceUsd && balanceUsd.gt(0) && (
-                      <div>${formatAmount(balanceUsd, 30, 2, true)}</div>
+                      <div className="font-number">${formatAmount(balanceUsd, 30, 2, true)}</div>
                     )}
                   </span>
                 </div>

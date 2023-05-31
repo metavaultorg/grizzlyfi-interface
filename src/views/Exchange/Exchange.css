@@ -759,7 +759,7 @@ table.Exchange-list th:last-child {
 
 .Exchange-swap-box .TokenSelector .Modal-content,
 .Selector .Modal-content {
-  width: 27rem;
+  width: 600px;
   position: absolute;
   max-height: 100vh;
   top: 0;
@@ -771,9 +771,9 @@ table.Exchange-list th:last-child {
   scroll-margin-right: 25rem;
   overscroll-behavior: smooth;
   scrollbar-width: thin;
-  padding-right: 5px;
   max-height: calc(100vh - 5rem);
   overflow-y: auto;
+  margin-top: 40px;
 }
 
 .Selector .Modal-content {
@@ -847,6 +847,7 @@ table.Exchange-list th:last-child {
   display: grid;
   grid-template-columns: 1fr auto;
   padding-bottom: 0.2rem;
+  align-items: center;
 }
 
 .Exchange-swap-message {
@@ -882,7 +883,8 @@ table.Exchange-list th:last-child {
 }
 
 .Exchange-swap-section-bottom .TokenSelector-box {
-  font-size: 1.35rem;
+  font-size: 18px;
+  font-weight: 600;
 }
 
 .Exchange-leverage-box .TokenSelector-caret {
@@ -1160,8 +1162,8 @@ table.Exchange-list-small td {
     scroll-margin-right: 25rem;
     overscroll-behavior: smooth;
     scrollbar-width: thin;
-    padding-right: 5px;
-    margin: 1rem calc(1rem - 5px) 1rem 1rem;
+    margin-top: 16px;
+    height: 600px;
   }
 
   .Exchange-swap-box .TokenSelector .Modal,
