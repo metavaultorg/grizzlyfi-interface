@@ -233,6 +233,13 @@
   /*padding-left: 0.7rem;*/
 }
 
+.PositionEditor .Modal .Modal-content {
+  width: 600px;
+}
+.PositionEditor .Modal .Modal-content .Modal-body {
+  margin-top: 40px;
+}
+
 .PositionEditor .Modal-content .PositionEditor-info-box,
 .Confirmation-box .Modal-content .Confirmation-box-info-box {
   display: flex;
@@ -1186,6 +1193,10 @@ table.Exchange-list-small td {
     width: 2.5rem;
     padding: 0.3rem 0;
     font-size: 0.8rem;
+  }
+
+  .PositionEditor .Modal .Modal-content .Modal-body {
+    margin-top: 16px;
   }
 }
 
