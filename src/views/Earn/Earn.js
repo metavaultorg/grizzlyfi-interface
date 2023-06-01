@@ -52,6 +52,8 @@ import { getContract } from "../../Addresses";
 import Vault from "../../abis/Vault.json";
 import AssetDropdown from "../Dashboard/AssetDropdown";
 import cx from "classnames";
+import ChartPrice from './ChartPrice'
+import TextBadge from '../../components/Common/TextBadge'
 
 export default function Earn(props) {
   const history = useHistory();
@@ -64,6 +66,8 @@ export default function Earn(props) {
   const tokenList = whitelistedTokens.filter((t) => !t.isWrapped);
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
+
+  
   useEffect(() => {
     const hash = history.location.hash.replace("#", "");
     const buying = hash === "redeem" ? false : true;
@@ -164,7 +168,7 @@ export default function Earn(props) {
   return (
     <div className="Earn Exchange page-layout">
       <div className="section-header" style={{ maxWidth: 1006, margin: '0 auto' }}>
-        <h1>Grizzly Leverage Liquidity</h1>
+        <h1>Grizzly Leverage Liquidity<TextBadge text='Low Risk' bgColor={'rgba(158,206,255,0.1)'} textColor='#9eceff' /></h1>
         <p className="text-description" style={{ marginTop: 16, marginBottom: 48 }}>The Grizzly Leverage Liquidity tokens (GLL) is the counterparty to everyone trading with leverage. Deposit your favourite cryptocurrency and earn a solid yield which comes from the trading fees paid on Grizzly Trade. Earn like an exchange. </p>
       </div>
       <div className='Exchange-content'>
@@ -180,6 +184,7 @@ export default function Earn(props) {
             </button>}
             />
           </div>
+          <ChartPrice />
         </div>
         <div className='Exchange-right'>
           <div className='Exchange-swap-box'>

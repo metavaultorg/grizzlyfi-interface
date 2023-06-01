@@ -1,3 +1,6 @@
+.asset-menu{
+  position: relative;
+}
 .asset-menu-items {
   position: absolute;
   border-radius: 12px;
@@ -7,7 +10,19 @@
   font-size: 14px;
   overflow: hidden;
   font-weight: normal !important;
+  width: max-content;
+  
 }
+ @media (min-width: 768px) and (max-width: 1000px) {
+   .asset-menu-items{
+    right: -30px;
+   }
+ }
+  @media (max-width: 490px) {
+    .asset-menu-items {
+      right: -30px;
+    }
+  }
 
 .dropdown-arrow {
   margin-left: 0.5rem;

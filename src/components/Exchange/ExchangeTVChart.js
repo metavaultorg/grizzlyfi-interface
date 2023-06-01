@@ -365,7 +365,7 @@ export default function ExchangeTVChart(props) {
   };
 
   return (
-    <div style={{ marginTop: 60 }} className="ExchangeChart tv" ref={ref}>
+    <div  className="ExchangeChart tv" ref={ref}>
       <div className="ExchangeChart-top App-box App-box-border">
         <div className="ExchangeChart-top-inner">
           <div>

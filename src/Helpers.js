@@ -1520,7 +1520,7 @@ export const fetcher = (library, contractInfo, additionalArgs) => (...args) => {
     })
 
     fallbackContractCall.then((result) => resolve(result)).catch((e) => {
-      console.error("fallback fetcher error", id, contractInfo.contractName, method, e);
+      // console.error("fallback fetcher error", id, contractInfo.contractName, method, e);
       reject(e)
     })
   }
@@ -1530,7 +1530,7 @@ export const fetcher = (library, contractInfo, additionalArgs) => (...args) => {
       shouldCallFallback = false
       resolve(result)
     }).catch((e) => {
-      console.error("fetcher error", id, contractInfo.contractName, method, e);
+      // console.error("fetcher error", id, contractInfo.contractName, method, e);
       handleFallback(resolve, reject, e)
     })
 

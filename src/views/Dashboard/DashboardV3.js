@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom"; 
 import { useWeb3React } from "@web3-react/core";
 import useSWR from "swr";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
@@ -81,6 +81,10 @@ import LiquidityPng from '../../assets/liquidity.png'
 import IconDown from '../../assets/icons/icon-down.svg'
 import Lottie from "lottie-react";
 import animationData from './animation_1.json'
+import TextBadge from '../../components/Common/TextBadge'
+import DownChartArrow from '../../assets/icons/down-chart-arrow.svg'
+import UpChartArrow from '../../assets/icons/up-chart-arrow.svg'
+
 const { AddressZero } = ethers.constants;
 
 const tokenPairMarketList = [
@@ -96,7 +100,7 @@ const positionList = [
 
 
 export default function DashboardV3() {
-
+    const history = useHistory();
     const { active, library, account } = useWeb3React();
     const { chainId } = useChainId();
 
@@ -278,17 +282,32 @@ export default function DashboardV3() {
                     <div className="label">Total Trading Volume</div>
                     <div>
                         <h1>${formatAmount(totalVolumeSum, USD_DECIMALS, 0, true)}</h1>
-                        <div className="info-change positive">
-                        {(volumeInfo / totalVolumeSum * 100).toFixed(2)}%(${formatAmount(volumeInfo, USD_DECIMALS, 0, true)})
-                        <span style={{ opacity: '0.5', marginLeft: 4 }}>24h</span>
+                        <div className={cx('info-change',{
+                            positive: volumeInfo > 0,
+                            negative: volumeInfo < 0,
+                            muted: volumeInfo === 0,
+                        })}>
+                            <img src={volumeInfo > 0 ? UpChartArrow : DownChartArrow} alt="icon" />
+                            <div>{(volumeInfo / totalVolumeSum * 100).toFixed(2)}%</div>
+                            (${formatAmount(volumeInfo, USD_DECIMALS, 0, true)})
+                        <span style={{ opacity: '0.5', }}>24h</span>
                         </div>
                     </div>
                 </div>
                 <div className="total-info">
                     <div className="label">Paid out to GLL Stakers</div>
                     <div>
-                        <h1>$123456</h1>
-                        <div className="info-change positive">12.4%($113.4) <span style={{ opacity: '0.5', marginLeft: 4 }}>24h</span></div>
+                        <h1>${formatAmount(totalVolumeSum, USD_DECIMALS, 0, true)}</h1>
+                        <div className={cx('info-change', {
+                            positive: volumeInfo > 0,
+                            negative: volumeInfo < 0,
+                            muted: volumeInfo === 0,
+                        })}>
+                            <img src={volumeInfo > 0 ? UpChartArrow : DownChartArrow} alt="icon" />
+                            <div>{(volumeInfo / totalVolumeSum * 100).toFixed(2)}%</div>
+                            (${formatAmount(volumeInfo, USD_DECIMALS, 0, true)})
+                            <span style={{ opacity: '0.5', }}>24h</span>
+                        </div>
                     </div>
                     
                 </div>
@@ -296,7 +315,13 @@ export default function DashboardV3() {
                     <div className="label">Assets Under Management</div>
                     <div>
                         <h1>${formatAmount(tvl, USD_DECIMALS, 0, true)}</h1>
-                        <div className="info-change negative">12.4%(-$113.4) <span style={{ opacity: '0.5', marginLeft: 4 }}>24h</span></div>
+                        <div className={cx('info-change', {
+                            positive: tvl > 0,
+                            negative: tvl < 0,
+                            muted: tvl === 0,
+                        })}>
+                            <img src={tvl > 0 ? UpChartArrow : DownChartArrow} alt="icon" />
+                            <div>...%</div>($...) <span style={{ opacity: '0.5', }}>24h</span></div>
                     </div>
                     
                 </div>
@@ -323,12 +348,12 @@ export default function DashboardV3() {
                         </div>
                         <div className="invest-card">
                             <img />
-                            <h1>Earn real yield</h1>
+                            <h1>Earn Real Yield</h1>
                             <p className="text-description">Get to earn real yield in BTC, ETH and other bluechip
                                 currencies by providing the liquidity others can use to trade.
                             </p>
                             <div className="w-full" style={{ maxWidth: 512 }}>
-                                <Link to="" className="btn-primary ">
+                                <Link to="/earn" className="btn-primary ">
                                     Invest Now
                                 </Link>
                             </div>
@@ -336,7 +361,7 @@ export default function DashboardV3() {
                         </div>
                     </div>
                 </div>}
-            {(processedData.mvlpBalanceUsd > 0) &&
+            {/* {(processedData.mvlpBalanceUsd > 0) && */}
                 <div className="section section-investments">
                     <div className="section-header">
                         <h1>Your Investments </h1>
@@ -418,6 +443,7 @@ export default function DashboardV3() {
                                                 })}>{position.pnl}</span></td>
                                                 <td><button
                                                     className="table-trade-btn"
+                                                    onClick={() => history.push('/trade')}
                                                 >
                                                     Trade
                                                 </button></td>
@@ -500,6 +526,14 @@ export default function DashboardV3() {
                                                         muted: position.change === 0,
                                                     })}>{position.pnl}</span>
                                                 </div>
+                                            </div>
+                                            <div className="App-card-row">
+                                                <button
+                                                    className="table-trade-btn w-full"
+                                                    onClick={() => history.push('/trade')}
+                                                >
+                                                    Trade
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -630,7 +664,12 @@ export default function DashboardV3() {
                                                 })}>{item.profit}%</span>
                                             </div>
                                         </div>
-                                        
+                                        <div className="App-card-row"><button
+                                            className="btn-secondary w-full "
+
+                                        >
+                                            Claim
+                                        </button></div>
                                     </div>
                                 </div>
                             )
@@ -639,7 +678,7 @@ export default function DashboardV3() {
                     </InnerCard>
 
                 </div>
-            }
+            {/* } */}
 
             <div className=" section-markets">
                 <div className="section-header">
@@ -789,7 +828,7 @@ export default function DashboardV3() {
                     <Lottie animationData={animationData} loop={true} style={{height:445}} />
                 </div>
                 <div className="section-header" >
-                    <h1>Grizzly Leverage Liquidity</h1>
+                    <h1>Grizzly Leverage Liquidity <TextBadge text='Active' bgColor={'rgba(121,255,171,0.1)'} textColor='#79ffab' /></h1>
                     <p className="text-description" style={{ marginTop: 16, marginBottom: 48 }}>The Grizzly Leverage Liquidity tokens (GLL) is the counterparty to everyone trading with leverage. Deposit your favourite cryptocurrency and earn a solid yield which comes from the trading fees paid on Grizzly Trade. Earn like an exchange. </p>
                 </div>
                 <div className="grid-cols-4 item-card-group">
@@ -800,8 +839,8 @@ export default function DashboardV3() {
                 </div>
                 <div style={{ maxWidth: 500, margin: 'auto', marginTop: 80, position: 'relative' }}>
                     <div style={{ position: 'absolute', zIndex: '-1', left: 17, width: '90%', height: 48, background: '#f2c75c', opacity: '0.6', filter: 'blur(41px)' }}></div>
-                    <Link to="" className="btn-primary " >
-                        Invest Now
+                    <Link to="/earn" className="btn-primary " >
+                        Invest More
                     </Link>
                 </div>
             </div>

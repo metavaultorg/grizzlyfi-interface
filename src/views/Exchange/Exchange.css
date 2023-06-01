@@ -93,7 +93,6 @@
 .Exchange-right {
   display: grid;
   grid-template-rows: auto 1fr;
-  margin-top: 60px;
 }
 
 .Exchange-leverage-slider-settings {

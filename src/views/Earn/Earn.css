@@ -54,3 +54,73 @@
 
 
 }
+.chart-cell{
+  background: #1f1f1f;
+  color: white;
+  margin: 0;
+  border-radius: 40px;
+  position: relative;
+  padding: 24px;
+  grid-column-start: span 5;
+  margin-top: 24px;
+}
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  padding: 5px 12px !important;
+}
+
+.recharts-tooltip-wrapper ul.recharts-tooltip-item-list li {
+  padding: 0px !important;
+  font-size: 12px !important;
+  line-height: 15px !important;
+}
+
+.recharts-tooltip-wrapper ul.recharts-tooltip-item-list li+li {
+  margin-top: 1px !important;
+}
+
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: #000 !important;
+  box-shadow: 0px 3px 6px #0000005c;
+  border: none !important;
+  border-radius: 4px;
+  opacity: 0.9;
+}
+.recharts-tooltip-label{
+
+}
+.time-group{
+  display: flex;
+  gap: 8px;
+  margin: auto;
+  width: fit-content;
+}
+.time-checked{
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+  
+}
+.time-unchecked{
+  font-size: 14px;
+  font-weight: normal;
+  color: rgba(255, 255, 255, 0.4);
+}
+.time-option{
+  border-radius: 13px;
+  width: 50px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.time-option:hover{
+  color: #fff;
+}
+.chart-cell .chart-title{
+  display: flex;
+  justify-content: space-between;
+  font-size: 24px;
+  font-weight: 600;
+}
