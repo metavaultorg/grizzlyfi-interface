@@ -678,12 +678,19 @@ export default function GllSwapBox(props) {
     };
 
     return (
-        <div className="GllSwap-box App-box basis-mobile">
+        <div className="GllSwap-box App-box basis-mobile section-gllswapbox">
             {mvlpBalance && mvlpBalance.gt(0) ?
                 <ItemCard
                     className='col-span-2'
                     label='Current Deposit'
-                    value={`$${formatAmount(mvlpBalance, MVLP_DECIMALS, 4, true)} GLL (~$${formatAmount(mvlpBalanceUsd, USD_DECIMALS, 2, true)})`}
+                    value={
+                        <div className="font-number" style={{ display: "inline-flex",alignItems:"center", fontSize: "24px", fontWeight: "500" }}>
+                            {formatAmount(mvlpBalance, MVLP_DECIMALS, 4, true)} GLL
+                            <div className="font-number" style={{ display: "inline-flex", fontSize: "16px", fontWeight:"400", opacity: "0.5" }}>
+                                (~${formatAmount(mvlpBalanceUsd, USD_DECIMALS, 2, true)})
+                            </div>
+                        </div>
+                    }
                     icon={IconMoney} />
                 :
                 <ItemCard
