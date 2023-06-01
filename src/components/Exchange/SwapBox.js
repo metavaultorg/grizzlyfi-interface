@@ -1106,7 +1106,7 @@ export default function SwapBox(props) {
       modalError === "BUFFER" ? `${shortCollateralToken.symbol} Required` : `${fromToken.symbol} Capacity Reached`;
     return (
       <Modal isVisible={!!modalError} setIsVisible={setModalError} label={label} className="Error-modal font-base">
-        <div style={{ padding: 10 }}>
+        <div style={{ marginTop:32 }}>
           <p>You need to select {swapTokenSymbol} as the "Pay" token to initiate this trade.</p>
           <br />
           {isShort && (
@@ -2319,7 +2319,7 @@ export default function SwapBox(props) {
         )}
         <div className="Exchange-swap-button-container">
           <button
-            className="App-cta Exchange-swap-button"
+            className={cx("App-cta Exchange-swap-button", isLong?"positive":"negative")}
             onClick={onClickPrimary}
             disabled={!isPrimaryEnabled()}
           >

@@ -41,7 +41,7 @@
 }
 @media screen and (max-width:768px){
   .Modal-content {
-   overflow-y:scroll;
+   overflow-y:auto;
   }
 }
 @media screen and (max-height:732px){
