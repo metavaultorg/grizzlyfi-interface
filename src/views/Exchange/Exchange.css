@@ -632,6 +632,7 @@ table.Exchange-list th:last-child {
 
 .Exchange-info-row .font-number .Tooltip-handle,
 .Exchange-info-row .font-number .inline-block,
+.Exchange-info-row .font-number div,
 .Exchange-info-row .font-number {
   font-family: "Montserrat",sans-serif;
   font-size: 18px;

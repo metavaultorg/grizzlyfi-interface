@@ -74,6 +74,7 @@
 
 .PositionSeller-token-selector .TokenSelector-box {
   display: inline-flex;
+  align-items: center;
 }
 
 .PositionEditor .PositionSeller-modal .Modal-content .PositionSeller-receive-row .PositionSelector-selected-receive-token {

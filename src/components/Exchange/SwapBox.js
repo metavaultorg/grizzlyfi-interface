@@ -2528,7 +2528,7 @@ export default function SwapBox(props) {
           </div>
           <div className="Exchange-info-label-button">
             <a href="https://app.metavault.trade/#/orders_overview" target="_blank" rel="noopener noreferrer">
-              Orders Overview
+              Speed up page loading
             </a>
           </div>
         </div>

@@ -110,7 +110,7 @@ export default function PositionEditor(props) {
   if (position) {
     title = () => {
       return (<>
-      <img src={tokenImage24(position.indexToken.symbol.toLowerCase())} alt=" "/>
+      <img src={tokenImage24(position.indexToken.symbol.toLowerCase())} alt=" " style={{height:32, width:32}} />
       Edit {position.isLong ? "Long" : "Short"} {position.indexToken.symbol}
       </>)
     }
@@ -495,7 +495,7 @@ export default function PositionEditor(props) {
                           {isDeposit ? <>
                             <img src={tokenImage24(position.collateralToken.symbol.toLowerCase())} style={{ height: 32, width: 32 }} alt=" " />
                             <div style={{ width: 8 }}></div> {position.collateralToken.symbol}</>
-                            : "USD"}
+                            : <div style={{ paddingLeft:40 }}>USD</div>}
                         </div>
                       </div>
                 </div>

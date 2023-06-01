@@ -307,7 +307,7 @@ export default function PositionSeller(props) {
     //title = `Close ${position.isLong ? "Long" : "Short"} ${position.indexToken.symbol}`;
     title = () => {
       return (<>
-      <img src={tokenImage24(position.indexToken.symbol.toLowerCase())} alt=" "/>
+      <img src={tokenImage24(position.indexToken.symbol.toLowerCase())} alt=" " style={{height:32, width:32}} />
       Close {position.isLong ? "Long" : "Short"} {position.indexToken.symbol}
       </>)
     }
