@@ -796,7 +796,10 @@ function FullApp() {
               />
             </Route>
             <Route exact path="/dashboard">
-              <Dashboard />
+              <Dashboard 
+                savedShowPnlAfterFees={savedShowPnlAfterFees}
+                savedIsPnlInLeverage={savedIsPnlInLeverage}
+              />
             </Route>
             <Route exact path="/earn">
               {/* <Stake setPendingTxns={setPendingTxns} connectWallet={connectWallet} /> */}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useHistory } from "react-router-dom"; 
+import { Link, useHistory } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 import useSWR from "swr";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
@@ -40,6 +40,8 @@ import {
     getDepositBalanceData,
     getStakingData,
     getVestingData,
+    getLiquidationPrice,
+    USD_DISPLAY_DECIMALS
 } from "../../Helpers";
 import {
     useTotalMvxInLiquidity,
@@ -61,6 +63,8 @@ import Vault from "../../abis/Vault.json";
 import Reader from "../../abis/Reader.json";
 import MvlpManager from "../../abis/MvlpManager.json";
 import Footer from "../../Footer";
+
+import { getPositionQuery, getPositions } from "../Exchange/Exchange";
 
 import "./DashboardV3.css";
 
@@ -84,25 +88,34 @@ import animationData from './animation_1.json'
 import TextBadge from '../../components/Common/TextBadge'
 import DownChartArrow from '../../assets/icons/down-chart-arrow.svg'
 import UpChartArrow from '../../assets/icons/up-chart-arrow.svg'
+import { useTokenPairMarketData } from '../../hooks/useCoingeckoPrices';
 
 const { AddressZero } = ethers.constants;
 
-const tokenPairMarketList = [
-    { name: 'BTC/USD', symbol: 'BTC', lastPrice: '$456', change: '1.54', high: '34', low: '13', volume: '123', volumeUsd: '56' },
-    { name: 'ETH/USD', symbol: 'ETH', lastPrice: '$456', change: '1.62', high: '34', low: '13', volume: '123', volumeUsd: '56' },
-    { name: 'DAI/USD', symbol: 'DAI', lastPrice: '$456', change: '-2.52', high: '34', low: '13', volume: '123', volumeUsd: '56' },
-    { name: 'USDT/USD', symbol: 'USDT', lastPrice: '$456', change: '1.62', high: '34', low: '13', volume: '123', volumeUsd: '56' },
-]
+// const tokenPairMarketList = [
+//     { name: 'BTC/USD', symbol: 'BTC', lastPrice: '$456', change: '1.54', high: '34', low: '13', volume: '123', volumeUsd: '56' },
+//     { name: 'ETH/USD', symbol: 'ETH', lastPrice: '$456', change: '1.62', high: '34', low: '13', volume: '123', volumeUsd: '56' },
+//     { name: 'DAI/USD', symbol: 'DAI', lastPrice: '$456', change: '-2.52', high: '34', low: '13', volume: '123', volumeUsd: '56' },
+//     { name: 'USDT/USD', symbol: 'USDT', lastPrice: '$456', change: '1.62', high: '34', low: '13', volume: '123', volumeUsd: '56' },
+// ]
 const positionList = [
     { symbol: 'ETH', isLong: true, levarage: '15.4', marketPrice: '0.9611', change: '-8.05', entryPrice: '0.96', liqPrice: '1.05', colleteral: '10.43', pnl: '-804', },
     { symbol: 'BTC', isLong: false, levarage: '15.4', marketPrice: '0.9611', change: '41.5', entryPrice: '0.96', liqPrice: '1.05', colleteral: '10.43', pnl: '104.41', }
 ]
 
 
-export default function DashboardV3() {
+export default function DashboardV3(props) {
+    const {
+        savedIsPnlInLeverage,
+        savedShowPnlAfterFees,
+    } = props;
     const history = useHistory();
     const { active, library, account } = useWeb3React();
     const { chainId } = useChainId();
+
+    const tokenPairMarketList = useTokenPairMarketData();
+
+    // console.log("AAAA,tokenPairMarketList",tokenPairMarketList)
 
     const totalVolumeSum = useTotalVolume();
     const volumeInfo = useHourlyVolume();
@@ -269,6 +282,33 @@ export default function DashboardV3() {
         mvxSupply
     );
 
+    const [pendingPositions, setPendingPositions] = useState({});
+    const [updatedPositions, setUpdatedPositions] = useState({});
+    const positionQuery = getPositionQuery(whitelistedTokens, nativeTokenAddress);
+    const { data: positionData, error: positionDataError } = useSWR(
+        active && [active, chainId, readerAddress, "getPositions", vaultAddress, account],
+        {
+            fetcher: fetcher(library, Reader, [
+                positionQuery.collateralTokens,
+                positionQuery.indexTokens,
+                positionQuery.isLong,
+            ]),
+        }
+    );
+
+    const { positions, positionsMap } = getPositions(
+        chainId,
+        positionQuery,
+        positionData,
+        infoTokens,
+        savedIsPnlInLeverage,
+        savedShowPnlAfterFees,
+        account,
+        pendingPositions,
+        updatedPositions
+    );
+
+    console.log("AAAA,positions", positions)
 
     const vaultList = [
         { symbol: 'GLL', apy: `${formatKeyAmount(processedData, "mvlpAprTotal", 2, 2, true)}%`, locked: '104.41', invest: `${formatKeyAmount(processedData, "mvlpBalance", MVLP_DECIMALS, 2, true)}`, poolShare: '0.96%', profit: `$${formatKeyAmount(processedData, "totalMvlpRewardsUsd", USD_DECIMALS, 2, true)}`, },
@@ -282,7 +322,7 @@ export default function DashboardV3() {
                     <div className="label">Total Trading Volume</div>
                     <div>
                         <h1>${formatAmount(totalVolumeSum, USD_DECIMALS, 0, true)}</h1>
-                        <div className={cx('info-change',{
+                        <div className={cx('info-change', {
                             positive: volumeInfo > 0,
                             negative: volumeInfo < 0,
                             muted: volumeInfo === 0,
@@ -290,7 +330,7 @@ export default function DashboardV3() {
                             <img src={volumeInfo > 0 ? UpChartArrow : DownChartArrow} alt="icon" />
                             <div>{(volumeInfo / totalVolumeSum * 100).toFixed(2)}%</div>
                             (${formatAmount(volumeInfo, USD_DECIMALS, 0, true)})
-                        <span style={{ opacity: '0.5', }}>24h</span>
+                            <span style={{ opacity: '0.5', }}>24h</span>
                         </div>
                     </div>
                 </div>
@@ -309,7 +349,7 @@ export default function DashboardV3() {
                             <span style={{ opacity: '0.5', }}>24h</span>
                         </div>
                     </div>
-                    
+
                 </div>
                 <div className="total-info">
                     <div className="label">Assets Under Management</div>
@@ -323,7 +363,7 @@ export default function DashboardV3() {
                             <img src={tvl > 0 ? UpChartArrow : DownChartArrow} alt="icon" />
                             <div>...%</div>($...) <span style={{ opacity: '0.5', }}>24h</span></div>
                     </div>
-                    
+
                 </div>
 
             </div>
@@ -332,7 +372,7 @@ export default function DashboardV3() {
                 <div className="section section-noinvestments">
                     <div className="section-header">
                         <h1>No investment Yet</h1>
-                        <p className="text-description" style={{ margin:'16px auto 56px',maxWidth:658, }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas varius tortor nibh, sit amet tempor nibh finibus et. Aenean eu enim justo. Vestibulum aliquam hendrerit molestie. Mauris </p>
+                        <p className="text-description" style={{ margin: '16px auto 56px', maxWidth: 658, }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas varius tortor nibh, sit amet tempor nibh finibus et. Aenean eu enim justo. Vestibulum aliquam hendrerit molestie. Mauris </p>
                     </div>
 
                     <div className="DashboardV3-cards">
@@ -362,186 +402,212 @@ export default function DashboardV3() {
                     </div>
                 </div>}
             {/* {(processedData.mvlpBalanceUsd > 0) && */}
-                <div className="section section-investments">
-                    <div className="section-header">
-                        <h1>Your Investments </h1>
-                    </div>
-                    <div className="info-card-section" style={{ margin: '40px auto',maxWidth:952 }}>
-                        <ItemCard  label='Total PnL'  value={`$${formatKeyAmount(processedData, "totalMvlpRewardsUsd", USD_DECIMALS, 2, true)}`} icon={IconPercentage} />
-                        <ItemCard  label='Your GLL deposit' value={`$${formatKeyAmount(processedData, "mvlpBalanceUsd", USD_DECIMALS, 2, true)}`} icon={IconMoney} />
-                        <ItemCard style={{ width: '-webkit-fill-available', }} label='Claimable' value='$92.21' icon={IconClaim} buttonEle={<button
-                                className="btn-secondary "
-                                style={{ width: 75, height: 32 }}
-                            >
-                                Claim
-                            </button>}
-                            />
-                    </div>
-                    <InnerCard title='Your Opened Positions'>
-                        <div className="list-table">
-                            <table className="table-bordered" style={{ width: '100%', textAlign: 'left', borderSpacing: '0px 10px' }} cellspacing="0" cellpadding="0">
-                                <thead>
-                                    <tr>
-                                        <th>Position</th>
-                                        <th>Mkt.Price</th>
-                                        <th>24h Change <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /></th>
-                                        <th>Entry Price/Liq Price</th>
-                                        <th>Collateral</th>
-                                        <th>PnL</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {positionList.map((position, index) => {
-                                        var tokenImage = null;
+            <div className="section section-investments">
+                <div className="section-header">
+                    <h1>Your Investments </h1>
+                </div>
+                <div className="info-card-section" style={{ margin: '40px auto', maxWidth: 952 }}>
+                    <ItemCard label='Total PnL' value={`$${formatKeyAmount(processedData, "totalMvlpRewardsUsd", USD_DECIMALS, 2, true)}`} icon={IconPercentage} />
+                    <ItemCard label='Your GLL deposit' value={`$${formatKeyAmount(processedData, "mvlpBalanceUsd", USD_DECIMALS, 2, true)}`} icon={IconMoney} />
+                    <ItemCard style={{ width: '-webkit-fill-available', }} label='Claimable' value='$92.21' icon={IconClaim} buttonEle={<button
+                        className="btn-secondary "
+                        style={{ width: 75, height: 32 }}
+                    >
+                        Claim
+                    </button>}
+                    />
+                </div>
+                <InnerCard title='Your Opened Positions'>
+                    <div className="list-table">
+                        <table className="table-bordered" style={{ width: '100%', textAlign: 'left', borderSpacing: '0px 10px' }} cellspacing="0" cellpadding="0">
+                            <thead>
+                                <tr>
+                                    <th>Position</th>
+                                    <th>Mkt.Price</th>
+                                    <th>24h Change <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /></th>
+                                    <th>Entry Price/Liq Price</th>
+                                    <th>Collateral</th>
+                                    <th>PnL</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {positions.length > 0 && positions.map((position, index) => {
+                                    const liquidationPrice = getLiquidationPrice(position) || bigNumberify(0);
+                                    var tokenImage = null;
 
-                                        try {
-                                            tokenImage = getImageUrl({
-                                                path: `coins/others/${position.symbol.toLowerCase()}-original`,
-                                            });
-                                        } catch (error) {
-                                            console.error(error);
-                                        }
-                                        return (
-                                            <tr
-                                                key={index}
-
-                                            >
-                                                <td>
-                                                    <div className="App-card-title-info">
-                                                        <div className="App-card-title-info-icon">
-                                                            <img
-                                                                style={{ objectFit: "contain" }}
-                                                                src={tokenImage || tokenImage.default}
-                                                                alt={position.symbol}
-                                                                width={32}
-                                                                height={32}
-                                                            />
-                                                        </div>
+                                    try {
+                                        tokenImage = getImageUrl({
+                                            path: `coins/others/${position.indexToken.symbol.toLowerCase()}-original`,
+                                        });
+                                    } catch (error) {
+                                        console.error(error);
+                                    }
+                                    return (
+                                        <tr key={index} >
+                                            <td>
+                                                <div className="App-card-title-info">
+                                                    <div className="App-card-title-info-icon">
+                                                        <img
+                                                            style={{ objectFit: "contain" }}
+                                                            src={tokenImage || tokenImage.default}
+                                                            alt={position.symbol}
+                                                            width={32}
+                                                            height={32}
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <div style={{ fontSize: 18, fontWeight: 600 }}>{position.indexToken.symbol}</div>
                                                         <div>
-                                                            <div style={{ fontSize: 18, fontWeight: 600 }}>{position.symbol}</div>
-                                                            <div>
-                                                                <img src={position.isLong ? IconLong : IconShort} alt="icon" />
-
-                                                                <span style={{ fontSize: 14, fontWeight: 500, marginLeft: 4 }}>{position.levarage}x</span>
-                                                            </div>
+                                                            <img src={position.isLong ? IconLong : IconShort} alt="icon" />
+                                                            {position.leverage && (
+                                                                <span className="font-number" style={{ fontSize: 14, fontWeight: 500, marginLeft: 4 }}>{formatAmount(position.leverage, 4, 2, true)}x&nbsp;</span>
+                                                            )}
                                                         </div>
                                                     </div>
-                                                </td>
-                                                <td>{position.marketPrice}</td>
-                                                <td><span className={cx({
-                                                    positive: position.change > 0,
-                                                    negative: position.change < 0,
-                                                    muted: position.change === 0,
-                                                })}>{position.change}%</span></td>
-                                                <td>${position.entryPrice}/${position.liqPrice}</td>
-                                                <td>${position.colleteral}</td>
-                                                <td><span className={cx({
-                                                    positive: position.change > 0,
-                                                    negative: position.change < 0,
-                                                    muted: position.change === 0,
-                                                })}>{position.pnl}</span></td>
-                                                <td><button
-                                                    className="table-trade-btn"
-                                                    onClick={() => history.push('/trade')}
-                                                >
-                                                    Trade
-                                                </button></td>
-                                            </tr>
-                                        )
-                                    }
-
-                                    )}
-                                </tbody>
-                            </table></div>
-                        <div className="token-grid">
-                            {positionList.map((position, index) => { 
-                                var tokenImage = null;
-
-                                try {
-                                    tokenImage = getImageUrl({
-                                        path: `coins/others/${position.symbol.toLowerCase()}-original`,
-                                    });
-                                } catch (error) {
-                                    console.error(error);
+                                                </div>
+                                            </td>
+                                            <td className="font-number">${formatAmount(
+                                                position.markPrice,
+                                                USD_DECIMALS,
+                                                position.indexToken.displayDecimals,
+                                                true
+                                            )}</td>
+                                            <td><span className={cx({
+                                                positive: position.change > 0,
+                                                negative: position.change < 0,
+                                                muted: position.change === 0,
+                                            })}>{position.change}%</span></td>
+                                            <td className="font-number">
+                                                ${formatAmount(position.averagePrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}/
+                                                <span className="negative font-number" >${formatAmount(liquidationPrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}</span>
+                                            </td>
+                                            <td className="font-number">${formatAmount(
+                                                position.collateralAfterFee,
+                                                USD_DECIMALS,
+                                                USD_DISPLAY_DECIMALS,
+                                                true
+                                            )}</td>
+                                            <td><span className={cx({
+                                                positive: position.change > 0,
+                                                negative: position.change < 0,
+                                                muted: position.change === 0,
+                                            })}>{position.deltaBeforeFeesStr}</span></td>
+                                            <td><button
+                                                className="table-trade-btn"
+                                                onClick={() => history.push('/trade')}
+                                            >
+                                                Trade
+                                            </button></td>
+                                        </tr>
+                                    )
                                 }
-                                return (
-                                    <div className="App-card" key={index}>
-                                        <div className="App-card-title">
-                                            <div style={{ display: "flex", alignItems: 'center', gap: 16 }}>
-                                                <img
-                                                    style={{ objectFit: "contain" }}
-                                                    src={tokenImage || tokenImage.default}
-                                                    alt={position.symbol}
-                                                    width={32}
-                                                    height={32}
-                                                />
-                                                <span>{position.symbol}</span>
-                                            </div>
-                                        </div>
-                                        <div className="App-card-divider"></div>
-                                        <div className="App-card-content">
-                                            <div className="App-card-row">
-                                                <div className="label">Leverage</div>
-                                                <div>
-                                                    <img src={position.isLong ? IconLong : IconShort} alt="icon" />
 
-                                                    <span style={{ fontSize: 14, fontWeight: 500, marginLeft: 4 }}>{position.levarage}x</span>
-                                                </div>
-                                            </div>
-                                            <div className="App-card-row">
-                                                <div className="label">Mkt.Price</div>
-                                                <div>
-                                                    {position.marketPrice}
-                                                </div>
-                                            </div>
-                                            <div className="App-card-row">
-                                                <div className="label">24h Change <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /></div>
-                                                <div>
-                                                    <span className={cx({
-                                                        positive: position.change > 0,
-                                                        negative: position.change < 0,
-                                                        muted: position.change === 0,
-                                                    })}>{position.change}%</span>
-                                                </div>
-                                            </div>
-                                            <div className="App-card-row">
-                                                <div className="label">Entry Price/Liq Price</div>
-                                                <div>
-                                                    ${position.entryPrice}/${position.liqPrice}
-                                                </div>
-                                            </div>
-                                            <div className="App-card-row">
-                                                <div className="label">Collateral</div>
-                                                <div>
-                                                    ${position.colleteral}
-                                                </div>
-                                            </div>
-                                            <div className="App-card-row">
-                                                <div className="label">PnL</div>
-                                                <div>
-                                                    <span className={cx({
-                                                        positive: position.change > 0,
-                                                        negative: position.change < 0,
-                                                        muted: position.change === 0,
-                                                    })}>{position.pnl}</span>
-                                                </div>
-                                            </div>
-                                            <div className="App-card-row">
-                                                <button
-                                                    className="table-trade-btn w-full"
-                                                    onClick={() => history.push('/trade')}
-                                                >
-                                                    Trade
-                                                </button>
-                                            </div>
+                                )}
+                            </tbody>
+                        </table></div>
+                    <div className="token-grid">
+                        {positions.map((position, index) => {
+                            const liquidationPrice = getLiquidationPrice(position) || bigNumberify(0);
+                            var tokenImage = null;
+
+                            try {
+                                tokenImage = getImageUrl({
+                                    path: `coins/others/${position.indexToken.symbol.toLowerCase()}-original`,
+                                });
+                            } catch (error) {
+                                console.error(error);
+                            }
+                            return (
+                                <div className="App-card" key={index}>
+                                    <div className="App-card-title">
+                                        <div style={{ display: "flex", alignItems: 'center', gap: 16 }}>
+                                            <img
+                                                style={{ objectFit: "contain" }}
+                                                src={tokenImage || tokenImage.default}
+                                                alt={position.symbol}
+                                                width={32}
+                                                height={32}
+                                            />
+                                            <span>{position.indexToken.symbol}</span>
                                         </div>
                                     </div>
-                                )
-                            })}
-                        </div>
-                        </InnerCard>
-                    <InnerCard title='Your GLL Vault' style={{ marginTop: 8 }}>
+                                    <div className="App-card-divider"></div>
+                                    <div className="App-card-content">
+                                        <div className="App-card-row">
+                                            <div className="label">Leverage</div>
+                                            <div>
+                                                <img src={position.isLong ? IconLong : IconShort} alt="icon" />
+
+                                                {position.leverage && (
+                                                    <span className="font-number" style={{ fontSize: 14, fontWeight: 500, marginLeft: 4 }}>{formatAmount(position.leverage, 4, 2, true)}x&nbsp;</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="App-card-row">
+                                            <div className="label">Mkt.Price</div>
+                                            <div className="font-number">
+                                            ${formatAmount(
+                                                position.markPrice,
+                                                USD_DECIMALS,
+                                                position.indexToken.displayDecimals,
+                                                true
+                                            )}
+                                            </div>
+                                        </div>
+                                        <div className="App-card-row">
+                                            <div className="label">24h Change <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /></div>
+                                            <div className="font-number">
+                                                <span className={cx({
+                                                    positive: position.change > 0,
+                                                    negative: position.change < 0,
+                                                    muted: position.change === 0,
+                                                })}>{position.change}%</span>
+                                            </div>
+                                        </div>
+                                        <div className="App-card-row">
+                                            <div className="label">Entry Price/Liq Price</div>
+                                            <div className="font-number">
+                                            ${formatAmount(position.averagePrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}/
+                                                ${formatAmount(liquidationPrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}
+                                            </div>
+                                        </div>
+                                        <div className="App-card-row">
+                                            <div className="label">Collateral</div>
+                                            <div className="font-number">
+                                            ${formatAmount(
+                                                position.collateralAfterFee,
+                                                USD_DECIMALS,
+                                                USD_DISPLAY_DECIMALS,
+                                                true
+                                            )}
+                                            </div>
+                                        </div>
+                                        <div className="App-card-row">
+                                            <div className="label">PnL</div>
+                                            <div className="font-number">
+                                                <span className={cx({
+                                                    positive: position.change > 0,
+                                                    negative: position.change < 0,
+                                                    muted: position.change === 0,
+                                                })}>{position.deltaBeforeFeesStr}</span>
+                                            </div>
+                                        </div>
+                                        <div className="App-card-row">
+                                            <button
+                                                className="table-trade-btn w-full"
+                                                onClick={() => history.push('/trade')}
+                                            >
+                                                Trade
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </InnerCard>
+                <InnerCard title='Your GLL Vault' style={{ marginTop: 8 }}>
                     <div className="list-table">
                         <table className="table-bordered" style={{ width: '100%', textAlign: 'left', borderSpacing: '0px 10px' }} cellspacing="0" cellpadding="0">
                             <thead>
@@ -611,9 +677,9 @@ export default function DashboardV3() {
                                 )}
                             </tbody>
                         </table></div>
-                    <div className="token-grid" style={{ gridTemplateColumns: '1fr'}}>
+                    <div className="token-grid" style={{ gridTemplateColumns: '1fr' }}>
                         {vaultList.map((item, index) => {
-                            
+
                             return (
                                 <div className="App-card" key={index}>
                                     <div className="App-card-title">
@@ -675,9 +741,9 @@ export default function DashboardV3() {
                             )
                         })}
                     </div>
-                    </InnerCard>
+                </InnerCard>
 
-                </div>
+            </div>
             {/* } */}
 
             <div className=" section-markets">
@@ -731,16 +797,16 @@ export default function DashboardV3() {
                                             positive: pairItem.change > 0,
                                             negative: pairItem.change < 0,
                                             muted: pairItem.change === 0,
-                                        })}>{pairItem.lastPrice}</td>
+                                        }, "font-number")}>${pairItem.lastPrice}</td>
                                         <td className={cx({
                                             positive: pairItem.change > 0,
                                             negative: pairItem.change < 0,
                                             muted: pairItem.change === 0,
-                                        })}>{pairItem.change}%</td>
-                                        <td>{pairItem.high}</td>
-                                        <td>{pairItem.low}</td>
-                                        <td>{pairItem.volume}</td>
-                                        <td>{pairItem.volumeUsd}</td>
+                                        }, "font-number")}>{pairItem.change}%</td>
+                                        <td className="font-number">${pairItem.high}</td>
+                                        <td className="font-number">${pairItem.low}</td>
+                                        <td className="font-number">{pairItem.volume}</td>
+                                        <td className="font-number">${pairItem.volumeUsd}</td>
 
                                     </tr>
 
@@ -753,7 +819,7 @@ export default function DashboardV3() {
                     </table>
                 </div>
                 <div className="token-grid">
-                    {tokenPairMarketList.map((pairItem, index) => { 
+                    {tokenPairMarketList.map((pairItem, index) => {
                         var tokenImage = null;
 
                         try {
@@ -825,7 +891,7 @@ export default function DashboardV3() {
             <div className=" section leverage-liquidity-container">
                 <div style={{ textAlign: 'center' }}>
                     {/* <img src={LiquidityPng} alt="liquidity" /> */}
-                    <Lottie animationData={animationData} loop={true} style={{height:445}} />
+                    <Lottie animationData={animationData} loop={true} style={{ height: 445 }} />
                 </div>
                 <div className="section-header" >
                     <h1>Grizzly Leverage Liquidity <TextBadge text='Active' bgColor={'rgba(121,255,171,0.1)'} textColor='#79ffab' /></h1>
