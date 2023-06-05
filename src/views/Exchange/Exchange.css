@@ -236,7 +236,7 @@
   width: 600px;
 }
 .PositionEditor .Modal .Modal-content .Modal-body {
-  margin-top: 40px;
+  margin-top: 32px;
 }
 
 .PositionEditor .Modal-content .PositionEditor-info-box,
@@ -780,7 +780,7 @@ table.Exchange-list th:last-child {
   scrollbar-width: thin;
   max-height: calc(100vh - 5rem);
   overflow-y: auto;
-  margin-top: 40px;
+  margin-top: 32px;
 }
 
 .Selector .Modal-content {
