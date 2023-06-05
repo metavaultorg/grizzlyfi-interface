@@ -54,6 +54,7 @@ import AssetDropdown from "../Dashboard/AssetDropdown";
 import cx from "classnames";
 import ChartPrice from './ChartPrice'
 import TextBadge from '../../components/Common/TextBadge'
+import APRLabel from "../../components/APRLabel/APRLabel";
 
 export default function Earn(props) {
   const history = useHistory();
@@ -174,7 +175,7 @@ export default function Earn(props) {
       <div className='Exchange-content'>
         <div className='Exchange-left'>
           <div className="info-card-section" style={{maxWidth:912}}>
-            <ItemCard style={{ minWidth: 218 }} label='APR' value={`$123`} icon={IconPercentage} />
+            <ItemCard style={{ minWidth: 218 }} label='APR' value={<APRLabel chainId={POLYGON} label="mvlpAprTotal" key="POLYGON" />} icon={IconPercentage} />
             <ItemCard style={{ minWidth: 298 }}  label='Assets Under Management' value={`$123`} icon={IconMoney} />
             <ItemCard style={{ width: '-webkit-fill-available', minWidth: 320 }}  label='Claimable Rewards' value='$92.21' icon={IconClaim} buttonEle={<button
               className="btn-secondary "
