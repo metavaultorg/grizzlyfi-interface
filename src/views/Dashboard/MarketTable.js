@@ -41,7 +41,7 @@ export default function MarketTable() {
 
                         try {
                             tokenImage = getImageUrl({
-                                path: `coins/others/${pairItem.symbol.toLowerCase()}-original`,
+                                path: `coins/${pairItem.symbol.toLowerCase()}`,
                             });
                         } catch (error) {
                             console.error(error);
@@ -95,7 +95,7 @@ export default function MarketTable() {
 
                         try {
                             tokenImage = getImageUrl({
-                                path: `coins/others/${pairItem.symbol.toLowerCase()}-original`,
+                                path: `coins/${pairItem.symbol.toLowerCase()}`,
                             });
                         } catch (error) {
                             console.error(error);

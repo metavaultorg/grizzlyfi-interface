@@ -38,7 +38,7 @@ export default function ChartTokenSelector(props) {
           className={cx("App-cta small transparent chart-token-selector flex", { "default-cursor": isSwap })}
         >
           <img src={getImageUrl({
-            path: `coins/others/${value.symbol.toLowerCase()}-original`,
+            path: `coins/${value.symbol.toLowerCase()}`,
           })} alt={value.name} className="token-logo"  width={48} />
           <span className="chart-token-selector--current">{value.symbol} / USD</span>
           {!isSwap && <img style={{ width: 14, height: 14 }} src={FaChevronDown} alt="chevron down" />}

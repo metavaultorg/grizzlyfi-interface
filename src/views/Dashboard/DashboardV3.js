@@ -86,8 +86,6 @@ import TextBadge from '../../components/Common/TextBadge'
 import DownChartArrow from '../../assets/icons/down-chart-arrow.svg'
 import UpChartArrow from '../../assets/icons/up-chart-arrow.svg'
 import { useTokenPairMarketData } from '../../hooks/useCoingeckoPrices';
-import StartTradingImg from '../../assets/start-trading.png'
-import EarnRealImg from '../../assets/earn-real-yield.png';
 import { sortArr } from './util'
 import MarketTable from "./MarketTable";
 import OpenedPositions from "./OpenedPositions";
@@ -342,7 +340,10 @@ export default function DashboardV3(props) {
 
                     <div className="DashboardV3-cards">
                         <div className="invest-card">
-                            <img src={StartTradingImg} alt=""/>
+                            <img src={getImageUrl({
+                                path: `start-trading`,
+                                format: 'png'
+                            })} alt="" />
                             <h1>Start Trading</h1>
                             <p className="text-description">Experience purely decentralized trading on Grizzly. Trade your favorite bluechip Cryptocurrencies instantly with up to 50x leverage</p>
                             <div className="w-full" style={{ maxWidth: 512 }}>
@@ -352,7 +353,10 @@ export default function DashboardV3(props) {
                             </div>
                         </div>
                         <div className="invest-card">
-                            <img src={EarnRealImg} alt="" />
+                            <img src={getImageUrl({
+                                path: `earn-real-yield`,
+                                format:'png'
+                            })} alt="" />
                             <h1>Earn Real Yield</h1>
                             <p className="text-description">Get to earn real yield in BTC, ETH and other bluechip
                                 currencies by providing the liquidity others can use to trade.

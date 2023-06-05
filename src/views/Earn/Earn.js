@@ -219,7 +219,7 @@ export default function Earn(props) {
 
                 try {
                   tokenImage = getImageUrl({
-                    path: `coins/others/${token.symbol.toLowerCase()}-original`,
+                    path: `coins/${token.symbol.toLowerCase()}`,
                   });
                 } catch (error) {
                   console.error(error);
@@ -284,7 +284,7 @@ export default function Earn(props) {
 
             try {
               tokenImage = getImageUrl({
-                path: `coins/others/${token.symbol.toLowerCase()}-original`,
+                path: `coins/${token.symbol.toLowerCase()}`,
               });
             } catch (error) {
               console.error(error);

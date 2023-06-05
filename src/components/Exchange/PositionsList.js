@@ -562,7 +562,7 @@ export default function PositionsList(props) {
 
             try {
               tokenImage = getImageUrl({
-                path: `coins/others/${position.indexToken.symbol.toLowerCase()}-original`,
+                path: `coins/${position.indexToken.symbol.toLowerCase()}`,
               });
             } catch (error) {
               console.error(error);

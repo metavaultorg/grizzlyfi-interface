@@ -92,7 +92,7 @@ export default function OpenedPositions(props) {
                           const marketToken = tokenPairMarketList.find((token) => token.symbol === position.indexToken.symbol);
                           try {
                               tokenImage = getImageUrl({
-                                  path: `coins/others/${position.indexToken.symbol.toLowerCase()}-original`,
+                                  path: `coins/${position.indexToken.symbol.toLowerCase()}`,
                               });
                           } catch (error) {
                               console.error(error);
@@ -168,7 +168,7 @@ export default function OpenedPositions(props) {
 
                   try {
                       tokenImage = getImageUrl({
-                          path: `coins/others/${position.indexToken.symbol.toLowerCase()}-original`,
+                          path: `coins/${position.indexToken.symbol.toLowerCase()}`,
                       });
                   } catch (error) {
                       console.error(error);

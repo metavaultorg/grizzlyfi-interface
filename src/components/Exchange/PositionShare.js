@@ -255,7 +255,7 @@ function PositionShareCard({
               <div className="share-token">
                 <img width={48} height={48}
                   src={getImageUrl({
-                    path: `coins/others/${indexToken.symbol}-original`,
+                    path: `coins/${indexToken.symbol}`,
                   })} alt=""
                 />
                 <div>{indexToken.symbol}</div>

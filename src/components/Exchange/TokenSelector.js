@@ -56,7 +56,7 @@ export default function TokenSelector(props) {
 
   try {
     tokenImage = getImageUrl({
-      path: `coins/others/${tokenInfo.symbol.toLowerCase()}-original`,
+      path: `coins/${tokenInfo.symbol.toLowerCase()}`,
     });
   } catch (error) {
     console.error(error);
@@ -103,11 +103,11 @@ export default function TokenSelector(props) {
             let tokenPopupImage;
             try {
               tokenPopupImage = getImageUrl({
-                path: `coins/others/${token.symbol.toLowerCase()}-original`,
+                path: `coins/${token.symbol.toLowerCase()}`,
               });
             } catch (error) {
               tokenPopupImage = getImageUrl({
-                path: `coins/others/busd-original`,
+                path: `coins/busd`,
               });
             }
             let info = infoTokens ? infoTokens[token.address] : {};
