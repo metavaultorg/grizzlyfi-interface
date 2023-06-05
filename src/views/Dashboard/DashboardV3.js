@@ -92,28 +92,36 @@ import { useTokenPairMarketData } from '../../hooks/useCoingeckoPrices';
 
 const { AddressZero } = ethers.constants;
 
-// const tokenPairMarketList = [
-//     { name: 'BTC/USD', symbol: 'BTC', lastPrice: '$456', change: '1.54', high: '34', low: '13', volume: '123', volumeUsd: '56' },
-//     { name: 'ETH/USD', symbol: 'ETH', lastPrice: '$456', change: '1.62', high: '34', low: '13', volume: '123', volumeUsd: '56' },
-//     { name: 'DAI/USD', symbol: 'DAI', lastPrice: '$456', change: '-2.52', high: '34', low: '13', volume: '123', volumeUsd: '56' },
-//     { name: 'USDT/USD', symbol: 'USDT', lastPrice: '$456', change: '1.62', high: '34', low: '13', volume: '123', volumeUsd: '56' },
-// ]
+
 const positionList = [
     { symbol: 'ETH', isLong: true, levarage: '15.4', marketPrice: '0.9611', change: '-8.05', entryPrice: '0.96', liqPrice: '1.05', colleteral: '10.43', pnl: '-804', },
     { symbol: 'BTC', isLong: false, levarage: '15.4', marketPrice: '0.9611', change: '41.5', entryPrice: '0.96', liqPrice: '1.05', colleteral: '10.43', pnl: '104.41', }
 ]
 
+export function sortArr(arr, key, isAsc) {
+    let result = arr.sort(function add(a, b) {
+        if (isAsc) {
+           return  a[key] - b[key]
+        } else { //desc
+            return b[key] - a[key]
+        }
+    })
+    // console.log(result);w
+    return result
+}
+
 
 export default function DashboardV3(props) {
-    const {
-        savedIsPnlInLeverage,
-        savedShowPnlAfterFees,
-    } = props;
+    const { savedIsPnlInLeverage,savedShowPnlAfterFees,} = props;
     const history = useHistory();
     const { active, library, account } = useWeb3React();
     const { chainId } = useChainId();
 
+    const [marketTablesSort, setMarketTablesSort] = useState({ sortBy: 'change', isAsc: true })
+    const [positionTablesSort, setPositionTablesSort] = useState({ sortBy: 'change', isAsc: true })
+
     const tokenPairMarketList = useTokenPairMarketData();
+
 
     const totalVolumeSum = useTotalVolume();
     const volumeInfo = useHourlyVolume();
@@ -311,6 +319,23 @@ export default function DashboardV3(props) {
 
     ]
 
+    function SortTh({ value, title, }) {
+        return <th
+            className="sortCol"
+            onClick={() => { setMarketTablesSort({ sortBy: value, isAsc: !marketTablesSort.isAsc }) }}
+        >{title} {marketTablesSort.sortBy == value && <img src={IconDown} className={cx({ sortUp: marketTablesSort.isAsc }, 'sortIcon')} alt="" />}
+        </th>
+        
+    }
+    function SortThPostion({ value, title, }) {
+        return <th
+            className="sortCol"
+            onClick={() => { setPositionTablesSort({ sortBy: value, isAsc: !positionTablesSort.isAsc }) }}
+        >{title} {positionTablesSort.sortBy == value && <img src={IconDown} className={cx({ sortUp: positionTablesSort.isAsc }, 'sortIcon')} alt="" />}
+        </th>
+
+    }
+
     return <SEO title={getPageTitle("Dashboard")}>
         <div className="default-container DashboardV2 page-layout">
             <div className="section-total-info">
@@ -419,16 +444,16 @@ export default function DashboardV3(props) {
                             <thead>
                                 <tr>
                                     <th>Position</th>
-                                    <th>Mkt.Price</th>
-                                    <th>24h Change <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /></th>
+                                    <SortThPostion value={'markPrice'} title={'Mkt.Price'} />
+                                    <SortThPostion value={'change'} title={'24h Change'} />
                                     <th>Entry Price/Liq Price</th>
-                                    <th>Collateral</th>
-                                    <th>PnL</th>
+                                    <SortThPostion value={'collateralAfterFee'} title={'Collateral'} />
+                                    <SortThPostion value={'deltaBeforeFeesStr'} title={'PnL'} />
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {positions.length > 0 && positions.map((position, index) => {
+                                {positions.length > 0 && sortArr(positions,positionTablesSort.sortBy,positionTablesSort.isAsc).map((position, index) => {
                                     const liquidationPrice = getLiquidationPrice(position) || bigNumberify(0);
                                     var tokenImage = null;
                                     const marketToken = tokenPairMarketList.find((token)=>token.symbol === position.indexToken.symbol);
@@ -753,16 +778,16 @@ export default function DashboardV3(props) {
                         <thead>
                             <tr>
                                 <th>Pair</th>
-                                <th>Last Price <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /></th>
-                                <th>24h Change</th>
-                                <th>24h High</th>
-                                <th>24h Low</th>
-                                <th>24h Volume</th>
-                                <th>24h Volume(USD)</th>
+                                <SortTh value='lastPrice' title='Last Price ' />
+                                <SortTh value='change' title='24h Change' />
+                                <SortTh value='high' title='24h High' />
+                                <SortTh value='low' title='24h Low' />
+                                <SortTh value='volume' title='24h Volume' />
+                                <SortTh value='volumeUsd' title='24h Volume(USD)' />
                             </tr>
                         </thead>
                         <tbody>
-                            {tokenPairMarketList.map((pairItem, index) => {
+                            {sortArr(tokenPairMarketList,marketTablesSort.sortBy,marketTablesSort.isAsc).map((pairItem, index) => {
                                 var tokenImage = null;
 
                                 try {

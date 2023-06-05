@@ -152,3 +152,15 @@ p{
   align-items: center;
   gap: 4px;
 }
+.sortIcon{
+  margin-bottom: -4px;
+}
+.sortUp{
+  transform: rotate(180deg);
+}
+.sortCol{
+  cursor: pointer;
+}
+.sortCol:hover{
+  opacity: 0.8;
+}
