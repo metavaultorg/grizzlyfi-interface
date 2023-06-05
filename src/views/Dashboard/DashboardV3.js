@@ -874,7 +874,7 @@ export default function DashboardV3(props) {
                                             negative: pairItem.change < 0,
                                             muted: pairItem.change === 0,
                                         })}>
-                                            {pairItem.lastPrice}
+                                            ${pairItem.lastPrice}
                                         </div>
                                     </div>
                                     <div className="App-card-row">
@@ -887,11 +887,11 @@ export default function DashboardV3(props) {
                                     </div>
                                     <div className="App-card-row">
                                         <div className="label">24h High</div>
-                                        <div>{pairItem.high}</div>
+                                        <div>${pairItem.high}</div>
                                     </div>
                                     <div className="App-card-row">
                                         <div className="label">24h Low</div>
-                                        <div>{pairItem.low}</div>
+                                        <div>${pairItem.low}</div>
                                     </div>
                                     <div className="App-card-row">
                                         <div className="label">24h Volume</div>
@@ -899,7 +899,7 @@ export default function DashboardV3(props) {
                                     </div>
                                     <div className="App-card-row">
                                         <div className="label">24h Volume(USD)</div>
-                                        <div>{pairItem.volumeUsd}</div>
+                                        <div>${pairItem.volumeUsd}</div>
                                     </div>
 
                                 </div>

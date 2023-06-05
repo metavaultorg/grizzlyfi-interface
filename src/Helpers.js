@@ -1578,6 +1578,31 @@ export const limitDecimals = (amount, maxDecimals) => {
   return amountStr;
 };
 
+export const compactNumber = value => {
+  const abs = Math.abs(value)
+  if (abs >= 1e9) {
+    return `${(value / 1e9).toFixed(abs < 1e10 ? 2 : 1)}B`
+  }
+  if (abs >= 1e6) {
+    return `${(value / 1e6).toFixed(abs < 1e7 ? 2 : 1)}M`
+  }
+  if (abs >= 1e3) {
+    return `${(value / 1e3).toFixed(abs < 1e4 ? 2 : 1)}K`
+  }
+  return `${value.toFixed(1)}`
+}
+
+export const formatNumber = (value, displayDecimals, useComma, compact) => {
+  let ret = limitDecimals(value, displayDecimals);
+  if (compact) {
+    ret = compactNumber(ret)
+  }
+  if (useComma) {
+    ret = numberWithCommas(ret);
+  }
+  return ret;
+}
+
 export const padDecimals = (amount, minDecimals) => {
   let amountStr = amount.toString();
   const dotIndex = amountStr.indexOf(".");

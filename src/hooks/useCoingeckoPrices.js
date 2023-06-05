@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
-import { limitDecimals, CHAIN_ID } from "../Helpers";
+import { limitDecimals, numberWithCommas, formatNumber, CHAIN_ID } from "../Helpers";
 import { getTokenBySymbol } from "../data/Tokens";
 import useSWR from "swr";
 import axios from "axios";
@@ -88,12 +88,12 @@ export function useCoingeckoPrices(symbol) {
         return {
             name: symbol.concat("/USD"),
             symbol: symbol,
-            lastPrice: limitDecimals(lastPrice, displayDecimals),
+            lastPrice: formatNumber(lastPrice, displayDecimals, true, false),
             change: limitDecimals((lastPrice - firstPrice) / firstPrice * 100, 2),
-            high: limitDecimals(high_24h, displayDecimals),
-            low: limitDecimals(low_24h, displayDecimals),
-            volume: limitDecimals(volume, 2),
-            volumeUsd: limitDecimals(volumeUsd, 2),
+            high: formatNumber(high_24h, displayDecimals, true, false),
+            low: formatNumber(low_24h, displayDecimals, true, false),
+            volume: formatNumber(volume, 0, true, false),
+            volumeUsd: formatNumber(volumeUsd, 0, true, false),
         };
     }, [res, symbol]);
 
