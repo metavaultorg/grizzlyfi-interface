@@ -10,7 +10,7 @@ import { ethers } from "ethers";
 import statsIcon from "../../assets/icons/statsIcon.png";
 import { getImageUrl } from "../../cloudinary/getImageUrl";
 import cx from "classnames";
-import { getWhitelistedTokens, getTokenBySymbol } from "../../data/Tokens";
+
 import { getFeeHistory } from "../../data/Fees";
 import Token from "../../abis/Token.json";
 
@@ -64,8 +64,6 @@ import Reader from "../../abis/Reader.json";
 import MvlpManager from "../../abis/MvlpManager.json";
 import Footer from "../../Footer";
 
-import { getPositionQuery, getPositions } from "../Exchange/Exchange";
-
 import "./DashboardV3.css";
 
 import AssetDropdown from "./AssetDropdown";
@@ -78,8 +76,7 @@ import IconPercentage from '../../assets/icons/icon-percentage.svg'
 import IconMoney from '../../assets/icons/icon-investments-money.svg'
 import IconClaim from '../../assets/icons/icon-claim-reward.svg'
 import InnerCard from '../../components/Common/InnerCard'
-import IconLong from '../../assets/icons/icon-long.svg'
-import IconShort from '../../assets/icons/icon-short.svg'
+
 import IconToken from '../../assets/icons/honey-token.svg'
 import LiquidityPng from '../../assets/liquidity.png'
 import IconDown from '../../assets/icons/icon-down.svg'
@@ -89,36 +86,23 @@ import TextBadge from '../../components/Common/TextBadge'
 import DownChartArrow from '../../assets/icons/down-chart-arrow.svg'
 import UpChartArrow from '../../assets/icons/up-chart-arrow.svg'
 import { useTokenPairMarketData } from '../../hooks/useCoingeckoPrices';
+import StartTradingImg from '../../assets/start-trading.png'
+import EarnRealImg from '../../assets/earn-real-yield.png';
+import { sortArr } from './util'
+import MarketTable from "./MarketTable";
+import OpenedPositions from "./OpenedPositions";
 
 const { AddressZero } = ethers.constants;
 
 
-const positionList = [
-    { symbol: 'ETH', isLong: true, levarage: '15.4', marketPrice: '0.9611', change: '-8.05', entryPrice: '0.96', liqPrice: '1.05', colleteral: '10.43', pnl: '-804', },
-    { symbol: 'BTC', isLong: false, levarage: '15.4', marketPrice: '0.9611', change: '41.5', entryPrice: '0.96', liqPrice: '1.05', colleteral: '10.43', pnl: '104.41', }
-]
-
-export function sortArr(arr, key, isAsc) {
-    let result = arr.sort(function add(a, b) {
-        if (isAsc) {
-           return  a[key] - b[key]
-        } else { //desc
-            return b[key] - a[key]
-        }
-    })
-    // console.log(result);w
-    return result
-}
-
 
 export default function DashboardV3(props) {
-    const { savedIsPnlInLeverage,savedShowPnlAfterFees,} = props;
-    const history = useHistory();
+
+    
     const { active, library, account } = useWeb3React();
     const { chainId } = useChainId();
 
-    const [marketTablesSort, setMarketTablesSort] = useState({ sortBy: 'change', isAsc: true })
-    const [positionTablesSort, setPositionTablesSort] = useState({ sortBy: 'change', isAsc: true })
+    
 
     const tokenPairMarketList = useTokenPairMarketData();
 
@@ -126,9 +110,7 @@ export default function DashboardV3(props) {
     const totalVolumeSum = useTotalVolume();
     const volumeInfo = useHourlyVolume();
 
-    const whitelistedTokens = getWhitelistedTokens(chainId);
-    const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
-    const tokenList = whitelistedTokens.filter((t) => !t.isWrapped);
+    
 
     const vaultAddress = getContract(chainId, "Vault");
     const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
@@ -288,53 +270,15 @@ export default function DashboardV3(props) {
         mvxSupply
     );
 
-    const [pendingPositions, setPendingPositions] = useState({});
-    const [updatedPositions, setUpdatedPositions] = useState({});
-    const positionQuery = getPositionQuery(whitelistedTokens, nativeTokenAddress);
-    const { data: positionData, error: positionDataError } = useSWR(
-        active && [active, chainId, readerAddress, "getPositions", vaultAddress, account],
-        {
-            fetcher: fetcher(library, Reader, [
-                positionQuery.collateralTokens,
-                positionQuery.indexTokens,
-                positionQuery.isLong,
-            ]),
-        }
-    );
+    
 
-    const { positions, positionsMap } = getPositions(
-        chainId,
-        positionQuery,
-        positionData,
-        infoTokens,
-        savedIsPnlInLeverage,
-        savedShowPnlAfterFees,
-        account,
-        pendingPositions,
-        updatedPositions
-    );
+    
 
     const vaultList = [
         { symbol: 'GLL', apy: `${formatKeyAmount(processedData, "mvlpAprTotal", 2, 2, true)}%`, locked: '104.41', invest: `${formatKeyAmount(processedData, "mvlpBalance", MVLP_DECIMALS, 2, true)}`, poolShare: '0.96%', profit: `$${formatKeyAmount(processedData, "totalMvlpRewardsUsd", USD_DECIMALS, 2, true)}`, },
 
     ]
 
-    function SortTh({ value, title, }) {
-        return <th
-            className="sortCol"
-            onClick={() => { setMarketTablesSort({ sortBy: value, isAsc: !marketTablesSort.isAsc }) }}
-        >{title} {marketTablesSort.sortBy == value && <img src={IconDown} className={cx({ sortUp: marketTablesSort.isAsc }, 'sortIcon')} alt="" />}
-        </th>
-        
-    }
-    function SortThPostion({ value, title, }) {
-        return <th
-            className="sortCol"
-            onClick={() => { setPositionTablesSort({ sortBy: value, isAsc: !positionTablesSort.isAsc }) }}
-        >{title} {positionTablesSort.sortBy == value && <img src={IconDown} className={cx({ sortUp: positionTablesSort.isAsc }, 'sortIcon')} alt="" />}
-        </th>
-
-    }
 
     return <SEO title={getPageTitle("Dashboard")}>
         <div className="default-container DashboardV2 page-layout">
@@ -398,9 +342,9 @@ export default function DashboardV3(props) {
 
                     <div className="DashboardV3-cards">
                         <div className="invest-card">
-                            <img />
+                            <img src={StartTradingImg} alt=""/>
                             <h1>Start Trading</h1>
-                            <p className="text-description">Experience purely decentralized trading on Grizzly. Trade your favorite bluechip Cryptocurrencies instantly with up to 100x leverage</p>
+                            <p className="text-description">Experience purely decentralized trading on Grizzly. Trade your favorite bluechip Cryptocurrencies instantly with up to 50x leverage</p>
                             <div className="w-full" style={{ maxWidth: 512 }}>
                                 <Link to="" className="btn-primary ">
                                     Trade Now
@@ -408,7 +352,7 @@ export default function DashboardV3(props) {
                             </div>
                         </div>
                         <div className="invest-card">
-                            <img />
+                            <img src={EarnRealImg} alt="" />
                             <h1>Earn Real Yield</h1>
                             <p className="text-description">Get to earn real yield in BTC, ETH and other bluechip
                                 currencies by providing the liquidity others can use to trade.
@@ -439,195 +383,7 @@ export default function DashboardV3(props) {
                     />
                 </div>
                 <InnerCard title='Your Opened Positions'>
-                    <div className="list-table">
-                        <table className="table-bordered" style={{ width: '100%', textAlign: 'left', borderSpacing: '0px 10px' }} cellspacing="0" cellpadding="0">
-                            <thead>
-                                <tr>
-                                    <th>Position</th>
-                                    <SortThPostion value={'markPrice'} title={'Mkt.Price'} />
-                                    <SortThPostion value={'change'} title={'24h Change'} />
-                                    <th>Entry Price/Liq Price</th>
-                                    <SortThPostion value={'collateralAfterFee'} title={'Collateral'} />
-                                    <SortThPostion value={'deltaBeforeFeesStr'} title={'PnL'} />
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {positions.length > 0 && sortArr(positions,positionTablesSort.sortBy,positionTablesSort.isAsc).map((position, index) => {
-                                    const liquidationPrice = getLiquidationPrice(position) || bigNumberify(0);
-                                    var tokenImage = null;
-                                    const marketToken = tokenPairMarketList.find((token)=>token.symbol === position.indexToken.symbol);
-                                    try {
-                                        tokenImage = getImageUrl({
-                                            path: `coins/others/${position.indexToken.symbol.toLowerCase()}-original`,
-                                        });
-                                    } catch (error) {
-                                        console.error(error);
-                                    }
-                                    return (
-                                        <tr key={index} >
-                                            <td>
-                                                <div className="App-card-title-info">
-                                                    <div className="App-card-title-info-icon">
-                                                        <img
-                                                            style={{ objectFit: "contain" }}
-                                                            src={tokenImage || tokenImage.default}
-                                                            alt={position.symbol}
-                                                            width={32}
-                                                            height={32}
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <div style={{ fontSize: 18, fontWeight: 600 }}>{position.indexToken.symbol}</div>
-                                                        <div style={{ display: "flex" }}>
-                                                            <img src={position.isLong ? IconLong : IconShort} alt="icon" />
-                                                            {position.leverage && (
-                                                                <span className="font-number" style={{ fontSize: 14, fontWeight: 500, marginLeft: 4 }}>{formatAmount(position.leverage, 4, 2, true)}x&nbsp;</span>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="font-number">${formatAmount(
-                                                position.markPrice,
-                                                USD_DECIMALS,
-                                                position.indexToken.displayDecimals,
-                                                true
-                                            )}</td>
-                                            <td><span className={cx({
-                                                positive: position.change > 0,
-                                                negative: position.change < 0,
-                                                muted: position.change === 0,
-                                            })}>{marketToken?marketToken.change + "%": "-"}</span></td>
-                                            <td className="font-number">
-                                                ${formatAmount(position.averagePrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}/
-                                                <span className="negative font-number" >${formatAmount(liquidationPrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}</span>
-                                            </td>
-                                            <td className="font-number">${formatAmount(
-                                                position.collateralAfterFee,
-                                                USD_DECIMALS,
-                                                USD_DISPLAY_DECIMALS,
-                                                true
-                                            )}</td>
-                                            <td><span className={cx({
-                                                positive: position.change > 0,
-                                                negative: position.change < 0,
-                                                muted: position.change === 0,
-                                            }, "font-number")}>{position.deltaBeforeFeesStr}</span></td>
-                                            <td><button
-                                                className="table-trade-btn"
-                                                onClick={() => history.push('/trade')}
-                                            >
-                                                Trade
-                                            </button></td>
-                                        </tr>
-                                    )
-                                }
-
-                                )}
-                            </tbody>
-                        </table></div>
-                    <div className="token-grid">
-                        {positions.map((position, index) => {
-                            const liquidationPrice = getLiquidationPrice(position) || bigNumberify(0);
-                            const marketToken = tokenPairMarketList.find((token)=>token.symbol === position.indexToken.symbol);
-                            var tokenImage = null;
-
-                            try {
-                                tokenImage = getImageUrl({
-                                    path: `coins/others/${position.indexToken.symbol.toLowerCase()}-original`,
-                                });
-                            } catch (error) {
-                                console.error(error);
-                            }
-                            return (
-                                <div className="App-card" key={index}>
-                                    <div className="App-card-title">
-                                        <div style={{ display: "flex", alignItems: 'center', gap: 16 }}>
-                                            <img
-                                                style={{ objectFit: "contain" }}
-                                                src={tokenImage || tokenImage.default}
-                                                alt={position.symbol}
-                                                width={32}
-                                                height={32}
-                                            />
-                                            <span>{position.indexToken.symbol}</span>
-                                        </div>
-                                    </div>
-                                    <div className="App-card-divider"></div>
-                                    <div className="App-card-content">
-                                        <div className="App-card-row">
-                                            <div className="label">Leverage</div>
-                                            <div style={{ display: "flex", alignItems: 'center', gap: 4 }}>
-                                                <img src={position.isLong ? IconLong : IconShort} alt="icon" />
-
-                                                {position.leverage && (
-                                                    <span className="font-number" style={{ fontSize: 14, fontWeight: 500, marginLeft: 4 }}>{formatAmount(position.leverage, 4, 2, true)}x&nbsp;</span>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div className="App-card-row">
-                                            <div className="label">Mkt.Price</div>
-                                            <div className="font-number">
-                                            ${formatAmount(
-                                                position.markPrice,
-                                                USD_DECIMALS,
-                                                position.indexToken.displayDecimals,
-                                                true
-                                            )}
-                                            </div>
-                                        </div>
-                                        <div className="App-card-row">
-                                            <div className="label">24h Change <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /></div>
-                                            <div className="font-number">
-                                                <span className={cx({
-                                                    positive: position.change > 0,
-                                                    negative: position.change < 0,
-                                                    muted: position.change === 0,
-                                                })}>{marketToken?marketToken.change + "%": "-"}</span>
-                                            </div>
-                                        </div>
-                                        <div className="App-card-row">
-                                            <div className="label">Entry Price/Liq Price</div>
-                                            <div className="font-number">
-                                            ${formatAmount(position.averagePrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}/
-                                                ${formatAmount(liquidationPrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}
-                                            </div>
-                                        </div>
-                                        <div className="App-card-row">
-                                            <div className="label">Collateral</div>
-                                            <div className="font-number">
-                                            ${formatAmount(
-                                                position.collateralAfterFee,
-                                                USD_DECIMALS,
-                                                USD_DISPLAY_DECIMALS,
-                                                true
-                                            )}
-                                            </div>
-                                        </div>
-                                        <div className="App-card-row">
-                                            <div className="label">PnL</div>
-                                            <div>
-                                                <span className={cx({
-                                                    positive: position.change > 0,
-                                                    negative: position.change < 0,
-                                                    muted: position.change === 0,
-                                                }, "font-number")}>{position.deltaBeforeFeesStr}</span>
-                                            </div>
-                                        </div>
-                                        <div className="App-card-row">
-                                            <button
-                                                className="table-trade-btn w-full"
-                                                onClick={() => history.push('/trade')}
-                                            >
-                                                Trade
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            )
-                        })}
-                    </div>
+                    <OpenedPositions tokenPairMarketList={tokenPairMarketList} />
                 </InnerCard>
                 <InnerCard title='Your GLL Vault' style={{ marginTop: 8 }}>
                     <div className="list-table">
@@ -635,7 +391,7 @@ export default function DashboardV3(props) {
                             <thead>
                                 <tr >
                                     <th></th>
-                                    <th>APY <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /></th>
+                                    <th>APY {/* <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /> */}</th>
                                     <th>Locked in GLL</th>
                                     <th>Your Investment</th>
                                     <th>Pool Share</th>
@@ -771,142 +527,9 @@ export default function DashboardV3(props) {
             <div className=" section-markets">
                 <div className="section-header">
                     <h1>Markets</h1>
-                    <p className="text-description" style={{ marginTop: 16 }}>Start leverage trading with Grizzly Pairs and earn up to 100x. </p>
+                    <p className="text-description" style={{ marginTop: 16 }}>Start leverage trading with Grizzly Pairs and earn up to 50x. </p>
                 </div>
-                <div className="market-card list-table">
-                    <table style={{ width: '100%', textAlign: 'left', borderSpacing: '0px 10px' }} cellspacing="0" cellpadding="0">
-                        <thead>
-                            <tr>
-                                <th>Pair</th>
-                                <SortTh value='lastPrice' title='Last Price ' />
-                                <SortTh value='change' title='24h Change' />
-                                <SortTh value='high' title='24h High' />
-                                <SortTh value='low' title='24h Low' />
-                                <SortTh value='volume' title='24h Volume' />
-                                <SortTh value='volumeUsd' title='24h Volume(USD)' />
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {sortArr(tokenPairMarketList,marketTablesSort.sortBy,marketTablesSort.isAsc).map((pairItem, index) => {
-                                var tokenImage = null;
-
-                                try {
-                                    tokenImage = getImageUrl({
-                                        path: `coins/others/${pairItem.symbol.toLowerCase()}-original`,
-                                    });
-                                } catch (error) {
-                                    console.error(error);
-                                }
-                                return (
-
-                                    <tr
-                                        key={index}
-
-                                    >
-                                        <td>
-                                            <div style={{ display: "flex", alignItems: 'center', gap: 16 }}>
-                                                <img
-                                                    style={{ objectFit: "contain" }}
-                                                    src={tokenImage || tokenImage.default}
-                                                    alt={pairItem.symbol}
-                                                    width={32}
-                                                    height={32}
-                                                />
-                                                <span>{pairItem.name}</span>
-                                            </div>
-                                        </td>
-                                        <td className={cx({
-                                            positive: pairItem.change > 0,
-                                            negative: pairItem.change < 0,
-                                            muted: pairItem.change === 0,
-                                        }, "font-number")}>${pairItem.lastPrice}</td>
-                                        <td className={cx({
-                                            positive: pairItem.change > 0,
-                                            negative: pairItem.change < 0,
-                                            muted: pairItem.change === 0,
-                                        }, "font-number")}>{pairItem.change}%</td>
-                                        <td className="font-number">${pairItem.high}</td>
-                                        <td className="font-number">${pairItem.low}</td>
-                                        <td className="font-number">{pairItem.volume}</td>
-                                        <td className="font-number">${pairItem.volumeUsd}</td>
-
-                                    </tr>
-
-
-                                )
-                            }
-
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-                <div className="token-grid">
-                    {tokenPairMarketList.map((pairItem, index) => {
-                        var tokenImage = null;
-
-                        try {
-                            tokenImage = getImageUrl({
-                                path: `coins/others/${pairItem.symbol.toLowerCase()}-original`,
-                            });
-                        } catch (error) {
-                            console.error(error);
-                        }
-                        return (
-                            <div className="App-card" key={pairItem.name}>
-                                <div className="App-card-title">
-                                    <div style={{ display: "flex", alignItems: 'center', gap: 16 }}>
-                                        <img
-                                            style={{ objectFit: "contain" }}
-                                            src={tokenImage || tokenImage.default}
-                                            alt={pairItem.symbol}
-                                            width={32}
-                                            height={32}
-                                        />
-                                        <span>{pairItem.name}</span>
-                                    </div>
-                                </div>
-                                <div className="App-card-divider"></div>
-                                <div className="App-card-content">
-                                    <div className="App-card-row">
-                                        <div className="label">Last Price <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /></div>
-                                        <div className={cx({
-                                            positive: pairItem.change > 0,
-                                            negative: pairItem.change < 0,
-                                            muted: pairItem.change === 0,
-                                        })}>
-                                            ${pairItem.lastPrice}
-                                        </div>
-                                    </div>
-                                    <div className="App-card-row">
-                                        <div className="label">24h Change</div>
-                                        <div className={cx({
-                                            positive: pairItem.change > 0,
-                                            negative: pairItem.change < 0,
-                                            muted: pairItem.change === 0,
-                                        })}>{pairItem.change}%</div>
-                                    </div>
-                                    <div className="App-card-row">
-                                        <div className="label">24h High</div>
-                                        <div>${pairItem.high}</div>
-                                    </div>
-                                    <div className="App-card-row">
-                                        <div className="label">24h Low</div>
-                                        <div>${pairItem.low}</div>
-                                    </div>
-                                    <div className="App-card-row">
-                                        <div className="label">24h Volume</div>
-                                        <div>{pairItem.volume}</div>
-                                    </div>
-                                    <div className="App-card-row">
-                                        <div className="label">24h Volume(USD)</div>
-                                        <div>${pairItem.volumeUsd}</div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
+                <MarketTable />
 
             </div>
 
