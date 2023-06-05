@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { gql, ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
-import { chain, sumBy, sortBy, maxBy, minBy } from "lodash";
+import { sortBy } from "lodash";
 
 
 
@@ -77,7 +77,7 @@ export function useGraph(querySource, { subgraph = null, subgraphUrl = null, cha
 
 
 
-export function useMvlpData({ from = FROM_DATE_TS, to = NOW_TS, period = "daily",chainName = "polygon" } = {}) {
+export function useMvlpData({ from = FROM_DATE_TS, to = NOW_TS, period = "daily", chainName = "polygon" } = {}) {
     console.log(from, to, 123456)
 
     const query = `{
@@ -170,4 +170,81 @@ export function useMvlpData({ from = FROM_DATE_TS, to = NOW_TS, period = "daily"
     return [mvlpChartData, loading, error];
 }
 
+export function useFastPrice({ token, from = FROM_DATE_TS, to = NOW_TS, chainName = "polygon" } = {}) {
+    const timestampProp = "timestamp";
+    const tokenLowerCase = token.toLowerCase();
+    const query = `{
+        fastPrices(
+            first: 1000
+            orderBy: timestamp
+            orderDirection: desc
+            where: {period: hourly, token:"${tokenLowerCase}",timestamp_gte: ${from}, timestamp_lte: ${to}}
+          ) {
+            period
+            timestamp
+            token
+            value
+          }
+    }`;
+    const [graphData, loading, error] = useGraph(query, { chainName, subgraph: "sdcrypt0/metavault-mvx-prices" });
 
+    const data = useMemo(() => {
+        if (!graphData) {
+            return null;
+        }
+
+        const ret = {};
+        sortBy(graphData.fastPrices, timestampProp).map((item) => {
+            const timestamp = item[timestampProp];
+            ret[timestamp] = item;
+        });
+        return ret;
+
+    }, [graphData])
+    return [data, loading, error];
+}
+
+export function useHourlyVolumeByToken({ token, from = FROM_DATE_TS, to = NOW_TS, chainName = "polygon" } = {}) {
+    // const PROPS = "margin liquidation swap mint burn".split(" ");
+    const PROPS = "margin".split(" ");
+    const timestampProp = "timestamp";
+    const query = `{
+        hourlyVolumeByTokens(
+        first: 1000,
+        orderBy: timestamp,
+        orderDirection: desc
+        where: { tokenA: "${token}", timestamp_gte: ${from}, timestamp_lte: ${to} }
+      ) {
+        timestamp
+        ${PROPS.join("\n")}
+      }
+    }`;
+    const [graphData, loading, error] = useGraph(query, { chainName, subgraphUrl });
+    const [prices] = useFastPrice({ token, from, to });
+    const data = useMemo(() => {
+        if (!graphData || !prices) {
+            return null;
+        }
+
+        let ret = sortBy(graphData.hourlyVolumeByTokens, timestampProp).map((item) => {
+            const ret = { timestamp: item[timestampProp] };
+            let all = 0;
+            PROPS.forEach((prop) => {
+                ret[prop] = item[prop] / 1e30;
+                all += ret[prop];
+            });
+            ret.all = all;
+            const price = prices[ret.timestamp] ? prices[ret.timestamp].value / 1e30 : 0
+            ret.allAmount = ret.all > 0 ? ret.all / price : 0;
+            return ret;
+        });
+        return ret;
+    }, [PROPS, graphData, prices]);
+
+    let total = {};
+    if (data && data.length) {
+        total["volumeUsd"] = data.reduce((accumulator, item) => accumulator += item.all, 0);
+        total["volume"] = data.reduce((accumulator, item) => accumulator += item.allAmount, 0);
+    }
+    return [data, total, loading, error];
+}

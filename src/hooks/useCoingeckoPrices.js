@@ -1,8 +1,9 @@
 import { useMemo, useState, useEffect } from "react";
-import { limitDecimals, numberWithCommas, formatNumber, CHAIN_ID } from "../Helpers";
+import { limitDecimals, formatNumber, CHAIN_ID } from "../Helpers";
 import { getTokenBySymbol } from "../data/Tokens";
 import useSWR from "swr";
 import axios from "axios";
+import { useHourlyVolumeByToken } from "../views/Earn/dataProvider"
 
 export const FIRST_DATE_TS = parseInt(+new Date(2022, 5, 1) / 1000);
 export const NOW_TS = parseInt(new Date().getTime() / 1000);
@@ -63,6 +64,9 @@ export function useCoingeckoPrices(symbol) {
         }
     );
 
+    const token = getTokenBySymbol(CHAIN_ID, symbol).address;
+    const [, total, , ,] = useHourlyVolumeByToken({ token, from, to });
+
     const data = useMemo(() => {
         if (!res || res === undefined || res.length === 0) {
             return null;
@@ -78,12 +82,6 @@ export function useCoingeckoPrices(symbol) {
         const high_24h = prices.reduce((previous, current) => Math.max(previous, current))
         const low_24h = prices.reduce((previous, current) => Math.min(previous, current))
 
-        const volumeUsd = res.total_volumes.reduce((accumulator, currentValue) => accumulator + currentValue[1], 0);
-
-        const volume = res.total_volumes.map((v, index) => {
-            return v[1] / res.prices[index][1];
-        }).reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-
         const displayDecimals = getTokenBySymbol(CHAIN_ID, symbol).displayDecimals || 2;
         return {
             name: symbol.concat("/USD"),
@@ -92,10 +90,10 @@ export function useCoingeckoPrices(symbol) {
             change: limitDecimals((lastPrice - firstPrice) / firstPrice * 100, 2),
             high: formatNumber(high_24h, displayDecimals, true, false),
             low: formatNumber(low_24h, displayDecimals, true, false),
-            volume: formatNumber(volume, 0, true, false),
-            volumeUsd: formatNumber(volumeUsd, 0, true, false),
+            volume: formatNumber(total && total["volume"] ? total["volume"] : 0, displayDecimals, true, false),
+            volumeUsd: formatNumber(total && total["volumeUsd"] ? total["volumeUsd"] : 0, displayDecimals, true, false),
         };
-    }, [res, symbol]);
+    }, [res, symbol, total]);
 
     return [data, null, error];
 }
@@ -106,7 +104,6 @@ export function useTokenPairMarketData() {
     const [daiPrices] = useCoingeckoPrices("DAI");
     const [busdPrices] = useCoingeckoPrices("BUSD");
 
-    const tokens = ["BTC", "ETH", "DAI", "BUSD"];
     const data = useMemo(() => {
         const ret = [];
         if (btcPrices) ret.push(btcPrices);
