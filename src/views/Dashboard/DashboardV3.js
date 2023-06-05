@@ -115,8 +115,6 @@ export default function DashboardV3(props) {
 
     const tokenPairMarketList = useTokenPairMarketData();
 
-    // console.log("AAAA,tokenPairMarketList",tokenPairMarketList)
-
     const totalVolumeSum = useTotalVolume();
     const volumeInfo = useHourlyVolume();
 
@@ -308,8 +306,6 @@ export default function DashboardV3(props) {
         updatedPositions
     );
 
-    console.log("AAAA,positions", positions)
-
     const vaultList = [
         { symbol: 'GLL', apy: `${formatKeyAmount(processedData, "mvlpAprTotal", 2, 2, true)}%`, locked: '104.41', invest: `${formatKeyAmount(processedData, "mvlpBalance", MVLP_DECIMALS, 2, true)}`, poolShare: '0.96%', profit: `$${formatKeyAmount(processedData, "totalMvlpRewardsUsd", USD_DECIMALS, 2, true)}`, },
 
@@ -435,7 +431,7 @@ export default function DashboardV3(props) {
                                 {positions.length > 0 && positions.map((position, index) => {
                                     const liquidationPrice = getLiquidationPrice(position) || bigNumberify(0);
                                     var tokenImage = null;
-
+                                    const marketToken = tokenPairMarketList.find((token)=>token.symbol === position.indexToken.symbol);
                                     try {
                                         tokenImage = getImageUrl({
                                             path: `coins/others/${position.indexToken.symbol.toLowerCase()}-original`,
@@ -458,7 +454,7 @@ export default function DashboardV3(props) {
                                                     </div>
                                                     <div>
                                                         <div style={{ fontSize: 18, fontWeight: 600 }}>{position.indexToken.symbol}</div>
-                                                        <div>
+                                                        <div style={{ display: "flex" }}>
                                                             <img src={position.isLong ? IconLong : IconShort} alt="icon" />
                                                             {position.leverage && (
                                                                 <span className="font-number" style={{ fontSize: 14, fontWeight: 500, marginLeft: 4 }}>{formatAmount(position.leverage, 4, 2, true)}x&nbsp;</span>
@@ -477,7 +473,7 @@ export default function DashboardV3(props) {
                                                 positive: position.change > 0,
                                                 negative: position.change < 0,
                                                 muted: position.change === 0,
-                                            })}>{position.change}%</span></td>
+                                            })}>{marketToken?marketToken.change + "%": "-"}</span></td>
                                             <td className="font-number">
                                                 ${formatAmount(position.averagePrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}/
                                                 <span className="negative font-number" >${formatAmount(liquidationPrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}</span>
@@ -492,7 +488,7 @@ export default function DashboardV3(props) {
                                                 positive: position.change > 0,
                                                 negative: position.change < 0,
                                                 muted: position.change === 0,
-                                            })}>{position.deltaBeforeFeesStr}</span></td>
+                                            }, "font-number")}>{position.deltaBeforeFeesStr}</span></td>
                                             <td><button
                                                 className="table-trade-btn"
                                                 onClick={() => history.push('/trade')}
@@ -509,6 +505,7 @@ export default function DashboardV3(props) {
                     <div className="token-grid">
                         {positions.map((position, index) => {
                             const liquidationPrice = getLiquidationPrice(position) || bigNumberify(0);
+                            const marketToken = tokenPairMarketList.find((token)=>token.symbol === position.indexToken.symbol);
                             var tokenImage = null;
 
                             try {
@@ -536,7 +533,7 @@ export default function DashboardV3(props) {
                                     <div className="App-card-content">
                                         <div className="App-card-row">
                                             <div className="label">Leverage</div>
-                                            <div>
+                                            <div style={{ display: "flex", alignItems: 'center', gap: 4 }}>
                                                 <img src={position.isLong ? IconLong : IconShort} alt="icon" />
 
                                                 {position.leverage && (
@@ -562,7 +559,7 @@ export default function DashboardV3(props) {
                                                     positive: position.change > 0,
                                                     negative: position.change < 0,
                                                     muted: position.change === 0,
-                                                })}>{position.change}%</span>
+                                                })}>{marketToken?marketToken.change + "%": "-"}</span>
                                             </div>
                                         </div>
                                         <div className="App-card-row">
@@ -585,12 +582,12 @@ export default function DashboardV3(props) {
                                         </div>
                                         <div className="App-card-row">
                                             <div className="label">PnL</div>
-                                            <div className="font-number">
+                                            <div>
                                                 <span className={cx({
                                                     positive: position.change > 0,
                                                     negative: position.change < 0,
                                                     muted: position.change === 0,
-                                                })}>{position.deltaBeforeFeesStr}</span>
+                                                }, "font-number")}>{position.deltaBeforeFeesStr}</span>
                                             </div>
                                         </div>
                                         <div className="App-card-row">

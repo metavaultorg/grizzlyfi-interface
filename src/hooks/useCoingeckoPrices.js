@@ -2,11 +2,12 @@ import { useMemo, useState, useEffect } from "react";
 import { limitDecimals, CHAIN_ID } from "../Helpers";
 import { getTokenBySymbol } from "../data/Tokens";
 import useSWR from "swr";
+import axios from "axios";
 
 export const FIRST_DATE_TS = parseInt(+new Date(2022, 5, 1) / 1000);
 export const NOW_TS = parseInt(new Date().getTime() / 1000);
 
-const defaultFetcher = (url) => fetch(url).then((res) => res.json());
+const defaultFetcher = (url) => axios.get(url).then((res) => res.data);
 
 export function useRequest(url, defaultValue, fetcher = defaultFetcher) {
     const [loading, setLoading] = useState(true);
@@ -52,7 +53,15 @@ export function useCoingeckoPrices(symbol) {
 
     const url = `https://api.coingecko.com/api/v3/coins/${_symbol}/market_chart/range?vs_currency=usd&from=${from}&to=${to}`;
 
-    const [res, loading, error] = useRequest(url);
+    // const [res, loading, error] = useRequest(url);
+
+    const { data: res, error } = useSWR(
+        [url, symbol],
+        {
+            fetcher: defaultFetcher,
+            refreshInterval: 100000
+        }
+    );
 
     const data = useMemo(() => {
         if (!res || res === undefined || res.length === 0) {
@@ -87,7 +96,6 @@ export function useCoingeckoPrices(symbol) {
             volumeUsd: limitDecimals(volumeUsd, 2),
         };
     }, [res, symbol]);
-    
 
     return [data, null, error];
 }
@@ -98,11 +106,14 @@ export function useTokenPairMarketData() {
     const [daiPrices] = useCoingeckoPrices("DAI");
     const [busdPrices] = useCoingeckoPrices("BUSD");
 
+    const tokens = ["BTC", "ETH", "DAI", "BUSD"];
     const data = useMemo(() => {
-        if (!btcPrices || !ethPrices || !daiPrices || !busdPrices) {
-            return [];
-        }
-        return [btcPrices, ethPrices, daiPrices, busdPrices];
+        const ret = [];
+        if (btcPrices) ret.push(btcPrices);
+        if (ethPrices) ret.push(ethPrices);
+        if (daiPrices) ret.push(daiPrices);
+        if (busdPrices) ret.push(busdPrices);
+        return ret;
     }, [btcPrices, busdPrices, daiPrices, ethPrices])
     return data;
 }
