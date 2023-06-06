@@ -721,6 +721,7 @@ export default function GllSwapBox(props) {
                             onClickMax={fillMaxAmount}
                             selectedToken={swapToken}
                             balance={payBalance}
+                            showBorder={true}
                         >
                             <TokenSelector
                                 label="Pay"
@@ -741,7 +742,7 @@ export default function GllSwapBox(props) {
                         <BuyInputSection
                             topLeftLabel={`≈ `}
                             topRightLabel={`Available: `}
-                            tokenBalance={`${formatAmount(maxSellAmount, MVLP_DECIMALS, 4, true)}`}
+                            // tokenBalance={`${formatAmount(maxSellAmount, MVLP_DECIMALS, 4, true)}`}
                             inputValue={mvlpValue}
                             onInputValueChange={onMvlpValueChange}
                             showMaxButton={mvlpValue !== formatAmountFree(maxSellAmount, MVLP_DECIMALS, MVLP_DECIMALS)}
@@ -749,6 +750,7 @@ export default function GllSwapBox(props) {
                             onClickMax={fillMaxAmount}
                             balance={payBalance}
                             defaultTokenName={"GLL"}
+                            showBorder={true}
                         >
                             <div className="selected-token">
                                 <div className="selected-token-img-container">
@@ -785,7 +787,7 @@ export default function GllSwapBox(props) {
                         <BuyInputSection
                             topLeftLabel={`≈ `}
                             topRightLabel={`Balance: `}
-                            tokenBalance={`${formatAmount(mvlpBalance, MVLP_DECIMALS, 4, true)}`}
+                            // tokenBalance={`${formatAmount(mvlpBalance, MVLP_DECIMALS, 4, true)}`}
                             inputValue={mvlpValue}
                             onInputValueChange={onMvlpValueChange}
                             balance={receiveBalance}

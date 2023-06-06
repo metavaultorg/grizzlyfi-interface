@@ -45,16 +45,18 @@
   position: relative;
   height: 30px;
   width: 100%;
-  /* border: solid 1px #fff; */
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 16px;
 }
  .GllSwap-dividing-line {
   width: 100%;
   height: 1px;
   opacity: 0.1;
-  border: solid 1px #fff;
+  background-image: linear-gradient(to right, #fff 0%, #fff 50%, transparent 50%);
+  background-size: 12px 1px;
+  background-repeat: repeat-x;
 }
  .GllSwap-next {
   position: absolute;
