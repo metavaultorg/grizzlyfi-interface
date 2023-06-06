@@ -1,38 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import React, { useMemo } from "react";
+import { Link } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 import useSWR from "swr";
-import { PieChart, Pie, Cell, Tooltip } from "recharts";
-import TooltipComponent from "../../components/Tooltip/Tooltip";
-import tokensBigIcon from "../../assets/icons/tokenIcon.png";
-import hexToRgba from "hex-to-rgba";
-import { ethers } from "ethers";
-import statsIcon from "../../assets/icons/statsIcon.png";
 import { getImageUrl } from "../../cloudinary/getImageUrl";
 import cx from "classnames";
 
-import { getFeeHistory } from "../../data/Fees";
 import Token from "../../abis/Token.json";
 
 import {
     fetcher,
     formatAmount,
+    formatNumber,
     formatKeyAmount,
-    expandDecimals,
-    bigNumberify,
-    numberWithCommas,
-    formatDate,
-    getServerUrl,
-    getChainName,
     useChainId,
     USD_DECIMALS,
     MVXMVLP_DISPLAY_DECIMALS,
-    MVX_DECIMALS,
     MVLP_DECIMALS,
-    BASIS_POINTS_DIVISOR,
     POLYGON,
-    getTotalVolumeSum,
-    MVLPPOOLCOLORS,
     getPageTitle,
     getProcessedData,
     getBalanceAndSupplyData,
@@ -40,45 +24,32 @@ import {
     getDepositBalanceData,
     getStakingData,
     getVestingData,
-    getLiquidationPrice,
-    USD_DISPLAY_DECIMALS
+    yesterday,
+    today,
 } from "../../Helpers";
 import {
-    useTotalMvxInLiquidity,
     useMvxPrice,
-    useTotalMvxStaked,
     useTotalMvxSupply,
     useInfoTokens,
-    useMvdMvxTreasuryHoldings,
-    useMvdMvlpTreasuryHoldings,
-    useMvxMultisigHoldings,
-    useMvxReserveTimelockHoldings,
-    useMvxTeamVestingHoldings,
-    useProtocolOwnLiquidity,
-    useVestingContractHoldings,
 } from "../../Api";
 import { getContract } from "../../Addresses";
 import RewardReader from "../../abis/RewardReader.json";
 import Vault from "../../abis/Vault.json";
 import Reader from "../../abis/Reader.json";
 import MvlpManager from "../../abis/MvlpManager.json";
-import Footer from "../../Footer";
 
 import "./DashboardV3.css";
 
-import AssetDropdown from "./AssetDropdown";
 import SEO from "../../components/Common/SEO";
 
-import { useTotalVolume, useHourlyVolume, useTotalFees } from "../../Api";
+import { useTotalVolume, useHourlyVolume } from "../../Api";
 import ItemCard from '../../components/ItemCard/ItemCard'
-import DemoIcon from "../../assets/icons/ReferralCodeIcon";
 import IconPercentage from '../../assets/icons/icon-percentage.svg'
 import IconMoney from '../../assets/icons/icon-investments-money.svg'
 import IconClaim from '../../assets/icons/icon-claim-reward.svg'
 import InnerCard from '../../components/Common/InnerCard'
 
 import IconToken from '../../assets/icons/honey-token.svg'
-import LiquidityPng from '../../assets/liquidity.png'
 import IconDown from '../../assets/icons/icon-down.svg'
 import Lottie from "lottie-react";
 import animationData from './animation_1.json'
@@ -86,13 +57,10 @@ import TextBadge from '../../components/Common/TextBadge'
 import DownChartArrow from '../../assets/icons/down-chart-arrow.svg'
 import UpChartArrow from '../../assets/icons/up-chart-arrow.svg'
 import { useTokenPairMarketData } from '../../hooks/useCoingeckoPrices';
-import { sortArr } from './util'
 import MarketTable from "./MarketTable";
 import OpenedPositions from "./OpenedPositions";
-
-const { AddressZero } = ethers.constants;
-
-
+import AUMLabel from "../../components/AUMLabel/AUMLabel";
+import { useMvlpData } from "../../views/Earn/dataProvider";
 
 export default function DashboardV3(props) {
 
@@ -117,45 +85,17 @@ export default function DashboardV3(props) {
 
     const mvxAddress = getContract(chainId, "MVX");
     const mvlpAddress = getContract(chainId, "MVLP");
-    const usdmAddress = getContract(chainId, "USDM");
-    const tokensForSupplyQuery = [mvxAddress, mvlpAddress, usdmAddress];
 
     const { data: aums } = useSWR([`Dashboard:getAums:${active}`, chainId, mvlpManagerAddress, "getAums"], {
         fetcher: fetcher(library, MvlpManager),
     });
 
-    const { data: totalSupplies } = useSWR(
-        [`Dashboard:totalSupplies:${active}`, chainId, readerAddress, "getTokenBalancesWithSupplies", AddressZero],
-        {
-            fetcher: fetcher(library, Reader, [tokensForSupplyQuery]),
-        }
-    );
-
     const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
     const { mvxPrice } = useMvxPrice({ polygon: chainId === POLYGON ? library : undefined }, active, infoTokens);
-
-    let { polygon: polygonStakedMvx, total: totalStakedMvx } = useTotalMvxStaked();
 
     let aum;
     if (aums && aums.length > 0) {
         aum = aums[0].add(aums[1]).div(2);
-    }
-
-    let mvlpPrice;
-    let mvlpSupply;
-    let mvlpMarketCap;
-    if (aum && totalSupplies && totalSupplies[3]) {
-        mvlpSupply = totalSupplies[3];
-        mvlpPrice =
-            aum && aum.gt(0) && mvlpSupply.gt(0)
-                ? aum.mul(expandDecimals(1, MVLP_DECIMALS)).div(mvlpSupply)
-                : expandDecimals(1, USD_DECIMALS);
-        mvlpMarketCap = mvlpPrice.mul(mvlpSupply).div(expandDecimals(1, MVLP_DECIMALS));
-    }
-
-    let tvl;
-    if (mvlpMarketCap && mvxPrice && totalStakedMvx) {
-        tvl = mvlpMarketCap.add(mvxPrice.mul(totalStakedMvx).div(expandDecimals(1, MVX_DECIMALS)));
     }
 
     const rewardReaderAddress = getContract(chainId, "RewardReader");
@@ -268,7 +208,17 @@ export default function DashboardV3(props) {
         mvxSupply
     );
 
-    
+    const totalParams = { from: yesterday(), to: today() } 
+    const [totalMvlpData, ] = useMvlpData(totalParams);
+    const [totalAum, totalAumDelta, totalAumDeltaPercentage] = useMemo(() => {
+        if (!totalMvlpData) {
+          return [];
+        }
+        const total = totalMvlpData[totalMvlpData.length - 1]?.aum;
+        const delta = total - totalMvlpData[totalMvlpData.length - 2]?.aum;
+        const percentage = Math.abs(delta)/total *100;
+        return [total, delta, percentage];
+      }, [totalMvlpData]);
 
     
 
@@ -291,7 +241,7 @@ export default function DashboardV3(props) {
                             muted: volumeInfo === 0,
                         })}>
                             <img src={volumeInfo > 0 ? UpChartArrow : DownChartArrow} alt="icon" />
-                            <div>{(volumeInfo / totalVolumeSum * 100).toFixed(2)}%</div>
+                            {(volumeInfo / totalVolumeSum * 100).toFixed(2)}%
                             (${formatAmount(volumeInfo, USD_DECIMALS, 0, true)})
                             <span style={{ opacity: '0.5', }}>24h</span>
                         </div>
@@ -300,14 +250,14 @@ export default function DashboardV3(props) {
                 <div className="total-info">
                     <div className="label">Paid out to GLL Stakers</div>
                     <div>
-                        <h1>${formatAmount(totalVolumeSum, USD_DECIMALS, 0, true)}</h1>
+                        <h1 className="font-number">${formatAmount(totalVolumeSum, USD_DECIMALS, 0, true)}</h1>
                         <div className={cx('info-change', {
                             positive: volumeInfo > 0,
                             negative: volumeInfo < 0,
                             muted: volumeInfo === 0,
-                        })}>
+                        }, "font-number")}>
                             <img src={volumeInfo > 0 ? UpChartArrow : DownChartArrow} alt="icon" />
-                            <div>{(volumeInfo / totalVolumeSum * 100).toFixed(2)}%</div>
+                            {(volumeInfo / totalVolumeSum * 100).toFixed(2)}%
                             (${formatAmount(volumeInfo, USD_DECIMALS, 0, true)})
                             <span style={{ opacity: '0.5', }}>24h</span>
                         </div>
@@ -317,14 +267,17 @@ export default function DashboardV3(props) {
                 <div className="total-info">
                     <div className="label">Assets Under Management</div>
                     <div>
-                        <h1>${formatAmount(tvl, USD_DECIMALS, 0, true)}</h1>
+                        <h1 className="font-number"><AUMLabel /></h1>
                         <div className={cx('info-change', {
-                            positive: tvl > 0,
-                            negative: tvl < 0,
-                            muted: tvl === 0,
-                        })}>
-                            <img src={tvl > 0 ? UpChartArrow : DownChartArrow} alt="icon" />
-                            <div>...%</div>($...) <span style={{ opacity: '0.5', }}>24h</span></div>
+                            positive: totalAumDelta > 0,
+                            negative: totalAumDelta < 0,
+                            muted: totalAumDelta === 0,
+                        }, "font-number")}>
+                            <img src={totalAumDelta > 0 ? UpChartArrow : DownChartArrow} alt="icon" />
+                            {formatNumber(totalAumDeltaPercentage, 2, false, false)}%
+                            (${formatNumber(Math.abs(totalAumDelta), 2, true, false)})
+                            <span style={{ opacity: '0.5', }}>24h</span>
+                        </div>
                     </div>
 
                 </div>
