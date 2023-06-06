@@ -1593,6 +1593,9 @@ export const compactNumber = value => {
 }
 
 export const formatNumber = (value, displayDecimals, useComma, compact) => {
+  if (!value) {
+    return null;
+  }
   let ret = limitDecimals(value, displayDecimals);
   if (compact) {
     ret = compactNumber(ret)
@@ -2758,4 +2761,14 @@ export function shouldShowRedirectModal(timestamp) {
   const thirtyDays = 1000 * 60 * 60 * 24 * 30;
   const expiryTime = timestamp + thirtyDays;
   return !isValidTimestamp(timestamp) || Date.now() > expiryTime;
+}
+
+export function today(){
+  const now =  parseInt(new Date()/1000);
+  return now - now%86400;
+}
+
+
+export function yesterday(){
+  return today() - 86400;
 }
