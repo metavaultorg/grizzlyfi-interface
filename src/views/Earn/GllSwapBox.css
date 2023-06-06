@@ -194,8 +194,8 @@
   }
   
   .GllSwap-box .Exchange-info-row {
-    height: 1rem;
-    margin-bottom: 0.5rem;
+    height: 22px;
+    margin-bottom: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
