@@ -156,7 +156,7 @@
   .GllSwap-from-token .Modal-content .Modal-body {
     padding-right: 5px;
     max-height: calc(100vh - 5rem);
-    overflow-y: auto;
+    /* overflow-y: auto; */
     -webkit-overflow-scrolling: touch;
     -webkit-overflow-scrolling: auto;
   }
@@ -258,7 +258,7 @@
       bottom: auto;
     }
     .GllSwap-from-token .Modal .Modal-content .Modal-body {
-      overflow-y: auto;
+      /* overflow-y: auto; */
       max-height: calc(80vh - 5.5rem);
       /* padding-right: 5px;
       margin: 1rem calc(1rem - 5px) 1rem 1rem; */

@@ -779,7 +779,7 @@ table.Exchange-list th:last-child {
   overscroll-behavior: smooth;
   scrollbar-width: thin;
   max-height: calc(100vh - 5rem);
-  overflow-y: auto;
+  /* overflow-y: auto; */
   margin-top: 32px;
 }
 
@@ -1170,13 +1170,13 @@ table.Exchange-list-small td {
   }
 
   .Exchange-swap-box .TokenSelector .Modal-content .Modal-body {
-    overflow-y: auto;
-    max-height: calc(70vh - 5.5rem);
+    /* overflow-y: auto; */
+    /* max-height: calc(70vh - 5.5rem); */
     scroll-margin-right: 25rem;
     overscroll-behavior: smooth;
     scrollbar-width: thin;
     margin-top: 16px;
-    height: 600px;
+    /* height: 600px; */
   }
 
   .Exchange-swap-box .TokenSelector .Modal,
