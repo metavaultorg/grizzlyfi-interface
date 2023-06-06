@@ -387,16 +387,16 @@ export default function DashboardV3(props) {
                                                     <div>{item.symbol}</div>
                                                 </div>
                                             </td>
-                                            <td>{item.apy}</td>
-                                            <td>{item.locked}</td>
-                                            <td>{item.invest}</td>
-                                            <td>{item.poolShare}</td>
+                                            <td className="font-number">{item.apy}</td>
+                                            <td className="font-number">{item.locked}</td>
+                                            <td className="font-number">{item.invest}</td>
+                                            <td className="font-number">{item.poolShare}</td>
                                             <td>
                                                 <span className={cx({
                                                     positive: item.profit > 0,
                                                     negative: item.profit < 0,
                                                     muted: item.profit === 0,
-                                                })}>{item.profit}%</span>
+                                                }, "font-number")}>{item.profit}%</span>
                                             </td>
 
                                             <td><button
@@ -433,25 +433,25 @@ export default function DashboardV3(props) {
                                     <div className="App-card-content">
                                         <div className="App-card-row">
                                             <div className="label">APY <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /></div>
-                                            <div>
+                                            <div className="font-number">
                                                 {item.apy}
                                             </div>
                                         </div>
                                         <div className="App-card-row">
                                             <div className="label">Locked in GLL</div>
-                                            <div>
+                                            <div className="font-number">
                                                 {item.locked}
                                             </div>
                                         </div>
                                         <div className="App-card-row">
                                             <div className="label">Your Investment</div>
-                                            <div>
+                                            <div className="font-number">
                                                 {item.invest}
                                             </div>
                                         </div>
                                         <div className="App-card-row">
                                             <div className="label">Pool Share</div>
-                                            <div>
+                                            <div className="font-number">
                                                 {item.poolShare}
                                             </div>
                                         </div>
@@ -462,7 +462,7 @@ export default function DashboardV3(props) {
                                                     positive: item.profit > 0,
                                                     negative: item.profit < 0,
                                                     muted: item.profit === 0,
-                                                })}>{item.profit}%</span>
+                                                }, "font-number")}>{item.profit}%</span>
                                             </div>
                                         </div>
                                         <div className="App-card-row"><button
