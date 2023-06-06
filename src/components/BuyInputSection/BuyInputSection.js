@@ -20,7 +20,7 @@ export default function BuyInputSection(props) {
 
   return (
     <div className={`Exchange-swap-section buy-input ${showBorder ? "border" : "noborder"}`}>
-      <div style={{position: "relative",display:"flex"}}>
+      <div style={{position: "relative",display:"flex",justifyContent:"space-between",width: "100%"}}>
         <div className="Exchange-swap-section-left">
           <div className={cx("PositionEditor-token-symbol",{
             largePadding: !tokenBalance,
