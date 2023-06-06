@@ -205,8 +205,8 @@ export function useFastPrice({ token, from = FROM_DATE_TS, to = NOW_TS, chainNam
 }
 
 export function useHourlyVolumeByToken({ token, from = FROM_DATE_TS, to = NOW_TS, chainName = "polygon" } = {}) {
-    // const PROPS = "margin liquidation swap mint burn".split(" ");
-    const PROPS = "margin".split(" ");
+    const PROPS = "margin liquidation swap mint burn".split(" ");
+    // const PROPS = "margin".split(" ");
     const timestampProp = "timestamp";
     const query = `{
         hourlyVolumeByTokens(
@@ -244,7 +244,7 @@ export function useHourlyVolumeByToken({ token, from = FROM_DATE_TS, to = NOW_TS
     let total = {};
     if (data && data.length) {
         total["volumeUsd"] = data.reduce((accumulator, item) => accumulator += item.all, 0);
-        total["volume"] = data.reduce((accumulator, item) => accumulator += item.allAmount, 0);
+        total["volume"] = (prices && Object.keys(prices).length !== 0) ? data.reduce((accumulator, item) => accumulator += item.allAmount, 0) : "-";
     }
     return [data, total, loading, error];
 }
