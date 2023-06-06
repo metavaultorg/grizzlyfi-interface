@@ -69,7 +69,7 @@ export default function ChartPrice() {
                     
                 ]}
             >
-                <ResponsiveContainer width="100%" height={552}>
+                <ResponsiveContainer width="100%" height={528}>
                     <LineChart data={mvlpData} syncId="syncMvlp">
                         <CartesianGrid stroke="#2b2b2b" strokeDasharray="5 5" />
                         <XAxis
