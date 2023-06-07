@@ -835,7 +835,7 @@ export default function GllSwapBox(props) {
                     <div className="Exchange-info-row">
                         <div className="Exchange-info-label">Minimum Received</div>
                         {isBuying && mvlpAmount && <div className="font-number">{formatAmountFree(mvlpAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR), MVLP_DECIMALS, 2)} GLL</div>}
-                        {!isBuying && mvlpAmount && <div className="font-number">{formatAmountFree(swapAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR), swapToken.decimals, swapToken.displayDecimals)} {swapToken.symbol}</div>}
+                        {!isBuying && swapAmount && <div className="font-number">{formatAmountFree(swapAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR), swapToken.decimals, swapToken.displayDecimals)} {swapToken.symbol}</div>}
                     </div>
                     <div className="Exchange-info-row">
                         <div className="Exchange-info-label">Weight / Target</div>

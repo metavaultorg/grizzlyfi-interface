@@ -1908,8 +1908,12 @@ export const parseValue = (value, tokenDecimals) => {
     return undefined;
   }
   value = limitDecimals(value, tokenDecimals);
-  const amount = ethers.utils.parseUnits(value, tokenDecimals);
-  return bigNumberify(amount);
+  try {
+    const amount = ethers.utils.parseUnits(value, tokenDecimals);
+    return bigNumberify(amount);
+  } catch (error) {
+    console.log(error)
+  }
 };
 
 export function numberWithCommas(x) {
