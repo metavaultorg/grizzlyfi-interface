@@ -124,3 +124,29 @@
   font-size: 24px;
   font-weight: 600;
 }
+.Earn-content {
+  display: flex;
+  
+  gap: 1rem;
+}
+@media (max-width: 1300px) {
+  .Earn-content {
+    flex-direction: column;
+  }
+}
+.Earn-left{
+  flex: 1;
+}
+.Earn-right {
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.Earn .Exchange-swap-box{
+  width: 440px;
+}
+@media (max-width: 1300px) {
+  .Earn .Exchange-swap-box {
+    width: auto;
+  }
+}

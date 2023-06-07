@@ -1,5 +1,5 @@
 import strftime from 'strftime'
-
+import { useLayoutEffect, useState } from 'react';
 
 const numberFmt0 = Intl.NumberFormat('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
 const numberFmt1 = Intl.NumberFormat('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 1 })
@@ -82,4 +82,18 @@ export const yaxisFormatterNumber = value => {
 }
 export const tooltipFormatterNumber = (value, name, item) => {
     return formatNumber(value)
+}
+
+
+export function useWindowSize() {
+    const [size, setSize] = useState([0, 0]);
+    useLayoutEffect(() => {
+        function updateSize() {
+            setSize([window.innerWidth, window.innerHeight]);
+        }
+        window.addEventListener('resize', updateSize);
+        updateSize();
+        return () => window.removeEventListener('resize', updateSize);
+    }, []);
+    return size;
 }

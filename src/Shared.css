@@ -310,6 +310,8 @@ button.btn-link:hover .logout-icon {
   flex-direction: column;
   padding-bottom: 3rem;
   margin-top: 24px;
+  max-width: 1440px;
+  margin: auto;
 }
 
 .d-flex {

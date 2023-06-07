@@ -168,13 +168,13 @@ export default function Earn(props) {
   };
 
   return (
-    <div className="Earn Exchange page-layout">
+    <div className="Earn  page-layout">
       <div className="section-header" style={{ maxWidth: 1006, margin: '0 auto' }}>
         <h1>Grizzly Leverage Liquidity<TextBadge text='Low Risk' bgColor={'rgba(158,206,255,0.1)'} textColor='#9eceff' /></h1>
         <p className="text-description" style={{ marginTop: 16, marginBottom: 48 }}>The Grizzly Leverage Liquidity tokens (GLL) is the counterparty to everyone trading with leverage. Deposit your favourite cryptocurrency and earn a solid yield which comes from the trading fees paid on Grizzly Trade. Earn like an exchange. </p>
       </div>
-      <div className='Exchange-content'>
-        <div className='Exchange-left'>
+      <div className='Earn-content'>
+        <div className='Earn-left'>
           <div className="info-card-section" style={{maxWidth:912}}>
             <ItemCard style={{ minWidth: 218 }} label='APR' value={<APRLabel chainId={POLYGON} label="mvlpAprTotal" key="POLYGON" />} icon={IconPercentage} />
             <ItemCard style={{ minWidth: 298 }}  label='Assets Under Management' value={ <AUMLabel />} icon={IconMoney} />
@@ -188,7 +188,7 @@ export default function Earn(props) {
           </div>
           <ChartPrice />
         </div>
-        <div className='Exchange-right'>
+        <div className='Earn-right'>
           <div className='Exchange-swap-box'>
             <GllSwapBox {...props} isBuying={isBuying} setIsBuying={setIsBuying} getWeightText={getWeightText}/>
           </div>
