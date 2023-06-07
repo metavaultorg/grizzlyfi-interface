@@ -6,6 +6,8 @@ import "./ChartTokenSelector.css";
 import { getTokens, getWhitelistedTokens } from "../../data/Tokens";
 import { LONG, SHORT, SWAP } from "../../Helpers";
 import { getImageUrl } from "../../cloudinary/getImageUrl";
+import IconArrow from '../../assets/icons/icon-arrows'
+
 export default function ChartTokenSelector(props) {
   const { chainId, selectedToken, onSelectToken, swapOption } = props;
 
@@ -41,7 +43,8 @@ export default function ChartTokenSelector(props) {
             path: `coins/${value.symbol.toLowerCase()}`,
           })} alt={value.name} className="token-logo"  width={48} />
           <span className="chart-token-selector--current">{value.symbol} / USD</span>
-          {!isSwap && <img style={{ width: 14, height: 14 }} src={FaChevronDown} alt="chevron down" />}
+          {/* {!isSwap && <img style={{ width: 14, height: 14 }} src={FaChevronDown} alt="chevron down" />} */}
+          {!isSwap && <IconArrow />}
         </button>
       </Menu.Button>
       <div className="chart-token-menu">

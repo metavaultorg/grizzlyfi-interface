@@ -14,6 +14,7 @@ import IconSearch from "../../assets/icons/icon-search-new.svg";
 import "./TokenSelector.css";
 import TooltipWithPortal from "../Tooltip/TooltipWithPortal";
 import { getImageUrl } from "../../cloudinary/getImageUrl";
+import IconArrow from '../../assets/icons/icon-arrows'
 
 export default function TokenSelector(props) {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -210,7 +211,7 @@ export default function TokenSelector(props) {
         selectedTokenLabel ? (
           <div className="TokenSelector-box" onClick={() => setIsModalVisible(true)}>
             {selectedTokenLabel}
-            {!showNewCaret && <BiChevronDown className="TokenSelector-caret" />}
+            {!showNewCaret && <IconArrow />}
           </div>
         ) : (
           <div className="TokenSelector-box" onClick={() => setIsModalVisible(true)}>

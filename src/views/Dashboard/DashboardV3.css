@@ -12,9 +12,10 @@
     flex-direction: column;
     gap: 4px;
 }
-.total-info .info-number{
+.total-info h1{
     font-size: 32px;
     font-weight: 600;
+    font-family: "Montserrat",sans-serif;
 }
 
 
@@ -151,6 +152,11 @@ p{
   display: flex;
   align-items: center;
   gap: 4px;
+  font-family: "Montserrat",sans-serif ;
+}
+.info-change span{
+  font-family: "Montserrat",sans-serif;
+  opacity: 0.5;
 }
 .sortIcon{
   margin-bottom: -4px;

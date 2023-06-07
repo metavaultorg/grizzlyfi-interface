@@ -75,7 +75,7 @@ export const compactNumber = value => {
     if (abs >= 1e3) {
         return `${(value / 1e3).toFixed(abs < 1e4 ? 2 : 1)}K`
     }
-    return `${value.toFixed(1)}`
+    return `${value.toFixed(2)}`
 }
 export const yaxisFormatterNumber = value => {
     return compactNumber(value)

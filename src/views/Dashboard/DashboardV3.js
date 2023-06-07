@@ -243,7 +243,7 @@ export default function DashboardV3(props) {
                             <img src={volumeInfo > 0 ? UpChartArrow : DownChartArrow} alt="icon" />
                             {(volumeInfo / totalVolumeSum * 100).toFixed(2)}%
                             (${formatAmount(volumeInfo, USD_DECIMALS, 0, true)})
-                            <span style={{ opacity: '0.5', }}>24h</span>
+                            <span>24h</span>
                         </div>
                     </div>
                 </div>
@@ -259,7 +259,7 @@ export default function DashboardV3(props) {
                             <img src={volumeInfo > 0 ? UpChartArrow : DownChartArrow} alt="icon" />
                             {(volumeInfo / totalVolumeSum * 100).toFixed(2)}%
                             (${formatAmount(volumeInfo, USD_DECIMALS, 0, true)})
-                            <span style={{ opacity: '0.5', }}>24h</span>
+                            <span>24h</span>
                         </div>
                     </div>
 
@@ -276,7 +276,7 @@ export default function DashboardV3(props) {
                             <img src={totalAumDelta > 0 ? UpChartArrow : DownChartArrow} alt="icon" />
                             {formatNumber(totalAumDeltaPercentage, 2, false, false)}%
                             (${formatNumber(Math.abs(totalAumDelta), 2, true, false)})
-                            <span style={{ opacity: '0.5', }}>24h</span>
+                            <span>24h</span>
                         </div>
                     </div>
 

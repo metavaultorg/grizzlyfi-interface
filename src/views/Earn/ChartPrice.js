@@ -55,7 +55,7 @@ export default function ChartPrice() {
         }
         
     }
-    console.log(mvlpData)
+
     return (
         <div className="chart-cell">
             <div></div>
@@ -79,7 +79,8 @@ export default function ChartPrice() {
                         />
                         <YAxis
                             dataKey="mvlpPrice"
-                            domain={[0.4, 1.7]}
+                            domain={['auto', 'auto']}
+                            // domain={[0.4, 1.7]}
                             orientation="left"
                             yAxisId="right"
                             tickFormatter={yaxisFormatterNumber}
