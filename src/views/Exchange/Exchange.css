@@ -254,7 +254,8 @@
 .Confirmation-box .Modal-content .Confirmation-box-info-box .Exchange-info-row {
   margin: 0;
 }
-.PositionEditor .Modal-content .PositionEditor-info-box span,
+.PositionEditor .Modal-content .PositionEditor-info-box .Checkbox-label,
+.PositionEditor .Modal-content .PositionEditor-info-box .Checkbox-label span,
 .PositionEditor .Modal-content .PositionEditor-info-box .Exchange-info-label,
 .Confirmation-box .Modal-content .Confirmation-box-info-box  .Exchange-info-label,
 .Confirmation-box .Modal-content .Confirmation-box-info-box  .PositionEditor-allow-higher-slippage span {
@@ -632,14 +633,23 @@ table.Exchange-list th:last-child {
   margin: 0 0 20px 0;
 }
 
-.Exchange-info-row .font-number .Tooltip-handle,
+.Exchange-info-row .font-number.Tooltip-handle,
 .Exchange-info-row .font-number .inline-block,
 .Exchange-info-row .font-number div,
+.Exchange-info-row .font-number .TokenSelector-box span,
 .Exchange-info-row .font-number {
   font-family: "Montserrat",sans-serif;
   font-size: 18px;
   font-weight: 500;
   color: #fff;
+}
+
+.Exchange-info-row .font-number .Tooltip-popup,
+.Exchange-info-row .font-number .Tooltip-popup div,
+.Exchange-info-row .Tooltip-popup span {
+  font-size: 0.9rem;
+  font-family: "Boston",sans-serif;
+  color: rgba(255,255,255,0.6);
 }
 
 .Exchange-info-row.top-line {
@@ -921,7 +931,8 @@ input.Exchange-swap-input.small {
 
 .App-cta.Exchange-swap-button,
 .App-cta.Exchange-swap-button.positive,
-.App-cta.Confirmation-box-button {
+.App-cta.Confirmation-box-button,
+.App-cta.Confirmation-box-button.positive {
   display: block;
   width: 100%;
   color: #fff;
@@ -933,9 +944,23 @@ input.Exchange-swap-input.small {
   padding-bottom: 19px;
 }
 
-.App-cta.Exchange-swap-button.negative {
+.App-cta.Exchange-swap-button.positive:hover,
+.App-cta.Confirmation-box-button.positive:hover {
+  background-image: linear-gradient(to bottom, #f2c75c, #cb9612);
+  filter: brightness(125%);
+}
+
+.App-cta.Exchange-swap-button.negative,
+.App-cta.Confirmation-box-button.negative {
   box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.2);
   background-image: linear-gradient(to bottom, #ff7b41, #ff570d);
+}
+
+.App-cta.Exchange-swap-button.negative:hover,
+.App-cta.Confirmation-box-button.negative:hover {
+  box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.2);
+  background-image: linear-gradient(to bottom, #ff7b41, #ff570d);
+  filter: brightness(125%);
 }
 
 .Exchange-swap-ball-container {

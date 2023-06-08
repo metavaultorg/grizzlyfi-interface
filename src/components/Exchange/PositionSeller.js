@@ -922,6 +922,7 @@ export default function PositionSeller(props) {
                 <ExchangeInfoRow label="Allowed Slippage">
                   <Tooltip
                     handle={`${formatAmount(allowedSlippage, 2, 2)}%`}
+                    handleClassName="font-number"
                     position="right-bottom"
                     renderContent={() => {
                       return (
@@ -1058,8 +1059,9 @@ export default function PositionSeller(props) {
 
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">Fees</div>
-              <div className="align-right font-number">
+              <div className="align-right">
                 <Tooltip
+                  handleClassName="font-number"
                   position="right-top"
                   className="PositionSeller-fees-tooltip"
                   handle={
@@ -1121,14 +1123,14 @@ export default function PositionSeller(props) {
               )}
 
               {!allowReceiveTokenChange && receiveToken && (
-                <div className="align-right PositionSelector-selected-receive-token">
+                <div className="align-right font-number PositionSelector-selected-receive-token">
                   {formatAmount(convertedReceiveAmount, receiveToken.decimals, 4, true)}&nbsp;{receiveToken.symbol} ($
                   {formatAmount(receiveAmount, USD_DECIMALS, 2, true)})
                 </div>
               )}
 
               {allowReceiveTokenChange && receiveToken && (
-                <div className="align-right">
+                <div className="align-right font-number">
                   <TokenSelector
                     // Scroll lock lead to side effects
                     // if it applied on modal inside another modal

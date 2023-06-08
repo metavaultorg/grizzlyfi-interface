@@ -504,7 +504,7 @@ export default function ConfirmationBox(props) {
       <ExchangeInfoRow label="Available Liquidity">
         <Tooltip
           position="right-bottom"
-          handleClassName={isLiquidityRisk ? "negative" : null}
+          handleClassName={cx(isLiquidityRisk ? "negative" : null, "font-number")}
           handle={
             <>
               {formatAmount(availableLiquidity, token.decimals, token.isStable ? 0 : 2, true)} {token.symbol}
@@ -585,6 +585,7 @@ export default function ConfirmationBox(props) {
           <ExchangeInfoRow label="Collateral">
             <Tooltip
               handle={`$${formatAmount(collateralAfterFees, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}`}
+              handleClassName="font-number"
               position="right-bottom"
               renderContent={() => {
                 return (
@@ -643,6 +644,7 @@ export default function ConfirmationBox(props) {
           <ExchangeInfoRow label="Allowed Slippage">
             <Tooltip
               handle={`${formatAmount(allowedSlippage, 2, 2)}%`}
+              handleClassName="font-number"
               position="right-top"
               renderContent={() => {
                 return (
@@ -667,18 +669,18 @@ export default function ConfirmationBox(props) {
 
           {/* RECEIVE TOKEN */}
           {allowReceiveTokenChange && (
-            <div className="Exchange-info-row PositionSeller-receive-row top-line">
-              Receive
+            <div className="Exchange-info-row PositionSeller-receive-row">
+              <div className="Exchange-info-label">Receive</div>
 
               {!allowReceiveTokenChange && receiveToken && (
-                <div className="align-right PositionSelector-selected-receive-token">
+                <div className="align-right font-number PositionSelector-selected-receive-token">
                   {formatAmount(convertedReceiveAmount, receiveToken.decimals, 4, true)}&nbsp;{receiveToken.symbol} ($
                   {formatAmount(receiveAmount, USD_DECIMALS, 2, true)})
                 </div>
               )}
 
               {allowReceiveTokenChange && receiveToken && (
-                <div className="align-right">
+                <div className="align-right font-number">
                   <TokenSelector
                     // Scroll lock lead to side effects
                     // if it applied on modal inside another modal
@@ -802,7 +804,7 @@ export default function ConfirmationBox(props) {
           {!isMarketOrder && (
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">Limit Price</div>
-              <div className="align-right">{getExchangeRateDisplay(triggerRatio, fromTokenInfo, toTokenInfo)}</div>
+              <div className="align-right font-number">{getExchangeRateDisplay(triggerRatio, fromTokenInfo, toTokenInfo)}</div>
             </div>
           )}
           {showSpread && (
@@ -812,7 +814,7 @@ export default function ConfirmationBox(props) {
           )}
           <div className="Exchange-info-row">
             <div className="Exchange-info-label">Fees</div>
-            <div className="align-right">
+            <div className="align-right font-nubmer">
               {formatAmount(feeBps, 2, 2, true)}% ({formatAmount(fees, fromTokenInfo.decimals, 4, true)}{" "}
               {fromTokenInfo.symbol}: ${formatAmount(feesUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)})
             </div>
@@ -821,13 +823,13 @@ export default function ConfirmationBox(props) {
           {fromTokenUsd && (
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">{fromTokenInfo.symbol} Price</div>
-              <div className="align-right">{fromTokenUsd} USD</div>
+              <div className="align-right font-number">{fromTokenUsd} USD</div>
             </div>
           )}
           {toTokenUsd && (
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">{toTokenInfo.symbol} Price</div>
-              <div className="align-right">{toTokenUsd} USD</div>
+              <div className="align-right font-number">{toTokenUsd} USD</div>
             </div>
           )}
         </div>
@@ -863,7 +865,7 @@ export default function ConfirmationBox(props) {
           <button
             style={{ }}
             onClick={onConfirmationClick}
-            className="App-cta Confirmation-box-button text-uppercase"
+            className={cx("App-cta Confirmation-box-button text-uppercase", isLong?"positive":"negative")}
             disabled={!isPrimaryEnabled()}
           >
             {getPrimaryText()}

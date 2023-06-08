@@ -359,9 +359,10 @@ export default function SwapBox(props) {
     return (
       <div className="Exchange-info-row">
         <div className="Exchange-info-label">Available Liquidity</div>
-        <div className="align-right font-number">
+        <div className="align-right">
           <Tooltip
             handle={`${formatAmount(toTokenInfo.maxAvailableLong, USD_DECIMALS, 2, true)}`}
+            handleClassName="font-number"
             position="right-bottom"
             renderContent={() => {
               return (
@@ -2158,8 +2159,9 @@ export default function SwapBox(props) {
             {isLong && (
               <div className="Exchange-info-row">
                 <div className="Exchange-info-label">Collateral In</div>
-                <div className="align-right font-number">
+                <div className="align-right">
                   <Tooltip
+                    handleClassName="font-number"
                     position="right-bottom"
                     handle="USD"
                     renderContent={() => (
@@ -2231,11 +2233,12 @@ export default function SwapBox(props) {
               </div>
             </div>
             <ExchangeInfoRow label="Fees">
-              <div className="font-number">
+              <div className="">
                 {!feesUsd && "-"}
                 {feesUsd && (
                   <Tooltip
                     handle={`$${formatAmount(feesUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}`}
+                    handleClassName="font-number"
                     position="right-bottom"
                     renderContent={() => {
                       return (
@@ -2268,6 +2271,7 @@ export default function SwapBox(props) {
                 {trailingStopFeeUsd && (
                   <Tooltip
                     handle={`$${formatAmount(trailingStopFeeUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}`}
+                    handleClassName="font-number"
                     position="right-bottom"
                     renderContent={() => {
                       return (
@@ -2346,9 +2350,10 @@ export default function SwapBox(props) {
           </div>
           <div className="Exchange-info-row">
             <div className="Exchange-info-label">Available Liquidity:</div>
-            <div className="align-right al-swap font-number">
+            <div className="align-right al-swap">
               <Tooltip
                 handle={`${formatAmount(maxSwapAmountUsd, USD_DECIMALS, 2, true)} USD`}
+                handleClassName="font-number"
                 position="right-bottom"
                 renderContent={() => {
                   return (
@@ -2385,9 +2390,10 @@ export default function SwapBox(props) {
           <div className="App-card-divider"></div>
           <div className="Exchange-info-row">
             <div className="Exchange-info-label">Entry Price</div>
-            <div className="align-right font-number">
+            <div className="align-right">
               <Tooltip
                 handle={`${formatAmount(entryMarkPrice, USD_DECIMALS, markPriceDisplayDecimals, true)} USD`}
+                handleClassName="font-number"
                 position="right-bottom"
                 renderContent={() => {
                   return (
@@ -2417,9 +2423,10 @@ export default function SwapBox(props) {
           </div>
           <div className="Exchange-info-row">
             <div className="Exchange-info-label">Exit Price</div>
-            <div className="align-right font-number">
+            <div className="align-right">
               <Tooltip
                 handle={`${formatAmount(exitMarkPrice, USD_DECIMALS, markPriceDisplayDecimals, true)} USD`}
+                handleClassName="font-number"
                 position="right-bottom"
                 renderContent={() => {
                   return (
@@ -2447,9 +2454,10 @@ export default function SwapBox(props) {
           </div>
           <div className="Exchange-info-row">
             <div className="Exchange-info-label">Borrow Fee</div>
-            <div className="align-right font-number">
+            <div className="align-right">
               <Tooltip
                 handle={borrowFeeText}
+                handleClassName="font-number"
                 position="right-bottom"
                 renderContent={() => {
                   return (
@@ -2489,9 +2497,10 @@ export default function SwapBox(props) {
           {isShort && toTokenInfo.hasMaxAvailableShort && (
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">Available Liquidity</div>
-              <div className="align-right font-number">
+              <div className="align-right">
                 <Tooltip
                   handle={`${formatAmount(toTokenInfo.maxAvailableShort, USD_DECIMALS, 2, true)}`}
+                  handleClassName="font-number"
                   position="right-bottom"
                   renderContent={() => {
                     return (
