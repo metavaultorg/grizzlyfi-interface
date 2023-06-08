@@ -7,6 +7,7 @@ import Checkbox from "../Checkbox/Checkbox";
 import { bigNumberify, expandDecimals, formatAmount, USD_DECIMALS, USD_DISPLAY_DECIMALS ,parseValue} from "../../Helpers";
 import { BigNumber, ethers } from "ethers";
 import { isNumber } from "lodash";
+import Tab from "../../components/Tab/Tab";
 
 const stopLossRadioEnum = {
   stopLoss: "Stop Loss",
@@ -113,8 +114,7 @@ export default function Trailer(props) {
   }, [isStopLoss]);
 
   return (
-    <div className="Exchange-leverage-box">
-      <div className="divider"></div>
+    <div className="Exchange-trailer-box">
       <div className="Exchange-leverage-slider-settings">
         <Checkbox isChecked={isTrailingEnabled} setIsChecked={setIsTrailingEnabled}>
           <span className="muted">Pro Trading</span>
@@ -122,15 +122,17 @@ export default function Trailer(props) {
       </div>
       {isTrailingEnabled && (
         <>
-          <div className="trailing-box">
+          <div style={{ height: 32 }}></div>
+          <div className="trailing-box stop-loss">
             <div className="trailing-header">
-              <Radio
+              <Tab
                 options={[stopLossRadioEnum.stopLoss, stopLossRadioEnum.trailingStop]}
                 option={stopLossRadio}
-                setOption={setStopLossRadio}
-              ></Radio>
-              <div style={{ color: "red" }}>
-                ({formatAmount(stopLossPriceLabel, USD_DECIMALS, tokenInfo.displayDecimals, true)}$)
+                onChange={setStopLossRadio}
+                className="Exchange-swap-option-tabs"
+              />
+              <div className="font-number negative">
+                ${formatAmount(stopLossPriceLabel, USD_DECIMALS, tokenInfo.displayDecimals, true)}
               </div>
             </div>
             <div className="Exchange-leverage-slider App-slider negative">
@@ -150,7 +152,7 @@ export default function Trailer(props) {
               ) : (
                 <Slider
                   min={0}
-                  max={Object.keys(trailingStopPrices)[Object.keys(trailingStopPrices).length-1]}
+                  max={Object.keys(trailingStopPrices)[Object.keys(trailingStopPrices).length - 1]}
                   step={0.1}
                   marks={trailingStopPrices}
                   handle={sliderHandle}
@@ -165,20 +167,13 @@ export default function Trailer(props) {
           </div>
           <div className="divider"></div>
 
-          <div className="trailing-box">
+          <div className="trailing-box take-profit">
             <div className="trailing-header">
-              <div style={{ display: "flex" }}>
+              <div className="label">
                 Take Profit{" "}
-                <p style={{ color: "green", marginLeft: "3px" }}>
-                  (
-                  {takeProfitPriceLabel.gt(0)
-                    ? formatAmount(takeProfitPriceLabel, USD_DECIMALS, tokenInfo.displayDecimals, true)
-                    : "..."}
-                  )$
-                </p>
               </div>
               <input
-                className="take-profit-input"
+                className="take-profit-input font-number"
                 type="number"
                 min={0}
                 inputMode={"decimal"}
@@ -190,6 +185,11 @@ export default function Trailer(props) {
                 }}
               />
             </div>
+            <p className="positive font-number price">
+                  ${takeProfitPriceLabel.gt(0)
+                    ? formatAmount(takeProfitPriceLabel, USD_DECIMALS, tokenInfo.displayDecimals, true)
+                    : "..."}
+            </p>
             <div className="Exchange-leverage-slider App-slider negative">
               <Slider
                 min={0}
@@ -206,7 +206,6 @@ export default function Trailer(props) {
               />
             </div>
           </div>
-          <div className="divider"></div>
         </>
       )}
     </div>
