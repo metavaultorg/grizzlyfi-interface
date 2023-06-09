@@ -238,7 +238,7 @@ export default function ExchangeTVChart(props) {
                 .setLineStyle(1)
                 .setLineLength(10)
                 .setQuantity("")
-                .setBodyFont("12px Inter,sans-serif")
+                .setBodyFont("12px Boston,sans-serif")
                 .setText(title.padEnd(PRICE_LINE_TEXT_WIDTH, " "))
             );
         });
@@ -262,7 +262,7 @@ export default function ExchangeTVChart(props) {
                 .setLineStyle(1)
                 .setLineLength(10)
                 .setQuantity("")
-                .setBodyFont("12px Inter,sans-serif")
+                .setBodyFont("12px Boston,sans-serif")
                 .setText(
                   `Open ${position.indexToken.symbol} ${position.isLong ? "Long" : "Short"}`.padEnd(
                     PRICE_LINE_TEXT_WIDTH,
@@ -286,7 +286,7 @@ export default function ExchangeTVChart(props) {
                 .setLineStyle(1)
                 .setLineLength(10)
                 .setQuantity("")
-                .setBodyFont("12px Inter,sans-serif")
+                .setBodyFont("12px Boston,sans-serif")
                 .setText(
                   `Liq. ${position.indexToken.symbol} ${position.isLong ? "Long" : "Short"}`.padEnd(
                     PRICE_LINE_TEXT_WIDTH,

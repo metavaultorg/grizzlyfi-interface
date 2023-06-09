@@ -219,7 +219,7 @@ a.plain:hover {
   border-radius: 10px;
   font-size: 15px;
   line-height: 23px;
-  font-family: "Inter", sans-serif;
+  font-family: "Boston", sans-serif;
   font-weight: 600;
   letter-spacing: -0.02em;
   color: #000 !important;
@@ -347,7 +347,7 @@ button.btn-link:hover .logout-icon {
   line-height: 34px;
   letter-spacing: -0.02em;
   font-weight: 600;
-  font-family: "Inter", sans-serif;
+  font-family: "Boston", sans-serif;
 }
 
 .padding-left {
@@ -371,7 +371,7 @@ button.btn-link:hover .logout-icon {
   -webkit-background-clip: text;
   -moz-background-clip: text;
   font-weight: 700;
-  font-family: "Inter", sans-serif;
+  font-family: "Boston", sans-serif;
 }
 
 .token-card-flex {
@@ -393,7 +393,7 @@ button.btn-link:hover .logout-icon {
 }
 
 .token-apr {
-  font-family: "Inter", sans-serif;
+  font-family: "Boston", sans-serif;
   font-size: 22px;
   font-weight: 700;
 }
@@ -413,7 +413,7 @@ button.btn-link:hover .logout-icon {
   text-decoration: none;
   display: inline-block;
   text-align: center;
-  font-family: "Inter", sans-serif;
+  font-family: "Boston", sans-serif;
 }
 
 .buy-polygon:hover {
@@ -442,7 +442,7 @@ button.btn-link:hover .logout-icon {
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-family: "Inter", sans-serif;
+  font-family: "Boston", sans-serif;
 }
 
 @media (max-width: 1145px) {
@@ -458,7 +458,7 @@ button.btn-link:hover .logout-icon {
   font-weight: 700;
   font-size: 17px;
   line-height: 28px;
-  font-family: "Inter", sans-serif;
+  font-family: "Boston", sans-serif;
   display: flex;
   align-items: center;
   margin: 0 auto;
@@ -472,7 +472,7 @@ button.btn-link:hover .logout-icon {
   font-weight: 700;
   font-size: 17px;
   line-height: 28px;
-  font-family: "Inter", sans-serif;
+  font-family: "Boston", sans-serif;
   display: flex;
   align-items: center;
   margin: 0 auto;

@@ -171,7 +171,15 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
   if (!referralCodeInString && userReferralCodeInLocalStorage && !isHashZero(userReferralCodeInLocalStorage)) {
     referralCodeInString = decodeReferralCode(userReferralCodeInLocalStorage);
   }
-
+  const showInfo = () => {
+    if (activeTab === TRADERS && referralCodeInString) {
+      return false
+    }
+    if (activeTab === AFFILIATES && referralsData?.codes?.length) {
+      return false
+    }
+    return true
+  }
   function handleCreateReferralCode(code) {
     const referralCodeHex = encodeReferralCode(code);
     return registerReferralCode(chainId, referralCodeHex, {
@@ -288,96 +296,95 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
             <h3>Invite Friends & Earn Commissions</h3>
             <p>Enjoy Fee-Cashback and Fee-Commissions through the Metavault.Trade referral program.</p>
           </div>
+          <div>
+            <img
+              src={getImageUrl({
+                path: 'referralBanner',
+                format:'png'
+              })}
+              alt=""
+            />
+          </div>
         </div>
       </div>
       <div className="default-container page-layout Referrals">
-        <div style={{ marginBottom: 60, marginTop: 14 }} className="refer-texts">
+        {/* <div style={{ marginBottom: 60, marginTop: 14 }} className="refer-texts">
           <h4>Create a referral code in three easy steps</h4>
           <p> Make sure you are connected to your wallet to proceed</p>
-        </div>
+        </div> */}
         <div
           style={{
             display: "flex",
             alignItems: "flex-start",
             gap: 30,
-            flexDirection: account || windowWidth < 1130 ? "column" : "row",
+            // flexDirection: account || windowWidth < 1130 ? "column" : "row",
+            flexDirection:"column"
           }}
         >
+          {showInfo() &&
           <div
-            style={{ flexDirection: account && windowWidth > 800 ? "row" : "column", flexBasis: "50%" }}
+            style={{
+              flexDirection: "row",
+              // flexDirection: account && windowWidth > 800 ? "row" : "column",
+              flexBasis: "50%"
+            }}
             className="instructions-container"
           >
             <div className="instruction-container">
               <div className="instruction-container--header">
-                <span>01</span>
+                {/* <span>01</span> */}
                 <img
-                  width={74}
-                  height={74}
                   src={getImageUrl({
-                    path: "app.metavault.trade/affiliates-icon",
-                    format: "png",
-                    width: 100,
-                    height: 100,
-                    quality: 100,
+                    path: "affiliates-icon",
                   })}
                   alt="Affiliates"
                 />
               </div>
-              <p>Click on the ‘Affiliates’ tab </p>
+              <p>1.Click on the ‘Affiliates’ tab </p>
+              <p>Go to Affiliates tab to Generate your Referrarl link</p>
             </div>
             <div className="instruction-container">
               <div className="instruction-container--header">
-                <span>02</span>
+                {/* <span>02</span> */}
                 <img
-                  width={74}
-                  height={74}
                   src={getImageUrl({
-                    path: "app.metavault.trade/referralCode-icon",
-                    format: "png",
-                    width: 100,
-                    height: 100,
-                    quality: 100,
+                    path: "referralCode-icon",
                   })}
                   alt="Referral Code"
                 />
               </div>
               <p style={{ maxWidth: 460 }}>
-                Enter your own unique code (Combination of Letters, Numbers or underscores) e.g. Mvx_10
+                2. Enter your own unique code
               </p>
+              <p>(Combination of Letters, Numbers or underscores) e.g. Grz_44</p>
             </div>
             <div className="instruction-container">
               <div className="instruction-container--header">
-                <span>03</span>
+                {/* <span>03</span> */}
                 <img
-                  width={74}
-                  height={74}
                   src={getImageUrl({
-                    path: "app.metavault.trade/cashback-icon",
-                    format: "png",
-                    width: 100,
-                    height: 100,
-                    quality: 100,
+                    path: "cashback-icon",
                   })}
                   alt="Cashback"
                 />
               </div>
               <p style={{ maxWidth: 460 }}>
-                Share your referral link on social media.
-                <br />
-                Enjoy up to 15% Fee-Commission.
-                <br />
-                Referred Traders can get up to 10% Cashback.
+                3.Share your referral link on social media.
               </p>
+              <p>Enjoy up to 15% Fee-Commission.
+                Referred Traders can get up to 10% Cashback.</p>
             </div>
           </div>
+          }
           <div style={{ display: "flex", flexDirection: "column", width: "100%", flexBasis: "50%" }}>
             <div
               className="ref-container"
               style={{
-                background: account ? "transparent" : "rgba(118,118,128,0.24)",
-                padding: account ? 0 : 32,
-                borderRadius: 30,
-                height: 373.03,
+                background: " #1f1f1f",
+                border: "solid 1px #2b2b2b",
+                padding: 24,
+                borderRadius: 40,
+                // height: 373.03,
                 display: "flex",
                 flexDirection: "column",
               }}
@@ -387,7 +394,7 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
                 {activeTab === AFFILIATES ? renderAffiliatesTab() : renderTradersTab()}
               </div>
             </div>
-            <a
+            {/* <a
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -440,16 +447,16 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
                   fill="white"
                 />
               </svg>
-            </a>
+            </a> */}
           </div>
         </div>
         {/*  <div className="referral-tab-container text-uppercase">
           <Tab options={TAB_OPTIONS} option={activeTab} setOption={setActiveTab} onChange={setActiveTab} />
         </div>
         {activeTab === AFFILIATES ? renderAffiliatesTab() : renderTradersTab()} */}
-        <div style={{ marginTop: 24 }}>
+        {/* <div style={{ marginTop: 24 }}>
           <Footer />
-        </div>
+        </div> */}
       </div>
     </SEO>
   );
@@ -500,13 +507,13 @@ function CreateReferralCode({
 
   function getButtonError() {
     if (!referralCode || referralCode.length === 0) {
-      return "ENTER A CODE";
+      return "Enter a code";
     }
     if (referralCodeCheckStatus === "taken") {
-      return "CODE ALREADY TAKEN";
+      return "Code Already Taken";
     }
     if (referralCodeCheckStatus === "checking") {
-      return "CHECKING CODE...";
+      return "Checking Code...";
     }
 
     return false;
@@ -569,8 +576,8 @@ function CreateReferralCode({
   return (
     <div
       style={{
-        background: account ? "rgba(118,118,128,.24)" : "transparent",
-        border: account ? "1px solid rgba(255, 255, 255, 0.2)" : "none",
+        // background: account ? "rgba(118,118,128,.24)" : "transparent",
+        // border: account ? "1px solid rgba(255, 255, 255, 0.2)" : "none",
         marginBottom: account ? 140 : 0,
       }}
       className="referral-card section-center mt-medium"
@@ -612,7 +619,7 @@ function CreateReferralCode({
           </form>
         ) : (
           <button
-            style={{ fontSize: "17px", fontWeight: 600, fontFamily: "Inter" }}
+            style={{ fontSize: "17px", fontWeight: 600, fontFamily: "Boston" }}
             className="App-cta Exchange-swap-button"
             type="submit"
             onClick={connectWallet}
@@ -776,16 +783,19 @@ function AffiliatesInfo({
           label="Total Traders Referred"
           tooltipText="Amount of traders you referred."
           data={cumulativeStats?.registeredReferralsCount || "0"}
+          iconPath="icon-referral-invite-friend"
         />
         <InfoCard
           label="Total Trading Volume"
           tooltipText="Volume traded by your referred traders."
           data={getUSDValue(cumulativeStats?.volume)}
+          iconPath="icon-investments-money"
         />
         <InfoCard
           label="Total Fee-Commissions"
           tooltipText="Fee-Commissions earned by this account as an affiliate."
           data={getUSDValue(referrerRebates)}
+          iconPath="icon-withdraw"
         />
       </div>
       <div className="list">
@@ -834,7 +844,7 @@ function AffiliatesInfo({
                   {referrerTierInfo && `Tier ${getTierIdDisplay(tierId)} (${tierRebateInfo[tierId]}% fee-commissions)`}
                 </span>
               </p>
-              <button className="transparent-btn transparent-btnmargintop" onClick={open}>
+              <button className="transparent-btn transparent-btnmargintop" onClick={open} style={{marginBottom:8}}>
                 <FiPlus /> <span className="ml-small">Create</span>
               </button>
             </div>
@@ -944,12 +954,25 @@ function AffiliatesInfo({
                           {formatAmount(rebate.amount, tokenInfo.decimals, 4, true)} {tokenInfo.symbol}
                         </td>
                         <td className="table-head" data-label="Transaction">
-                          <a
+                          {/* <a
                             target="_blank"
                             rel="noopener noreferrer"
                             href={explorerURL + `tx/${rebate.transactionHash}`}
                           >
                             {shortenAddress(rebate.transactionHash, 13)}
+                          </a> */}
+                          {shortenAddress(rebate.transactionHash, 13)}
+                          <span
+                            className="td-icon"
+                            onClick={() => {
+                              copyToClipboard(rebate.transactionHash);
+                              helperToast.success("Transaction hash copied to your clipboard");
+                            }}
+                          ><img alt="copy" src={getImageUrl({ path: 'icon-copy-new' })} /></span>
+                          <a target="_blank"
+                            rel="noopener noreferrer"
+                            href={explorerURL + `tx/${rebate.transactionHash}`} className="td-icon">
+                            <img alt="link" src={getImageUrl({ path: 'icon-send-token' })} />
                           </a>
                         </td>
                       </tr>
@@ -989,7 +1012,7 @@ function TradersInfo({
   const [error, setError] = useState("");
   const editModalRef = useRef(null);
   const debouncedEditReferralCode = useDebounce(editReferralCode, 300);
-
+  const [, copyToClipboard] = useCopyToClipboard();
   const open = () => setIsEditModalOpen(true);
   const close = () => {
     setEditReferralCode("");
@@ -1077,13 +1100,16 @@ function TradersInfo({
           label="Total Trading Volume"
           tooltipText="Volume traded by this account with an active referral code."
           data={getUSDValue(referralTotalStats?.volume)}
+          iconPath="icon-investments-money"
         />
         <InfoCard
           label="Total Fee-cashback"
           tooltipText="Fee-cashback earned by this account as a trader."
           data={getUSDValue(referralTotalStats?.discountUsd)}
+          iconPath="icon-withdraw"
         />
         <InfoCard
+          iconPath="icon-referral-invite-friend"
           label="Active Referral Code"
           data={
             <div className="active-referral-code">
@@ -1169,13 +1195,25 @@ function TradersInfo({
                           {formatAmount(rebate.amount, tokenInfo.decimals, 4, true)} {tokenInfo.symbol}
                         </td>
                         <td data-label="Transaction">
-                          <a
+                          {/* <a
                             style={{ color: "#f2c75c" }}
                             target="_blank"
                             rel="noopener noreferrer"
                             href={explorerURL + `tx/${rebate.transactionHash}`}
                           >
                             {shortenAddress(rebate.transactionHash, 20)}
+                          </a> */}
+                          {shortenAddress(rebate.transactionHash, 20)}
+                          <span
+                            className="td-icon"
+                            onClick={() => {
+                              copyToClipboard(rebate.transactionHash);
+                              helperToast.success("Transaction hash copied to your clipboard");
+                            }}
+                          ><img alt="copy" src={getImageUrl({ path: 'icon-copy-new' })} /></span>
+                          <a target="_blank" rel="noopener noreferrer" href={explorerURL + `tx/${rebate.transactionHash}`}
+                            className="td-icon">
+                            <img alt="copy" src={getImageUrl({ path: 'icon-send-token' })} />
                           </a>
                         </td>
                       </tr>
@@ -1233,8 +1271,8 @@ function JoinReferralCode({
   return (
     <div
       style={{
-        background: account ? "rgba(118,118,128,.24)" : "transparent",
-        border: account ? "1px solid rgba(255, 255, 255, 0.2)" : "none",
+        // background: account ? "rgba(118,118,128,.24)" : "transparent",
+        // border: account ? "1px solid rgba(255, 255, 255, 0.2)" : "none",
         marginBottom: account ? 140 : 0,
       }}
       className="referral-card section-center mt-medium"
@@ -1266,12 +1304,12 @@ function JoinReferralCode({
               type="submit"
               disabled={!referralCode.trim() || isSubmitting}
             >
-              {isSubmitting ? "SUBMITTING.." : "SUBMIT"}
+              {isSubmitting ? "Submitting.." : "Submit"}
             </button>
           </form>
         ) : (
           <button
-            style={{ fontSize: "17px", fontWeight: 600, fontFamily: "Inter" }}
+            style={{ fontSize: "17px", fontWeight: 600, fontFamily: "Boston" }}
             className="App-cta Exchange-swap-button"
             type="submit"
             onClick={connectWallet}
@@ -1284,9 +1322,18 @@ function JoinReferralCode({
   );
 }
 
-function InfoCard({ label, data, tooltipText, toolTipPosition = "left-bottom" }) {
+function InfoCard({ label, data, tooltipText, toolTipPosition = "left-bottom",iconPath }) {
   return (
     <div className="info-card">
+      <div className="card-icon">
+        <img
+          src={getImageUrl({
+            path: iconPath
+          })}
+          alt=""
+        />
+      </div>
+      
       <div className="card-details">
         <h3 className="label">
           {tooltipText ? (

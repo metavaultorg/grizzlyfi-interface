@@ -54,7 +54,7 @@ export default function BuyMVX() {
 
   const customize = {
     // width: 470,
-    fontFamily: "Inter",
+    fontFamily: "Boston",
     responsiveWidth: true,
     borderRadius: 1,
     primary: "rgb(58, 55, 95)",

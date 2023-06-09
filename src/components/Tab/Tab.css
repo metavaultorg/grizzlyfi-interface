@@ -1,13 +1,13 @@
 .Tab.block {
   display: grid;
+  gap: 8px;
   grid-auto-flow: column;
-  font-size: 15px;
-  border-radius: 20px;
+  font-size: 16px;
+  border-radius: 22px;
   overflow: hidden;
   color: #fff;
   background: rgba(118, 118, 128, 0.24);
   box-shadow: inset 0px 0px 30px 5px rgba(255, 255, 255, 0.01);
-  font-family: "Inter", sans-serif;
 }
 
 .Tab-option-icon {
@@ -21,7 +21,7 @@
   padding-left: 2rem;
   padding-right: 2rem;
   cursor: pointer;
-  font-family: "Inter", sans-serif;
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .Tab.block .Tab-option:hover {
@@ -29,9 +29,10 @@
 }
 
 .Tab.block .Tab-option.active {
+  background-color: #fff;
+  color: #1a1a1a;
   opacity: 1;
-  pointer-events: none;
-  color: #fff;
+  font-weight: 600;
 }
 
 .Tab.block .Tab-option.active .Tab-option-icon {

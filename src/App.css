@@ -339,7 +339,7 @@ button:hover{
   font-weight: normal;
   letter-spacing: 0px;
   color: #ffffff;
-  font-family: "Inter", sans-serif;
+  font-family: "Boston", sans-serif;
 }
 
 .App-card-info-subtitle {
@@ -380,7 +380,7 @@ button:hover{
 }
 
 .Wallet-btn > * {
-  font-family: "Inter", sans-serif;
+  font-family: "Boston", sans-serif;
   font-weight: 500;
 }
 .Wallet-btn:hover {
@@ -587,7 +587,7 @@ button:hover{
   -webkit-background-clip: text;
   background-clip: text;
   /*   margin-bottom: 0.5rem; */
-  font-family: "Inter", sans-serif;
+  font-family: "Boston", sans-serif;
 }
 
 .Page-description {
@@ -653,7 +653,7 @@ button:hover{
   backdrop-filter: blur(85px);
   -webkit-backdrop-filter: blur(85px);
   padding: 30px;
-  font-family: "Inter", sans-serif;
+  font-family: "Boston", sans-serif;
   border-radius: 15px 15px 0 0;
   -webkit-border-radius: 15px 15px 0 0;
   -moz-border-radius: 15px 15px 0 0;
@@ -957,7 +957,7 @@ button.App-cta {
   border-radius: 24px;
   text-decoration: none;
   /* box-shadow: 0 0 4px 6px rgba(45,66,252,0.15); */
-  font-family: "Inter", sans-serif !important;
+  font-family: "Boston", sans-serif !important;
   font-weight: 600;
 }
 
@@ -1213,7 +1213,7 @@ button.App-button {
   /*   background: #ffffff47 0% 0% no-repeat padding-box; */
 }
 .Toastify__toast-body {
-  font: normal normal normal 14px/16px "Inter", sans-serif;
+  font: normal normal normal 14px/16px "Boston", sans-serif;
   line-height: 1.3rem;
 }
 

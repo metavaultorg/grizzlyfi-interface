@@ -186,16 +186,17 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
           Earn
         </NavLink>
       </div>
-      {/* <div className="App-header-link-container">
-        <NavLink activeClassName="active" to="/buy">
-          Buy
-        </NavLink>
-      </div>
       <div className="App-header-link-container">
         <NavLink activeClassName="active" to="/referrals">
           Referrals
         </NavLink>
       </div>
+      {/* <div className="App-header-link-container">
+        <NavLink activeClassName="active" to="/buy">
+          Buy
+        </NavLink>
+      </div>
+      
       <div className="App-header-link-container">
         <a href="https://docs.metavault.trade/" target="_blank" rel="noopener noreferrer">
           <span

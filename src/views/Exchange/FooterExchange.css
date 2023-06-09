@@ -110,7 +110,7 @@
   justify-content: center;
   max-width: 458px;
   margin-bottom: 30px;
-  font-family: "Inter", sans-serif;
+  font-family: "Boston", sans-serif;
 }
 
 @media (max-width: 1170px) {
@@ -140,7 +140,7 @@ span {
   line-height: 34px;
   letter-spacing: -0.02em;
   font-weight: 500;
-  font-family: "Inter", sans-serif;
+  font-family: "Boston", sans-serif;
   color: #fff;
   align-self: flex-start;
 }
