@@ -5,6 +5,7 @@ import Card from "../../components/Common/Card";
 import SEO from "../../components/Common/SEO";
 import Tab from "../../components/Tab/Tab";
 import Footer from "../../Footer";
+import { format as formatDateFn } from "date-fns";
 import {
   useChainId,
   getPageTitle,
@@ -57,6 +58,23 @@ const AFFILIATES = "Affiliates";
 const TAB_OPTIONS = [TRADERS, AFFILIATES];
 const CODE_REGEX = /^\w+$/; // only number, string and underscore is allowed
 
+const intervals = [
+  { label: 'year', seconds: 31536000 },
+  { label: 'month', seconds: 2592000 },
+  { label: 'day', seconds: 86400 },
+  { label: 'hour', seconds: 3600 },
+  { label: 'min', seconds: 60 },
+  { label: 'second', seconds: 1 }
+]
+export function timeSince(time) {
+  const seconds = Date.now() / 1000 - time | 0
+  const interval = intervals.find(i => i.seconds < seconds)
+
+  if (!interval)
+    return ''
+  const count = seconds / interval.seconds | 0
+  return `${count} ${interval.label}${count !== 1 ? 's' : ''} ago`
+}
 function isRecentReferralCodeNotExpired(referralCodeInfo) {
   if (referralCodeInfo.time) {
     return referralCodeInfo.time + REFERRAL_DATA_MAX_TIME > Date.now();
@@ -932,7 +950,7 @@ function AffiliatesInfo({
                       Amount
                     </th>
                     <th className="table-head" scope="col">
-                      Transaction
+                      Address
                     </th>
                   </tr>
                 </thead>
@@ -948,12 +966,13 @@ function AffiliatesInfo({
                     return (
                       <tr key={index}>
                         <td className="table-head" data-label="Date">
-                          {formatDate(rebate.timestamp)}
+                          <div>{timeSince(rebate.timestamp)}</div>
+                          <div style={{ fontSize: 16, color: 'rgba(255,255,255,0.6)' }}>{formatDateFn(rebate.timestamp * 1000, "dd/MM/yyyy")}</div>
                         </td>
                         <td className="table-head" data-label="Amount">
                           {formatAmount(rebate.amount, tokenInfo.decimals, 4, true)} {tokenInfo.symbol}
                         </td>
-                        <td className="table-head" data-label="Transaction">
+                        <td className="table-head" data-label="Address">
                           {/* <a
                             target="_blank"
                             rel="noopener noreferrer"
@@ -1175,7 +1194,7 @@ function TradersInfo({
                       Amount
                     </th>
                     <th className="table-head" scope="col">
-                      Transaction
+                      Address
                     </th>
                   </tr>
                 </thead>
@@ -1190,11 +1209,14 @@ function TradersInfo({
                     const explorerURL = getExplorerUrl(chainId);
                     return (
                       <tr key={index}>
-                        <td data-label="Date">{formatDate(rebate.timestamp)}</td>
+                        <td data-label="Date">
+                          <div>{timeSince(rebate.timestamp)}</div>
+                          <div style={{ fontSize: 16, color: 'rgba(255,255,255,0.6)' }}>{formatDateFn(rebate.timestamp * 1000, "dd/MM/yyyy")}</div>
+                        </td>
                         <td data-label="Amount">
                           {formatAmount(rebate.amount, tokenInfo.decimals, 4, true)} {tokenInfo.symbol}
                         </td>
-                        <td data-label="Transaction">
+                        <td data-label="Address">
                           {/* <a
                             style={{ color: "#f2c75c" }}
                             target="_blank"
