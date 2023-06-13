@@ -8,10 +8,15 @@ html {
   }
 }
 
+.section-share {
+  background: url('https://res.cloudinary.com/dfsqsebxd/image/upload/v1685962645/website-assets/bg-share.png') no-repeat;
+  background-size: 100% 100%;
+}
+
 .position-share-modal .Modal-content {
   padding: 0px;
-  border: none;
-  border-radius: 46px;
+  border: 1px solid #3f3f3f;
+  border-radius: 40px;
 }
 .position-share-modal .Modal-title-bar {
   display: none;
@@ -31,7 +36,6 @@ html {
 }
 
 .share-modal {
-  background-size: cover;
   width: 800px;
 }
 
@@ -126,7 +130,7 @@ align-items: center;
   font-weight: 600;
   opacity: 0.6;
   margin-bottom: 8px;
-  width: 110px;
+  width: 125px;
 }
 .share-referral-value {
   font-size: 24px;
@@ -316,6 +320,7 @@ align-items: center;
     flex-direction: column;
     align-items: baseline;
     font-size: 14px;
+    gap: 4px;
   }
   .share-referral {
     margin-top: 0px;

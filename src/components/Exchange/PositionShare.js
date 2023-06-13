@@ -21,8 +21,6 @@ import {
 import { useAffiliateCodes } from "../../Api/referrals";
 import SpinningLoader from "../Common/SpinningLoader";
 import useLoadImage from "../../hooks/useLoadImage";
-// import shareBgImg from "../../assets/sharePositionBg.webp";
-import shareBgImg from "../../assets/group-56.webp";
 import IconNext from '../../assets/icons/icon-next-left.svg';
 import longImg from "../../assets/icons/icon-long.svg";
 import shortImg from "../../assets/icons/icon-short.svg";
@@ -31,7 +29,7 @@ import { MdClose } from "react-icons/md";
 const ROOT_SHARE_URL = getRootShareApiUrl();
 const UPLOAD_URL = ROOT_SHARE_URL + "/api/upload";
 const UPLOAD_SHARE = ROOT_SHARE_URL + "/api/s";
-const config = { quality: 0.95, canvasWidth: 600, canvasHeight: 315, backgroundColor: '#444c56' };
+const config = { quality: 0.95, canvasWidth: 800, canvasHeight: 400, backgroundColor: '#444c56' };
 
 function getShareURL(imageInfo, ref) {
   if (!imageInfo) return;
@@ -50,7 +48,6 @@ function PositionShare({ setIsPositionShareModalOpen, isPositionShareModalOpen, 
   const [onTweet, setOnTweet] = useState(false);
   const [loading, setLoading] = useState(false);
   const [, copyToClipboard] = useCopyToClipboard();
-  const sharePositionBgImg = useLoadImage(shareBgImg);
   const positionRef = useRef();
 
 
@@ -68,7 +65,7 @@ function PositionShare({ setIsPositionShareModalOpen, isPositionShareModalOpen, 
 
   const uploadToServer = async () => {
     const element = positionRef.current;
-    if (element && userAffiliateCode.success && sharePositionBgImg && positionToShare) {
+    if (element && userAffiliateCode.success && positionToShare) {
       const image = await toJpeg(element, config);
       setLoading(true);
       try {
@@ -82,22 +79,6 @@ function PositionShare({ setIsPositionShareModalOpen, isPositionShareModalOpen, 
       }
     }
   }
-
-  // useEffect(() => {
-  //   (async function () {
-  //     const element = positionRef.current;
-  //     if (element && userAffiliateCode.success && sharePositionBgImg && positionToShare) {
-  //       const image = await toJpeg(element, config);
-  //       try {
-  //         const imageInfo = await fetch(UPLOAD_URL, { method: "POST", body: image }).then((res) => res.json());
-  //         setUploadedImageInfo(imageInfo);
-  //       } catch {
-  //         setUploadedImageInfo(null);
-  //         setUploadedImageError("Image generation error, please refresh and try again.");
-  //       }
-  //     }
-  //   })();
-  // }, [userAffiliateCode, sharePositionBgImg, positionToShare]);
 
   async function handleDownload() {
     const { indexToken, isLong } = positionToShare;
@@ -159,11 +140,7 @@ function PositionShare({ setIsPositionShareModalOpen, isPositionShareModalOpen, 
       <div className="Modal-close-button" onClick={() => setIsPositionShareModalOpen(false)}>
         <MdClose fontSize={28} className="Modal-close-icon" />
       </div>
-      <div
-        style={{
-          backgroundImage: `url(${sharePositionBgImg})`
-        }}
-        className="share-modal">
+      <div className="share-modal section-share">
         <PositionShareCard
           userAffiliateCode={userAffiliateCode}
           positionRef={positionRef}
@@ -172,16 +149,7 @@ function PositionShare({ setIsPositionShareModalOpen, isPositionShareModalOpen, 
           account={account}
           uploadedImageInfo={uploadedImageInfo}
           uploadedImageError={uploadedImageError}
-          sharePositionBgImg={sharePositionBgImg}
         />
-        {/* {!uploadedImageInfo && !uploadedImageError && (
-          <div style={{ zIndex: 100000 }} className="image-overlay-wrapper">
-          <div className="image-overlay">
-          <SpinningLoader />
-          <p className="loading-text">Generating shareable image...</p>
-          </div>
-          </div>
-        )} */}
         <div style={{ position: "relative" }}>
           <div className="share-dividing-line" />
           {loading && <div style={{ zIndex: 100000 }} className="image-overlay-wrapper">
@@ -227,7 +195,6 @@ function PositionShareCard({
   userAffiliateCode,
   uploadedImageInfo,
   uploadedImageError,
-  sharePositionBgImg,
 }) {
   const { code, success } = userAffiliateCode;
   const { deltaAfterFeesPercentageStr, isLong, leverage, indexToken, averagePrice, markPrice } = position;
@@ -238,12 +205,6 @@ function PositionShareCard({
       <div
         ref={positionRef}
         className="position-share"
-      // style={{
-      //   backgroundImage: `url(${sharePositionBgImg})`,
-      //   backgroundSize: "cover",
-      //   // padding: 0,
-      //   // borderRadius: 10,
-      // }}
       >
         <div className="bg-card--backdrop">
           <div className="logo">
