@@ -427,6 +427,7 @@ button:hover{
     margin-right: 15px;
   }
 }
+
 .App-header-balance{
   font-size: 14px;
   border-radius: 16px;
@@ -449,8 +450,17 @@ button:hover{
   justify-content: center;
   
 }
+
 .App-header-actions{
   cursor: pointer;
+  position: relative;
+  border-radius: 16px;
+  background-color: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  width: 48px;
+  height: 48px;
+  justify-content: center;
 }
 .App-header-user-address {
   backdrop-filter: blur(28px);
@@ -466,7 +476,13 @@ button:hover{
   font-size: 16px;
   padding: 8px;
 }
+@media (max-width:600px) {
 
+  .App-header-balance,
+  .App-header-network {
+    display: none;
+  }
+}
 .App-header-user-address:hover,
 .App-header-actions:hover {
   background: rgba(255, 255, 255, 0.15) !important;

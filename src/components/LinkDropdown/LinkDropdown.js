@@ -13,7 +13,7 @@ import discord from './icon-discord.svg'
 export default function LinkDropdown() {
     return (
         <Menu>
-            <Menu.Button as="div" className='flex App-header-network App-header-actions'>
+            <Menu.Button as="div" className='flex App-header-actions'>
                 {/* <button className=""> */}
                     <img src={dots} alt="" />
                 {/* </button> */}
