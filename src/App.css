@@ -428,6 +428,7 @@ button:hover{
   }
 }
 .App-header-balance{
+  font-size: 14px;
   border-radius: 16px;
   background-color: rgba(255, 255, 255, 0.05);
   display: flex;
@@ -435,8 +436,10 @@ button:hover{
   width: 103px;
   justify-content: center;
   gap: 4px;
+  font-family: "Montserrat",sans-serif;
 }
 .App-header-network{
+  position: relative;
   border-radius: 16px;
   background-color: rgba(255, 255, 255, 0.05);
   display: flex;
@@ -444,6 +447,10 @@ button:hover{
   width: 48px;
   height: 48px;
   justify-content: center;
+  
+}
+.App-header-actions{
+  cursor: pointer;
 }
 .App-header-user-address {
   backdrop-filter: blur(28px);
@@ -460,10 +467,19 @@ button:hover{
   padding: 8px;
 }
 
-.App-header-user-address:hover {
-  background: rgba(118, 118, 128, 0.24) !important;
+.App-header-user-address:hover,
+.App-header-actions:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
 }
-
+.media-links{
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+.media-links a:hover{
+  opacity: 0.8 !important;
+}
 .App-card-divider {
 }
 

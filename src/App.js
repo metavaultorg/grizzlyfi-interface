@@ -101,6 +101,7 @@ import Earn from "./views/Earn/Earn";
 import IconProfile from './assets/icons/icon-profile.svg'
 import IconToken from './assets/icons/honey-token.svg'
 import IconBnb from './assets/icons/icon-bnb.svg'
+import LinkDropdown from "./components/LinkDropdown/LinkDropdown";
 
 
 const safeMultisigConnector = new SafeAppConnector();
@@ -320,6 +321,9 @@ function AppHeaderUser({
             $155.51
           </div>
           <div className="App-header-network"><img src={IconBnb} alt="icon" /></div>
+          <div style={{ position: 'relative' }} >
+            <LinkDropdown />
+          </div>
           <div className="App-header-user-address">
             <img src={IconProfile} alt="icon" style={{ marginLeft: 8 }} />
             <AddressDropdown
@@ -333,10 +337,16 @@ function AppHeaderUser({
         </div>
         
       ) : (
-        <button className={"btn btn-yellow btn-wallet"} onClick={() => setWalletModalVisible(true)}>
-          {/* {small ? "Connect" : "Connect Wallet"} */}
-          Connect
-        </button>
+          <div style={{ display: 'flex', gap: 8,alignItems:'center' }}>
+            <div style={{position:'relative'}}>
+              <LinkDropdown />
+            </div>
+            <button className={"btn btn-yellow btn-wallet"} onClick={() => setWalletModalVisible(true)}>
+              {/* {small ? "Connect" : "Connect Wallet"} */}
+              Connect
+            </button>
+          </div>
+        
         // <ConnectWalletButton onClick={() => setWalletModalVisible(true)} imgSrc={connectWalletImg}>
         //   {small ? "Connect" : "Connect Wallet"}
         // </ConnectWalletButton>
