@@ -62,7 +62,22 @@ button:hover{
   bottom: -13px;
   left: 0;
 } */
-
+.App-header {
+  position: relative;
+  z-index: 2;
+}
+.App-header::after {
+	content: "";
+	width: 1600px;
+	height: 100%;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	background: rgba(123, 188, 185, 0.1);
+	filter: blur(50px);
+	-webkit-filter: blur(50px);
+	z-index: -1;
+}
 .App-header.large .App-header-links {
   display: flex;
   gap: 30px;
