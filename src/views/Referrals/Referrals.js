@@ -1,10 +1,11 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useRef, useState } from "react";
 import { useWeb3React } from "@web3-react/core";
 
 import Card from "../../components/Common/Card";
 import SEO from "../../components/Common/SEO";
 import Tab from "../../components/Tab/Tab";
-import Footer from "../../Footer";
+// import Footer from "../../Footer";
 import { format as formatDateFn } from "date-fns";
 import {
   useChainId,
@@ -12,7 +13,7 @@ import {
   formatAmount,
   USD_DECIMALS,
   helperToast,
-  formatDate,
+  // formatDate,
   getExplorerUrl,
   shortenAddress,
   bigNumberify,
@@ -28,9 +29,9 @@ import {
 } from "../../Helpers";
 import { decodeReferralCode, encodeReferralCode, useReferralsData } from "../../Api/referrals";
 
-import AffiliatesIcon from "../../assets/icons/AffiliatesIcon";
-import CashbackIcon from "../../assets/icons/CashbackIcon";
-import ReferralCodeIcon from "../../assets/icons/ReferralCodeIcon";
+// import AffiliatesIcon from "../../assets/icons/AffiliatesIcon";
+// import CashbackIcon from "../../assets/icons/CashbackIcon";
+// import ReferralCodeIcon from "../../assets/icons/ReferralCodeIcon";
 
 import "./Referrals.css";
 import {
@@ -56,7 +57,7 @@ const REFERRAL_DATA_MAX_TIME = 60000 * 5; // 5 minutes
 const TRADERS = "Traders";
 const AFFILIATES = "Affiliates";
 const TAB_OPTIONS = [TRADERS, AFFILIATES];
-const CODE_REGEX = /^\w+$/; // only number, string and underscore is allowed
+export const CODE_REGEX = /^\w+$/; // only number, string and underscore is allowed
 
 const intervals = [
   { label: 'year', seconds: 31536000 },
@@ -66,6 +67,16 @@ const intervals = [
   { label: 'min', seconds: 60 },
   { label: 'second', seconds: 1 }
 ]
+const tierDiscountInfo = {
+  0: 5,
+  1: 10,
+  2: 10,
+};
+async function validateReferralCodeExists(referralCode, chainId) {
+  const referralCodeBytes32 = encodeReferralCode(referralCode);
+  const referralCodeOwner = await getReferralCodeOwner(chainId, referralCodeBytes32);
+  return !isAddressZero(referralCodeOwner);
+}
 export function timeSince(time) {
   const seconds = Date.now() / 1000 - time | 0
   const interval = intervals.find(i => i.seconds < seconds)
@@ -81,11 +92,7 @@ function isRecentReferralCodeNotExpired(referralCodeInfo) {
   }
 }
 
-async function validateReferralCodeExists(referralCode, chainId) {
-  const referralCodeBytes32 = encodeReferralCode(referralCode);
-  const referralCodeOwner = await getReferralCodeOwner(chainId, referralCodeBytes32);
-  return !isAddressZero(referralCodeOwner);
-}
+
 
 async function getReferralCodeTakenStatus(account, referralCode, chainId) {
   const referralCodeBytes32 = encodeReferralCode(referralCode);
@@ -100,7 +107,7 @@ async function getReferralCodeTakenStatus(account, referralCode, chainId) {
   return { status: "none", info: codeOwner };
 }
 
-function getTierIdDisplay(tierId) {
+export function getTierIdDisplay(tierId) {
   if (!tierId) {
     return "";
   }
@@ -113,11 +120,7 @@ const tierRebateInfo = {
   2: 15,
 };
 
-const tierDiscountInfo = {
-  0: 5,
-  1: 10,
-  2: 10,
-};
+
 
 const getSampleReferrarStat = (code, ownerOnOtherNetwork, account) => {
   return {
@@ -140,11 +143,11 @@ const getSampleReferrarStat = (code, ownerOnOtherNetwork, account) => {
   };
 };
 
-function getUSDValue(value) {
+export function getUSDValue(value) {
   return `$${formatAmount(value, USD_DECIMALS, 2, true, "0.00")}`;
 }
 
-function getCodeError(value) {
+export function getCodeError(value) {
   const trimmedValue = value.trim();
   if (!trimmedValue) return "";
 
@@ -190,10 +193,10 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
     referralCodeInString = decodeReferralCode(userReferralCodeInLocalStorage);
   }
   const showInfo = () => {
-    if (activeTab === TRADERS && referralCodeInString) {
+    if (activeTab === TRADERS && referralCodeInString && active) {
       return false
     }
-    if (activeTab === AFFILIATES && referralsData?.codes?.length) {
+    if (activeTab === AFFILIATES && referralsData?.codes?.length && active) {
       return false
     }
     return true
@@ -339,61 +342,79 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
             flexDirection:"column"
           }}
         >
-          {showInfo() &&
-          <div
-            style={{
-              flexDirection: "row",
-              // flexDirection: account && windowWidth > 800 ? "row" : "column",
-              flexBasis: "50%"
-            }}
-            className="instructions-container"
-          >
-            <div className="instruction-container">
-              <div className="instruction-container--header">
-                {/* <span>01</span> */}
-                <img
-                  src={getImageUrl({
-                    path: "affiliates-icon",
-                  })}
-                  alt="Affiliates"
-                />
+          {showInfo() ?
+            <div
+              style={{
+                flexDirection: "row",
+                // flexDirection: account && windowWidth > 800 ? "row" : "column",
+                flexBasis: "50%"
+              }}
+              className="instructions-container"
+            >
+              <div className="instruction-container">
+                <div className="instruction-container--header">
+                  {/* <span>01</span> */}
+                  <img
+                    src={getImageUrl({
+                      path: "affiliates-icon",
+                    })}
+                    alt="Affiliates"
+                  />
+                </div>
+                <p>1.Click on the ‘Affiliates’ tab </p>
+                <p>Go to Affiliates tab to Generate your Referrarl link</p>
               </div>
-              <p>1.Click on the ‘Affiliates’ tab </p>
-              <p>Go to Affiliates tab to Generate your Referrarl link</p>
-            </div>
-            <div className="instruction-container">
-              <div className="instruction-container--header">
-                {/* <span>02</span> */}
-                <img
-                  src={getImageUrl({
-                    path: "referralCode-icon",
-                  })}
-                  alt="Referral Code"
-                />
+              <div className="instruction-container">
+                <div className="instruction-container--header">
+                  {/* <span>02</span> */}
+                  <img
+                    src={getImageUrl({
+                      path: "referralCode-icon",
+                    })}
+                    alt="Referral Code"
+                  />
+                </div>
+                <p style={{ maxWidth: 460 }}>
+                  2. Enter your own unique code
+                </p>
+                <p>(Combination of Letters, Numbers or underscores) e.g. Grz_44</p>
               </div>
-              <p style={{ maxWidth: 460 }}>
-                2. Enter your own unique code
-              </p>
-              <p>(Combination of Letters, Numbers or underscores) e.g. Grz_44</p>
-            </div>
-            <div className="instruction-container">
-              <div className="instruction-container--header">
-                {/* <span>03</span> */}
-                <img
-                  src={getImageUrl({
-                    path: "cashback-icon",
-                  })}
-                  alt="Cashback"
-                />
+              <div className="instruction-container">
+                <div className="instruction-container--header">
+                  {/* <span>03</span> */}
+                  <img
+                    src={getImageUrl({
+                      path: "cashback-icon",
+                    })}
+                    alt="Cashback"
+                  />
+                </div>
+                <p style={{ maxWidth: 460 }}>
+                  3.Share your referral link on social media.
+                </p>
+                <p>Enjoy up to 15% Fee-Commission.
+                  Referred Traders can get up to 10% Cashback.</p>
               </div>
-              <p style={{ maxWidth: 460 }}>
-                3.Share your referral link on social media.
-              </p>
-              <p>Enjoy up to 15% Fee-Commission.
-                Referred Traders can get up to 10% Cashback.</p>
-            </div>
-          </div>
+            </div> :
+            <>
+              {activeTab === AFFILIATES ?
+                <AffiliatesStats referralsData={referralsData} />
+                : 
+                <TraderStats
+                  account={account}
+                  referralCodeInString={referralCodeInString}
+                  chainId={chainId}
+                  library={library}
+                  referralsData={referralsData}
+                  setPendingTxns={setPendingTxns}
+                  pendingTxns={pendingTxns}
+                  traderTier={traderTier}
+                />
+              }
+            </>
+
           }
+          
           <div style={{ display: "flex", flexDirection: "column", width: "100%", flexBasis: "50%" }}>
             <div
               className="ref-container"
@@ -407,7 +428,7 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
                 flexDirection: "column",
               }}
             >
-              <div style={{ marginTop: account ? 60 : 0 }}>
+              <div>
                 <Tab options={TAB_OPTIONS} option={activeTab} setOption={setActiveTab} onChange={setActiveTab} />
                 {activeTab === AFFILIATES ? renderAffiliatesTab() : renderTradersTab()}
               </div>
@@ -789,33 +810,11 @@ function AffiliatesInfo({
   }, referrerTotalStats);
 
   const tierId = referrerTierInfo?.tierId;
-  let referrerRebates = bigNumberify(0);
-  if (cumulativeStats && cumulativeStats.rebates && cumulativeStats.discountUsd) {
-    referrerRebates = cumulativeStats.rebates.sub(cumulativeStats.discountUsd);
-  }
+  
 
   return (
     <div className="referral-body-container">
-      <div className="referral-stats">
-        <InfoCard
-          label="Total Traders Referred"
-          tooltipText="Amount of traders you referred."
-          data={cumulativeStats?.registeredReferralsCount || "0"}
-          iconPath="icon-referral-invite-friend"
-        />
-        <InfoCard
-          label="Total Trading Volume"
-          tooltipText="Volume traded by your referred traders."
-          data={getUSDValue(cumulativeStats?.volume)}
-          iconPath="icon-investments-money"
-        />
-        <InfoCard
-          label="Total Fee-Commissions"
-          tooltipText="Fee-Commissions earned by this account as an affiliate."
-          data={getUSDValue(referrerRebates)}
-          iconPath="icon-withdraw"
-        />
-      </div>
+
       <div className="list">
         <Modal
           className="Connect-wallet-modal"
@@ -862,8 +861,8 @@ function AffiliatesInfo({
                   {referrerTierInfo && `Tier ${getTierIdDisplay(tierId)} (${tierRebateInfo[tierId]}% fee-commissions)`}
                 </span>
               </p>
-              <button className="transparent-btn transparent-btnmargintop" onClick={open} style={{marginBottom:8}}>
-                <FiPlus /> <span className="ml-small">Create</span>
+              <button className="transparent-btn transparent-btnmargintop create-btn" onClick={open} style={{marginBottom:8,background:'rgba(255,255,255,0.05)',border:'none',borderRadius:18,}}>
+                <FiPlus size={24} /> <span className="ml-small">Create new</span>
               </button>
             </div>
           }
@@ -1023,163 +1022,13 @@ function TradersInfo({
   pendingTxns,
 }) {
   const { referralTotalStats, discountDistributions } = referralsData;
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [referralCodeExists, setReferralCodeExists] = useState(true);
-  const [isValidating, setIsValidating] = useState(false);
-  const [editReferralCode, setEditReferralCode] = useState("");
-  const [isUpdateSubmitting, setIsUpdateSubmitting] = useState(false);
-  const [error, setError] = useState("");
-  const editModalRef = useRef(null);
-  const debouncedEditReferralCode = useDebounce(editReferralCode, 300);
+  
   const [, copyToClipboard] = useCopyToClipboard();
-  const open = () => setIsEditModalOpen(true);
-  const close = () => {
-    setEditReferralCode("");
-    setIsUpdateSubmitting(false);
-    setError("");
-    setIsEditModalOpen(false);
-  };
-  function handleUpdateReferralCode(event) {
-    event.preventDefault();
-    setIsUpdateSubmitting(true);
-    const referralCodeHex = encodeReferralCode(editReferralCode);
-    return setTraderReferralCodeByUser(chainId, referralCodeHex, {
-      library,
-      account,
-      successMsg: `Referral code updated!`,
-      failMsg: "Referral code updated failed.",
-      setPendingTxns,
-      pendingTxns,
-    })
-      .then(() => {
-        setIsEditModalOpen(false);
-      })
-      .finally(() => {
-        setIsUpdateSubmitting(false);
-      });
-  }
-  function getPrimaryText() {
-    if (editReferralCode === referralCodeInString) {
-      return "Referral Code is same";
-    }
-    if (isUpdateSubmitting) {
-      return "Updating...";
-    }
-    if (debouncedEditReferralCode === "") {
-      return "ENTER REFERRAL CODE";
-    }
-    if (isValidating) {
-      return `Checking code...`;
-    }
-    if (!referralCodeExists) {
-      return `Referral Code does not exist`;
-    }
 
-    return "Update";
-  }
-  function isPrimaryEnabled() {
-    if (
-      debouncedEditReferralCode === "" ||
-      isUpdateSubmitting ||
-      isValidating ||
-      !referralCodeExists ||
-      editReferralCode === referralCodeInString
-    ) {
-      return false;
-    }
-    return true;
-  }
-
-  useEffect(() => {
-    let cancelled = false;
-    async function checkReferralCode() {
-      if (debouncedEditReferralCode === "" || !CODE_REGEX.test(debouncedEditReferralCode)) {
-        setIsValidating(false);
-        setReferralCodeExists(false);
-        return;
-      }
-
-      setIsValidating(true);
-      const codeExists = await validateReferralCodeExists(debouncedEditReferralCode, chainId);
-      if (!cancelled) {
-        setReferralCodeExists(codeExists);
-        setIsValidating(false);
-      }
-    }
-    checkReferralCode();
-    return () => {
-      cancelled = true;
-    };
-  }, [debouncedEditReferralCode, chainId]);
 
   return (
     <div className="rebate-container">
-      <div className="referral-stats">
-        <InfoCard
-          label="Total Trading Volume"
-          tooltipText="Volume traded by this account with an active referral code."
-          data={getUSDValue(referralTotalStats?.volume)}
-          iconPath="icon-investments-money"
-        />
-        <InfoCard
-          label="Total Fee-cashback"
-          tooltipText="Fee-cashback earned by this account as a trader."
-          data={getUSDValue(referralTotalStats?.discountUsd)}
-          iconPath="icon-withdraw"
-        />
-        <InfoCard
-          iconPath="icon-referral-invite-friend"
-          label="Active Referral Code"
-          data={
-            <div className="active-referral-code">
-              <div className="edit">
-                <span>{referralCodeInString}</span>
-                <BiEditAlt onClick={open} />
-              </div>
-              {traderTier && (
-                <div className="tier">
-                  <Tooltip
-                    handle={`Tier ${getTierIdDisplay(traderTier)} (${tierDiscountInfo[traderTier]}% fee-cashback)`}
-                    position="right-bottom"
-                    renderContent={() =>
-                      `You will receive a ${tierDiscountInfo[traderTier]}% cashback on your opening and closing fees, this fee-cashback will be airdropped to your account every Friday`
-                    }
-                  />
-                </div>
-              )}
-            </div>
-          }
-        />
-        <Modal
-          className="Connect-wallet-modal"
-          isVisible={isEditModalOpen}
-          setIsVisible={close}
-          label="Edit Referral Code"
-          onAfterOpen={() => editModalRef.current?.focus()}
-        >
-          <div className="edit-referral-modal">
-            <form onSubmit={handleUpdateReferralCode}>
-              <input
-                ref={editModalRef}
-                disabled={isUpdateSubmitting}
-                type="text"
-                placeholder="Enter referral code"
-                className={`text-input ${!error && "mb-sm"}`}
-                value={editReferralCode}
-                onChange={({ target }) => {
-                  const { value } = target;
-                  setEditReferralCode(value);
-                  setError(getCodeError(value));
-                }}
-              />
-              {error && <p className="error">{error}</p>}
-              <button type="submit" className="App-cta Exchange-swap-button" disabled={!isPrimaryEnabled()}>
-                {getPrimaryText()}
-              </button>
-            </form>
-          </div>
-        </Modal>
-      </div>
+
       {discountDistributions.length > 0 ? (
         <div className="reward-history">
           <Card title="Fee-cashback Distribution History" tooltipText="Fee-cashback are airdropped weekly.">
@@ -1344,7 +1193,7 @@ function JoinReferralCode({
   );
 }
 
-function InfoCard({ label, data, tooltipText, toolTipPosition = "left-bottom",iconPath }) {
+export function InfoCard({ label, data, tooltipText, toolTipPosition = "left-bottom",iconPath }) {
   return (
     <div className="info-card">
       <div className="card-icon">
@@ -1385,6 +1234,203 @@ function EmptyMessage({ message = "", tooltipText }) {
       )}
     </div>
   );
+}
+function TraderStats({
+  referralsData, referralCodeInString, traderTier, chainId,
+  library, account, setPendingTxns, pendingTxns,
+}) {
+  const { referralTotalStats, } = referralsData;
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editReferralCode, setEditReferralCode] = useState("");
+  const [isUpdateSubmitting, setIsUpdateSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [referralCodeExists, setReferralCodeExists] = useState(true);
+  const [isValidating, setIsValidating] = useState(false);
+
+  const editModalRef = useRef(null);
+  const debouncedEditReferralCode = useDebounce(editReferralCode, 300);
+
+
+  const open = () => setIsEditModalOpen(true);
+  const close = () => {
+    setEditReferralCode("");
+    setIsUpdateSubmitting(false);
+    setError("");
+    setIsEditModalOpen(false);
+  };
+
+
+  useEffect(() => {
+    let cancelled = false;
+    async function checkReferralCode() {
+      if (debouncedEditReferralCode === "" || !CODE_REGEX.test(debouncedEditReferralCode)) {
+        setIsValidating(false);
+        setReferralCodeExists(false);
+        return;
+      }
+
+      setIsValidating(true);
+      const codeExists = await validateReferralCodeExists(debouncedEditReferralCode, chainId);
+      if (!cancelled) {
+        setReferralCodeExists(codeExists);
+        setIsValidating(false);
+      }
+    }
+    checkReferralCode();
+    return () => {
+      cancelled = true;
+    };
+  }, [debouncedEditReferralCode, chainId]);
+
+  function handleUpdateReferralCode(event) {
+    event.preventDefault();
+    setIsUpdateSubmitting(true);
+    const referralCodeHex = encodeReferralCode(editReferralCode);
+    return setTraderReferralCodeByUser(chainId, referralCodeHex, {
+      library,
+      account,
+      successMsg: `Referral code updated!`,
+      failMsg: "Referral code updated failed.",
+      setPendingTxns,
+      pendingTxns,
+    })
+      .then(() => {
+        setIsEditModalOpen(false);
+      })
+      .finally(() => {
+        setIsUpdateSubmitting(false);
+      });
+  }
+  function getPrimaryText() {
+    if (editReferralCode === referralCodeInString) {
+      return "Referral Code is same";
+    }
+    if (isUpdateSubmitting) {
+      return "Updating...";
+    }
+    if (debouncedEditReferralCode === "") {
+      return "ENTER REFERRAL CODE";
+    }
+    if (isValidating) {
+      return `Checking code...`;
+    }
+    if (!referralCodeExists) {
+      return `Referral Code does not exist`;
+    }
+
+    return "Update";
+  }
+  function isPrimaryEnabled() {
+    if (
+      debouncedEditReferralCode === "" ||
+      isUpdateSubmitting ||
+      isValidating ||
+      !referralCodeExists ||
+      editReferralCode === referralCodeInString
+    ) {
+      return false;
+    }
+    return true;
+  }
+  return (
+    <div className="referral-stats">
+      <InfoCard
+        label="Total Trading Volume"
+        tooltipText="Volume traded by this account with an active referral code."
+        data={getUSDValue(referralTotalStats?.volume)}
+        iconPath="icon-investments-money"
+      />
+      <InfoCard
+        label="Total Fee-cashback"
+        tooltipText="Fee-cashback earned by this account as a trader."
+        data={getUSDValue(referralTotalStats?.discountUsd)}
+        iconPath="icon-withdraw"
+      />
+      <InfoCard
+        iconPath="icon-referral-invite-friend"
+        label="Active Referral Code"
+        data={
+          <div className="active-referral-code">
+            <div className="edit">
+              <span>{referralCodeInString}</span>
+              <BiEditAlt onClick={open} />
+            </div>
+            {traderTier && (
+              <div className="tier">
+                <Tooltip
+                  handle={`Tier ${getTierIdDisplay(traderTier)} (${tierDiscountInfo[traderTier]}% fee-cashback)`}
+                  position="right-bottom"
+                  renderContent={() =>
+                    `You will receive a ${tierDiscountInfo[traderTier]}% cashback on your opening and closing fees, this fee-cashback will be airdropped to your account every Friday`
+                  }
+                />
+              </div>
+            )}
+          </div>
+        }
+      />
+      <Modal
+        className="Connect-wallet-modal"
+        isVisible={isEditModalOpen}
+        setIsVisible={close}
+        label="Edit Referral Code"
+        onAfterOpen={() => editModalRef.current?.focus()}
+      >
+        <div className="edit-referral-modal">
+          <form onSubmit={handleUpdateReferralCode}>
+            <input
+              ref={editModalRef}
+              disabled={isUpdateSubmitting}
+              type="text"
+              placeholder="Enter referral code"
+              className={`text-input ${!error && "mb-sm"}`}
+              value={editReferralCode}
+              onChange={({ target }) => {
+                const { value } = target;
+                setEditReferralCode(value);
+                setError(getCodeError(value));
+              }}
+            />
+            {error && <p className="error">{error}</p>}
+            <button type="submit" className="App-cta Exchange-swap-button" disabled={!isPrimaryEnabled()}>
+              {getPrimaryText()}
+            </button>
+          </form>
+        </div>
+      </Modal>
+    </div>
+  )
+}
+function AffiliatesStats({
+  referralsData,
+}) {
+  let { cumulativeStats, } = referralsData;
+  let referrerRebates = bigNumberify(0);
+  if (cumulativeStats && cumulativeStats.rebates && cumulativeStats.discountUsd) {
+    referrerRebates = cumulativeStats.rebates.sub(cumulativeStats.discountUsd);
+  }
+  return (
+    <div className="referral-stats">
+      <InfoCard
+        label="Total Traders Referred"
+        tooltipText="Amount of traders you referred."
+        data={cumulativeStats?.registeredReferralsCount || "0"}
+        iconPath="icon-profile"
+      />
+      <InfoCard
+        label="Total Trading Volume"
+        tooltipText="Volume traded by your referred traders."
+        data={getUSDValue(cumulativeStats?.volume)}
+        iconPath="icon-investments-money"
+      />
+      <InfoCard
+        label="Total Fee-Commissions"
+        tooltipText="Fee-Commissions earned by this account as an affiliate."
+        data={getUSDValue(referrerRebates)}
+        iconPath="icon-percentage"
+      />
+    </div>
+  )
 }
 
 export default Referrals;

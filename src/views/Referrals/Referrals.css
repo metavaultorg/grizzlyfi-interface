@@ -1,5 +1,5 @@
 .Referrals {
-  padding-top: 3rem;
+  padding-top: 40px;
   max-width: 1140px;
   margin: 0 auto;
 }
@@ -463,6 +463,7 @@
   padding: 24px;
   flex-basis: 100%;
   text-align: center;
+  max-width: 438px;
 }
 
 .instruction-container--header {
@@ -524,13 +525,26 @@
 }
 .ref-container .card{
   border: none;
+}
+.rebate-container .card{
   background: none;
+
 }
 .ref-container {
   flex: 1 1 50%;
   width: 100%;
 }
-
+.create-btn{
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  border-radius: 18px;
+  color: rgba(255, 255, 255, 0.7);
+  height: 48px;
+}
+.create-btn span{
+  color: rgba(255, 255, 255, 0.7);
+}
 @media screen and (max-width: 1272px) {
   .referrals-header {
     background-image: none;

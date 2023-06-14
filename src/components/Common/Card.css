@@ -1,8 +1,8 @@
 .card {
   padding: 1rem;
   border: 1px solid rgba(234, 234, 234, 0.15);
-  border-radius: 15px;
-  background: rgba(118, 118, 128, 0.24);
+  border-radius: 30px;
+  background: #242424;
 }
 
 .card-header {
@@ -16,7 +16,7 @@
   align-items: center;
   justify-content: space-between;
   background: none;
-  border-bottom: 1px solid rgba(234, 234, 234, 0.15);
+  /* border-bottom: 1px solid rgba(234, 234, 234, 0.15); */
 }
 
 .card-divider {
