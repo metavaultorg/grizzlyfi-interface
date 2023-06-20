@@ -3,9 +3,9 @@ import { Helmet } from "react-helmet";
 function SEO(props) {
   const { children, ...customMeta } = props;
   const meta = {
-    title: "GLL | Grizzly.Trade - Perpetual trading exchange",
-    description: `Trade spot or perpetual BTC, ETH, MATIC and other top cryptocurrencies with up to 50x leverage directly from your wallet on Polygon.`,
-    image: "https://metavault.trade/android-chrome-512x512.png",
+    title: "Grizzly.fi Futures - Perpetual trading exchange",
+    description: `Trade perpetual BTC, ETH & BNB other top cryptocurrencies with up to 50x leverage directly from your wallet.`,
+    image: "https://www.grizzly.fi/assets/img/logos/logo2.svg",
     type: "exchange",
     ...customMeta,
   };
@@ -16,12 +16,12 @@ function SEO(props) {
         <meta name="robots" content="follow, index" />
         <meta content={meta.description} name="description" />
         <meta property="og:type" content={meta.type} />
-        <meta property="og:site_name" content="MVX" />
+        <meta property="og:site_name" content="Grizzly.fi Futures" />
         <meta property="og:description" content={meta.description} />
         <meta property="og:title" content={meta.title} />
         <meta property="og:image" content={meta.image} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@MetavaultDAO" />
+        <meta name="twitter:site" content="@GrizzlyFi" />
         <meta name="twitter:title" content={meta.title} />
         <meta name="twitter:description" content={meta.description} />
         <meta name="twitter:image" content={meta.image} />
