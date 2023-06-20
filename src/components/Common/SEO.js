@@ -4,7 +4,7 @@ function SEO(props) {
   const { children, ...customMeta } = props;
   const meta = {
     title: "Grizzly.fi Futures - Perpetual trading exchange",
-    description: `Trade perpetual BTC, ETH & BNB other top cryptocurrencies with up to 50x leverage directly from your wallet.`,
+    description: `Trade perpetual BTC, ETH & BNB and other top cryptocurrencies with up to 50x leverage directly from your wallet.`,
     image: "https://www.grizzly.fi/assets/img/logos/logo2.svg",
     type: "exchange",
     ...customMeta,
