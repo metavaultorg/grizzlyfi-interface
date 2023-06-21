@@ -2423,7 +2423,7 @@ export default function SwapBox(props) {
               </ExchangeInfoRow>
             }
             {takeProfitPrice && takeProfitPrice.gt(0) && stopLossPrice && stopLossPrice.gt(0) &&
-              <ExchangeInfoRow label="Take Profit/Stop Loss Fee">
+              <ExchangeInfoRow label="Stop Loss/Take Profit Fee">
                 <div>
                   {!takeProfitFeeUsd && "-"}
                   {takeProfitFeeUsd && (
