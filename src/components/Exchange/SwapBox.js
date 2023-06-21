@@ -1805,6 +1805,15 @@ export default function SwapBox(props) {
   let swapFees;
   let positionFee;
   let trailingStopFeeUsd;
+  let executionFee = 0;
+  let executionFeeUsd = 0;
+  let totalFeesUsd; // fees + executionFee
+  const stopLossFee = getConstant(chainId, "DECREASE_ORDER_EXECUTION_GAS_FEE");
+  const stopLossFeeUsd = getUsd(stopLossFee, nativeTokenAddress, false, infoTokens);
+  const takeProfitFee = getConstant(chainId, "DECREASE_ORDER_EXECUTION_GAS_FEE");
+  const takeProfitFeeUsd = getUsd(takeProfitFee, nativeTokenAddress, false, infoTokens);
+  const nativeTokenSymbol = getConstant(chainId, "nativeTokenSymbol");
+
   if (isSwap) {
     if (fromAmount) {
       const { feeBasisPoints } = getNextToAmount(
@@ -1852,6 +1861,152 @@ export default function SwapBox(props) {
     }
     feeBps = feeBasisPoints;
   }
+
+  if (fromAmount?.gt(bigNumberify(0))) {
+    if (isSwap && isMarketOrder) {executionFee = 0;}
+    if (isSwap && !isMarketOrder) {executionFee = getConstant(chainId, "SWAP_ORDER_EXECUTION_GAS_FEE");}
+    if (!isSwap && isMarketOrder) {executionFee = getConstant(chainId, "INCREASE_ORDER_EXECUTION_GAS_FEE");}
+    if (!isSwap && !isMarketOrder) {executionFee = minExecutionFee;}
+
+    if (executionFee > 0) {
+      executionFeeUsd = getUsd(executionFee, nativeTokenAddress, false, infoTokens);
+    }
+  }
+  totalFeesUsd = feesUsd?.add(executionFeeUsd);
+
+  const renderFeesTooltip = () => {
+
+    if (isSwap) return (
+      <Tooltip
+        handle={`$${formatAmount(totalFeesUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}`}
+        handleClassName="font-number"
+        position="right-bottom"
+        renderContent={() => {
+          return (
+            <>
+              <div>
+                Swap Fee ({formatAmount(feeBps, 2, 2, false)}% of swap size):
+                &nbsp; {formatAmount(fees, fromToken.decimals, 4, true)}
+                &nbsp; {fromToken.symbol}
+                &nbsp; (${formatAmount(feesUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)})
+              </div>
+              {isMarketOrder ? <></> : (<>
+                <br />
+                <div>
+                  Execution Fee: &nbsp;
+                  {formatAmount(executionFee, nativeTokenSymbol.decimals, nativeTokenSymbol.displayDecimals, true)}
+                  &nbsp; {nativeTokenSymbol}
+                  &nbsp; (${formatAmount(executionFeeUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)})
+                </div></>)
+              }
+            </>
+          );
+        }}
+      />
+    );
+
+    if ((isLong || isShort) && !isStopOrder) return (
+      <Tooltip
+        handle={`$${formatAmount(totalFeesUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}`}
+        handleClassName="font-number"
+        position="right-bottom"
+        renderContent={() => {
+          return (
+            <>
+              {swapFees && (
+                <div>
+                  {collateralToken.symbol} is required for collateral. <br />
+                  <br />
+                  Swap {fromToken.symbol} to {collateralToken.symbol} Fee: &nbsp;$
+                  {formatAmount(swapFees, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}
+                  <br />
+                  <br />
+                </div>
+              )}
+              <div>
+                Position Fee (0.1% of position size): &nbsp;$
+                {formatAmount(positionFee, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}
+              </div>
+              <br />
+              <div>
+                Execution Fee: &nbsp;
+                {formatAmount(executionFee, nativeTokenSymbol.decimals, nativeTokenSymbol.displayDecimals, true)}
+                &nbsp; {nativeTokenSymbol}
+                &nbsp; (${formatAmount(executionFeeUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)})
+              </div>
+            </>
+          );
+        }}
+      />
+    );
+
+    return (<>-</>);
+  };
+
+  const renderTrailingStopFeeTooltip = () => {
+    return (
+      <Tooltip
+        handle={`$${formatAmount(trailingStopFeeUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}`}
+        handleClassName="font-number"
+        position="right-bottom"
+        renderContent={() => {
+          return (
+            <div>
+              Only in case of TS position closing a fee of 0.5% based on the position size will be deducted from your collateral, otherwise the order will be auto canceled and no fees are charged.
+            </div>
+          );
+        }}
+      />)
+  };
+
+  const renderStopLossFeeTooltip = () => {
+    return (
+      <Tooltip
+        handle={`$${formatAmount(stopLossFeeUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}`}
+        handleClassName="font-number"
+        position="right-bottom"
+        renderContent={() => {
+          return (
+            <div>
+              Only in case of the Stop Loss order being executed the execution fee will be used,
+              otherwise the order will be auto canceled and you will receive the reserved execution fee back.
+            </div>
+          );
+        }}
+      />)
+  };
+  const renderTakeProfitFeeTooltip = () => {
+    return (
+      <Tooltip
+        handle={`$${formatAmount(takeProfitFeeUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}`}
+        handleClassName="font-number"
+        position="right-bottom"
+        renderContent={() => {
+          return (
+            <div>
+              Only in case of the Take Profit order being executed the execution fee will be used,
+              otherwise the order will be auto canceled and you will receive the reserved execution fee back.
+            </div>
+          );
+        }}
+      />)
+  };
+  const renderStopLossTakeProfitFeeTooltip = () => {
+    return (
+      <Tooltip
+        handle={`$${formatAmount(takeProfitFeeUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}`}
+        handleClassName="font-number"
+        position="right-bottom"
+        renderContent={() => {
+          return (
+            <div>
+              Only in case of the Stop Loss/Take Profit order being executed the execution fee will be used,
+              otherwise the order will be auto canceled and you will receive the reserved execution fee back. 
+            </div>
+          );
+        }}
+      />)
+  };
 
   const leverageMarks = {
     2: "2x",
@@ -2104,10 +2259,7 @@ export default function SwapBox(props) {
               <div>
                 {!fees && "-"}
                 {fees && (
-                  <div>
-                    {formatAmount(feeBps, 2, 2, false)}%&nbsp; ({formatAmount(fees, fromToken.decimals, 4, true)}{" "}
-                    {fromToken.symbol}: ${formatAmount(feesUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)})
-                  </div>
+                  renderFeesTooltip()
                 )}
               </div>
             </ExchangeInfoRow>
@@ -2236,55 +2388,50 @@ export default function SwapBox(props) {
               <div className="">
                 {!feesUsd && "-"}
                 {feesUsd && (
-                  <Tooltip
-                    handle={`$${formatAmount(feesUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}`}
-                    handleClassName="font-number"
-                    position="right-bottom"
-                    renderContent={() => {
-                      return (
-                        <>
-                          {swapFees && (
-                            <div>
-                              {collateralToken.symbol} is required for collateral. <br />
-                              <br />
-                              Swap {fromToken.symbol} to {collateralToken.symbol} Fee: $
-                              {formatAmount(swapFees, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}
-                              <br />
-                              <br />
-                            </div>
-                          )}
-                          <div>
-                            Position Fee (0.1% of position size): $
-                            {formatAmount(positionFee, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}
-                          </div>
-                        </>
-                      );
-                    }}
-                  />
+                   renderFeesTooltip()
                 )}
               </div>
             </ExchangeInfoRow>
-            {trailingStopPerc>0 &&
-            <ExchangeInfoRow label="Trailing Stop Fee">
-              <div>
-                {!trailingStopFeeUsd && "-"}
-                {trailingStopFeeUsd && (
-                  <Tooltip
-                    handle={`$${formatAmount(trailingStopFeeUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}`}
-                    handleClassName="font-number"
-                    position="right-bottom"
-                    renderContent={() => {
-                      return (
-                          <div>
-                            Only in case of TS position closing a fee of 0.5% based on the position size will be deducted.
-                          </div>
-                      );
-                    }}
-                  />
-                )}
-              </div>
-            </ExchangeInfoRow>
-}
+            {trailingStopPerc > 0 &&
+              <ExchangeInfoRow label="Trailing Stop Fee">
+                <div>
+                  {!trailingStopFeeUsd && "-"}
+                  {trailingStopFeeUsd && (
+                    renderTrailingStopFeeTooltip()
+                  )}
+                </div>
+              </ExchangeInfoRow>
+            }
+            {stopLossPrice && stopLossPrice.gt(0) && !(takeProfitPrice && takeProfitPrice.gt(0)) &&
+              <ExchangeInfoRow label="Stop Loss Fee">
+                <div>
+                  {!stopLossFeeUsd && "-"}
+                  {stopLossFeeUsd && (
+                    renderStopLossFeeTooltip()
+                  )}
+                </div>
+              </ExchangeInfoRow>
+            }
+            {takeProfitPrice && takeProfitPrice.gt(0) && !(stopLossPrice && stopLossPrice.gt(0)) &&
+              <ExchangeInfoRow label="Take Profit Fee">
+                <div>
+                  {!takeProfitFeeUsd && "-"}
+                  {takeProfitFeeUsd && (
+                    renderTakeProfitFeeTooltip()
+                  )}
+                </div>
+              </ExchangeInfoRow>
+            }
+            {takeProfitPrice && takeProfitPrice.gt(0) && stopLossPrice && stopLossPrice.gt(0) &&
+              <ExchangeInfoRow label="Take Profit/Stop Loss Fee">
+                <div>
+                  {!takeProfitFeeUsd && "-"}
+                  {takeProfitFeeUsd && (
+                    renderStopLossTakeProfitFeeTooltip()
+                  )}
+                </div>
+              </ExchangeInfoRow>
+            }
           </div>
         )}
 
@@ -2609,6 +2756,11 @@ export default function SwapBox(props) {
           receiveToken={receiveToken}
           setReceiveToken={setReceiveToken}
           trailingStopFeeUsd={trailingStopFeeUsd}
+          renderFeesTooltip={renderFeesTooltip}
+          renderTrailingStopFeeTooltip={renderTrailingStopFeeTooltip}
+          renderStopLossFeeTooltip={renderStopLossFeeTooltip}
+          renderTakeProfitFeeTooltip={renderTakeProfitFeeTooltip}
+          renderStopLossTakeProfitFeeTooltip={renderStopLossTakeProfitFeeTooltip}
         />
       )}
     </div>

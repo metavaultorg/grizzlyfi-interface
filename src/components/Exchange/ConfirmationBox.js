@@ -110,24 +110,13 @@ export default function ConfirmationBox(props) {
     receiveToken,
     setReceiveToken,
     minExecutionFee,
-    trailingStopFeeUsd        
+    trailingStopFeeUsd,
+    renderFeesTooltip,
+    renderTrailingStopFeeTooltip,
+    renderStopLossFeeTooltip,
+    renderTakeProfitFeeTooltip,
+    renderStopLossTakeProfitFeeTooltip
   } = props;
-
-  
-
-
-  let totalExecutionFee = isMarketOrder ? minExecutionFee : getConstant(chainId, "INCREASE_ORDER_EXECUTION_GAS_FEE");
-  if(stopLossPrice && stopLossPrice.gt(0)){
-    totalExecutionFee = totalExecutionFee.add(getConstant(chainId, "DECREASE_ORDER_EXECUTION_GAS_FEE"))
-  }else if(trailingStopPerc > 0){
-    totalExecutionFee = totalExecutionFee.add(getConstant(chainId, "TRAILING_STOP_EXECUTION_GAS_FEE"))
-  }
-  if(isSwap){
-    totalExecutionFee = 0;
-  }
-  if(takeProfitPrice && takeProfitPrice.gt(0)){
-    totalExecutionFee = totalExecutionFee.add(getConstant(chainId, "DECREASE_ORDER_EXECUTION_GAS_FEE"))
-  }
 
   
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
@@ -437,26 +426,7 @@ export default function ConfirmationBox(props) {
     );
   }, [isSwap, fromAmount, fromToken, toToken, fromUsdMin, toUsdMax, isLong, toAmount]);
 
-  const SWAP_ORDER_EXECUTION_GAS_FEE = getConstant(chainId, "SWAP_ORDER_EXECUTION_GAS_FEE");
-  const INCREASE_ORDER_EXECUTION_GAS_FEE = getConstant(chainId, "INCREASE_ORDER_EXECUTION_GAS_FEE");
-  const executionFee = isSwap ? SWAP_ORDER_EXECUTION_GAS_FEE : INCREASE_ORDER_EXECUTION_GAS_FEE;
-  const renderExecutionFee = useCallback(() => {
-    if (isMarketOrder ) {
-      if(totalExecutionFee && totalExecutionFee.gt(0))
-        return (
-          <ExchangeInfoRow label="Execution Fee">
-            {formatAmount(totalExecutionFee, 18, 2)} {getNativeToken(chainId).symbol}
-          </ExchangeInfoRow>
-        );
-      else
-          return null;
-    }
-    return (
-      <ExchangeInfoRow label="Execution Fee">
-        {formatAmount(totalExecutionFee && totalExecutionFee.gt(0)?totalExecutionFee : executionFee, 18, 2)} {getNativeToken(chainId).symbol}
-      </ExchangeInfoRow>
-    );
-  }, [isMarketOrder, totalExecutionFee,executionFee, chainId]);
+  const nativeTokenSymbol = getConstant(chainId, "nativeTokenSymbol");
 
   const renderAvailableLiquidity = useCallback(() => {
     let availableLiquidity;
@@ -575,12 +545,27 @@ export default function ConfirmationBox(props) {
             {!displayLiquidationPrice && `-`}
           </ExchangeInfoRow>
           <ExchangeInfoRow label="Fees">
-            ${formatAmount(feesUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}
+              {renderFeesTooltip()}
           </ExchangeInfoRow>
-          {trailingStopPerc>0 && trailingStopFeeUsd && 
-                      <ExchangeInfoRow label="Trailing Stop Fee">
-                      ${formatAmount(trailingStopFeeUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}
-                    </ExchangeInfoRow>
+          {trailingStopPerc > 0 && trailingStopFeeUsd &&
+            <ExchangeInfoRow label="Trailing Stop Fee">
+              {renderTrailingStopFeeTooltip()}
+            </ExchangeInfoRow>
+          }
+          {stopLossPrice && stopLossPrice.gt(0) && !(takeProfitPrice && takeProfitPrice.gt(0)) &&
+            <ExchangeInfoRow label="Stop Loss Fee">
+              {renderStopLossFeeTooltip()}
+            </ExchangeInfoRow>
+          }
+          {takeProfitPrice && takeProfitPrice.gt(0) && !(stopLossPrice && stopLossPrice.gt(0)) &&
+            <ExchangeInfoRow label="Take Profit Fee">
+              {renderTakeProfitFeeTooltip()}
+            </ExchangeInfoRow>
+          }
+          {takeProfitPrice && takeProfitPrice.gt(0) && stopLossPrice && stopLossPrice.gt(0) &&
+            <ExchangeInfoRow label="Take Profit/Stop Loss Fee">
+              {renderStopLossTakeProfitFeeTooltip()}
+            </ExchangeInfoRow>
           }
           <ExchangeInfoRow label="Collateral">
             <Tooltip
@@ -747,7 +732,6 @@ export default function ConfirmationBox(props) {
               )}
             </div>
           )}
-          {renderExecutionFee()}
           </div>
         </div>
       </>
@@ -771,7 +755,6 @@ export default function ConfirmationBox(props) {
     existingLiquidationPrice,
     feesUsd,
     leverage,
-    renderExecutionFee,
     shortCollateralToken,
     renderExistingOrderWarning,
     chainId,
@@ -815,11 +798,9 @@ export default function ConfirmationBox(props) {
           <div className="Exchange-info-row">
             <div className="Exchange-info-label">Fees</div>
             <div className="align-right font-nubmer">
-              {formatAmount(feeBps, 2, 2, true)}% ({formatAmount(fees, fromTokenInfo.decimals, 4, true)}{" "}
-              {fromTokenInfo.symbol}: ${formatAmount(feesUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)})
+              {renderFeesTooltip()}
             </div>
           </div>
-          {renderExecutionFee()}
           {fromTokenUsd && (
             <div className="Exchange-info-row">
               <div className="Exchange-info-label">{fromTokenInfo.symbol} Price</div>
@@ -845,7 +826,6 @@ export default function ConfirmationBox(props) {
     spread,
     feesUsd,
     feeBps,
-    renderExecutionFee,
     fromTokenUsd,
     toTokenUsd,
     triggerRatio,
