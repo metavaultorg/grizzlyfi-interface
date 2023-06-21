@@ -2632,7 +2632,7 @@ export function sleep(ms) {
 }
 
 export function getPageTitle(data) {
-  return `${data} | Grizzly.Trade - Perpetual trading exchange | GLL`;
+  return `${data} | Grizzly.fi Futures - Perpetual trading exchange`;
 }
 
 export function isHashZero(value) {
