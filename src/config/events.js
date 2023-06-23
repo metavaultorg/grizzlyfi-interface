@@ -34,7 +34,7 @@ let eventsData = [
     title: "USDC market price impact",
     isActive: false,
     validTill: "03/30/2023 12:00:00 PM",
-    bodyText: "USDC is currently facing a large spread due to its current market price. The spread might impact the transactions related to USDC on the platform, such as leverage with USDC collateral, swaps and MVLP minting/burning.",
+    bodyText: "USDC is currently facing a large spread due to its current market price. The spread might impact the transactions related to USDC on the platform, such as leverage with USDC collateral, swaps and GLL minting/burning.",
     buttons: []
   }
 ];

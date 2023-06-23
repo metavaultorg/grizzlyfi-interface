@@ -9,16 +9,16 @@ import {
     USD_DECIMALS,
 } from "../../Helpers";
 import { getContract } from "../../Addresses";
-import MvlpManager from "../../abis/MvlpManager.json";
+import GllManager from "../../abis/GllManager.json";
 
 export default function AUMLabel() {
     const { active, library } = useWeb3React();
     const { chainId } = useChainId();
 
-    const mvlpManagerAddress = getContract(chainId, "MvlpManager");
+    const gllManagerAddress = getContract(chainId, "GllManager");
 
-    const { data: aums } = useSWR([`Dashboard:getAums:${active}`, chainId, mvlpManagerAddress, "getAums"], {
-        fetcher: fetcher(library, MvlpManager),
+    const { data: aums } = useSWR([`Dashboard:getAums:${active}`, chainId, gllManagerAddress, "getAums"], {
+        fetcher: fetcher(library, GllManager),
     });
 
     let aum;

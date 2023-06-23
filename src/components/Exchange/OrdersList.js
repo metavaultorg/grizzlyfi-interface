@@ -42,7 +42,7 @@ export default function OrdersList(props) {
     infoTokens,
     positionsMap,
     totalTokenWeights,
-    usdmSupply,
+    usdgSupply,
     orders,
     hideActions,
     chainId,
@@ -163,14 +163,14 @@ export default function OrdersList(props) {
               {formatAmount(
                 order.amountIn,
                 fromTokenInfo.decimals,
-                fromTokenInfo.isStable || fromTokenInfo.isUsdm ? 2 : 4,
+                fromTokenInfo.isStable || fromTokenInfo.isUsdg ? 2 : 4,
                 true
               )}{" "}
               {fromTokenInfo.symbol} for{" "}
               {formatAmount(
                 order.minOut,
                 toTokenInfo.decimals,
-                toTokenInfo.isStable || toTokenInfo.isUsdm ? 2 : 4,
+                toTokenInfo.isStable || toTokenInfo.isUsdg ? 2 : 4,
                 true
               )}{" "}
               {toTokenInfo.symbol}
@@ -183,7 +183,7 @@ export default function OrdersList(props) {
                   You will receive at least ${formatAmount(
                     order.minOut,
                     toTokenInfo.decimals,
-                    toTokenInfo.isStable || toTokenInfo.isUsdm ? 2 : 4,
+                    toTokenInfo.isStable || toTokenInfo.isUsdg ? 2 : 4,
                     true
                   )} ${
                   toTokenInfo.symbol
@@ -349,7 +349,7 @@ export default function OrdersList(props) {
                     You will receive at least ${formatAmount(
                       order.minOut,
                       toTokenInfo.decimals,
-                      toTokenInfo.isStable || toTokenInfo.isUsdm ? 2 : 4,
+                      toTokenInfo.isStable || toTokenInfo.isUsdg ? 2 : 4,
                       true
                     )} ${
                       toTokenInfo.symbol
@@ -565,7 +565,7 @@ export default function OrdersList(props) {
           positionsMap={positionsMap}
           library={library}
           totalTokenWeights={totalTokenWeights}
-          usdmSupply={usdmSupply}
+          usdgSupply={usdgSupply}
         />
       )}
     </React.Fragment>

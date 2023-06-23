@@ -43,20 +43,15 @@ import {
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
   REFERRAL_CODE_KEY,
   REFERRAL_CODE_QUERY_PARAMS,
-  POLYGON,
+  BSC,
   hasExodusWalletExtension,
   ZKSYNC,
 } from "./Helpers";
 
 import Dashboard from "./views/Dashboard/Dashboard";
-import Stake from "./views/Stake/Stake";
 import { Exchange } from "./views/Exchange/Exchange";
 import Actions from "./views/Actions/Actions";
 import Referrals from "./views/Referrals/Referrals";
-import BuyMvlp from "./views/BuyMvlp/BuyMvlp";
-import BuyMVX from "./views/BuyMVX/BuyMVX";
-import SellMvlp from "./views/SellMvlp/SellMvlp";
-import Buy from "./views/Buy/Buy";
 import BeginAccountTransfer from "./views/BeginAccountTransfer/BeginAccountTransfer";
 import CompleteAccountTransfer from "./views/CompleteAccountTransfer/CompleteAccountTransfer";
 
@@ -124,15 +119,15 @@ const Zoom = cssTransition({
   duration: 200,
 });
 
-const polygonWsProvider = new ethers.providers.WebSocketProvider(process.env.REACT_APP_POLYGON_WS);
+const bscWsProvider = new ethers.providers.WebSocketProvider(process.env.REACT_APP_BSC_WS);
 
 function getWsProvider(active, chainId) {
   if (!active) {
     return;
   }
 
-  if (chainId === POLYGON) {
-    return polygonWsProvider;
+  if (chainId === BSC) {
+    return bscWsProvider;
   }
 }
 
@@ -144,13 +139,10 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
           <div className="App-header-menu-icon-block" onClick={() => clickCloseIcon()}>
             <FiX className="App-header-menu-icon" />
           </div>
-          {/* <Link className="App-header-link-main" to="https://metavault.trade">
-            <img src={logoImg} alt="MVX Logo" />
-          </Link> */}
           <a
             style={{ width: 21, height: 21 }}
             className="App-header-link-main"
-            href="https://metavault.trade"
+            href="https://perp.grizzly.fi"
             rel="noopener noreferrer"
           >
             {/* <img
@@ -167,7 +159,7 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
         </div>
       )}
       <div className="App-header-link-container App-header-link-home">
-        <a href="https://metavault.trade" rel="noopener noreferrer">
+        <a href="https://perp.grizzly.fi" rel="noopener noreferrer">
           Home
         </a>
       </div>
@@ -199,7 +191,7 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
       </div>
       
       <div className="App-header-link-container">
-        <a href="https://docs.metavault.trade/" target="_blank" rel="noopener noreferrer">
+        <a href="https://perp-docs.grizzly.fi/" target="_blank" rel="noopener noreferrer">
           <span
             className="hover-white"
             style={{
@@ -241,10 +233,10 @@ function AppHeaderUser({
   const showSelector = false;
   const networkOptions = [
     {
-      label: "Polygon Network",
-      network: "Polygon",
-      value: POLYGON,
-      icon: "ic_polygon_24.svg",
+      label: "Bsc Network",
+      network: "Bsc",
+      value: BSC,
+      icon: "ic_bsc_24.svg",
       color: "#2e2f5a",
     },
     {
@@ -291,24 +283,6 @@ function AppHeaderUser({
           showModal={showNetworkSelectorModal}
         />
       )}
-      {/* <div className="App-header-user-link">
-        <a href="https://bo.metavault.trade/" target="_blank" rel="noopener noreferrer" className="btn btn-gray">
-          <span
-            className="hover-white"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              color: "color: rgba(255, 255, 255, 0.8)",
-              opacity: "80%",
-              whiteSpace: "nowrap",
-              // lineHeight: "28px",
-            }}
-          >
-            {small ? "Binary Options" : "Launch Binary Options"}
-            <TopRightArrWhite />
-          </span>
-        </a>
-      </div> */}
       {/* <div className="App-header-user-link">
         <NavLink disabled="disabled" className="btn btn-blue" to="/trade">
           Trade
@@ -433,7 +407,7 @@ function FullApp() {
           <a href="https://metamask.io" target="_blank" rel="noopener noreferrer" className="ahreftextcolorwallet">
             Install MetaMask
           </a>
-          {userOnMobileDevice ? ", and use MVX with its built-in browser" : " to start using MVX"}.
+          {userOnMobileDevice ? ", and use GrizzlyFi with its built-in browser" : " to start using GrizzlyFi"}.
         </div>
       );
       return false;
@@ -450,7 +424,7 @@ function FullApp() {
           <a href="https://exodus.com" target="_blank" rel="noopener noreferrer" className="ahreftextcolorwallet">
             Install Exodus
           </a>
-          {userOnMobileDevice ? ", and use MVX with its built-in browser" : " to start using MVX"}.
+          {userOnMobileDevice ? ", and use GrizzlyFi with its built-in browser" : " to start using GrizzlyFi"}.
         </div>
       );
       return false;
@@ -472,7 +446,7 @@ function FullApp() {
           >
             Install Coinbase Wallet
           </a>
-          {userOnMobileDevice ? ", and use MVX with its built-in browser" : " to start using MVX"}.
+          {userOnMobileDevice ? ", and use GrizzlyFi with its built-in browser" : " to start using GrizzlyFi"}.
         </div>
       );
       return false;
@@ -708,7 +682,7 @@ function FullApp() {
           <header>
             <div className="App-header large">
               <div className="App-header-container-left">
-                <a className="App-header-link-main" href="https://metavault.trade">
+                <a className="App-header-link-main" href="https://perp.grizzly.fi">
                   {/* <img
                     style={{ width: "169px", height: "56px", flexBasis: "none" }}
                     src={getImageUrl({
@@ -815,30 +789,6 @@ function FullApp() {
             <Route exact path="/earn">
               {/* <Stake setPendingTxns={setPendingTxns} connectWallet={connectWallet} /> */}
               <Earn setPendingTxns={setPendingTxns} connectWallet={connectWallet} />
-            </Route>
-            <Route exact path="/buy">
-              <Buy
-                savedSlippageAmount={savedSlippageAmount}
-                setPendingTxns={setPendingTxns}
-                connectWallet={connectWallet}
-              />
-            </Route>
-            <Route exact path="/buy_mvlp">
-              <BuyMvlp
-                savedSlippageAmount={savedSlippageAmount}
-                setPendingTxns={setPendingTxns}
-                connectWallet={connectWallet}
-              />
-            </Route>
-            <Route exact path="/sell_mvlp">
-              <SellMvlp
-                savedSlippageAmount={savedSlippageAmount}
-                setPendingTxns={setPendingTxns}
-                connectWallet={connectWallet}
-              />
-            </Route>
-            <Route exact path="/buy_mvx">
-              <BuyMVX />
             </Route>
             <Route exact path="/referrals">
               <Referrals pendingTxns={pendingTxns} connectWallet={connectWallet} setPendingTxns={setPendingTxns} />

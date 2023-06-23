@@ -382,7 +382,7 @@ export const Exchange = forwardRef((props, ref) => {
   const vaultAddress = getContract(chainId, "Vault");
   const positionRouterAddress = getContract(chainId, "PositionRouter");
   const readerAddress = getContract(chainId, "Reader");
-  const usdmAddress = getContract(chainId, "USDM");
+  const usdgAddress = getContract(chainId, "USDG");
 
   const whitelistedTokens = getWhitelistedTokens(chainId);
   const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
@@ -485,7 +485,7 @@ export const Exchange = forwardRef((props, ref) => {
     }
   );
 
-  const { data: usdmSupply } = useSWR([`Exchange:usdmSupply:${active}`, chainId, usdmAddress, "totalSupply"], {
+  const { data: usdgSupply } = useSWR([`Exchange:usdgSupply:${active}`, chainId, usdgAddress, "totalSupply"], {
     fetcher: fetcher(library, Token),
   });
 
@@ -880,7 +880,7 @@ export const Exchange = forwardRef((props, ref) => {
             minExecutionFee={minExecutionFee}
             minExecutionFeeUSD={minExecutionFeeUSD}
             minExecutionFeeErrorMessage={minExecutionFeeErrorMessage}
-            usdmSupply={usdmSupply}
+            usdgSupply={usdgSupply}
             totalTokenWeights={totalTokenWeights}
             trailingStopOrders={trailingStopOrders}
           />
@@ -897,7 +897,7 @@ export const Exchange = forwardRef((props, ref) => {
             chainId={chainId}
             orders={orders}
             totalTokenWeights={totalTokenWeights}
-            usdmSupply={usdmSupply}
+            usdgSupply={usdgSupply}
             savedShouldDisableOrderValidation={savedShouldDisableOrderValidation}
             cancelOrderIdList={cancelOrderIdList}
             setCancelOrderIdList={setCancelOrderIdList}
@@ -989,7 +989,7 @@ export const Exchange = forwardRef((props, ref) => {
             nativeTokenAddress={nativeTokenAddress}
             savedSlippageAmount={savedSlippageAmount}
             totalTokenWeights={totalTokenWeights}
-            usdmSupply={usdmSupply}
+            usdgSupply={usdgSupply}
             savedShouldDisableOrderValidation={savedShouldDisableOrderValidation}
             minExecutionFee={minExecutionFee}
             minExecutionFeeUSD={minExecutionFeeUSD}

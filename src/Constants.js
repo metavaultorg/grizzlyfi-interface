@@ -1,13 +1,13 @@
 import { ethers } from "ethers";
 
-import { POLYGON } from "./Helpers";
+import { BSC } from "./Helpers";
 
 const { parseEther } = ethers.utils;
 
 const constants = {
-  [POLYGON]: {
-    nativeTokenSymbol: "MATIC",
-    wrappedTokenSymbol: "WMATIC",
+  [BSC]: {
+    nativeTokenSymbol: "BNB",
+    wrappedTokenSymbol: "WBNB",
     defaultCollateralSymbol: "USDC",
     defaultFlagOrdersEnabled: true,
     positionReaderPropsLength: 9,

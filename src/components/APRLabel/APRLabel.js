@@ -17,11 +17,11 @@ import Vault from "../../abis/Vault.json";
 import Reader from "../../abis/Reader.json";
 import RewardReader from "../../abis/RewardReader.json";
 import Token from "../../abis/Token.json";
-import MvlpManager from "../../abis/MvlpManager.json";
+import GllManager from "../../abis/GllManager.json";
 
 import { useWeb3React } from "@web3-react/core";
 
-import { useMvxPrice, useTotalMvxSupply,useInfoTokens } from "../../Api";
+import { useInfoTokens } from "../../Api";
 
 import { getContract } from "../../Addresses";
 
@@ -34,48 +34,24 @@ export default function APRLabel({ chainId, label }) {
 
   const vaultAddress = getContract(chainId, "Vault");
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
-  const mvxAddress = getContract(chainId, "MVX");
-  const esMvxAddress = getContract(chainId, "ES_MVX");
-  const bnMvxAddress = getContract(chainId, "BN_MVX");
-  const mvlpAddress = getContract(chainId, "MVLP");
 
-  const stakedMvxTrackerAddress = getContract(chainId, "StakedMvxTracker");
-  const bonusMvxTrackerAddress = getContract(chainId, "BonusMvxTracker");
-  const feeMvxTrackerAddress = getContract(chainId, "FeeMvxTracker");
+  const gllAddress = getContract(chainId, "GLL");
 
-  const stakedMvlpTrackerAddress = getContract(chainId, "StakedMvlpTracker");
-  const feeMvlpTrackerAddress = getContract(chainId, "FeeMvlpTracker");
+  const feeGllTrackerAddress = getContract(chainId, "FeeGllTracker");
 
-  const mvlpManagerAddress = getContract(chainId, "MvlpManager");
+  const gllManagerAddress = getContract(chainId, "GllManager");
 
-  const mvxVesterAddress = getContract(chainId, "MvxVester");
-  const mvlpVesterAddress = getContract(chainId, "MvlpVester");
 
-  const vesterAddresses = [mvxVesterAddress, mvlpVesterAddress];
 
-  const walletTokens = [mvxAddress, esMvxAddress, mvlpAddress, stakedMvxTrackerAddress];
+  const walletTokens = [ gllAddress];
   const depositTokens = [
-    mvxAddress,
-    esMvxAddress,
-    stakedMvxTrackerAddress,
-    bonusMvxTrackerAddress,
-    bnMvxAddress,
-    mvlpAddress,
+    gllAddress,
   ];
   const rewardTrackersForDepositBalances = [
-    stakedMvxTrackerAddress,
-    stakedMvxTrackerAddress,
-    bonusMvxTrackerAddress,
-    feeMvxTrackerAddress,
-    feeMvxTrackerAddress,
-    feeMvlpTrackerAddress,
+    feeGllTrackerAddress,
   ];
   const rewardTrackersForStakingInfo = [
-    stakedMvxTrackerAddress,
-    bonusMvxTrackerAddress,
-    feeMvxTrackerAddress,
-    stakedMvlpTrackerAddress,
-    feeMvlpTrackerAddress,
+    feeGllTrackerAddress,
   ];
 
   const { data: walletBalances } = useSWR(
@@ -99,15 +75,9 @@ export default function APRLabel({ chainId, label }) {
     }
   );
 
-  const { data: stakedMvxSupply } = useSWR(
-    [`StakeV2:stakedMvxSupply:${active}`, chainId, mvxAddress, "balanceOf", stakedMvxTrackerAddress],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
 
-  const { data: aums } = useSWR([`StakeV2:getAums:${active}`, chainId, mvlpManagerAddress, "getAums"], {
-    fetcher: fetcher(undefined, MvlpManager),
+  const { data: aums } = useSWR([`StakeV2:getAums:${active}`, chainId, gllManagerAddress, "getAums"], {
+    fetcher: fetcher(undefined, GllManager),
   });
 
   const { data: nativeTokenPrice } = useSWR(
@@ -117,18 +87,7 @@ export default function APRLabel({ chainId, label }) {
     }
   );
 
-  const { data: vestingInfo } = useSWR(
-    [`StakeV2:vestingInfo:${active}`, chainId, readerAddress, "getVestingInfo", PLACEHOLDER_ACCOUNT],
-    {
-      fetcher: fetcher(undefined, Reader, [vesterAddresses]),
-    }
-  );
-
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
-
-  const { mvxPrice } = useMvxPrice( {}, active,infoTokens);
-
-  let { total: mvxSupply } = useTotalMvxSupply();
 
   let aum;
   if (aums && aums.length > 0) {
@@ -138,19 +97,14 @@ export default function APRLabel({ chainId, label }) {
   const { balanceData, supplyData } = getBalanceAndSupplyData(walletBalances);
   const depositBalanceData = getDepositBalanceData(depositBalances);
   const stakingData = getStakingData(stakingInfo);
-  const vestingData = getVestingData(vestingInfo);
 
   const processedData = getProcessedData(
     balanceData,
     supplyData,
     depositBalanceData,
     stakingData,
-    vestingData,
     aum,
     nativeTokenPrice,
-    stakedMvxSupply,
-    mvxPrice,
-    mvxSupply
   );
 
   return <>{`${formatKeyAmount(processedData, label, 2, 2, true)}%`}</>;

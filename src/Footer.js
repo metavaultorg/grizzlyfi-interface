@@ -10,7 +10,7 @@ import githubIcon from "./img/ic_github.svg";
 import mediumIcon from "./img/ic_medium.svg";
 import gitbookIcon from "./img/ic_gitbook.svg";
 import ChainlinkIcon from "./img/chainlink.svg";
-import PolygonIcon from "./img/footerpolygonnew.svg";
+import BscIcon from "./img/footerpolygonnew.svg";
 import linktreeIcon from "./img/linktree_white.svg";
 import TopRightArr from "./assets/icons/TopRightArrColored";
 import { NavLink } from "react-router-dom";

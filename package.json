@@ -1,5 +1,5 @@
 {
-  "name": "@metavault/trade-ui",
+  "name": "@grizzlyfi/trade-ui",
   "version": "0.1.0",
   "license": "MIT",
   "private": true,
@@ -14,7 +14,6 @@
     "@headlessui/react": "dev",
     "@material-ui/core": "^4.9.14",
     "@material-ui/icons": "^4.9.1",
-    "@metavault/sdk": "^1.0.7",
     "@socket.tech/widget": "^0.1.2",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",

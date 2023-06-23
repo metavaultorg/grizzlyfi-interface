@@ -13,7 +13,7 @@ function AssetDropdown({ assetSymbol, assetInfo, showReserves }) {
   const { chainId } = useChainId();
   let { coingecko, polygon, zkSync } = ICONLINKS[chainId][assetSymbol];
   const unavailableTokenSymbols = {
-    137: ["MATIC"],
+    56: ["BNB"],
   };
 
   return (
@@ -36,7 +36,7 @@ function AssetDropdown({ assetSymbol, assetInfo, showReserves }) {
           <>
             {polygon && showReserves && (
               <a
-                href="https://polygonscan.com/address/0x32848e2d3aecfa7364595609fb050a301050a6b4"
+                href="https://bscscan.com/address/0x32848e2d3aecfa7364595609fb050a301050a6b4"
                 className="asset-item"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -51,8 +51,8 @@ function AssetDropdown({ assetSymbol, assetInfo, showReserves }) {
           <>
             {polygon && (
               <a href={polygon} className="asset-item" target="_blank" rel="noopener noreferrer">
-                <img src={maticIcon} alt="Polygon" />
-                <p>Polygon Network</p>
+                <img src={maticIcon} alt="Bsc" />
+                <p>Bsc Network</p>
               </a>
             )}
           </>

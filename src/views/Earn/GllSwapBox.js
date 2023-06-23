@@ -22,30 +22,28 @@ import {
     bigNumberify,
     formatAmount,
     formatAmountFree,
-    formatKeyAmount,
     // formatDateTime,
-    getBuyMvlpToAmount,
-    getBuyMvlpFromAmount,
-    getSellMvlpFromAmount,
-    getSellMvlpToAmount,
+    getBuyGllToAmount,
+    getBuyGllFromAmount,
+    getSellGllFromAmount,
+    getSellGllToAmount,
     parseValue,
     approveTokens,
     getUsd,
     adjustForDecimals,
-    MVLP_DECIMALS,
+    GLL_DECIMALS,
     USD_DECIMALS,
     BASIS_POINTS_DIVISOR,
-    MVLP_COOLDOWN_DURATION,
+    GLL_COOLDOWN_DURATION,
     SECONDS_PER_YEAR,
-    USDM_DECIMALS,
-    POLYGON,
+    USDG_DECIMALS,
+    BSC,
     PLACEHOLDER_ACCOUNT,
-    MVXMVLP_DISPLAY_DECIMALS,
     SLIPPAGE_BPS_KEY,
     DEFAULT_SLIPPAGE_AMOUNT,
     useLocalStorageSerializeKey,
 } from "../../Helpers";
-import { callContract, useMvxPrice, useInfoTokens } from "../../Api";
+import { callContract, useInfoTokens } from "../../Api";
 
 import TokenSelector from "../../components/Exchange/TokenSelector";
 import BuyInputSection from "../../components/BuyInputSection/BuyInputSection";
@@ -54,26 +52,15 @@ import Tooltip from "../../components/Tooltip/Tooltip";
 import Reader from "../../abis/Reader.json";
 import RewardReader from "../../abis/RewardReader.json";
 import Vault from "../../abis/Vault.json";
-import MvlpManager from "../../abis/MvlpManager.json";
+import GllManager from "../../abis/GllManager.json";
 import RewardTracker from "../../abis/RewardTracker.json";
-import Vester from "../../abis/Vester.json";
 import RewardRouter from "../../abis/RewardRouter.json";
 import Token from "../../abis/Token.json";
 
 import gll24Icon from "../../assets/icons/honey-token.svg";
-import mvlp24Icon from "../../img/ic_mvlp_24.svg";
-import mvlp40Icon from "../../assets/icons/mvlpCoin.png";
-import arrowIcon from "../../img/ic_convert_down.svg";
 import ItemCard from '../../components/ItemCard/ItemCard'
-import IconPercentage from '../../assets/icons/icon-percentage.svg'
 import IconMoney from '../../assets/icons/icon-investments-money.svg'
-import IconClaim from '../../assets/icons/icon-claim-reward.svg'
 import IconNext from '../../assets/icons/icon-next-left.svg'
-
-import OliveSvg from "../../assets/platforms/olive.svg";
-
-import AssetDropdown from "../../views/Dashboard/AssetDropdown";
-import { getImageUrl } from "../../cloudinary/getImageUrl";
 
 const { AddressZero } = ethers.constants;
 
@@ -82,7 +69,7 @@ function getStakingData(stakingInfo) {
         return;
     }
 
-    const keys = ["stakedMvlpTracker", "feeMvlpTracker"];
+    const keys = ["feeGllTracker"];
     const data = {};
     const propsLength = 5;
 
@@ -100,7 +87,7 @@ function getStakingData(stakingInfo) {
     return data;
 }
 export default function GllSwapBox(props) {
-    const { isBuying, setPendingTxns, connectWallet, setIsBuying, getWeightText } = props;
+    const { isBuying, setPendingTxns, connectWallet, getWeightText } = props;
     const history = useHistory();
     const swapLabel = isBuying ? "+ LIQ." : "- LIQ.";
     const tabLabel = isBuying ? "Deposit" : "Withdraw";
@@ -114,9 +101,8 @@ export default function GllSwapBox(props) {
     const tokens = getTokens(chainId);
     const whitelistedTokens = getWhitelistedTokens(chainId);
     const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
-    const tokenList = whitelistedTokens.filter((t) => !t.isWrapped);
     const [swapValue, setSwapValue] = useState("");
-    const [mvlpValue, setMvlpValue] = useState("");
+    const [gllValue, setGllValue] = useState("");
     const [swapTokenAddress, setSwapTokenAddress] = useLocalStorageByChainId(
         chainId,
         `${swapLabel}-swap-token-address`,
@@ -132,23 +118,23 @@ export default function GllSwapBox(props) {
     const rewardReaderAddress = getContract(chainId, "RewardReader");
     const vaultAddress = getContract(chainId, "Vault");
     const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
-    const stakedMvlpTrackerAddress = getContract(chainId, "StakedMvlpTracker");
-    const feeMvlpTrackerAddress = getContract(chainId, "FeeMvlpTracker");
-    const usdmAddress = getContract(chainId, "USDM");
-    const mvlpManagerAddress = getContract(chainId, "MvlpManager");
+    const stakedGllTrackerAddress = getContract(chainId, "StakedGllTracker");
+    const feeGllTrackerAddress = getContract(chainId, "FeeGllTracker");
+    const usdgAddress = getContract(chainId, "USDG");
+    const gllManagerAddress = getContract(chainId, "GllManager");
     const rewardRouterAddress = getContract(chainId, "RewardRouter");
-    const tokensForBalanceAndSupplyQuery = [stakedMvlpTrackerAddress, usdmAddress];
+    const tokensForBalanceAndSupplyQuery = [stakedGllTrackerAddress, usdgAddress];
 
     const tokenAddresses = tokens.map((token) => token.address);
     const { data: tokenBalances } = useSWR(
-        [`MvlpSwap:getTokenBalances:${active}`, chainId, readerAddress, "getTokenBalances", account || PLACEHOLDER_ACCOUNT],
+        [`GllSwap:getTokenBalances:${active}`, chainId, readerAddress, "getTokenBalances", account || PLACEHOLDER_ACCOUNT],
         {
             fetcher: fetcher(library, Reader, [tokenAddresses]),
         }
     );
     const { data: balancesAndSupplies } = useSWR(
         [
-            `MvlpSwap:getTokenBalancesWithSupplies:${active}`,
+            `GllSwap:getTokenBalancesWithSupplies:${active}`,
             chainId,
             readerAddress,
             "getTokenBalancesWithSupplies",
@@ -165,12 +151,12 @@ export default function GllSwapBox(props) {
 
     const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, fundingRateInfo);
 
-    const { data: aums } = useSWR([`MvlpSwap:getAums:${active}`, chainId, mvlpManagerAddress, "getAums"], {
-        fetcher: fetcher(library, MvlpManager),
+    const { data: aums } = useSWR([`GllSwap:getAums:${active}`, chainId, gllManagerAddress, "getAums"], {
+        fetcher: fetcher(library, GllManager),
     });
 
     const { data: totalTokenWeights } = useSWR(
-        [`MvlpSwap:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
+        [`GllSwap:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
         {
             fetcher: fetcher(library, Vault),
         }
@@ -178,38 +164,29 @@ export default function GllSwapBox(props) {
 
     const tokenAllowanceAddress = swapTokenAddress === AddressZero ? nativeTokenAddress : swapTokenAddress;
     const { data: tokenAllowance } = useSWR(
-        [active, chainId, tokenAllowanceAddress, "allowance", account || PLACEHOLDER_ACCOUNT, mvlpManagerAddress],
+        [active, chainId, tokenAllowanceAddress, "allowance", account || PLACEHOLDER_ACCOUNT, gllManagerAddress],
         {
             fetcher: fetcher(library, Token),
         }
     );
 
     const { data: lastPurchaseTime } = useSWR(
-        [`MvlpSwap:lastPurchaseTime:${active}`, chainId, mvlpManagerAddress, "lastAddedAt", account || PLACEHOLDER_ACCOUNT],
+        [`GllSwap:lastPurchaseTime:${active}`, chainId, gllManagerAddress, "lastAddedAt", account || PLACEHOLDER_ACCOUNT],
         {
-            fetcher: fetcher(library, MvlpManager),
+            fetcher: fetcher(library, GllManager),
         }
     );
 
-    const { data: mvlpBalance } = useSWR(
-        [`MvlpSwap:mvlpBalance:${active}`, chainId, feeMvlpTrackerAddress, "stakedAmounts", account || PLACEHOLDER_ACCOUNT],
+    const { data: gllBalance } = useSWR(
+        [`GllSwap:gllBalance:${active}`, chainId, feeGllTrackerAddress, "stakedAmounts", account || PLACEHOLDER_ACCOUNT],
         {
             fetcher: fetcher(library, RewardTracker),
         }
     );
-    const mvlpVesterAddress = getContract(chainId, "MvlpVester");
-    const { data: reservedAmount } = useSWR(
-        [`MvlpSwap:reservedAmount:${active}`, chainId, mvlpVesterAddress, "pairAmounts", account || PLACEHOLDER_ACCOUNT],
-        {
-            fetcher: fetcher(library, Vester),
-        }
-    );
 
-    const { mvxPrice } = useMvxPrice({ polygon: chainId === POLYGON ? library : undefined }, active, infoTokens);
-
-    const rewardTrackersForStakingInfo = [stakedMvlpTrackerAddress, feeMvlpTrackerAddress];
+    const rewardTrackersForStakingInfo = [feeGllTrackerAddress];
     const { data: stakingInfo } = useSWR(
-        [`MvlpSwap:stakingInfo:${active}`, chainId, rewardReaderAddress, "getStakingInfo", account || PLACEHOLDER_ACCOUNT],
+        [`GllSwap:stakingInfo:${active}`, chainId, rewardReaderAddress, "getStakingInfo", account || PLACEHOLDER_ACCOUNT],
         {
             fetcher: fetcher(library, RewardReader, [rewardTrackersForStakingInfo]),
         }
@@ -217,29 +194,25 @@ export default function GllSwapBox(props) {
 
     const stakingData = getStakingData(stakingInfo);
 
-    const redemptionTime = lastPurchaseTime ? lastPurchaseTime.add(MVLP_COOLDOWN_DURATION) : undefined;
+    const redemptionTime = lastPurchaseTime ? lastPurchaseTime.add(GLL_COOLDOWN_DURATION) : undefined;
     const inCooldownWindow = redemptionTime && parseInt(Date.now() / 1000) < redemptionTime;
 
-    const mvlpSupply = balancesAndSupplies ? balancesAndSupplies[1] : bigNumberify(0);
-    const usdmSupply = balancesAndSupplies ? balancesAndSupplies[3] : bigNumberify(0);
+    const gllSupply = balancesAndSupplies ? balancesAndSupplies[1] : bigNumberify(0);
+    const usdgSupply = balancesAndSupplies ? balancesAndSupplies[3] : bigNumberify(0);
     let aum;
     if (aums && aums.length > 0) {
         aum = isBuying ? aums[0] : aums[1];
     }
-    const mvlpPrice =
-        aum && aum.gt(0) && mvlpSupply.gt(0)
-            ? aum.mul(expandDecimals(1, MVLP_DECIMALS)).div(mvlpSupply)
+    const gllPrice =
+        aum && aum.gt(0) && gllSupply.gt(0)
+            ? aum.mul(expandDecimals(1, GLL_DECIMALS)).div(gllSupply)
             : expandDecimals(1, USD_DECIMALS);
-    let mvlpBalanceUsd;
-    if (mvlpBalance) {
-        mvlpBalanceUsd = mvlpBalance.mul(mvlpPrice).div(expandDecimals(1, MVLP_DECIMALS));
+    let gllBalanceUsd;
+    if (gllBalance) {
+        gllBalanceUsd = gllBalance.mul(gllPrice).div(expandDecimals(1, GLL_DECIMALS));
     }
-    const mvlpSupplyUsd = mvlpSupply.mul(mvlpPrice).div(expandDecimals(1, MVLP_DECIMALS));
+    const gllSupplyUsd = gllSupply.mul(gllPrice).div(expandDecimals(1, GLL_DECIMALS));
 
-    let reserveAmountUsd;
-    if (reservedAmount) {
-        reserveAmountUsd = reservedAmount.mul(mvlpPrice).div(expandDecimals(1, MVLP_DECIMALS));
-    }
 
     const swapToken = getToken(chainId, swapTokenAddress);
     const swapTokenInfo = getTokenInfo(infoTokens, swapTokenAddress);
@@ -247,19 +220,19 @@ export default function GllSwapBox(props) {
     const swapTokenBalance = swapTokenInfo && swapTokenInfo.balance ? swapTokenInfo.balance : bigNumberify(0);
 
     const swapAmount = parseValue(swapValue, swapToken && swapToken.decimals);
-    const mvlpAmount = parseValue(mvlpValue, MVLP_DECIMALS);
+    const gllAmount = parseValue(gllValue, GLL_DECIMALS);
 
     const needApproval =
         isBuying && swapTokenAddress !== AddressZero && tokenAllowance && swapAmount && swapAmount.gt(tokenAllowance);
 
     const swapUsdMin = getUsd(swapAmount, swapTokenAddress, false, infoTokens);
-    const mvlpUsdMax =
-        mvlpAmount && mvlpPrice ? mvlpAmount.mul(mvlpPrice).div(expandDecimals(1, MVLP_DECIMALS)) : undefined;
+    const gllUsdMax =
+        gllAmount && gllPrice ? gllAmount.mul(gllPrice).div(expandDecimals(1, GLL_DECIMALS)) : undefined;
 
     let isSwapTokenCapReached;
-    if (swapTokenInfo.managedUsd && swapTokenInfo.maxUsdmAmount) {
+    if (swapTokenInfo.managedUsd && swapTokenInfo.maxUsdgAmount) {
         isSwapTokenCapReached = swapTokenInfo.managedUsd.gt(
-            adjustForDecimals(swapTokenInfo.maxUsdmAmount, USDM_DECIMALS, USD_DECIMALS)
+            adjustForDecimals(swapTokenInfo.maxUsdgAmount, USDG_DECIMALS, USD_DECIMALS)
         );
     }
 
@@ -268,9 +241,9 @@ export default function GllSwapBox(props) {
         setSwapValue(e.target.value);
     };
 
-    const onMvlpValueChange = (e) => {
+    const onGllValueChange = (e) => {
         setAnchorOnSwapAmount(false);
-        setMvlpValue(e.target.value);
+        setGllValue(e.target.value);
     };
 
     const onSelectSwapToken = (token) => {
@@ -282,83 +255,64 @@ export default function GllSwapBox(props) {
 
     let totalApr = bigNumberify(0);
 
-    let feeMvlpTrackerAnnualRewardsUsd;
-    let feeMvlpTrackerApr;
+    let feeGllTrackerAnnualRewardsUsd;
+    let feeGllTrackerApr;
     if (
         stakingData &&
-        stakingData.feeMvlpTracker &&
-        stakingData.feeMvlpTracker.tokensPerInterval &&
+        stakingData.feeGllTracker &&
+        stakingData.feeGllTracker.tokensPerInterval &&
         nativeToken &&
         nativeToken.minPrice &&
-        mvlpSupplyUsd &&
-        mvlpSupplyUsd.gt(0)
+        gllSupplyUsd &&
+        gllSupplyUsd.gt(0)
     ) {
-        feeMvlpTrackerAnnualRewardsUsd = stakingData.feeMvlpTracker.tokensPerInterval
+        feeGllTrackerAnnualRewardsUsd = stakingData.feeGllTracker.tokensPerInterval
             .mul(SECONDS_PER_YEAR)
             .mul(nativeToken.minPrice)
             .div(expandDecimals(1, 18));
-        feeMvlpTrackerApr = feeMvlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(mvlpSupplyUsd);
-        totalApr = totalApr.add(feeMvlpTrackerApr);
-    }
-
-    let stakedMvlpTrackerAnnualRewardsUsd;
-    let stakedMvlpTrackerApr;
-
-    if (
-        mvxPrice &&
-        stakingData &&
-        stakingData.stakedMvlpTracker &&
-        stakingData.stakedMvlpTracker.tokensPerInterval &&
-        mvlpSupplyUsd &&
-        mvlpSupplyUsd.gt(0)
-    ) {
-        stakedMvlpTrackerAnnualRewardsUsd = stakingData.stakedMvlpTracker.tokensPerInterval
-            .mul(SECONDS_PER_YEAR)
-            .mul(mvxPrice)
-            .div(expandDecimals(1, 18));
-        stakedMvlpTrackerApr = stakedMvlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(mvlpSupplyUsd);
-        totalApr = totalApr.add(stakedMvlpTrackerApr);
+        feeGllTrackerApr = feeGllTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(gllSupplyUsd);
+        totalApr = totalApr.add(feeGllTrackerApr);
     }
 
     useEffect(() => {
         const updateSwapAmounts = () => {
             if (anchorOnSwapAmount) {
                 if (!swapAmount) {
-                    setMvlpValue("");
+                    setGllValue("");
                     setFeeBasisPoints("");
                     return;
                 }
 
                 if (isBuying) {
-                    const { amount: nextAmount, feeBasisPoints: feeBps } = getBuyMvlpToAmount(
+                    const { amount: nextAmount, feeBasisPoints: feeBps } = getBuyGllToAmount(
                         swapAmount,
                         swapTokenAddress,
                         infoTokens,
-                        mvlpPrice,
-                        usdmSupply,
+                        gllPrice,
+                        usdgSupply,
                         totalTokenWeights
                     );
-                    const nextValue = formatAmountFree(nextAmount, MVLP_DECIMALS, MVLP_DECIMALS);
-                    setMvlpValue(nextValue);
+                    const nextValue = formatAmountFree(nextAmount, GLL_DECIMALS, GLL_DECIMALS);
+                    setGllValue(nextValue);
                     setFeeBasisPoints(feeBps);
                 } else {
-                    const { amount: nextAmount, feeBasisPoints: feeBps } = getSellMvlpFromAmount(
+                    const { amount: nextAmount, feeBasisPoints: feeBps } = getSellGllFromAmount(
                         swapAmount,
                         swapTokenAddress,
                         infoTokens,
-                        mvlpPrice,
-                        usdmSupply,
+                        gllPrice,
+                        usdgSupply,
                         totalTokenWeights
                     );
-                    const nextValue = formatAmountFree(nextAmount, MVLP_DECIMALS, MVLP_DECIMALS);
-                    setMvlpValue(nextValue);
+                    const nextValue = formatAmountFree(nextAmount, GLL_DECIMALS, GLL_DECIMALS);
+                    setGllValue(nextValue);
                     setFeeBasisPoints(feeBps);
                 }
 
                 return;
             }
 
-            if (!mvlpAmount) {
+            if (!gllAmount) {
                 setSwapValue("");
                 setFeeBasisPoints("");
                 return;
@@ -366,24 +320,24 @@ export default function GllSwapBox(props) {
 
             if (swapToken) {
                 if (isBuying) {
-                    const { amount: nextAmount, feeBasisPoints: feeBps } = getBuyMvlpFromAmount(
-                        mvlpAmount,
+                    const { amount: nextAmount, feeBasisPoints: feeBps } = getBuyGllFromAmount(
+                        gllAmount,
                         swapTokenAddress,
                         infoTokens,
-                        mvlpPrice,
-                        usdmSupply,
+                        gllPrice,
+                        usdgSupply,
                         totalTokenWeights
                     );
                     const nextValue = formatAmountFree(nextAmount, swapToken.decimals, swapToken.decimals);
                     setSwapValue(nextValue);
                     setFeeBasisPoints(feeBps);
                 } else {
-                    const { amount: nextAmount, feeBasisPoints: feeBps } = getSellMvlpToAmount(
-                        mvlpAmount,
+                    const { amount: nextAmount, feeBasisPoints: feeBps } = getSellGllToAmount(
+                        gllAmount,
                         swapTokenAddress,
                         infoTokens,
-                        mvlpPrice,
-                        usdmSupply,
+                        gllPrice,
+                        usdgSupply,
                         totalTokenWeights,
                         true
                     );
@@ -400,12 +354,12 @@ export default function GllSwapBox(props) {
         isBuying,
         anchorOnSwapAmount,
         swapAmount,
-        mvlpAmount,
+        gllAmount,
         swapToken,
         swapTokenAddress,
         infoTokens,
-        mvlpPrice,
-        usdmSupply,
+        gllPrice,
+        usdgSupply,
         totalTokenWeights,
     ]);
 
@@ -426,7 +380,7 @@ export default function GllSwapBox(props) {
         }
 
         setAnchorOnSwapAmount(false);
-        setMvlpValue(formatAmountFree(maxSellAmount, MVLP_DECIMALS, MVLP_DECIMALS));
+        setGllValue(formatAmountFree(maxSellAmount, GLL_DECIMALS, GLL_DECIMALS));
     };
 
     const getError = () => {
@@ -437,7 +391,7 @@ export default function GllSwapBox(props) {
         if (!swapAmount || swapAmount.eq(0)) {
             return ["Enter an amount"];
         }
-        if (!mvlpAmount || mvlpAmount.eq(0)) {
+        if (!gllAmount || gllAmount.eq(0)) {
             return ["Enter an amount"];
         }
 
@@ -447,17 +401,17 @@ export default function GllSwapBox(props) {
                 return [`Insufficient ${swapTokenInfo.symbol} Balance`];
             }
 
-            if (swapTokenInfo.maxUsdmAmount && swapTokenInfo.usdmAmount && swapUsdMin) {
-                const usdmFromAmount = adjustForDecimals(swapUsdMin, USD_DECIMALS, USDM_DECIMALS);
-                const nextUsdmAmount = swapTokenInfo.usdmAmount.add(usdmFromAmount);
-                if (swapTokenInfo.maxUsdmAmount.gt(0) && nextUsdmAmount.gt(swapTokenInfo.maxUsdmAmount)) {
+            if (swapTokenInfo.maxUsdgAmount && swapTokenInfo.usdgAmount && swapUsdMin) {
+                const usdgFromAmount = adjustForDecimals(swapUsdMin, USD_DECIMALS, USDG_DECIMALS);
+                const nextUsdgAmount = swapTokenInfo.usdgAmount.add(usdgFromAmount);
+                if (swapTokenInfo.maxUsdgAmount.gt(0) && nextUsdgAmount.gt(swapTokenInfo.maxUsdgAmount)) {
                     return [`${swapTokenInfo.symbol} pool exceeded, try different token`, true];
                 }
             }
         }
 
         if (!isBuying) {
-            if (maxSellAmount && mvlpAmount && mvlpAmount.gt(maxSellAmount)) {
+            if (maxSellAmount && gllAmount && gllAmount.gt(maxSellAmount)) {
                 return [`Insufficient GLL Balance`];
             }
 
@@ -540,7 +494,7 @@ export default function GllSwapBox(props) {
             setIsApproving,
             library,
             tokenAddress: swapToken.address,
-            spender: mvlpManagerAddress,
+            spender: gllManagerAddress,
             chainId: chainId,
             onApproveSubmitted: () => {
                 setIsWaitingForApproval(true);
@@ -550,14 +504,14 @@ export default function GllSwapBox(props) {
         });
     };
 
-    const buyMvlp = () => {
+    const buyGll = () => {
         setIsSubmitting(true);
 
-        const minMvlp = mvlpAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR);
+        const minGll = gllAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR);
 
         const contract = new ethers.Contract(rewardRouterAddress, RewardRouter.abi, library.getSigner());
-        const method = swapTokenAddress === AddressZero ? "mintAndStakeMvlpETH" : "mintAndStakeMvlp";
-        const params = swapTokenAddress === AddressZero ? [0, minMvlp] : [swapTokenAddress, swapAmount, 0, minMvlp];
+        const method = swapTokenAddress === AddressZero ? "mintAndStakeGllETH" : "mintAndStakeGll";
+        const params = swapTokenAddress === AddressZero ? [0, minGll] : [swapTokenAddress, swapAmount, 0, minGll];
         const value = swapTokenAddress === AddressZero ? swapAmount : 0;
 
         callContract(chainId, contract, method, params, {
@@ -565,7 +519,7 @@ export default function GllSwapBox(props) {
             sentMsg: "Providing...",
             failMsg: "Deposit failed.",
             successMsg: `${formatAmount(swapAmount, swapTokenInfo.decimals, 4, true)} ${swapTokenInfo.symbol
-                } provided for ${formatAmount(mvlpAmount, 18, 4, true)} GLL !`,
+                } provided for ${formatAmount(gllAmount, 18, 4, true)} GLL !`,
             setPendingTxns,
         })
             .then(async () => { })
@@ -574,22 +528,22 @@ export default function GllSwapBox(props) {
             });
     };
 
-    const sellMvlp = () => {
+    const sellGll = () => {
         setIsSubmitting(true);
 
         const minOut = swapAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR);
 
         const contract = new ethers.Contract(rewardRouterAddress, RewardRouter.abi, library.getSigner());
-        const method = swapTokenAddress === AddressZero ? "unstakeAndRedeemMvlpETH" : "unstakeAndRedeemMvlp";
+        const method = swapTokenAddress === AddressZero ? "unstakeAndRedeemGllETH" : "unstakeAndRedeemGll";
         const params =
             swapTokenAddress === AddressZero
-                ? [mvlpAmount, minOut, account]
-                : [swapTokenAddress, mvlpAmount, minOut, account];
+                ? [gllAmount, minOut, account]
+                : [swapTokenAddress, gllAmount, minOut, account];
 
         callContract(chainId, contract, method, params, {
             sentMsg: "Withdraw submitted!",
             failMsg: "Withdraw failed.",
-            successMsg: `${formatAmount(mvlpAmount, 18, 4, true)} GLL sold for ${formatAmount(
+            successMsg: `${formatAmount(gllAmount, 18, 4, true)} GLL sold for ${formatAmount(
                 swapAmount,
                 swapTokenInfo.decimals,
                 4,
@@ -624,9 +578,9 @@ export default function GllSwapBox(props) {
         }
 
         if (isBuying) {
-            buyMvlp();
+            buyGll();
         } else {
-            sellMvlp();
+            sellGll();
         }
     };
 
@@ -638,12 +592,12 @@ export default function GllSwapBox(props) {
         if (swapUsdMin) {
             payBalance = `$${formatAmount(swapUsdMin, USD_DECIMALS, 2, true)}`;
         }
-        if (mvlpUsdMax) {
-            receiveBalance = `$${formatAmount(mvlpUsdMax, USD_DECIMALS, 2, true)}`;
+        if (gllUsdMax) {
+            receiveBalance = `$${formatAmount(gllUsdMax, USD_DECIMALS, 2, true)}`;
         }
     } else {
-        if (mvlpUsdMax) {
-            payBalance = `$${formatAmount(mvlpUsdMax, USD_DECIMALS, 2, true)}`;
+        if (gllUsdMax) {
+            payBalance = `$${formatAmount(gllUsdMax, USD_DECIMALS, 2, true)}`;
         }
         if (swapUsdMin) {
             receiveBalance = `$${formatAmount(swapUsdMin, USD_DECIMALS, 2, true)}`;
@@ -661,9 +615,9 @@ export default function GllSwapBox(props) {
         feePercentageText += "%";
     }
 
-    let maxSellAmount = mvlpBalance;
-    if (mvlpBalance && reservedAmount) {
-        maxSellAmount = mvlpBalance.sub(reservedAmount);
+    let maxSellAmount = gllBalance;
+    if (gllBalance ) {
+        maxSellAmount = gllBalance;
     }
 
     const wrappedTokenSymbol = getWrappedToken(chainId).symbol;
@@ -679,15 +633,15 @@ export default function GllSwapBox(props) {
 
     return (
         <div className="GllSwap-box App-box basis-mobile section-gllswapbox">
-            {mvlpBalance && mvlpBalance.gt(0) ?
+            {gllBalance && gllBalance.gt(0) ?
                 <ItemCard
                     className='col-span-2'
                     label='Current Deposit'
                     value={
                         <div className="font-number" style={{ display: "inline-flex",alignItems:"center", fontSize: "24px", fontWeight: "500" }}>
-                            {formatAmount(mvlpBalance, MVLP_DECIMALS, 4, true)} GLL
+                            {formatAmount(gllBalance, GLL_DECIMALS, 4, true)} GLL
                             <div className="font-number" style={{ display: "inline-flex", fontSize: "16px", fontWeight:"400", opacity: "0.5" }}>
-                                (~${formatAmount(mvlpBalanceUsd, USD_DECIMALS, 2, true)})
+                                (~${formatAmount(gllBalanceUsd, USD_DECIMALS, 2, true)})
                             </div>
                         </div>
                     }
@@ -742,10 +696,10 @@ export default function GllSwapBox(props) {
                         <BuyInputSection
                             topLeftLabel={`≈ `}
                             topRightLabel={`Available: `}
-                            // tokenBalance={`${formatAmount(maxSellAmount, MVLP_DECIMALS, 4, true)}`}
-                            inputValue={mvlpValue}
-                            onInputValueChange={onMvlpValueChange}
-                            showMaxButton={mvlpValue !== formatAmountFree(maxSellAmount, MVLP_DECIMALS, MVLP_DECIMALS)}
+                            // tokenBalance={`${formatAmount(maxSellAmount, GLL_DECIMALS, 4, true)}`}
+                            inputValue={gllValue}
+                            onInputValueChange={onGllValueChange}
+                            showMaxButton={gllValue !== formatAmountFree(maxSellAmount, GLL_DECIMALS, GLL_DECIMALS)}
                             onClickTopRightLabel={fillMaxAmount}
                             onClickMax={fillMaxAmount}
                             balance={payBalance}
@@ -787,9 +741,9 @@ export default function GllSwapBox(props) {
                         <BuyInputSection
                             topLeftLabel={`≈ `}
                             topRightLabel={`Balance: `}
-                            // tokenBalance={`${formatAmount(mvlpBalance, MVLP_DECIMALS, 4, true)}`}
-                            inputValue={mvlpValue}
-                            onInputValueChange={onMvlpValueChange}
+                            // tokenBalance={`${formatAmount(gllBalance, GLL_DECIMALS, 4, true)}`}
+                            inputValue={gllValue}
+                            onInputValueChange={onGllValueChange}
                             balance={receiveBalance}
                             defaultTokenName={"GLL"}
                         >
@@ -834,7 +788,7 @@ export default function GllSwapBox(props) {
                     </div>
                     <div className="Exchange-info-row">
                         <div className="Exchange-info-label">Minimum Received</div>
-                        {isBuying && mvlpAmount && <div className="font-number">{formatAmountFree(mvlpAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR), MVLP_DECIMALS, 2)} GLL</div>}
+                        {isBuying && gllAmount && <div className="font-number">{formatAmountFree(gllAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR), GLL_DECIMALS, 2)} GLL</div>}
                         {!isBuying && swapAmount && <div className="font-number">{formatAmountFree(swapAmount.mul(BASIS_POINTS_DIVISOR - savedSlippageAmount).div(BASIS_POINTS_DIVISOR), swapToken.decimals, swapToken.displayDecimals)} {swapToken.symbol}</div>}
                     </div>
                     <div className="Exchange-info-row">

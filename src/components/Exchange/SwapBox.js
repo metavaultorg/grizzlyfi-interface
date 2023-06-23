@@ -19,7 +19,7 @@ import {
   bigNumberify,
   USD_DECIMALS,
   USD_DISPLAY_DECIMALS,
-  USDM_DECIMALS,
+  USDG_DECIMALS,
   LONG,
   SHORT,
   INACTIVE,
@@ -33,7 +33,7 @@ import {
   BASIS_POINTS_DIVISOR,
   MARGIN_FEE_BASIS_POINTS,
   PRECISION,
-  USDM_ADDRESS,
+  USDG_ADDRESS,
   STOP,
   LIMIT,
   SWAP_OPTIONS,
@@ -157,7 +157,7 @@ export default function SwapBox(props) {
     nativeTokenAddress,
     savedSlippageAmount,
     totalTokenWeights,
-    usdmSupply,
+    usdgSupply,
     orders,
     savedIsPnlInLeverage,
     orderBookApproved,
@@ -430,10 +430,10 @@ export default function SwapBox(props) {
   }, [maxToTokenOut, toTokenAddress, infoTokens]);
 
   const maxFromTokenInUSD = useMemo(() => {
-    const value = fromTokenInfo.maxUsdmAmount
-      ?.sub(fromTokenInfo.usdmAmount)
+    const value = fromTokenInfo.maxUsdgAmount
+      ?.sub(fromTokenInfo.usdgAmount)
       .mul(expandDecimals(1, USD_DECIMALS))
-      .div(expandDecimals(1, USDM_DECIMALS));
+      .div(expandDecimals(1, USDG_DECIMALS));
 
     if (!value) {
       return bigNumberify(0);
@@ -541,7 +541,7 @@ export default function SwapBox(props) {
             infoTokens,
             undefined,
             !isMarketOrder && triggerRatio,
-            usdmSupply,
+            usdgSupply,
             totalTokenWeights,
             isSwap
           );
@@ -565,7 +565,7 @@ export default function SwapBox(props) {
           infoTokens,
           undefined,
           !isMarketOrder && triggerRatio,
-          usdmSupply,
+          usdgSupply,
           totalTokenWeights,
           isSwap
         );
@@ -598,7 +598,7 @@ export default function SwapBox(props) {
             infoTokens,
             undefined,
             undefined,
-            usdmSupply,
+            usdgSupply,
             totalTokenWeights,
             isSwap
           );
@@ -645,7 +645,7 @@ export default function SwapBox(props) {
           infoTokens,
           undefined,
           undefined,
-          usdmSupply,
+          usdgSupply,
           totalTokenWeights,
           isSwap
         );
@@ -691,7 +691,7 @@ export default function SwapBox(props) {
     triggerPriceUsd,
     triggerRatio,
     hasLeverageOption,
-    usdmSupply,
+    usdgSupply,
     totalTokenWeights,
     chainId,
     collateralTokenAddress,
@@ -780,7 +780,7 @@ export default function SwapBox(props) {
     }
 
     if (!isMarketOrder) {
-      if ((toToken.isStable || toToken.isUsdm) && (fromToken.isStable || fromToken.isUsdm)) {
+      if ((toToken.isStable || toToken.isUsdg) && (fromToken.isStable || fromToken.isUsdg)) {
         return ["Select different tokens"];
       }
 
@@ -824,7 +824,7 @@ export default function SwapBox(props) {
     if (
       !isWrapOrUnwrap &&
       toToken &&
-      toTokenAddress !== USDM_ADDRESS &&
+      toTokenAddress !== USDG_ADDRESS &&
       toTokenInfo &&
       toTokenInfo.availableAmount &&
       toAmount.gt(toTokenInfo.availableAmount)
@@ -843,15 +843,15 @@ export default function SwapBox(props) {
 
     if (
       fromUsdMin &&
-      fromTokenInfo.maxUsdmAmount &&
-      fromTokenInfo.maxUsdmAmount.gt(0) &&
-      fromTokenInfo.usdmAmount &&
+      fromTokenInfo.maxUsdgAmount &&
+      fromTokenInfo.maxUsdgAmount.gt(0) &&
+      fromTokenInfo.usdgAmount &&
       fromTokenInfo.maxPrice
     ) {
-      const usdmFromAmount = adjustForDecimals(fromUsdMin, USD_DECIMALS, USDM_DECIMALS);
-      const nextUsdmAmount = fromTokenInfo.usdmAmount.add(usdmFromAmount);
+      const usdgFromAmount = adjustForDecimals(fromUsdMin, USD_DECIMALS, USDG_DECIMALS);
+      const nextUsdgAmount = fromTokenInfo.usdgAmount.add(usdgFromAmount);
 
-      if (nextUsdmAmount.gt(fromTokenInfo.maxUsdmAmount)) {
+      if (nextUsdgAmount.gt(fromTokenInfo.maxUsdgAmount)) {
         return [`${fromTokenInfo.symbol} pool exceeded`];
       }
     }
@@ -927,13 +927,13 @@ export default function SwapBox(props) {
           infoTokens,
           undefined,
           undefined,
-          usdmSupply,
+          usdgSupply,
           totalTokenWeights,
           isSwap
         );
         requiredAmount = requiredAmount.add(swapAmount);
 
-        if (toToken && toTokenAddress !== USDM_ADDRESS) {
+        if (toToken && toTokenAddress !== USDG_ADDRESS) {
           if (!toTokenInfo.availableAmount) {
             return ["Liquidity data not loaded"];
           }
@@ -952,15 +952,15 @@ export default function SwapBox(props) {
 
         if (
           fromUsdMin &&
-          fromTokenInfo.maxUsdmAmount &&
-          fromTokenInfo.maxUsdmAmount.gt(0) &&
+          fromTokenInfo.maxUsdgAmount &&
+          fromTokenInfo.maxUsdgAmount.gt(0) &&
           fromTokenInfo.minPrice &&
-          fromTokenInfo.usdmAmount
+          fromTokenInfo.usdgAmount
         ) {
-          const usdmFromAmount = adjustForDecimals(fromUsdMin, USD_DECIMALS, USDM_DECIMALS);
-          const nextUsdmAmount = fromTokenInfo.usdmAmount.add(usdmFromAmount);
-          if (nextUsdmAmount.gt(fromTokenInfo.maxUsdmAmount)) {
-            return [`${fromTokenInfo.symbol} pool exceeded, try different token`, true, "MAX_USDM"];
+          const usdgFromAmount = adjustForDecimals(fromUsdMin, USD_DECIMALS, USDG_DECIMALS);
+          const nextUsdgAmount = fromTokenInfo.usdgAmount.add(usdgFromAmount);
+          if (nextUsdgAmount.gt(fromTokenInfo.maxUsdgAmount)) {
+            return [`${fromTokenInfo.symbol} pool exceeded, try different token`, true, "MAX_USDG"];
           }
         }
       }
@@ -989,7 +989,7 @@ export default function SwapBox(props) {
           infoTokens,
           undefined,
           undefined,
-          usdmSupply,
+          usdgSupply,
           totalTokenWeights,
           isSwap
         );
@@ -1008,15 +1008,15 @@ export default function SwapBox(props) {
         }
 
         if (
-          fromTokenInfo.maxUsdmAmount &&
-          fromTokenInfo.maxUsdmAmount.gt(0) &&
+          fromTokenInfo.maxUsdgAmount &&
+          fromTokenInfo.maxUsdgAmount.gt(0) &&
           fromTokenInfo.minPrice &&
-          fromTokenInfo.usdmAmount
+          fromTokenInfo.usdgAmount
         ) {
-          const usdmFromAmount = adjustForDecimals(fromUsdMin, USD_DECIMALS, USDM_DECIMALS);
-          const nextUsdmAmount = fromTokenInfo.usdmAmount.add(usdmFromAmount);
-          if (nextUsdmAmount.gt(fromTokenInfo.maxUsdmAmount)) {
-            return [`${fromTokenInfo.symbol} pool exceeded, try different token`, true, "MAX_USDM"];
+          const usdgFromAmount = adjustForDecimals(fromUsdMin, USD_DECIMALS, USDG_DECIMALS);
+          const nextUsdgAmount = fromTokenInfo.usdgAmount.add(usdgFromAmount);
+          if (nextUsdgAmount.gt(fromTokenInfo.maxUsdgAmount)) {
+            return [`${fromTokenInfo.symbol} pool exceeded, try different token`, true, "MAX_USDG"];
           }
         }
       }
@@ -1101,8 +1101,7 @@ export default function SwapBox(props) {
     const swapTokenSymbol = isLong ? toToken.symbol : shortCollateralToken.symbol;
     const inputTokenSymbol = isLong ? fromToken.symbol : shortCollateralToken.symbol;
 
-    let uniswapUrl = `https://app.uniswap.org/#/swap`;
-    let kyberswapUrl = `https://kyberswap.com/swap/polygon/${inputCurrency}-to-${outputCurrency}`;
+
     const label =
       modalError === "BUFFER" ? `${shortCollateralToken.symbol} Required` : `${fromToken.symbol} Capacity Reached`;
     return (
@@ -1117,19 +1116,7 @@ export default function SwapBox(props) {
               <br />
             </p>
           )}
-          <div style={{ display: "flex", alignItems: "center", flexDirection: "column", gap: "10px" }}>
-            <a style={{ textDecoration: "none", color: "#f2c75c" }} href={uniswapUrl} target="_blank" rel="noreferrer">
-              Buy {swapTokenSymbol} on Uniswap
-            </a>
-            <a
-              style={{ textDecoration: "none", color: "#f2c75c" }}
-              href={kyberswapUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Buy {swapTokenSymbol} on KyberSwap
-            </a>
-          </div>
+
         </div>
       </Modal>
     );
@@ -1233,15 +1220,15 @@ export default function SwapBox(props) {
           infoTokens,
           undefined,
           undefined,
-          usdmSupply,
+          usdgSupply,
           totalTokenWeights,
           isSwap
         );
         const nextToAmountUsd = nextToAmount
           .mul(indexTokenInfo.minPrice)
           .div(expandDecimals(1, indexTokenInfo.decimals));
-        if (fromTokenAddress === USDM_ADDRESS && nextToAmountUsd.lt(fromUsdMin.mul(98).div(100))) {
-          return "High USDM Slippage, Long Anyway";
+        if (fromTokenAddress === USDG_ADDRESS && nextToAmountUsd.lt(fromUsdMin.mul(98).div(100))) {
+          return "High USDG Slippage, Long Anyway";
         }
       }
       return `Long ${toToken.symbol}`;
@@ -1355,7 +1342,7 @@ export default function SwapBox(props) {
         infoTokens,
         undefined,
         undefined,
-        usdmSupply,
+        usdgSupply,
         totalTokenWeights,
         isSwap
       );
@@ -1371,7 +1358,7 @@ export default function SwapBox(props) {
         infoTokens,
         undefined,
         undefined,
-        usdmSupply,
+        usdgSupply,
         totalTokenWeights,
         isSwap
       );
@@ -1547,7 +1534,7 @@ export default function SwapBox(props) {
 
     const boundedFromAmount = fromAmount ? fromAmount : bigNumberify(0);
 
-    if (fromAmount && fromAmount.gt(0) && fromTokenAddress === USDM_ADDRESS && isLong) {
+    if (fromAmount && fromAmount.gt(0) && fromTokenAddress === USDG_ADDRESS && isLong) {
       const { amount: nextToAmount, path: multiPath } = getNextToAmount(
         chainId,
         fromAmount,
@@ -1556,7 +1543,7 @@ export default function SwapBox(props) {
         infoTokens,
         undefined,
         undefined,
-        usdmSupply,
+        usdgSupply,
         totalTokenWeights,
         isSwap
       );
@@ -1824,14 +1811,14 @@ export default function SwapBox(props) {
         infoTokens,
         undefined,
         undefined,
-        usdmSupply,
+        usdgSupply,
         totalTokenWeights,
         isSwap
       );
       if (feeBasisPoints !== undefined) {
         fees = fromAmount.mul(feeBasisPoints).div(BASIS_POINTS_DIVISOR);
         const feeTokenPrice =
-          fromTokenInfo.address === USDM_ADDRESS ? expandDecimals(1, USD_DECIMALS) : fromTokenInfo.maxPrice;
+          fromTokenInfo.address === USDG_ADDRESS ? expandDecimals(1, USD_DECIMALS) : fromTokenInfo.maxPrice;
         feesUsd = fees.mul(feeTokenPrice).div(expandDecimals(1, fromTokenInfo.decimals));
       }
       feeBps = feeBasisPoints;
@@ -1851,7 +1838,7 @@ export default function SwapBox(props) {
       infoTokens,
       undefined,
       undefined,
-      usdmSupply,
+      usdgSupply,
       totalTokenWeights,
       isSwap
     );

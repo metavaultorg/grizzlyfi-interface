@@ -115,8 +115,8 @@ export default function TokenSelector(props) {
               let info = infoTokens ? infoTokens[token.address] : {};
               let mintAmount;
               let balance = info.balance;
-              if (showMintingCap && mintingCap && info.usdmAmount) {
-                mintAmount = mintingCap.sub(info.usdmAmount);
+              if (showMintingCap && mintingCap && info.usdgAmount) {
+                mintAmount = mintingCap.sub(info.usdgAmount);
               }
               if (mintAmount && mintAmount.lt(0)) {
                 mintAmount = bigNumberify(0);
@@ -178,7 +178,7 @@ export default function TokenSelector(props) {
                       </div>
                     )}
                     <span className="text-accent">
-                      {mintAmount && <div>Mintable: {formatAmount(mintAmount, token.decimals, 2, true)} USDM</div>}
+                      {mintAmount && <div>Mintable: {formatAmount(mintAmount, token.decimals, 2, true)} USDG</div>}
                       {showMintingCap && !mintAmount && <div>-</div>}
                       {!showMintingCap && showBalances && balanceUsd && balanceUsd.gt(0) && (
                         <div className="font-number">${formatAmount(balanceUsd, 30, 2, true)}</div>

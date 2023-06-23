@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { RadioGroup } from '@headlessui/react'
 import ChartWrapper from "./ChartWrapper";
-import { useMvlpData, FROM_DATE_TS, FIRST_DATE_TS, NOW_TS, } from './dataProvider'
+import { useGllData, FROM_DATE_TS, FIRST_DATE_TS, NOW_TS, } from './dataProvider'
 import { Line, ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Legend, Tooltip } from 'recharts'
 import { tooltipLabelFormatter, CHART_HEIGHT, yaxisFormatterNumber, YAXIS_WIDTH, tooltipFormatterNumber, formatNumber, useWindowSize  } from './util'
 import cx from "classnames";
@@ -29,13 +29,13 @@ export default function ChartPrice() {
     const period = selectedTimeRange.period
 
     const params = { from, to, period  };
-    const [mvlpData, mvlpLoading] = useMvlpData(params);
+    const [gllData, gllLoading] = useGllData(params);
     
 
     const priceChange = () => {
-        if (mvlpData && mvlpData.length > 0) {
-            const fristPrice = mvlpData[0].mvlpPrice
-            const lastPrice = mvlpData[mvlpData.length - 1].mvlpPrice
+        if (gllData && gllData.length > 0) {
+            const fristPrice = gllData[0].gllPrice
+            const lastPrice = gllData[gllData.length - 1].gllPrice
             const change = ((lastPrice - fristPrice) * 100 / fristPrice).toFixed(2)
 
             return (
@@ -72,15 +72,15 @@ export default function ChartPrice() {
         <div className="chart-cell">
             <div></div>
             <ChartWrapper
-                title={<div className="chart-title"><div>MVLP / USD</div> <div>{priceChange()}</div></div>}
-                loading={mvlpLoading}
-                data={mvlpData}
+                title={<div className="chart-title"><div>GLL / USD</div> <div>{priceChange()}</div></div>}
+                loading={gllLoading}
+                data={gllData}
                 csvFields={[
-                    { key: "mvlpPrice" },
+                    { key: "gllPrice" },
                 ]}
             >
                 <ResponsiveContainer width={chartWidth} height={536} debounce={3}>
-                <LineChart data={mvlpData} syncId="syncMvlp">
+                <LineChart data={gllData} syncId="syncGll">
                         <CartesianGrid stroke="#2b2b2b" strokeDasharray="5 5" />
                         <XAxis
                             dataKey="timestamp"
@@ -88,7 +88,7 @@ export default function ChartPrice() {
                             minTickGap={30}
                         />
                         <YAxis
-                            dataKey="mvlpPrice"
+                            dataKey="gllPrice"
                             domain={['auto', 'auto']}
                             orientation="left"
                             yAxisId="right"
@@ -108,8 +108,8 @@ export default function ChartPrice() {
                             strokeWidth={1}
                             yAxisId="right"
                             dot={false}
-                            dataKey="mvlpPrice"
-                            name="MVLP Price"
+                            dataKey="gllPrice"
+                            name="GLL Price"
                             stroke={'#f2c75c'}
                         />
                     </LineChart>

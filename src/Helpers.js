@@ -16,7 +16,6 @@ import useSWR from "swr";
 
 import OrderBookReader from "./abis/OrderBookReader.json";
 import OrderBook from "./abis/OrderBook.json";
-import OrderBookSwap from "./abis/OrderBookSwap.json";
 
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 
@@ -27,11 +26,11 @@ export const UI_VERSION = "1.3";
 // use a random placeholder account instead of the zero address as the zero address might have tokens
 export const PLACEHOLDER_ACCOUNT = ethers.Wallet.createRandom().address;
 
-export const POLYGON = 137;
+export const BSC = 56;
 export const ZKSYNC = 324;
 export const MUMBAI_TESTNET = 80001;
 
-export const DEFAULT_CHAIN_ID = POLYGON;
+export const DEFAULT_CHAIN_ID = BSC;
 export const CHAIN_ID = DEFAULT_CHAIN_ID;
 
 export const MIN_PROFIT_TIME = 0;
@@ -39,18 +38,18 @@ export const MIN_PROFIT_TIME = 0;
 const SELECTED_NETWORK_LOCAL_STORAGE_KEY = "SELECTED_NETWORK";
 
 const CHAIN_NAMES_MAP = {
-  [POLYGON]: "Polygon",
+  [BSC]: "Bsc",
 };
 
 const GAS_PRICE_ADJUSTMENT_MAP = {
-  [POLYGON]: 20000000000,
+  [BSC]: 20000000000,
 };
 
 const MAX_GAS_PRICE_MAP = {
-  [POLYGON]: 300000000000,
+  [BSC]: 300000000000,
 };
 
-const POLYGON_RPC_PROVIDERS = process.env.REACT_APP_POLYGON_RPC_URLS.split(" ");
+const BSC_RPC_PROVIDERS = process.env.REACT_APP_BSC_RPC_URLS.split(" ");
 // const ZKSYNC_RPC_PROVIDERS = process.env.REACT_APP_ZKSYNC_RPC_URLS.split(" ");
 
 export const WALLET_CONNECT_LOCALSTORAGE_KEY = "walletconnect";
@@ -62,24 +61,23 @@ export function getChainName(chainId) {
   return CHAIN_NAMES_MAP[chainId];
 }
 
-export const USDM_ADDRESS = getContract(CHAIN_ID, "USDM");
+export const USDG_ADDRESS = getContract(CHAIN_ID, "USDG");
 export const MAX_LEVERAGE = 100 * 10000;
 
 export const MAX_PRICE_DEVIATION_BASIS_POINTS = 250;
 export const DEFAULT_GAS_LIMIT = 1 * 1000 * 1000;
 export const SECONDS_PER_YEAR = 31536000;
-export const USDM_DECIMALS = 18;
+export const USDG_DECIMALS = 18;
 export const USD_DECIMALS = 30;
 export const USD_DISPLAY_DECIMALS = 2;
-export const MVXMVLP_DISPLAY_DECIMALS = 4;
+export const GLL_DISPLAY_DECIMALS = 4;
 export const BASIS_POINTS_DIVISOR = 10000;
 export const DEPOSIT_FEE = 30;
 export const DUST_BNB = "2000000000000000";
 export const DUST_USD = expandDecimals(1, USD_DECIMALS);
 export const PRECISION = expandDecimals(1, 30);
-export const MVLP_DECIMALS = 18;
-export const MVX_DECIMALS = 18;
-export const DEFAULT_MAX_USDM_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
+export const GLL_DECIMALS = 18;
+export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
 
 export const TAX_BASIS_POINTS = 50;
 export const STABLE_TAX_BASIS_POINTS = 5;
@@ -92,7 +90,7 @@ export const TRAILING_STOP_FEE = 50;
 
 export const LIQUIDATION_FEE = expandDecimals(5, USD_DECIMALS);
 
-export const MVLP_COOLDOWN_DURATION = 60;
+export const GLL_COOLDOWN_DURATION = 60;
 export const THRESHOLD_REDEMPTION_VALUE = expandDecimals(993, 27); // 0.993
 export const FUNDING_RATE_PRECISION = 1000000;
 
@@ -120,7 +118,7 @@ export const IS_PNL_IN_LEVERAGE_KEY = "Exchange-swap-is-pnl-in-leverage";
 export const SHOW_PNL_AFTER_FEES_KEY = "Exchange-swap-show-pnl-after-fees";
 export const DISABLE_ORDER_VALIDATION_KEY = "disable-order-validation";
 export const SHOULD_SHOW_POSITION_LINES_KEY = "Exchange-swap-should-show-position-lines";
-export const REFERRAL_CODE_KEY = "MVX-referralCode";
+export const REFERRAL_CODE_KEY = "GrizzlyFi-referralCode";
 export const REFERRAL_CODE_QUERY_PARAMS = "ref";
 export const REFERRALS_SELECTED_TAB_KEY = "Referrals-selected-tab";
 export const MAX_REFERRAL_CODE_LENGTH = 20;
@@ -132,7 +130,7 @@ export const TRIGGER_PREFIX_BELOW = "<";
 
 export const MIN_PROFIT_BIPS = 0;
 
-export const MVLPPOOLCOLORS = {
+export const GLLPOOLCOLORS = {
   MATIC: "#7C43DA",
   ETH: "#6185F5",
   BTC: "#F7931A",
@@ -146,97 +144,74 @@ export const MVLPPOOLCOLORS = {
   stMATIC: "#25c0ff",
 };
 export const HIGH_EXECUTION_FEES_MAP = {
-  [POLYGON]: 3, // 3 USD
+  [BSC]: 3, // 3 USD
 };
 export const ICONLINKS = {
-  137: {
-    MVX: {
-      coingecko: "https://www.coingecko.com/en/coins/metavault-trade",
-      polygon: "https://polygonscan.com/address/0x2760e46d9bb43dafcbecaad1f64b93207f9f0ed7",
-      zkSync: "https://explorer.zksync.io/address/0xC8Ac6191CDc9c7bF846AD6b52aaAA7a0757eE305#contract"
+  56: {
+    GLL: {
+      bsc: "https://bscscan.com/address/0x9F4f8bc00F48663B7C204c96b932C29ccc43A2E8",
     },
-    MVLP: {
-      //coingecko: "https://www.coingecko.com/en/coins/metavault-trade",
-      polygon: "https://polygonscan.com/address/0x9F4f8bc00F48663B7C204c96b932C29ccc43A2E8",
-    },
-    MATIC: {
-      coingecko: "https://www.coingecko.com/en/coins/polygon",
-      polygon: "https://polygonscan.com/address/0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+    BNB: {
+      coingecko: "https://www.coingecko.com/en/coins/bsc",
+      bsc: "https://bscscan.com/address/0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
     },
     ETH: {
       coingecko: "https://www.coingecko.com/en/coins/weth",
-      polygon: "https://polygonscan.com/address/0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+      bsc: "https://bscscan.com/address/0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
     },
     BTC: {
       coingecko: "https://www.coingecko.com/en/coins/wrapped-bitcoin",
-      polygon: "https://polygonscan.com/address/0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6",
+      bsc: "https://bscscan.com/address/0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6",
     },
     DAI: {
       coingecko: "https://www.coingecko.com/en/coins/dai",
-      polygon: "https://polygonscan.com/address/0x8f3cf7ad23cd3cadbd9735aff958023239c6a063",
+      bsc: "https://bscscan.com/address/0x8f3cf7ad23cd3cadbd9735aff958023239c6a063",
     },
     BUSD: {
       coingecko: "https://www.coingecko.com/en/coins/binance-usd",
-      polygon: "https://polygonscan.com/token/0x9C9e5fD8bbc25984B178FdCE6117Defa39d2db39",
+      bsc: "https://bscscan.com/token/0x9C9e5fD8bbc25984B178FdCE6117Defa39d2db39",
     },
     USDC: {
       coingecko: "https://www.coingecko.com/en/coins/usd-coin",
-      polygon: "https://polygonscan.com/address/0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
+      bsc: "https://bscscan.com/address/0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
     },
     USDT: {
       coingecko: "https://www.coingecko.com/en/coins/tether",
-      polygon: "https://polygonscan.com/address/0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
+      bsc: "https://bscscan.com/address/0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
     },
     LINK: {
       coingecko: "https://www.coingecko.com/en/coins/chainlink",
-      polygon: "https://polygonscan.com/address/0xb0897686c545045afc77cf20ec7a532e3120e0f1",
+      bsc: "https://bscscan.com/address/0xb0897686c545045afc77cf20ec7a532e3120e0f1",
     },
     AAVE: {
       coingecko: "https://www.coingecko.com/en/coins/aave",
-      polygon: "https://polygonscan.com/address/0xd6df932a45c0f255f85145f286ea0b292b21c90b",
+      bsc: "https://bscscan.com/address/0xd6df932a45c0f255f85145f286ea0b292b21c90b",
     },
     UNI: {
       coingecko: "https://www.coingecko.com/en/coins/uniswap",
-      polygon: "https://polygonscan.com/address/0xb33eaad8d922b1083446dc23f610c2567fb5180f",
+      bsc: "https://bscscan.com/address/0xb33eaad8d922b1083446dc23f610c2567fb5180f",
     },
     stMATIC: {
       coingecko: "https://www.coingecko.com/en/coins/lido-staked-matic",
-      polygon: "https://polygonscan.com/address/0x3a58a54c066fdc0f2d55fc9c89f0415c92ebf3c4",
+      bsc: "https://bscscan.com/address/0x3a58a54c066fdc0f2d55fc9c89f0415c92ebf3c4",
     },
   },
 };
 
 export const platformTokens = {
-  137: {
-    // polygon
-    MVX: {
-      name: "MVX",
-      symbol: "MVX",
+  56: {
+    // bsc
+    GLL: {
+      name: "GrizzlyFi Leverage Liquidity",
+      symbol: "GLL",
       decimals: 18,
-      address: getContract(POLYGON, "MVX"),
-      imageUrl: "https://res.cloudinary.com/metavault/image/upload/v1662984468/website-assets/mvx-token.png",
+      address: getContract(BSC, "StakedGllTracker"),
+      imageUrl: "https://res.cloudinary.com/grizzlyfi/image/upload/v1662984581/website-assets/gll-token.png",
     },
-    MVLP: {
-      name: "MVX LP",
-      symbol: "MVLP",
-      decimals: 18,
-      address: getContract(POLYGON, "StakedMvlpTracker"),
-      imageUrl: "https://res.cloudinary.com/metavault/image/upload/v1662984581/website-assets/mvlp-token.png",
-    },
-  },
-  324: {
-    // zkSync
-    MVX: {
-      name: "MVX",
-      symbol: "MVX",
-      decimals: 18,
-      address: getContract(ZKSYNC, "MVX"),
-      imageUrl: "https://res.cloudinary.com/metavault/image/upload/v1662984468/website-assets/mvx-token.png",
-    }
   },
 };
 
-const supportedChainIds = [POLYGON];
+const supportedChainIds = [BSC];
 const injectedConnector = new InjectedConnector({
   supportedChainIds,
 });
@@ -245,7 +220,7 @@ const getWalletConnectConnector = () => {
   const chainId = localStorage.getItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY) || DEFAULT_CHAIN_ID;
   return new WalletConnectConnector({
     rpc: {
-      [POLYGON]: POLYGON_RPC_PROVIDERS[0],
+      [BSC]: BSC_RPC_PROVIDERS[0],
       
     },
     qrcode: true,
@@ -386,10 +361,10 @@ export function getServerBaseUrl(chainId) {
       return fromLocalStorage;
     }
   }
-  if (chainId === POLYGON) {
-    return process.env.REACT_APP_MVX_API_POLYGON_URL;
+  if (chainId === BSC) {
+    return process.env.REACT_APP_GRIZZLYFI_API_URL;
   }
-  return process.env.REACT_APP_MVX_API_POLYGON_URL;
+  return process.env.REACT_APP_GRIZZLYFI_API_URL;
 }
 
 export function getServerUrl(chainId, path) {
@@ -398,7 +373,7 @@ export function getServerUrl(chainId, path) {
 
 export function isTriggerRatioInverted(fromTokenInfo, toTokenInfo) {
   if (!toTokenInfo || !fromTokenInfo) return false;
-  if (toTokenInfo.isStable || toTokenInfo.isUsdm) return true;
+  if (toTokenInfo.isStable || toTokenInfo.isUsdg) return true;
   if (toTokenInfo.maxPrice) return toTokenInfo.maxPrice.lt(fromTokenInfo.maxPrice);
   return false;
 }
@@ -433,7 +408,7 @@ export function getMostAbundantStableToken(chainId, infoTokens) {
 }
 
 export function shouldInvertTriggerRatio(tokenA, tokenB) {
-  if (tokenB.isStable || tokenB.isUsdm) return true;
+  if (tokenB.isStable || tokenB.isUsdg) return true;
   if (tokenB.maxPrice && tokenA.maxPrice && tokenB.maxPrice.lt(tokenA.maxPrice)) return true;
   return false;
 }
@@ -447,7 +422,7 @@ export function getExchangeRateDisplay(rate, tokenA, tokenB, opts = {}) {
   const rateValue = formatAmount(
     rate,
     USD_DECIMALS,
-    tokenA.isStable || tokenA.isUsdm ? tokenA.displayDecimals : 4,
+    tokenA.isStable || tokenA.isUsdg ? tokenA.displayDecimals : 4,
     true
   );
   if (opts.omitSymbols) {
@@ -470,41 +445,41 @@ export function adjustForDecimals(amount, divDecimals, mulDecimals) {
   return amount.mul(expandDecimals(1, mulDecimals)).div(expandDecimals(1, divDecimals));
 }
 
-export function getTargetUsdmAmount(token, usdmSupply, totalTokenWeights) {
-  if (!token || !token.weight || !usdmSupply) {
+export function getTargetUsdgAmount(token, usdgSupply, totalTokenWeights) {
+  if (!token || !token.weight || !usdgSupply) {
     return;
   }
 
-  if (usdmSupply.eq(0)) {
+  if (usdgSupply.eq(0)) {
     return bigNumberify(0);
   }
 
-  return token.weight.mul(usdmSupply).div(totalTokenWeights);
+  return token.weight.mul(usdgSupply).div(totalTokenWeights);
 }
 
 export function getFeeBasisPoints(
   token,
-  usdmDelta,
+  usdgDelta,
   feeBasisPoints,
   taxBasisPoints,
   increment,
-  usdmSupply,
+  usdgSupply,
   totalTokenWeights
 ) {
-  if (!token || !token.usdmAmount || !usdmSupply || !totalTokenWeights) {
+  if (!token || !token.usdgAmount || !usdgSupply || !totalTokenWeights) {
     return 0;
   }
 
   feeBasisPoints = bigNumberify(feeBasisPoints);
   taxBasisPoints = bigNumberify(taxBasisPoints);
 
-  const initialAmount = token.usdmAmount;
-  let nextAmount = initialAmount.add(usdmDelta);
+  const initialAmount = token.usdgAmount;
+  let nextAmount = initialAmount.add(usdgDelta);
   if (!increment) {
-    nextAmount = usdmDelta.gt(initialAmount) ? bigNumberify(0) : initialAmount.sub(usdmDelta);
+    nextAmount = usdgDelta.gt(initialAmount) ? bigNumberify(0) : initialAmount.sub(usdgDelta);
   }
 
-  const targetAmount = getTargetUsdmAmount(token, usdmSupply, totalTokenWeights);
+  const targetAmount = getTargetUsdgAmount(token, usdgSupply, totalTokenWeights);
   if (!targetAmount || targetAmount.eq(0)) {
     return feeBasisPoints.toNumber();
   }
@@ -527,9 +502,9 @@ export function getFeeBasisPoints(
   return feeBasisPoints.add(taxBps).toNumber();
 }
 
-export function getBuyMvlpToAmount(fromAmount, swapTokenAddress, infoTokens, mvlpPrice, usdmSupply, totalTokenWeights) {
+export function getBuyGllToAmount(fromAmount, swapTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0), feeBasisPoints: 0 };
-  if (!fromAmount || !swapTokenAddress || !infoTokens || !mvlpPrice || !usdmSupply || !totalTokenWeights) {
+  if (!fromAmount || !swapTokenAddress || !infoTokens || !gllPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
   }
 
@@ -538,36 +513,36 @@ export function getBuyMvlpToAmount(fromAmount, swapTokenAddress, infoTokens, mvl
     return defaultValue;
   }
 
-  let mvlpAmount = fromAmount.mul(swapToken.minPrice).div(mvlpPrice);
-  mvlpAmount = adjustForDecimals(mvlpAmount, swapToken.decimals, USDM_DECIMALS);
+  let gllAmount = fromAmount.mul(swapToken.minPrice).div(gllPrice);
+  gllAmount = adjustForDecimals(gllAmount, swapToken.decimals, USDG_DECIMALS);
 
-  let usdmAmount = fromAmount.mul(swapToken.minPrice).div(PRECISION);
-  usdmAmount = adjustForDecimals(usdmAmount, swapToken.decimals, USDM_DECIMALS);
+  let usdgAmount = fromAmount.mul(swapToken.minPrice).div(PRECISION);
+  usdgAmount = adjustForDecimals(usdgAmount, swapToken.decimals, USDG_DECIMALS);
   const feeBasisPoints = getFeeBasisPoints(
     swapToken,
-    usdmAmount,
+    usdgAmount,
     MINT_BURN_FEE_BASIS_POINTS,
     TAX_BASIS_POINTS,
     true,
-    usdmSupply,
+    usdgSupply,
     totalTokenWeights
   );
 
-  mvlpAmount = mvlpAmount.mul(BASIS_POINTS_DIVISOR - feeBasisPoints).div(BASIS_POINTS_DIVISOR);
+  gllAmount = gllAmount.mul(BASIS_POINTS_DIVISOR - feeBasisPoints).div(BASIS_POINTS_DIVISOR);
 
-  return { amount: mvlpAmount, feeBasisPoints };
+  return { amount: gllAmount, feeBasisPoints };
 }
 
-export function getSellMvlpFromAmount(
+export function getSellGllFromAmount(
   toAmount,
   swapTokenAddress,
   infoTokens,
-  mvlpPrice,
-  usdmSupply,
+  gllPrice,
+  usdgSupply,
   totalTokenWeights
 ) {
   const defaultValue = { amount: bigNumberify(0), feeBasisPoints: 0 };
-  if (!toAmount || !swapTokenAddress || !infoTokens || !mvlpPrice || !usdmSupply || !totalTokenWeights) {
+  if (!toAmount || !swapTokenAddress || !infoTokens || !gllPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
   }
 
@@ -576,29 +551,29 @@ export function getSellMvlpFromAmount(
     return defaultValue;
   }
 
-  let mvlpAmount = toAmount.mul(swapToken.maxPrice).div(mvlpPrice);
-  mvlpAmount = adjustForDecimals(mvlpAmount, swapToken.decimals, USDM_DECIMALS);
+  let gllAmount = toAmount.mul(swapToken.maxPrice).div(gllPrice);
+  gllAmount = adjustForDecimals(gllAmount, swapToken.decimals, USDG_DECIMALS);
 
-  let usdmAmount = toAmount.mul(swapToken.maxPrice).div(PRECISION);
-  usdmAmount = adjustForDecimals(usdmAmount, swapToken.decimals, USDM_DECIMALS);
+  let usdgAmount = toAmount.mul(swapToken.maxPrice).div(PRECISION);
+  usdgAmount = adjustForDecimals(usdgAmount, swapToken.decimals, USDG_DECIMALS);
   const feeBasisPoints = getFeeBasisPoints(
     swapToken,
-    usdmAmount,
+    usdgAmount,
     MINT_BURN_FEE_BASIS_POINTS,
     TAX_BASIS_POINTS,
     false,
-    usdmSupply,
+    usdgSupply,
     totalTokenWeights
   );
 
-  mvlpAmount = mvlpAmount.mul(BASIS_POINTS_DIVISOR).div(BASIS_POINTS_DIVISOR - feeBasisPoints);
+  gllAmount = gllAmount.mul(BASIS_POINTS_DIVISOR).div(BASIS_POINTS_DIVISOR - feeBasisPoints);
 
-  return { amount: mvlpAmount, feeBasisPoints };
+  return { amount: gllAmount, feeBasisPoints };
 }
 
-export function getBuyMvlpFromAmount(toAmount, fromTokenAddress, infoTokens, mvlpPrice, usdmSupply, totalTokenWeights) {
+export function getBuyGllFromAmount(toAmount, fromTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0) };
-  if (!toAmount || !fromTokenAddress || !infoTokens || !mvlpPrice || !usdmSupply || !totalTokenWeights) {
+  if (!toAmount || !fromTokenAddress || !infoTokens || !gllPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
   }
 
@@ -607,17 +582,17 @@ export function getBuyMvlpFromAmount(toAmount, fromTokenAddress, infoTokens, mvl
     return defaultValue;
   }
 
-  let fromAmount = toAmount.mul(mvlpPrice).div(fromToken.minPrice);
-  fromAmount = adjustForDecimals(fromAmount, MVLP_DECIMALS, fromToken.decimals);
+  let fromAmount = toAmount.mul(gllPrice).div(fromToken.minPrice);
+  fromAmount = adjustForDecimals(fromAmount, GLL_DECIMALS, fromToken.decimals);
 
-  const usdmAmount = toAmount.mul(mvlpPrice).div(PRECISION);
+  const usdgAmount = toAmount.mul(gllPrice).div(PRECISION);
   const feeBasisPoints = getFeeBasisPoints(
     fromToken,
-    usdmAmount,
+    usdgAmount,
     MINT_BURN_FEE_BASIS_POINTS,
     TAX_BASIS_POINTS,
     true,
-    usdmSupply,
+    usdgSupply,
     totalTokenWeights
   );
 
@@ -626,9 +601,9 @@ export function getBuyMvlpFromAmount(toAmount, fromTokenAddress, infoTokens, mvl
   return { amount: fromAmount, feeBasisPoints };
 }
 
-export function getSellMvlpToAmount(toAmount, fromTokenAddress, infoTokens, mvlpPrice, usdmSupply, totalTokenWeights) {
+export function getSellGllToAmount(toAmount, fromTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0) };
-  if (!toAmount || !fromTokenAddress || !infoTokens || !mvlpPrice || !usdmSupply || !totalTokenWeights) {
+  if (!toAmount || !fromTokenAddress || !infoTokens || !gllPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
   }
 
@@ -637,17 +612,17 @@ export function getSellMvlpToAmount(toAmount, fromTokenAddress, infoTokens, mvlp
     return defaultValue;
   }
 
-  let fromAmount = toAmount.mul(mvlpPrice).div(fromToken.maxPrice);
-  fromAmount = adjustForDecimals(fromAmount, MVLP_DECIMALS, fromToken.decimals);
+  let fromAmount = toAmount.mul(gllPrice).div(fromToken.maxPrice);
+  fromAmount = adjustForDecimals(fromAmount, GLL_DECIMALS, fromToken.decimals);
 
-  const usdmAmount = toAmount.mul(mvlpPrice).div(PRECISION);
+  const usdgAmount = toAmount.mul(gllPrice).div(PRECISION);
   const feeBasisPoints = getFeeBasisPoints(
     fromToken,
-    usdmAmount,
+    usdgAmount,
     MINT_BURN_FEE_BASIS_POINTS,
     TAX_BASIS_POINTS,
     false,
-    usdmSupply,
+    usdgSupply,
     totalTokenWeights
   );
 
@@ -664,7 +639,7 @@ export function getNextFromAmount(
   infoTokens,
   toTokenPriceUsd,
   ratio,
-  usdmSupply,
+  usdgSupply,
   totalTokenWeights,
   forSwap
 ) {
@@ -717,27 +692,27 @@ export function getNextFromAmount(
   const fromAmount =
     ratio && !ratio.isZero() ? fromAmountBasedOnRatio : toAmount.mul(toTokenMaxPrice).div(fromTokenMinPrice);
 
-  let usdmAmount = fromAmount.mul(fromTokenMinPrice).div(PRECISION);
-  usdmAmount = adjustForDecimals(usdmAmount, toToken.decimals, USDM_DECIMALS);
+  let usdgAmount = fromAmount.mul(fromTokenMinPrice).div(PRECISION);
+  usdgAmount = adjustForDecimals(usdgAmount, toToken.decimals, USDG_DECIMALS);
   const swapFeeBasisPoints =
     fromToken.isStable && toToken.isStable ? STABLE_SWAP_FEE_BASIS_POINTS : SWAP_FEE_BASIS_POINTS;
   const taxBasisPoints = fromToken.isStable && toToken.isStable ? STABLE_TAX_BASIS_POINTS : TAX_BASIS_POINTS;
   const feeBasisPoints0 = getFeeBasisPoints(
     fromToken,
-    usdmAmount,
+    usdgAmount,
     swapFeeBasisPoints,
     taxBasisPoints,
     true,
-    usdmSupply,
+    usdgSupply,
     totalTokenWeights
   );
   const feeBasisPoints1 = getFeeBasisPoints(
     toToken,
-    usdmAmount,
+    usdgAmount,
     swapFeeBasisPoints,
     taxBasisPoints,
     false,
-    usdmSupply,
+    usdgSupply,
     totalTokenWeights
   );
   const feeBasisPoints = feeBasisPoints0 > feeBasisPoints1 ? feeBasisPoints0 : feeBasisPoints1;
@@ -756,7 +731,7 @@ export function getNextToAmount(
   infoTokens,
   toTokenPriceUsd,
   ratio,
-  usdmSupply,
+  usdgSupply,
   totalTokenWeights,
   forSwap
 ) {
@@ -805,7 +780,7 @@ export function getNextToAmount(
     toAmountBasedOnRatio = fromAmount.mul(PRECISION).div(ratio);
   }
 
-  if (toTokenAddress === USDM_ADDRESS) {
+  if (toTokenAddress === USDG_ADDRESS) {
     const feeBasisPoints = getSwapFeeBasisPoints(fromToken.isStable);
 
     if (ratio && !ratio.isZero()) {
@@ -823,7 +798,7 @@ export function getNextToAmount(
     };
   }
 
-  if (fromTokenAddress === USDM_ADDRESS) {
+  if (fromTokenAddress === USDG_ADDRESS) {
     const redemptionValue = toToken.redemptionAmount
       .mul(toTokenPriceUsd || toTokenMaxPrice)
       .div(expandDecimals(1, toToken.decimals));
@@ -866,14 +841,14 @@ export function getNextToAmount(
         .div(BASIS_POINTS_DIVISOR);
       return {
         amount: adjustDecimals(toAmount),
-        path: [USDM_ADDRESS, stableToken.address, toToken.address],
+        path: [USDG_ADDRESS, stableToken.address, toToken.address],
         feeBasisPoints: feeBasisPoints0 + feeBasisPoints1,
       };
     }
 
-    // get toAmount for USDM => stableToken
+    // get toAmount for USDG => stableToken
     let toAmount = fromAmount.mul(PRECISION).div(stableToken.maxPrice);
-    // apply USDM => stableToken fees
+    // apply USDG => stableToken fees
     toAmount = toAmount.mul(BASIS_POINTS_DIVISOR - feeBasisPoints0).div(BASIS_POINTS_DIVISOR);
 
     // get toAmount for stableToken => toToken
@@ -883,7 +858,7 @@ export function getNextToAmount(
 
     return {
       amount: adjustDecimals(toAmount),
-      path: [USDM_ADDRESS, stableToken.address, toToken.address],
+      path: [USDG_ADDRESS, stableToken.address, toToken.address],
       feeBasisPoints: feeBasisPoints0 + feeBasisPoints1,
     };
   }
@@ -893,27 +868,27 @@ export function getNextToAmount(
       ? toAmountBasedOnRatio
       : fromAmount.mul(fromTokenMinPrice).div(toTokenPriceUsd || toTokenMaxPrice);
 
-  let usdmAmount = fromAmount.mul(fromTokenMinPrice).div(PRECISION);
-  usdmAmount = adjustForDecimals(usdmAmount, fromToken.decimals, USDM_DECIMALS);
+  let usdgAmount = fromAmount.mul(fromTokenMinPrice).div(PRECISION);
+  usdgAmount = adjustForDecimals(usdgAmount, fromToken.decimals, USDG_DECIMALS);
   const swapFeeBasisPoints =
     fromToken.isStable && toToken.isStable ? STABLE_SWAP_FEE_BASIS_POINTS : SWAP_FEE_BASIS_POINTS;
   const taxBasisPoints = fromToken.isStable && toToken.isStable ? STABLE_TAX_BASIS_POINTS : TAX_BASIS_POINTS;
   const feeBasisPoints0 = getFeeBasisPoints(
     fromToken,
-    usdmAmount,
+    usdgAmount,
     swapFeeBasisPoints,
     taxBasisPoints,
     true,
-    usdmSupply,
+    usdgSupply,
     totalTokenWeights
   );
   const feeBasisPoints1 = getFeeBasisPoints(
     toToken,
-    usdmAmount,
+    usdgAmount,
     swapFeeBasisPoints,
     taxBasisPoints,
     false,
-    usdmSupply,
+    usdgSupply,
     totalTokenWeights
   );
   const feeBasisPoints = feeBasisPoints0 > feeBasisPoints1 ? feeBasisPoints0 : feeBasisPoints1;
@@ -1152,7 +1127,7 @@ export function getUsd(amount, tokenAddress, max, infoTokens, orderOption, trigg
   if (!amount) {
     return;
   }
-  if (tokenAddress === USDM_ADDRESS) {
+  if (tokenAddress === USDG_ADDRESS) {
     return amount.mul(PRECISION).div(expandDecimals(1, 18));
   }
   const info = getTokenInfo(infoTokens, tokenAddress);
@@ -1182,13 +1157,13 @@ export function getSwapFeeBasisPoints(isStable) {
 }
 
 const RPC_PROVIDERS = {
-  [POLYGON]: POLYGON_RPC_PROVIDERS,
+  [BSC]: BSC_RPC_PROVIDERS,
 //   [ZKSYNC]: ZKSYNC_RPC_PROVIDERS,
 
 };
 
 const FALLBACK_PROVIDERS = {
-  [POLYGON]: process.env.REACT_APP_POLYGON_FALLBACK_PROVIDERS.split(" "),
+  [BSC]: process.env.REACT_APP_BSC_FALLBACK_PROVIDERS.split(" "),
 //   [ZKSYNC]: process.env.REACT_APP_ZKSYNC_FALLBACK_PROVIDERS.split(" "),
 };
 
@@ -1302,7 +1277,7 @@ export function useENS(address) {
       if (address) {
         try {
           const provider = new ethers.providers.JsonRpcProvider(
-            POLYGON_RPC_PROVIDERS[0]
+            BSC_RPC_PROVIDERS[0]
           );
           const name = await provider.lookupAddress(address.toLowerCase());
           if (name) setENSName(name);
@@ -1758,7 +1733,6 @@ export function useAccountOrders(flagOrdersEnabled, overrideAccount) {
     fetcher: async (active, chainId, orderBookAddress, account) => {
       const provider = getProvider(library, chainId);
       const orderBookContract = new ethers.Contract(orderBookAddress, OrderBook.abi, provider);
-      const orderBookSwapContract = new ethers.Contract(orderBookSwapAddress, OrderBookSwap.abi, provider);
       const orderBookReaderContract = new ethers.Contract(orderBookReaderAddress, OrderBookReader.abi, provider);
 
       // const fetchIndexesFromServer = () => {
@@ -1787,7 +1761,7 @@ export function useAccountOrders(flagOrdersEnabled, overrideAccount) {
 
       const fetchLastSwapIndex = async (type) => {
         const method = type.toLowerCase() + "OrdersIndex";
-        return await orderBookSwapContract[method](account).then((res) => bigNumberify(res._hex).toNumber());
+        return await orderBookContract[method](account).then((res) => bigNumberify(res._hex).toNumber());
       };
 
       const fetchLastIndexes = async () => {
@@ -1926,10 +1900,10 @@ export function numberWithCommas(x) {
 }
 
 export function getExplorerUrl(chainId) {
-  if (chainId === POLYGON) {
-    return process.env.REACT_APP_EXPLORER_POLYGON_URL;
+  if (chainId === BSC) {
+    return process.env.REACT_APP_EXPLORER_BSC_URL;
   }
-  return process.env.REACT_APP_EXPLORER_POLYGON_URL;
+  return process.env.REACT_APP_EXPLORER_BSC_URL;
 }
 
 export function getAccountUrl(chainId, account) {
@@ -2055,7 +2029,7 @@ export function approveTokens({
       ) {
         failMsg = (
           <div>
-            There is not enough MATIC in your account on Polygon to send this transaction.
+            There is not enough BNB in your account on Bsc to send this transaction.
             <br />
           </div>
         );
@@ -2098,16 +2072,16 @@ export const getTokenInfo = (infoTokens, tokenAddress, replaceNative, nativeToke
 };
 
 const NETWORK_METADATA = {
-  [POLYGON]: {
-    chainId: "0x" + POLYGON.toString(16),
-    chainName: "POLYGON",
+  [BSC]: {
+    chainId: "0x" + BSC.toString(16),
+    chainName: "BSC",
     nativeCurrency: {
-      name: "MATIC",
-      symbol: "MATIC",
+      name: "BNB",
+      symbol: "BNB",
       decimals: 18,
     },
-    rpcUrls: POLYGON_RPC_PROVIDERS,
-    blockExplorerUrls: [getExplorerUrl(POLYGON)],
+    rpcUrls: BSC_RPC_PROVIDERS,
+    blockExplorerUrls: [getExplorerUrl(BSC)],
   },
 };
 
@@ -2152,7 +2126,7 @@ export const getWalletConnectHandler = (activate, deactivate, setActivatingConne
     setActivatingConnector(walletConnect);
     activate(walletConnect, (ex) => {
       if (ex instanceof UnsupportedChainIdError) {
-        helperToast.error("Unsupported chain. Switch to Polygon network on your wallet and try again");
+        helperToast.error("Unsupported chain. Switch to Bsc network on your wallet and try again");
         console.warn(ex);
       } else if (!(ex instanceof UserRejectedRequestErrorWalletConnect)) {
         helperToast.error(ex.message);
@@ -2252,7 +2226,7 @@ export function getInfoTokens(
     if (tokenBalances) {
       token.balance = tokenBalances[i];
     }
-    if (token.address === USDM_ADDRESS) {
+    if (token.address === USDG_ADDRESS) {
       token.minPrice = expandDecimals(1, USD_DECIMALS);
       token.maxPrice = expandDecimals(1, USD_DECIMALS);
     }
@@ -2265,11 +2239,11 @@ export function getInfoTokens(
       token.poolAmount = vaultTokenInfo[i * vaultPropsLength];
       token.reservedAmount = vaultTokenInfo[i * vaultPropsLength + 1];
       token.availableAmount = token.poolAmount.sub(token.reservedAmount);
-      token.usdmAmount = vaultTokenInfo[i * vaultPropsLength + 2];
+      token.usdgAmount = vaultTokenInfo[i * vaultPropsLength + 2];
       token.redemptionAmount = vaultTokenInfo[i * vaultPropsLength + 3];
       token.weight = vaultTokenInfo[i * vaultPropsLength + 4];
       token.bufferAmount = vaultTokenInfo[i * vaultPropsLength + 5];
-      token.maxUsdmAmount = vaultTokenInfo[i * vaultPropsLength + 6];
+      token.maxUsdgAmount = vaultTokenInfo[i * vaultPropsLength + 6];
       token.globalShortSize = vaultTokenInfo[i * vaultPropsLength + 7];
       token.maxGlobalShortSize = vaultTokenInfo[i * vaultPropsLength + 8];
       token.maxGlobalLongSize = vaultTokenInfo[i * vaultPropsLength + 9];
@@ -2292,8 +2266,8 @@ export function getInfoTokens(
         }
       }
 
-      if (token.maxUsdmAmount.eq(0)) {
-        token.maxUsdmAmount = DEFAULT_MAX_USDM_AMOUNT;
+      if (token.maxUsdgAmount.eq(0)) {
+        token.maxUsdgAmount = DEFAULT_MAX_USDG_AMOUNT;
       }
 
       token.availableUsd = token.isStable
@@ -2365,7 +2339,7 @@ export function getBalanceAndSupplyData(balances) {
     return {};
   }
 
-  const keys = ["mvx", "esMvx", "mvlp", "stakedMvxTracker"];
+  const keys = [ "gll"];
   const balanceData = {};
   const supplyData = {};
   const propsLength = 2;
@@ -2385,12 +2359,7 @@ export function getDepositBalanceData(depositBalances) {
   }
 
   const keys = [
-    "mvxInStakedMvx",
-    "esMvxInStakedMvx",
-    "stakedMvxInBonusMvx",
-    "bonusMvxInFeeMvx",
-    "bnMvxInFeeMvx",
-    "mvlpInStakedMvlp",
+    "gllInStakedGll",
   ];
   const data = {};
 
@@ -2402,45 +2371,13 @@ export function getDepositBalanceData(depositBalances) {
   return data;
 }
 
-export function getVestingData(vestingInfo) {
-  if (!vestingInfo || vestingInfo.length === 0) {
-    return;
-  }
-
-  const keys = ["mvxVester", "mvlpVester"];
-  const data = {};
-  const propsLength = 7;
-
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
-    data[key] = {
-      pairAmount: vestingInfo[i * propsLength],
-      vestedAmount: vestingInfo[i * propsLength + 1],
-      escrowedBalance: vestingInfo[i * propsLength + 2],
-      claimedAmounts: vestingInfo[i * propsLength + 3],
-      claimable: vestingInfo[i * propsLength + 4],
-      maxVestableAmount: vestingInfo[i * propsLength + 5],
-      averageStakedAmount: vestingInfo[i * propsLength + 6],
-    };
-
-    data[key + "PairAmount"] = data[key].pairAmount;
-    data[key + "VestedAmount"] = data[key].vestedAmount;
-    data[key + "EscrowedBalance"] = data[key].escrowedBalance;
-    data[key + "ClaimSum"] = data[key].claimedAmounts.add(data[key].claimable);
-    data[key + "Claimable"] = data[key].claimable;
-    data[key + "MaxVestableAmount"] = data[key].maxVestableAmount;
-    data[key + "AverageStakedAmount"] = data[key].averageStakedAmount;
-  }
-
-  return data;
-}
 
 export function getStakingData(stakingInfo) {
   if (!stakingInfo || stakingInfo.length === 0) {
     return;
   }
 
-  const keys = ["stakedMvxTracker", "bonusMvxTracker", "feeMvxTracker", "stakedMvlpTracker", "feeMvlpTracker"];
+  const keys = ["feeGllTracker"];
   const data = {};
   const propsLength = 5;
 
@@ -2463,142 +2400,57 @@ export function getProcessedData(
   supplyData,
   depositBalanceData,
   stakingData,
-  vestingData,
   aum,
   nativeTokenPrice,
-  stakedMvxSupply,
-  mvxPrice,
-  mvxSupply
+
 ) {
   if (
     !balanceData ||
     !supplyData ||
     !depositBalanceData ||
     !stakingData ||
-    !vestingData ||
     !aum ||
-    !nativeTokenPrice ||
-    !stakedMvxSupply ||
-    !mvxPrice ||
-    !mvxSupply
+    !nativeTokenPrice
   ) {
     return {};
   }
 
   const data = {};
 
-  data.mvxBalance = balanceData.mvx;
-  data.mvxBalanceUsd = balanceData.mvx.mul(mvxPrice).div(expandDecimals(1, 18));
 
-  data.mvxSupply = bigNumberify(mvxSupply);
 
-  data.mvxSupplyUsd = data.mvxSupply.mul(mvxPrice).div(expandDecimals(1, 18));
-  data.stakedMvxSupply = stakedMvxSupply;
-  data.stakedMvxSupplyUsd = stakedMvxSupply.mul(mvxPrice).div(expandDecimals(1, 18));
-  data.mvxInStakedMvx = depositBalanceData.mvxInStakedMvx;
-  data.mvxInStakedMvxUsd = depositBalanceData.mvxInStakedMvx.mul(mvxPrice).div(expandDecimals(1, 18));
-
-  data.esMvxBalance = balanceData.esMvx;
-  data.esMvxBalanceUsd = balanceData.esMvx.mul(mvxPrice).div(expandDecimals(1, 18));
-
-  data.stakedMvxTrackerSupply = supplyData.stakedMvxTracker;
-  data.stakedMvxTrackerSupplyUsd = supplyData.stakedMvxTracker.mul(mvxPrice).div(expandDecimals(1, 18));
-  data.stakedEsMvxSupply = data.stakedMvxTrackerSupply.sub(data.stakedMvxSupply);
-  data.stakedEsMvxSupplyUsd = data.stakedEsMvxSupply.mul(mvxPrice).div(expandDecimals(1, 18));
-
-  data.esMvxInStakedMvx = depositBalanceData.esMvxInStakedMvx;
-  data.esMvxInStakedMvxUsd = depositBalanceData.esMvxInStakedMvx.mul(mvxPrice).div(expandDecimals(1, 18));
-
-  data.bnMvxInFeeMvx = depositBalanceData.bnMvxInFeeMvx;
-  data.bonusMvxInFeeMvx = depositBalanceData.bonusMvxInFeeMvx;
-  data.feeMvxSupply = stakingData.feeMvxTracker.totalSupply;
-  data.feeMvxSupplyUsd = data.feeMvxSupply.mul(mvxPrice).div(expandDecimals(1, 18));
-
-  data.stakedMvxTrackerRewards = stakingData.stakedMvxTracker.claimable;
-  data.stakedMvxTrackerRewardsUsd = stakingData.stakedMvxTracker.claimable.mul(mvxPrice).div(expandDecimals(1, 18));
-
-  data.bonusMvxTrackerRewards = stakingData.bonusMvxTracker.claimable;
-
-  data.feeMvxTrackerRewards = stakingData.feeMvxTracker.claimable;
-  data.feeMvxTrackerRewardsUsd = stakingData.feeMvxTracker.claimable.mul(nativeTokenPrice).div(expandDecimals(1, 18));
-
-  data.boostBasisPoints = bigNumberify(0);
-  if (data && data.bnMvxInFeeMvx && data.bonusMvxInFeeMvx && data.bonusMvxInFeeMvx.gt(0)) {
-    data.boostBasisPoints = data.bnMvxInFeeMvx.mul(BASIS_POINTS_DIVISOR).div(data.bonusMvxInFeeMvx);
-  }
-
-  data.stakedMvxTrackerAnnualRewardsUsd = stakingData.stakedMvxTracker.tokensPerInterval
-    .mul(SECONDS_PER_YEAR)
-    .mul(mvxPrice)
-    .div(expandDecimals(1, 18));
-  data.mvxAprForEsMvx =
-    data.stakedMvxTrackerSupplyUsd && data.stakedMvxTrackerSupplyUsd.gt(0)
-      ? data.stakedMvxTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.stakedMvxTrackerSupplyUsd)
+  data.gllSupply = supplyData.gll;
+  data.gllPrice =
+    data.gllSupply && data.gllSupply.gt(0)
+      ? aum.mul(expandDecimals(1, GLL_DECIMALS)).div(data.gllSupply)
       : bigNumberify(0);
-  data.feeMvxTrackerAnnualRewardsUsd = stakingData.feeMvxTracker.tokensPerInterval
+
+  data.gllSupplyUsd = supplyData.gll.mul(data.gllPrice).div(expandDecimals(1, 18));
+
+  data.gllBalance = depositBalanceData.gllInStakedGll;
+  data.gllBalanceUsd = depositBalanceData.gllInStakedGll.mul(data.gllPrice).div(expandDecimals(1, GLL_DECIMALS));
+
+  data.feeGllTrackerRewards = stakingData.feeGllTracker.claimable;
+  data.feeGllTrackerRewardsUsd = stakingData.feeGllTracker.claimable.mul(nativeTokenPrice).div(expandDecimals(1, 18));
+
+  data.feeGllTrackerAnnualRewardsUsd = stakingData.feeGllTracker.tokensPerInterval
     .mul(SECONDS_PER_YEAR)
     .mul(nativeTokenPrice)
     .div(expandDecimals(1, 18));
-  data.mvxAprForNativeToken =
-    data.feeMvxSupplyUsd && data.feeMvxSupplyUsd.gt(0)
-      ? data.feeMvxTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.feeMvxSupplyUsd)
+  data.gllAprForNativeToken =
+    data.gllSupplyUsd && data.gllSupplyUsd.gt(0)
+      ? data.feeGllTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.gllSupplyUsd)
       : bigNumberify(0);
-  data.mvxBoostAprForNativeToken = data.mvxAprForNativeToken.mul(data.boostBasisPoints).div(BASIS_POINTS_DIVISOR);
-  data.mvxAprTotal = data.mvxAprForNativeToken.add(data.mvxAprForEsMvx);
-  data.mvxAprTotalWithBoost = data.mvxAprForNativeToken.add(data.mvxBoostAprForNativeToken).add(data.mvxAprForEsMvx);
-  data.mvxAprForNativeTokenWithBoost = data.mvxAprForNativeToken.add(data.mvxBoostAprForNativeToken);
+  data.gllAprTotal = data.gllAprForNativeToken;
 
-  data.totalMvxRewardsUsd = data.stakedMvxTrackerRewardsUsd.add(data.feeMvxTrackerRewardsUsd);
+  data.totalGllRewardsUsd = data.feeGllTrackerRewardsUsd;
 
-  data.mvlpSupply = supplyData.mvlp;
-  data.mvlpPrice =
-    data.mvlpSupply && data.mvlpSupply.gt(0)
-      ? aum.mul(expandDecimals(1, MVLP_DECIMALS)).div(data.mvlpSupply)
-      : bigNumberify(0);
 
-  data.mvlpSupplyUsd = supplyData.mvlp.mul(data.mvlpPrice).div(expandDecimals(1, 18));
 
-  data.mvlpBalance = depositBalanceData.mvlpInStakedMvlp;
-  data.mvlpBalanceUsd = depositBalanceData.mvlpInStakedMvlp.mul(data.mvlpPrice).div(expandDecimals(1, MVLP_DECIMALS));
+  data.totalNativeTokenRewards = data.feeGllTrackerRewards;
+  data.totalNativeTokenRewardsUsd = data.feeGllTrackerRewardsUsd;
 
-  data.stakedMvlpTrackerRewards = stakingData.stakedMvlpTracker.claimable;
-  data.stakedMvlpTrackerRewardsUsd = stakingData.stakedMvlpTracker.claimable.mul(mvxPrice).div(expandDecimals(1, 18));
-
-  data.feeMvlpTrackerRewards = stakingData.feeMvlpTracker.claimable;
-  data.feeMvlpTrackerRewardsUsd = stakingData.feeMvlpTracker.claimable.mul(nativeTokenPrice).div(expandDecimals(1, 18));
-
-  data.stakedMvlpTrackerAnnualRewardsUsd = stakingData.stakedMvlpTracker.tokensPerInterval
-    .mul(SECONDS_PER_YEAR)
-    .mul(mvxPrice)
-    .div(expandDecimals(1, 18));
-  data.mvlpAprForEsMvx =
-    data.mvlpSupplyUsd && data.mvlpSupplyUsd.gt(0)
-      ? data.stakedMvlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.mvlpSupplyUsd)
-      : bigNumberify(0);
-  data.feeMvlpTrackerAnnualRewardsUsd = stakingData.feeMvlpTracker.tokensPerInterval
-    .mul(SECONDS_PER_YEAR)
-    .mul(nativeTokenPrice)
-    .div(expandDecimals(1, 18));
-  data.mvlpAprForNativeToken =
-    data.mvlpSupplyUsd && data.mvlpSupplyUsd.gt(0)
-      ? data.feeMvlpTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(data.mvlpSupplyUsd)
-      : bigNumberify(0);
-  data.mvlpAprTotal = data.mvlpAprForNativeToken.add(data.mvlpAprForEsMvx);
-
-  data.totalMvlpRewardsUsd = data.stakedMvlpTrackerRewardsUsd.add(data.feeMvlpTrackerRewardsUsd);
-
-  data.totalEsMvxRewards = data.stakedMvxTrackerRewards.add(data.stakedMvlpTrackerRewards);
-  data.totalEsMvxRewardsUsd = data.stakedMvxTrackerRewardsUsd.add(data.stakedMvlpTrackerRewardsUsd);
-
-  data.mvxVesterRewards = vestingData.mvxVester.claimable;
-  data.mvlpVesterRewards = vestingData.mvlpVester.claimable;
-  data.totalVesterRewards = data.mvxVesterRewards.add(data.mvlpVesterRewards);
-  data.totalVesterRewardsUsd = data.totalVesterRewards.mul(mvxPrice).div(expandDecimals(1, 18));
-
-  data.totalNativeTokenRewards = data.feeMvxTrackerRewards.add(data.feeMvlpTrackerRewards);
-  data.totalNativeTokenRewardsUsd = data.feeMvxTrackerRewardsUsd.add(data.feeMvlpTrackerRewardsUsd);
-
-  data.totalRewardsUsd = data.totalEsMvxRewardsUsd.add(data.totalNativeTokenRewardsUsd).add(data.totalVesterRewardsUsd);
+  data.totalRewardsUsd = data.totalNativeTokenRewardsUsd;
 
   return data;
 }
@@ -2664,7 +2516,7 @@ export function useDebounce(value, delay) {
 }
 
 export function isDevelopment() {
-  return !window.location.host?.includes("metavault.trade") && !window.location.host?.includes("metavault.trade");
+  return !window.location.host?.includes("perp.grizzly.fi") && !window.location.host?.includes("perp.grizzly.fi");
 }
 
 export function isLocal() {
@@ -2672,15 +2524,15 @@ export function isLocal() {
 }
 
 export function getHomeUrl() {
-  return "https://metavault.trade";
+  return "https://perp.grizzly.fi";
 }
 
 export function getRootShareApiUrl() {
-  return "https://share.metavault.trade";
+  return "https://perp-share.grizzly.fi";
 }
 
 export function getTradePageUrl() {
-  return "https://app.metavault.trade/trade";
+  return "https://perp.grizzly.fi/#/trade";
 }
 
 export function tokenImage24(name) {

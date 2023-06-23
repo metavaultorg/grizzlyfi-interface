@@ -14,9 +14,9 @@ import {
     formatKeyAmount,
     useChainId,
     USD_DECIMALS,
-    MVXMVLP_DISPLAY_DECIMALS,
-    MVLP_DECIMALS,
-    POLYGON,
+    GLL_DISPLAY_DECIMALS,
+    GLL_DECIMALS,
+    BSC,
     getPageTitle,
     getProcessedData,
     getBalanceAndSupplyData,
@@ -28,15 +28,13 @@ import {
     today,
 } from "../../Helpers";
 import {
-    useMvxPrice,
-    useTotalMvxSupply,
     useInfoTokens,
 } from "../../Api";
 import { getContract } from "../../Addresses";
 import RewardReader from "../../abis/RewardReader.json";
 import Vault from "../../abis/Vault.json";
 import Reader from "../../abis/Reader.json";
-import MvlpManager from "../../abis/MvlpManager.json";
+import GllManager from "../../abis/GllManager.json";
 
 import "./DashboardV3.css";
 
@@ -60,7 +58,7 @@ import { useTokenPairMarketData } from '../../hooks/useCoingeckoPrices';
 import MarketTable from "./MarketTable";
 import OpenedPositions from "./OpenedPositions";
 import AUMLabel from "../../components/AUMLabel/AUMLabel";
-import { useMvlpData } from "../../views/Earn/dataProvider";
+import { useGllData } from "../../views/Earn/dataProvider";
 
 export default function DashboardV3(props) {
 
@@ -81,17 +79,15 @@ export default function DashboardV3(props) {
     const vaultAddress = getContract(chainId, "Vault");
     const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
     const readerAddress = getContract(chainId, "Reader");
-    const mvlpManagerAddress = getContract(chainId, "MvlpManager");
+    const gllManagerAddress = getContract(chainId, "GllManager");
 
-    const mvxAddress = getContract(chainId, "MVX");
-    const mvlpAddress = getContract(chainId, "MVLP");
+    const gllAddress = getContract(chainId, "GLL");
 
-    const { data: aums } = useSWR([`Dashboard:getAums:${active}`, chainId, mvlpManagerAddress, "getAums"], {
-        fetcher: fetcher(library, MvlpManager),
+    const { data: aums } = useSWR([`Dashboard:getAums:${active}`, chainId, gllManagerAddress, "getAums"], {
+        fetcher: fetcher(library, GllManager),
     });
 
     const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
-    const { mvxPrice } = useMvxPrice({ polygon: chainId === POLYGON ? library : undefined }, active, infoTokens);
 
     let aum;
     if (aums && aums.length > 0) {
@@ -99,43 +95,20 @@ export default function DashboardV3(props) {
     }
 
     const rewardReaderAddress = getContract(chainId, "RewardReader");
-    const esMvxAddress = getContract(chainId, "ES_MVX");
-    const stakedMvxTrackerAddress = getContract(chainId, "StakedMvxTracker");
-    const bonusMvxTrackerAddress = getContract(chainId, "BonusMvxTracker");
-    const bnMvxAddress = getContract(chainId, "BN_MVX");
-    const feeMvxTrackerAddress = getContract(chainId, "FeeMvxTracker");
-    const feeMvlpTrackerAddress = getContract(chainId, "FeeMvlpTracker");
-    const stakedMvlpTrackerAddress = getContract(chainId, "StakedMvlpTracker");
+    const feeGllTrackerAddress = getContract(chainId, "FeeGllTracker");
 
-    const mvxVesterAddress = getContract(chainId, "MvxVester");
-    const mvlpVesterAddress = getContract(chainId, "MvlpVester");
 
-    const vesterAddresses = [mvxVesterAddress, mvlpVesterAddress];
-    const walletTokens = [mvxAddress, esMvxAddress, mvlpAddress, stakedMvxTrackerAddress];
+    const walletTokens = [gllAddress];
     const depositTokens = [
-        mvxAddress,
-        esMvxAddress,
-        stakedMvxTrackerAddress,
-        bonusMvxTrackerAddress,
-        bnMvxAddress,
-        mvlpAddress,
+        gllAddress,
     ];
     const rewardTrackersForDepositBalances = [
-        stakedMvxTrackerAddress,
-        stakedMvxTrackerAddress,
-        bonusMvxTrackerAddress,
-        feeMvxTrackerAddress,
-        feeMvxTrackerAddress,
-        feeMvlpTrackerAddress,
+        feeGllTrackerAddress,
     ];
 
 
     const rewardTrackersForStakingInfo = [
-        stakedMvxTrackerAddress,
-        bonusMvxTrackerAddress,
-        feeMvxTrackerAddress,
-        stakedMvlpTrackerAddress,
-        feeMvlpTrackerAddress,
+        feeGllTrackerAddress,
     ];
 
     const { data: walletBalances } = useSWR(
@@ -169,61 +142,43 @@ export default function DashboardV3(props) {
             fetcher: fetcher(library, RewardReader, [rewardTrackersForStakingInfo]),
         }
     );
-    const { data: stakedMvxSupply } = useSWR(
-        [`StakeV2:stakedMvxSupply:${active}`, chainId, mvxAddress, "balanceOf", stakedMvxTrackerAddress],
-        {
-            fetcher: fetcher(library, Token),
-        }
-    );
+
     const { data: nativeTokenPrice } = useSWR(
         [`StakeV2:nativeTokenPrice:${active}`, chainId, vaultAddress, "getMinPrice", nativeTokenAddress],
         {
             fetcher: fetcher(library, Vault),
         }
     );
-    const { data: vestingInfo } = useSWR(
-        [`StakeV2:vestingInfo:${active}`, chainId, readerAddress, "getVestingInfo", account || PLACEHOLDER_ACCOUNT],
-        {
-            fetcher: fetcher(library, Reader, [vesterAddresses]),
-        }
-    );
-
-    let { total: mvxSupply } = useTotalMvxSupply();
 
     const { balanceData, supplyData } = getBalanceAndSupplyData(walletBalances);
     const depositBalanceData = getDepositBalanceData(depositBalances);
     const stakingData = getStakingData(stakingInfo);
-    const vestingData = getVestingData(vestingInfo);
 
     const processedData = getProcessedData(
         balanceData,
         supplyData,
         depositBalanceData,
         stakingData,
-        vestingData,
         aum,
         nativeTokenPrice,
-        stakedMvxSupply,
-        mvxPrice,
-        mvxSupply
     );
 
     const totalParams = { from: yesterday(), to: today() } 
-    const [totalMvlpData, ] = useMvlpData(totalParams);
+    const [totalGllData, ] = useGllData(totalParams);
     const [totalAum, totalAumDelta, totalAumDeltaPercentage] = useMemo(() => {
-        if (!totalMvlpData) {
+        if (!totalGllData) {
           return [];
         }
-        const total = totalMvlpData[totalMvlpData.length - 1]?.aum;
-        const delta = total - totalMvlpData[totalMvlpData.length - 2]?.aum;
+        const total = totalGllData[totalGllData.length - 1]?.aum;
+        const delta = total - totalGllData[totalGllData.length - 2]?.aum;
         const percentage = Math.abs(delta)/total *100;
         return [total, delta, percentage];
-      }, [totalMvlpData]);
+      }, [totalGllData]);
 
     
 
     const vaultList = [
-        { symbol: 'GLL', apy: `${formatKeyAmount(processedData, "mvlpAprTotal", 2, 2, true)}%`, locked: '104.41', invest: `${formatKeyAmount(processedData, "mvlpBalance", MVLP_DECIMALS, 2, true)}`, poolShare: '0.96%', profit: `$${formatKeyAmount(processedData, "totalMvlpRewardsUsd", USD_DECIMALS, 2, true)}`, },
+        { symbol: 'GLL', apy: `${formatKeyAmount(processedData, "gllAprTotal", 2, 2, true)}%`, locked: '104.41', invest: `${formatKeyAmount(processedData, "gllBalance", GLL_DECIMALS, 2, true)}`, poolShare: '0.96%', profit: `$${formatKeyAmount(processedData, "totalGllRewardsUsd", USD_DECIMALS, 2, true)}`, },
 
     ]
 
@@ -284,7 +239,7 @@ export default function DashboardV3(props) {
 
             </div>
 
-            {!(processedData.mvlpBalanceUsd > 0) &&
+            {!(processedData.gllBalanceUsd > 0) &&
                 <div className="section section-noinvestments">
                     <div className="section-header">
                         <h1>No investment Yet</h1>
@@ -323,14 +278,14 @@ export default function DashboardV3(props) {
                         </div>
                     </div>
                 </div>}
-            {/* {(processedData.mvlpBalanceUsd > 0) && */}
+            {/* {(processedData.gllBalanceUsd > 0) && */}
             <div className="section section-investments">
                 <div className="section-header">
                     <h1>Your Investments </h1>
                 </div>
                 <div className="info-card-section" style={{ margin: '40px auto', maxWidth: 952 }}>
-                    <ItemCard label='Total PnL' value={`$${formatKeyAmount(processedData, "totalMvlpRewardsUsd", USD_DECIMALS, 2, true)}`} icon={IconPercentage} />
-                    <ItemCard label='Your GLL deposit' value={`$${formatKeyAmount(processedData, "mvlpBalanceUsd", USD_DECIMALS, 2, true)}`} icon={IconMoney} />
+                    <ItemCard label='Total PnL' value={`$${formatKeyAmount(processedData, "totalGllRewardsUsd", USD_DECIMALS, 2, true)}`} icon={IconPercentage} />
+                    <ItemCard label='Your GLL deposit' value={`$${formatKeyAmount(processedData, "gllBalanceUsd", USD_DECIMALS, 2, true)}`} icon={IconMoney} />
                     <ItemCard style={{ width: '-webkit-fill-available', }} label='Claimable' value='$92.21' icon={IconClaim} buttonEle={<button
                         className="btn-secondary "
                         style={{ width: 75, height: 32 }}
@@ -500,9 +455,9 @@ export default function DashboardV3(props) {
                     <p className="text-description" style={{ marginTop: 16, marginBottom: 48 }}>The Grizzly Leverage Liquidity tokens (GLL) is the counterparty to everyone trading with leverage. Deposit your favourite cryptocurrency and earn a solid yield which comes from the trading fees paid on Grizzly Trade. Earn like an exchange. </p>
                 </div>
                 <div className="grid-cols-4 item-card-group">
-                    <ItemCard label='Price of GLL' value={`$${formatKeyAmount(processedData, "mvlpPrice", USD_DECIMALS, MVXMVLP_DISPLAY_DECIMALS, true)}`} icon={IconToken} />
-                    <ItemCard label='Assets in GLL' value={`$${formatKeyAmount(processedData, "mvlpSupplyUsd", USD_DECIMALS, 2, true)}`} icon={IconMoney} />
-                    <ItemCard label='GLL APY' value={`${formatKeyAmount(processedData, "mvlpAprTotal", 2, 2, true)}%`} icon={IconPercentage} />
+                    <ItemCard label='Price of GLL' value={`$${formatKeyAmount(processedData, "gllPrice", USD_DECIMALS, GLL_DISPLAY_DECIMALS, true)}`} icon={IconToken} />
+                    <ItemCard label='Assets in GLL' value={`$${formatKeyAmount(processedData, "gllSupplyUsd", USD_DECIMALS, 2, true)}`} icon={IconMoney} />
+                    <ItemCard label='GLL APY' value={`${formatKeyAmount(processedData, "gllAprTotal", 2, 2, true)}%`} icon={IconPercentage} />
                     <ItemCard label='GLL 24h Rewards' value='$521' icon={IconClaim} />
                 </div>
                 <div style={{ maxWidth: 500, margin: 'auto', marginTop: 80, position: 'relative' }}>

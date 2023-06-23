@@ -109,25 +109,25 @@ export default function TradeHistory(props) {
         
       const defaultMsg = "";
 
-      if (tradeData.action === "BuyUSDM") {
+      if (tradeData.action === "BuyUSDG") {
         const token = getTokenInfo(infoTokens, params.token, true, nativeTokenAddress);
         if (!token) {
           return defaultMsg;
         }
         return `Swap ${formatAmount(params.tokenAmount, token.decimals, 4, true)} ${token.symbol} for ${formatAmount(
-          params.usdmAmount,
+          params.usdgAmount,
           18,
           4,
           true
-        )} USDM`;
+        )} USDG`;
       }
 
-      if (tradeData.action === "SellUSDM") {
+      if (tradeData.action === "SellUSDG") {
         const token = getTokenInfo(infoTokens, params.token, true, nativeTokenAddress);
         if (!token) {
           return defaultMsg;
         }
-        return `Swap ${formatAmount(params.usdmAmount, 18, 4, true)} USDM for ${formatAmount(
+        return `Swap ${formatAmount(params.usdgAmount, 18, 4, true)} USDG for ${formatAmount(
           params.tokenAmount,
           token.decimals,
           4,

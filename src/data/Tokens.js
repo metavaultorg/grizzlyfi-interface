@@ -2,38 +2,27 @@ import { ethers } from "ethers";
 import { getContract } from "../Addresses";
 
 const TOKENS = {
-  137: [
-    // polygon
+  56: [
+    // bsc
     {
-      name: "Matic",
-      symbol: "MATIC",
+      name: "Bnb",
+      symbol: "BNB",
       decimals: 18,
       address: ethers.constants.AddressZero,
-      coingeckoUrl: "https://www.coingecko.com/en/coins/polygon",
+      coingeckoUrl: "https://www.coingecko.com/en/coins/bnb",
       isNative: true,
       isShortable: true,
       displayDecimals:4
     },
     {
-      name: "W.Matic",
-      symbol: "WMATIC",
+      name: "W.Bnb",
+      symbol: "WBNB",
       decimals: 18,
       address: "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
       coingeckoUrl: "https://www.coingecko.com/en/coins/polygon",
       isWrapped: true,
-      baseSymbol: "MATIC",
+      baseSymbol: "BNB",
       displayDecimals:4
-    },
-    {
-      name: "Lido St. Matic",
-      symbol: "stMATIC",
-      address: "0x3A58a54C066FdC0f2D55FC9C89F0415C92eBf3C4",
-      coingeckoUrl: "https://www.coingecko.com/en/coins/lido-staked-matic",
-      decimals: 18,
-      isStable: false,
-      displayDecimals:4,
-      isNew: false,
-      isShortable: false,
     },
     {
       name: "Ethereum",
@@ -52,35 +41,6 @@ const TOKENS = {
       decimals: 8,
       isShortable: true,
       displayDecimals:2
-    },
-    {
-      name: "Chainlink",
-      symbol: "LINK",
-      address: "0xb0897686c545045aFc77CF20eC7A532E3120E0F1",
-      coingeckoUrl: "https://www.coingecko.com/en/coins/chainlink",
-      decimals: 18,
-      isStable: false,
-      isShortable: true,
-      displayDecimals:3
-    },
-    // {
-    //   name: "Uniswap",
-    //   symbol: "UNI",
-    //   address: "0xb33EaAd8d922B1083446DC23f610c2567fB5180f",
-    //   coingeckoUrl: "https://www.coingecko.com/en/coins/uniswap",
-    //   decimals: 18,
-    //   isStable: false,
-    //   isShortable: true,
-    //   displayDecimals:3
-    // },
-    {
-      name: "Aave",
-      symbol: "AAVE",
-      address: "0xD6DF932A45C0f255f85145f286eA0b292B21C90B",
-      coingeckoUrl: "https://www.coingecko.com/en/coins/aave",
-      decimals: 18,
-      isStable: false,
-      displayDecimals:3
     },
     {
       name: "USDC",
@@ -123,7 +83,7 @@ const TOKENS = {
 };
 
 export const CHAIN_FEED_IDS = {
-  137: {
+  56: {
     MATIC_USD: "0xab594600376ec9fd91f8e885dadf0ce036862de0",
     ETH_USD: "0xf9680d99d6c9589e2a93a78a04a279e509205945",
     BTC_USD: "0xc907e116054ad103354f2d350fd2514433d57f6f",
@@ -140,29 +100,17 @@ export const CHAIN_FEED_IDS = {
 };
 
 const ADDITIONAL_TOKENS = {
-  137: [
+  56: [
     {
-      name: "MVX",
-      symbol: "MVX",
-      address: getContract(137, "MVX"),
-      decimals: 18,
-    },
-    {
-      name: "Escrowed MVX",
-      symbol: "esMVX",
-      address: getContract(137, "ES_MVX"),
-      decimals: 18,
-    },
-    {
-      name: "MVX LP",
-      symbol: "MVLP",
-      address: getContract(137, "MVLP"),
+      name: "GrizzlyFi Leverage Liquidity",
+      symbol: "GLL",
+      address: getContract(56, "GLL"),
       decimals: 18,
     },
   ],
 };
 
-const CHAIN_IDS = [137];
+const CHAIN_IDS = [56];
 
 const TOKENS_MAP = {};
 const TOKENS_MAP_LOWER = {};
@@ -223,7 +171,7 @@ export function getToken(chainId, address) {
   }
   if (!TOKENS_MAP[chainId][address]) {
     localStorage.removeItem("Exchange-token-selection-v2");
-    localStorage.removeItem("BuyMvlp-swap-token-address");
+    localStorage.removeItem("BuyGll-swap-token-address");
     window.location.reload();
   }
   return TOKENS_MAP[chainId][address];
@@ -238,5 +186,5 @@ export function getTokenBySymbol(chainId, symbol) {
 }
 
 export function getWhitelistedTokens(chainId) {
-  return TOKENS[chainId].filter((token) => token.symbol !== "USDM");
+  return TOKENS[chainId].filter((token) => token.symbol !== "USDG");
 }

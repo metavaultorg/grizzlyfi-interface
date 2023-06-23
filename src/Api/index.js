@@ -4,17 +4,14 @@ import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import useSWR from "swr";
 
 import OrderBook from "../abis/OrderBook.json";
-import OrderBookSwap from "../abis/OrderBookSwap.json";
 import PositionManager from "../abis/PositionManager.json";
 import Vault from "../abis/Vault.json";
 import Router from "../abis/Router.json";
-import UniPool from "../abis/UniPool.json";
-import Token from "../abis/Token.json";
 import VaultReader from "../abis/VaultReader.json";
 import ReferralStorage from "../abis/ReferralStorage.json";
 import PositionRouter from "../abis/PositionRouter.json";
 
-import { getContract, MVD_TREASURY_ADDRESS, MVX_MULTISIG_ADDRESS,MVX_RESERVE_TIMELOCK, MVX_TEAM_VESTING_ADDRESS } from "../Addresses";
+import { getContract } from "../Addresses";
 import { getConstant } from "../Constants";
 import {
   UI_VERSION,
@@ -34,7 +31,7 @@ import {
   getInfoTokens,
   isAddressZero,
   helperToast,
-  POLYGON,
+  BSC,
   ZKSYNC,
   FIRST_DATE_TS,
   getUsd,
@@ -46,16 +43,16 @@ import {
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
-import { polygonGraphClient, positionsGraphClient } from "./common";
+import { coreGraphClient, positionsGraphClient } from "./common";
 import { groupBy } from "lodash";
 import { getAddress } from "ethers/lib/utils";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;
 
-function getMvxGraphClient(chainId) {
-  if (chainId === POLYGON) {
-    return polygonGraphClient;
+function getCoreGraphClient(chainId) {
+  if (chainId === BSC) {
+    return coreGraphClient;
   }
   throw new Error(`Unsupported chain ${chainId}`);
 }
@@ -78,7 +75,7 @@ export function useAllOrdersStats(chainId) {
   const [res, setRes] = useState();
 
   useEffect(() => {
-    getMvxGraphClient(chainId).query({ query }).then(setRes).catch(console.warn);
+    getCoreGraphClient(chainId).query({ query }).then(setRes).catch(console.warn);
   }, [setRes, query, chainId]);
 
   return res ? res.data.orderStat : null;
@@ -141,7 +138,7 @@ export function useUserStat(chainId) {
   const [res, setRes] = useState();
 
   useEffect(() => {
-    getMvxGraphClient(chainId).query({ query }).then(setRes).catch(console.warn);
+    getCoreGraphClient(chainId).query({ query }).then(setRes).catch(console.warn);
   }, [setRes, query, chainId]);
 
   return res ? res.data.userStat : null;
@@ -168,7 +165,7 @@ export function useLiquidationsData(chainId, account) {
            type
          }
       }`);
-      const graphClient = getMvxGraphClient(chainId);
+      const graphClient = getCoreGraphClient(chainId);
       graphClient
         .query({ query })
         .then((res) => {
@@ -273,21 +270,19 @@ export function useAllOrders(chainId, library) {
   const [res, setRes] = useState();
 
   useEffect(() => {
-    getMvxGraphClient(chainId).query({ query }).then(setRes);
+    getCoreGraphClient(chainId).query({ query }).then(setRes);
   }, [setRes, query, chainId]);
 
   const key = res ? res.data.orders.map((order) => `${order.type}-${order.account}-${order.index}`) : null;
   const { data: orders = [] } = useSWR(key, () => {
     const provider = getProvider(library, chainId);
     const orderBookAddress = getContract(chainId, "OrderBook");
-    const orderBookSwapAddress = getContract(chainId, "OrderBookSwap");
     const contract = new ethers.Contract(orderBookAddress, OrderBook.abi, provider);
-    const swapContract = new ethers.Contract(orderBookSwapAddress, OrderBookSwap.abi, provider);
     return Promise.all(
       res.data.orders.map(async (order) => {
         try {
           const type = order.type.charAt(0).toUpperCase() + order.type.substring(1);
-          const orderContract = order.type === "swap" ? swapContract : contract;
+          const orderContract = contract;
           const method = `get${type}Order`;
           const orderFromChain = await orderContract[method](order.account, order.index);
           const ret = {};
@@ -368,7 +363,7 @@ export function useTradesFromGraph(chainId, account) {
       }
     }`);
 
-      getMvxGraphClient(chainId).query({ query }).then(setTrades);
+      getCoreGraphClient(chainId).query({ query }).then(setTrades);
   }, [setTrades, chainId, account]);
 
   return { trades };
@@ -471,8 +466,8 @@ export function useMinExecutionFee(library, active, chainId, infoTokens) {
 
   let multiplier;
 
-  // multiplier for polygon is just the average gas usage
-  if (chainId === POLYGON) {
+  // multiplier for bsc is just the average gas usage
+  if (chainId === BSC) {
     multiplier = 700000;
   }
 
@@ -498,318 +493,17 @@ export function useMinExecutionFee(library, active, chainId, infoTokens) {
   };
 }
 
-export function useStakedMvxSupply(library, active) {
-  const mvxAddress = getContract(POLYGON, "MVX");
-  const stakedMvxTrackerAddress = getContract(POLYGON, "StakedMvxTracker");
-
-  const { data, mutate } = useSWR(
-    [`StakeV2:stakedMvxSupply:${active}`, POLYGON, mvxAddress, "balanceOf", stakedMvxTrackerAddress],
-    {
-      fetcher: fetcher(library, Token),
-    }
-  );
-
-  return { data, mutate };
-}
-
-export function useMvdMvxTreasuryHoldings() {
-  const { data: mvxHoldings, mutate: updateMvxTreasuryHoldings } = useSWR(
-    [`MVX:mvxTreasuryHoldings:${POLYGON}`, POLYGON, getContract(POLYGON, "MVX"), "balanceOf"],
-    {
-      fetcher: fetcher(undefined, Token, [MVD_TREASURY_ADDRESS]),
-    }
-  );
-
-  return {
-    data: mvxHoldings ? bigNumberify(mvxHoldings) : undefined,
-    mutate: updateMvxTreasuryHoldings,
-  };
-}
-
-export function useMvxMultisigHoldings() {
-
-  const { data: mvxHoldingsPolygon} = useSWR(
-    [`MVX:mvxMultisigHoldings:${POLYGON}`, POLYGON, getContract(POLYGON, "MVX"), "balanceOf"],
-    {
-      fetcher: fetcher(undefined, Token, [MVX_MULTISIG_ADDRESS]),
-    }
-  );
-
-  const { data: mvxHoldingsZksync } = useSWR(
-    [`MVLP:mvxMultisigHoldings:${ZKSYNC}`, ZKSYNC, getContract(ZKSYNC, "MVX"), "balanceOf"],
-    {
-      fetcher: fetcher(undefined, Token, [getContract(ZKSYNC, "MvxDeployer")]),
-    }
-  );
-
-
-  return {
-    data: bigNumberify(mvxHoldingsPolygon || "0").add(mvxHoldingsZksync || "0"),
-    mutate: null,
-  };
 
 
 
-}
 
-export function useMvxReserveTimelockHoldings() {
-  const { data: mvxHoldings, mutate: updateMvxMvxReserveTimelockHoldings } = useSWR(
-    [`MVX:mvxReserveTimelockHoldings:${POLYGON}`, POLYGON, getContract(POLYGON, "MVX"), "balanceOf"],
-    {
-      fetcher: fetcher(undefined, Token, [MVX_RESERVE_TIMELOCK]),
-    }
-  );
-
-  return {
-    data: mvxHoldings ? bigNumberify(mvxHoldings) : undefined,
-    mutate: updateMvxMvxReserveTimelockHoldings,
-  };
-}
-
-export function useMvxTeamVestingHoldings() {
-  const { data: mvxHoldings, mutate: updateMvxTeamVestingHoldings } = useSWR(
-    [`MVX:mvxTeamVestingHoldings:${POLYGON}`, POLYGON, getContract(POLYGON, "MVX"), "balanceOf"],
-    {
-      fetcher: fetcher(undefined, Token, [MVX_TEAM_VESTING_ADDRESS]),
-    }
-  );
-
-  return {
-    data: mvxHoldings ? bigNumberify(mvxHoldings) : undefined,
-    mutate: updateMvxTeamVestingHoldings,
-  };
-}
-
-export function useVestingContractHoldings() {
-  const { data: mvxVestingContract } = useSWR(
-    [`MVX:vestingContractHoldings:${POLYGON}`, POLYGON, getContract(POLYGON, "MVX"), "balanceOf"],
-    {
-      fetcher: fetcher(undefined, Token, [getContract(POLYGON, "MvxVester")]),
-    }
-  );
-
-  const { data: mvlpVestingContract } = useSWR(
-    [`MVLP:vestingContractHoldings:${POLYGON}`, POLYGON, getContract(POLYGON, "MVX"), "balanceOf"],
-    {
-      fetcher: fetcher(undefined, Token, [getContract(POLYGON, "MvlpVester")]),
-    }
-  );
-
-  return {
-    data: bigNumberify(mvxVestingContract || "0").add(mvlpVestingContract || "0"),
-    mutate: null,
-  };
-}
-
-export function useMvdMvlpTreasuryHoldings() {
-  const { data: mvlpHoldings, mutate: updateMvlpTreasuryHoldings } = useSWR(
-    [`MVLP:mvlpTreasuryHoldings:${POLYGON}`, POLYGON, getContract(POLYGON, "StakedMvlpTracker"), "balanceOf"],
-    {
-      fetcher: fetcher(undefined, Token, [MVD_TREASURY_ADDRESS]),
-    }
-  );
-
-  return {
-    data: mvlpHoldings ? bigNumberify(mvlpHoldings) : undefined,
-    mutate: updateMvlpTreasuryHoldings,
-  };
-}
-
-export function useProtocolOwnLiquidity() {
-  const { data: protocolOwnLiquidity, mutate: updateProtocolOwnLiquidity } = useSWR(
-    [`ProtocolOwnLiquidity:${POLYGON}`, POLYGON, getContract(POLYGON, "StakedMvlpTracker"), "balanceOf"],
-    {
-      fetcher: fetcher(undefined, Token, [MVX_MULTISIG_ADDRESS]),
-    }
-  );
-
-  return {
-    data: protocolOwnLiquidity ? bigNumberify(protocolOwnLiquidity) : undefined,
-    mutate: updateProtocolOwnLiquidity,
-  };
-}
 
 export function useHasOutdatedUi() {
-  // const url = getServerUrl(POLYGON, "/ui_version");
-  // const { data, mutate } = useSWR([url], {
-  //   fetcher: (...args) => fetch(...args).then((res) => res.text()),
-  // });
-
-  // let hasOutdatedUi = false;
-
-  // if (data && parseFloat(data) > parseFloat(UI_VERSION)) {
-  //   hasOutdatedUi = true;
-  // }
-
   return { data: false };
 }
 
-export function useMvxPrice(libraries, active,infoTokens) {
-  const polygonLibrary = libraries && libraries.polygon ? libraries.polygon : undefined;
-  const { data: mvxPrice, mutate: mutateFromPolygon } = useMvxPriceFromPolygon(polygonLibrary, active,infoTokens);
-
-  const mutate = useCallback(() => {
-    mutateFromPolygon();
-  }, [mutateFromPolygon]);
-
-  return {
-    mvxPrice,
-    mutate,
-  };
-}
-
-export function useTotalMvxSupply() {
-  const { data: mvxTotalSupply, mutate: updateMvxTotalSupply } = useSWR(
-    [`MVX:totalMvxSupply:${POLYGON}`, POLYGON, getContract(POLYGON, "MVX"), "totalSupply"],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
-
-  return {
-    total: mvxTotalSupply ? bigNumberify(mvxTotalSupply) : undefined,
-    mutate: updateMvxTotalSupply,
-  };
-}
-
-export function useTotalMvxStaked() {
-  const stakedMvxTrackerAddressPolygon = getContract(POLYGON, "StakedMvxTracker");
-  let totalStakedMvx = useRef(bigNumberify(0));
-  const { data: stakedMvxSupplyPolygon, mutate: updateStakedMvxSupplyPolygon } = useSWR(
-    [
-      `StakeV2:stakedMvxSupply:${POLYGON}`,
-      POLYGON,
-      getContract(POLYGON, "MVX"),
-      "balanceOf",
-      stakedMvxTrackerAddressPolygon,
-    ],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
-
-  const mutate = useCallback(() => {
-    updateStakedMvxSupplyPolygon();
-  }, [updateStakedMvxSupplyPolygon]);
-
-  if (stakedMvxSupplyPolygon) {
-    let total = bigNumberify(stakedMvxSupplyPolygon);
-    totalStakedMvx.current = total;
-  }
-
-  return {
-    polygon: stakedMvxSupplyPolygon,
-    total: totalStakedMvx.current,
-    mutate,
-  };
-}
-
-export function useTotalMvxInLiquidity() {
-  let poolAddressUniswapWeth = getContract(POLYGON, "UniswapMvxWethPool");
-  let poolAddressKyber = getContract(POLYGON, "KyberMvxWethPool");
-  let poolAddressQuick = getContract(POLYGON, "QuickMvxWethPool");
-  let poolAddressSolidly = getContract(POLYGON, "SolidlyMvxWethPool");
-  let poolAddressSolidly2 = getContract(POLYGON, "Solidly2MvxWethPool");
-  let poolAddressCelerPolygon = getContract(POLYGON, "CelerBridgeMvxWethPool");
-  let poolAddressMute = getContract(ZKSYNC, "MuteMvxWethPool");
-  let poolAddressVelocore = getContract(ZKSYNC, "VelocoreMvxWethPool");
-  let poolAddressCeler = getContract(ZKSYNC, "CelerMvxWethPool");
-  
-  let totalMvx = useRef(bigNumberify(0));
-
-  const { data: mvxInLiquidityOnUniswapWeth, mutate: mutateMvxInLiquidityOnUniswapWeth } = useSWR(
-    [`StakeV2:mvxInLiquidity:UniswapWeth`, POLYGON, getContract(POLYGON, "MVX"), "balanceOf", poolAddressUniswapWeth],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
-  const { data: mvxInLiquidityOnKyber, mutate: mutateMvxInLiquidityOnKyber } = useSWR(
-    [`StakeV2:mvxInLiquidity:Kyber`, POLYGON, getContract(POLYGON, "MVX"), "balanceOf", poolAddressKyber],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
-
-  const { data: mvxInLiquidityOnQuick, mutate: mutateMvxInLiquidityOnQuick } = useSWR(
-    [`StakeV2:mvxInLiquidity:Quick`, POLYGON, getContract(POLYGON, "MVX"), "balanceOf", poolAddressQuick],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
-
-  const { data: mvxInLiquidityOnSolidly, mutate: mutateMvxInLiquidityOnSolidly } = useSWR(
-    [`StakeV2:mvxInLiquidity:Solidly`, POLYGON, getContract(POLYGON, "MVX"), "balanceOf", poolAddressSolidly],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
-
-  const { data: mvxInLiquidityOnSolidly2, mutate: mutateMvxInLiquidityOnSolidly2 } = useSWR(
-    [`StakeV2:mvxInLiquidity:Solidly2`, POLYGON, getContract(POLYGON, "MVX"), "balanceOf", poolAddressSolidly2],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
-
-  const { data: mvxInLiquidityOnCelerPolygon, mutate: mutateMvxInLiquidityOnCelerPolygon } = useSWR(
-    [`StakeV2:mvxInLiquidity:CelerPolygon`, POLYGON, getContract(POLYGON, "MVX"), "balanceOf", poolAddressCelerPolygon],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
-  
-
-  const { data: mvxInLiquidityOnMute, mutate: mutateMvxInLiquidityOnMute } = useSWR(
-    [`StakeV2:mvxInLiquidity:Mute`, ZKSYNC, getContract(ZKSYNC, "MVX"), "balanceOf", poolAddressMute],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
-
-  const { data: mvxInLiquidityOnVelocore, mutate: mutateMvxInLiquidityOnVelocore } = useSWR(
-    [`StakeV2:mvxInLiquidity:Velocore`, ZKSYNC, getContract(ZKSYNC, "MVX"), "balanceOf", poolAddressVelocore],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
-
-  const { data: mvxInLiquidityOnCeler, mutate: mutateMvxInLiquidityOnCeler } = useSWR(
-    [`StakeV2:mvxInLiquidity:Celer`, ZKSYNC, getContract(ZKSYNC, "MVX"), "balanceOf", poolAddressCeler],
-    {
-      fetcher: fetcher(undefined, Token),
-    }
-  );
 
 
-  const mutate = useCallback(() => {
-
-    mutateMvxInLiquidityOnUniswapWeth();
-    mutateMvxInLiquidityOnKyber();
-    mutateMvxInLiquidityOnQuick();
-    mutateMvxInLiquidityOnSolidly();
-    mutateMvxInLiquidityOnSolidly2();
-    mutateMvxInLiquidityOnCelerPolygon();
-    mutateMvxInLiquidityOnMute();
-    mutateMvxInLiquidityOnVelocore();
-    mutateMvxInLiquidityOnCeler();
-  }, [mutateMvxInLiquidityOnUniswapWeth, mutateMvxInLiquidityOnKyber, mutateMvxInLiquidityOnQuick,mutateMvxInLiquidityOnSolidly,mutateMvxInLiquidityOnSolidly2,mutateMvxInLiquidityOnCelerPolygon,mutateMvxInLiquidityOnMute,mutateMvxInLiquidityOnVelocore,mutateMvxInLiquidityOnCeler]);
-
-  if ( mvxInLiquidityOnUniswapWeth && mvxInLiquidityOnKyber && mvxInLiquidityOnQuick && mvxInLiquidityOnSolidly && mvxInLiquidityOnSolidly2 && mvxInLiquidityOnCelerPolygon && mvxInLiquidityOnMute && mvxInLiquidityOnVelocore&& mvxInLiquidityOnCeler) {
-    let total = bigNumberify(mvxInLiquidityOnUniswapWeth).add(mvxInLiquidityOnKyber).add(mvxInLiquidityOnQuick).add(mvxInLiquidityOnSolidly).add(mvxInLiquidityOnSolidly2).add(mvxInLiquidityOnCelerPolygon).add(mvxInLiquidityOnMute).add(mvxInLiquidityOnVelocore).add(mvxInLiquidityOnCeler);
-    totalMvx.current = total;
-  }
-  return {
-    uniswapWeth: mvxInLiquidityOnUniswapWeth,
-    kyber: mvxInLiquidityOnKyber,
-    quick: mvxInLiquidityOnQuick,
-    solidly: mvxInLiquidityOnSolidly,
-    solidly2: mvxInLiquidityOnSolidly2,
-    total: totalMvx.current,
-    mutate,
-  };
-
-
-}
 
 
 
@@ -853,29 +547,6 @@ export function useCodeOwner(library, chainId, account, code) {
   };
 }
 
-function useMvxPriceFromPolygon(library, active,infoTokens) {
-  const poolAddress = getContract(POLYGON, "UniswapMvxWethPool");
-  const { data: uniPoolSlot0, mutate: updateUniPoolSlot0 } = useSWR(
-    [`StakeV2:uniPoolSlot0:${active}`, POLYGON, poolAddress, "slot0"],
-    {
-      fetcher: fetcher(library, UniPool),
-    }
-  );
-
-  const eth = infoTokens[getTokenBySymbol(POLYGON, "ETH").address];
-
-  const mvxPrice = useMemo(() => {
-    if (uniPoolSlot0 && eth && eth.maxPrice) {
-      return bigNumberify(((uniPoolSlot0.sqrtPriceX96 / 2 ** 96) ** 2 * 1e18).toFixed()).mul(bigNumberify(10).pow(12)).mul(eth.maxPrice).div(bigNumberify(10).pow(30));
-    }
-  }, [uniPoolSlot0, eth]);
-
-  const mutate = useCallback(() => {
-    updateUniPoolSlot0(undefined, true);
-  }, [updateUniPoolSlot0]);
-
-  return { data: mvxPrice, mutate };
-}
 
 export async function approvePlugin(
   chainId,
@@ -946,8 +617,8 @@ export async function createSwapOrder(
 
   const params = [path, amountIn, minOut, triggerRatio, triggerAboveThreshold, executionFee, shouldWrap, shouldUnwrap];
 
-  const orderBookSwapAddress = getContract(chainId, "OrderBookSwap");
-  const contract = new ethers.Contract(orderBookSwapAddress, OrderBookSwap.abi, library.getSigner());
+  const orderBookAddress = getContract(chainId, "OrderBook");
+  const contract = new ethers.Contract(orderBookAddress, OrderBook.abi, library.getSigner());
 
   return callContract(chainId, contract, "createSwapOrder", params, opts);
 }
@@ -1050,8 +721,8 @@ export async function createDecreaseOrder(
 export async function cancelSwapOrder(chainId, library, index, opts) {
   const params = [index];
   const method = "cancelSwapOrder";
-  const orderBookSwapAddress = getContract(chainId, "OrderBookSwap");
-  const contract = new ethers.Contract(orderBookSwapAddress, OrderBookSwap.abi, library.getSigner());
+  const orderBookAddress = getContract(chainId, "OrderBook");
+  const contract = new ethers.Contract(orderBookAddress, OrderBook.abi, library.getSigner());
 
   return callContract(chainId, contract, method, params, opts);
 }
@@ -1146,8 +817,8 @@ export async function updateIncreaseOrder(
 export async function updateSwapOrder(chainId, library, index, minOut, triggerRatio, triggerAboveThreshold, opts) {
   const params = [index, minOut, triggerRatio, triggerAboveThreshold];
   const method = "updateSwapOrder";
-  const orderBookSwapAddress = getContract(chainId, "OrderBookSwap");
-  const contract = new ethers.Contract(orderBookSwapAddress, OrderBookSwap.abi, library.getSigner());
+  const orderBookAddress = getContract(chainId, "OrderBook");
+  const contract = new ethers.Contract(orderBookAddress, OrderBook.abi, library.getSigner());
 
   return callContract(chainId, contract, method, params, opts);
 }
@@ -1256,7 +927,7 @@ export async function callContract(chainId, contract, method, params, opts) {
     const [message, type] = extractError(e);
     switch (type) {
       case NOT_ENOUGH_FUNDS:
-        failMsg = <div>There is not enough MATIC in your account on Polygon to send this transaction.</div>;
+        failMsg = <div>There is not enough BNB in your account on Bsc to send this transaction.</div>;
         break;
       case USER_DENIED:
         failMsg = "Transaction was cancelled.";
@@ -1315,7 +986,7 @@ function getTotalVolumeFromGraph() {
        burn
       }
     }`);
-  requests.push(polygonGraphClient.query({ query }));
+  requests.push(coreGraphClient.query({ query }));
 
   return Promise.all(requests)
     .then((chunks) => {
@@ -1379,7 +1050,7 @@ function getHourlyVolumeFromGraph() {
         __typename
       }
     }`);
-  requests.push(polygonGraphClient.query({ query }));
+  requests.push(coreGraphClient.query({ query }));
 
   return Promise.all(requests)
     .then((chunks) => {
@@ -1443,7 +1114,7 @@ function getTotalFeesFromGraph() {
     }
   }`);
 
-  requests.push(polygonGraphClient.query({ query }));
+  requests.push(coreGraphClient.query({ query }));
 
   return Promise.all(requests)
     .then((chunks) => {

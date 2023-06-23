@@ -1,13 +1,13 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
-export const chainlinkClient = createClient(process.env.REACT_APP_CHAINLINK_SUBGRAPH);
+export const priceGraphClient = createClient(process.env.REACT_APP_PRICE_SUBGRAPH);
 
-export const polygonGraphClient = createClient(process.env.REACT_APP_MVX_CORE_SUBGRAPH);
+export const coreGraphClient = createClient(process.env.REACT_APP_GRIZZLYFI_CORE_SUBGRAPH);
 
 // All Positions
-export const positionsGraphClient = createClient(process.env.REACT_APP_MVX_POSITIONS_SUBGRAPH);
+export const positionsGraphClient = createClient(process.env.REACT_APP_GRIZZLYFI_POSITIONS_SUBGRAPH);
 
-export const polygonReferralsGraphClient = createClient(process.env.REACT_APP_MVX_REFERRAL_SUBGRAPH);
+export const referralsGraphClient = createClient(process.env.REACT_APP_GRIZZLYFI_REFERRAL_SUBGRAPH);
 
 
 function createClient(uri) {

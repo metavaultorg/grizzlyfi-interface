@@ -12,46 +12,23 @@ import IconClaim from '../../assets/icons/icon-claim-reward.svg'
 import { getImageUrl } from "../../cloudinary/getImageUrl";
 import GllSwapBox from "./GllSwapBox";
 import TooltipComponent from "../../components/Tooltip/Tooltip";
-import { getWhitelistedTokens, getTokenBySymbol } from "../../data/Tokens";
+import { getWhitelistedTokens } from "../../data/Tokens";
 import {
   fetcher,
   formatAmount,
   formatKeyAmount,
-  expandDecimals,
   bigNumberify,
-  numberWithCommas,
-  formatDate,
-  getServerUrl,
-  getChainName,
   useChainId,
   USD_DECIMALS,
-  MVXMVLP_DISPLAY_DECIMALS,
-  MVX_DECIMALS,
-  MVLP_DECIMALS,
   BASIS_POINTS_DIVISOR,
-  POLYGON,
-  getTotalVolumeSum,
-  MVLPPOOLCOLORS,
-  getPageTitle,
+  BSC,
 } from "../../Helpers";
 import {
-  useTotalMvxInLiquidity,
-  useMvxPrice,
-  useTotalMvxStaked,
-  useTotalMvxSupply,
   useInfoTokens,
-  useMvdMvxTreasuryHoldings,
-  useMvdMvlpTreasuryHoldings,
-  useMvxMultisigHoldings,
-  useMvxReserveTimelockHoldings,
-  useMvxTeamVestingHoldings,
-  useProtocolOwnLiquidity,
-  useVestingContractHoldings,
 } from "../../Api";
 import { getContract } from "../../Addresses";
 import Vault from "../../abis/Vault.json";
 import AssetDropdown from "../Dashboard/AssetDropdown";
-import cx from "classnames";
 import ChartPrice from './ChartPrice'
 import TextBadge from '../../components/Common/TextBadge'
 import APRLabel from "../../components/APRLabel/APRLabel";
@@ -64,7 +41,6 @@ export default function Earn(props) {
   const { chainId } = useChainId();
 
   const whitelistedTokens = getWhitelistedTokens(chainId);
-  const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
   const tokenList = whitelistedTokens.filter((t) => !t.isWrapped);
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
@@ -79,33 +55,33 @@ export default function Earn(props) {
   const vaultAddress = getContract(chainId, "Vault");
 
   const { data: totalTokenWeights } = useSWR(
-    [`MvlpSwap:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
+    [`GllSwap:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
     {
       fetcher: fetcher(library, Vault),
     }
   );
 
-  let adjustedUsdmSupply = bigNumberify(0);
+  let adjustedUsdgSupply = bigNumberify(0);
 
   for (let i = 0; i < tokenList.length; i++) {
     const token = tokenList[i];
     const tokenInfo = infoTokens[token.address];
-    if (tokenInfo && tokenInfo.usdmAmount) {
-      adjustedUsdmSupply = adjustedUsdmSupply.add(tokenInfo.usdmAmount);
+    if (tokenInfo && tokenInfo.usdgAmount) {
+      adjustedUsdgSupply = adjustedUsdgSupply.add(tokenInfo.usdgAmount);
     }
   }
   const getWeightText = (tokenInfo) => {
     if (
       !tokenInfo.weight ||
-      !tokenInfo.usdmAmount ||
-      !adjustedUsdmSupply ||
-      adjustedUsdmSupply.eq(0) ||
+      !tokenInfo.usdgAmount ||
+      !adjustedUsdgSupply ||
+      adjustedUsdgSupply.eq(0) ||
       !totalTokenWeights
     ) {
       return "...";
     }
 
-    const currentWeightBps = tokenInfo.usdmAmount.mul(BASIS_POINTS_DIVISOR).div(adjustedUsdmSupply);
+    const currentWeightBps = tokenInfo.usdgAmount.mul(BASIS_POINTS_DIVISOR).div(adjustedUsdgSupply);
     const targetWeightBps = tokenInfo.weight.mul(BASIS_POINTS_DIVISOR).div(totalTokenWeights);
 
     const weightText = `${formatAmount(currentWeightBps, 2, 2, false)}% / ${formatAmount(
@@ -132,7 +108,7 @@ export default function Earn(props) {
                   {/* <br />
                   <br />
                   Get lower fees to{" "}
-                  <Link to="/buy_mvlp" target="_blank" rel="noopener noreferrer">
+                  <Link to="/buy_gll" target="_blank" rel="noopener noreferrer">
                     + liq.
                   </Link>{" "}
                   with {tokenInfo.symbol},&nbsp; and to{" "}
@@ -156,7 +132,7 @@ export default function Earn(props) {
               )}
               {/* <br />
               <div>
-                <a href="https://docs.metavault.trade/mvlp" target="_blank" rel="noopener noreferrer">
+                <a href="https://perp-docs.grizzly.fi/gll" target="_blank" rel="noopener noreferrer">
                   More Info
                 </a>
               </div> */}
@@ -176,7 +152,7 @@ export default function Earn(props) {
       <div className='Earn-content'>
         <div className='Earn-left'>
           <div className="info-card-section" style={{maxWidth:912}}>
-            <ItemCard style={{ minWidth: 218 }} label='APR' value={<APRLabel chainId={POLYGON} label="mvlpAprTotal" key="POLYGON" />} icon={IconPercentage} />
+            <ItemCard style={{ minWidth: 218 }} label='APR' value={<APRLabel chainId={BSC} label="gllAprTotal" key="BSC" />} icon={IconPercentage} />
             <ItemCard style={{ minWidth: 298 }}  label='Assets Under Management' value={ <AUMLabel />} icon={IconMoney} />
             <ItemCard style={{ width: '-webkit-fill-available', minWidth: 320 }}  label='Claimable Rewards' value='$92.21' icon={IconClaim} buttonEle={<button
               className="btn-secondary "
@@ -214,7 +190,7 @@ export default function Earn(props) {
                 if (tokenInfo && tokenInfo.reservedAmount && tokenInfo.poolAmount && tokenInfo.poolAmount.gt(0)) {
                   utilization = tokenInfo.reservedAmount.mul(BASIS_POINTS_DIVISOR).div(tokenInfo.poolAmount);
                 }
-                const maxUsdmAmount = tokenInfo.maxUsdmAmount;
+                const maxUsdgAmount = tokenInfo.maxUsdgAmount;
 
                 var tokenImage = null;
 
@@ -257,7 +233,7 @@ export default function Earn(props) {
                                   {token.symbol}
                                   <br />
                                   <br />
-                                  Max {tokenInfo.symbol} Capacity: ${formatAmount(maxUsdmAmount, 18, 0, true)}
+                                  Max {tokenInfo.symbol} Capacity: ${formatAmount(maxUsdgAmount, 18, 0, true)}
                                 </>
                               );
                             }}
@@ -279,7 +255,7 @@ export default function Earn(props) {
             if (tokenInfo && tokenInfo.reservedAmount && tokenInfo.poolAmount && tokenInfo.poolAmount.gt(0)) {
               utilization = tokenInfo.reservedAmount.mul(BASIS_POINTS_DIVISOR).div(tokenInfo.poolAmount);
             }
-            const maxUsdmAmount = tokenInfo.maxUsdmAmount;
+            const maxUsdgAmount = tokenInfo.maxUsdgAmount;
 
             var tokenImage = null;
 
@@ -330,7 +306,7 @@ export default function Earn(props) {
                               {token.symbol}
                               <br />
                               <br />
-                              Max {tokenInfo.symbol} Capacity: ${formatAmount(maxUsdmAmount, 18, 0, true)}
+                              Max {tokenInfo.symbol} Capacity: ${formatAmount(maxUsdgAmount, 18, 0, true)}
                             </>
                           );
                         }}

@@ -120,7 +120,7 @@ export default function PositionsList(props) {
     minExecutionFee,
     minExecutionFeeUSD,
     minExecutionFeeErrorMessage,
-    usdmSupply,
+    usdgSupply,
     totalTokenWeights,
     trailingStopOrders,
   } = props;
@@ -276,7 +276,7 @@ export default function PositionsList(props) {
           minExecutionFee={minExecutionFee}
           minExecutionFeeUSD={minExecutionFeeUSD}
           minExecutionFeeErrorMessage={minExecutionFeeErrorMessage}
-          usdgSupply={usdmSupply}
+          usdgSupply={usdgSupply}
           totalTokenWeights={totalTokenWeights}
         />
       )}

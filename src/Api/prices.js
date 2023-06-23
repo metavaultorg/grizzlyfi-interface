@@ -4,7 +4,7 @@ import useSWR from "swr";
 import { ethers } from "ethers";
 
 import { USD_DECIMALS, CHART_PERIODS, formatAmount, sleep, DEFAULT_CHAIN_ID } from "../Helpers";
-import { chainlinkClient } from "./common";
+import { priceGraphClient } from "./common";
 import { getTokenBySymbol } from "../data/Tokens";
 
 const BigNumber = ethers.BigNumber;
@@ -52,7 +52,7 @@ function fillGaps(prices, periodSeconds) {
 }
 
 async function getChartPricesFromStats(chainId, symbol, period) {
-  if (["WBTC", "WETH", "WMATIC"].includes(symbol)) {
+  if (["WBTC", "WETH", "WBNB"].includes(symbol)) {
     symbol = symbol.substr(1);
   }
 
@@ -152,7 +152,7 @@ function getCandlesFromPrices(prices, period) {
 }
 
 function getCandlePricesFromGraph(tokenSymbol, period) {
-  if (["MATIC"].includes(tokenSymbol)) {
+  if (["BNB"].includes(tokenSymbol)) {
     tokenSymbol = "W"+tokenSymbol;
   }
 
@@ -175,7 +175,7 @@ function getCandlePricesFromGraph(tokenSymbol, period) {
         value
       }
     }`);
-    requests.push(chainlinkClient.query({ query }));
+    requests.push(priceGraphClient.query({ query }));
   }
 
   return Promise.all(requests)
@@ -202,7 +202,7 @@ function getCandlePricesFromGraph(tokenSymbol, period) {
 }
 
 function getChainlinkChartPricesFromGraph(tokenSymbol, period) {
-  if (["WBTC", "WETH", "WMATIC"].includes(tokenSymbol)) {
+  if (["WBTC", "WETH", "WMBNB"].includes(tokenSymbol)) {
     tokenSymbol = tokenSymbol.substr(1);
   }
   const marketName = tokenSymbol + "_USD";
@@ -229,7 +229,7 @@ function getChainlinkChartPricesFromGraph(tokenSymbol, period) {
         value
       }
     }`);
-    requests.push(chainlinkClient.query({ query }));
+    requests.push(priceGraphClient.query({ query }));
   }
 
   return Promise.all(requests)

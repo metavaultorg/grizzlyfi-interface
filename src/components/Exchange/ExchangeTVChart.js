@@ -40,13 +40,13 @@ export function getChartToken(swapOption, fromToken, toToken, chainId) {
     return toToken;
   }
 
-  if (fromToken.isUsdm && toToken.isUsdm) {
+  if (fromToken.isUsdg && toToken.isUsdg) {
     return getTokens(chainId).find((t) => t.isStable);
   }
-  if (fromToken.isUsdm) {
+  if (fromToken.isUsdg) {
     return toToken;
   }
-  if (toToken.isUsdm) {
+  if (toToken.isUsdg) {
     return fromToken;
   }
 
