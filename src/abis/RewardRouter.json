@@ -1,5 +1,4 @@
 {
-  "address": "0x30d56F157758C4ff615869A4d57690b1d08240b6",
   "abi": [
     {
       "inputs": [
@@ -10,7 +9,7 @@
         },
         {
           "internalType": "address",
-          "name": "_qlp",
+          "name": "_gll",
           "type": "address"
         },
         {
@@ -20,22 +19,22 @@
         },
         {
           "internalType": "address",
-          "name": "_feeQlpTracker",
+          "name": "_feeGllTracker",
           "type": "address"
         },
         {
           "internalType": "address",
-          "name": "_qlpManager",
+          "name": "_gllManager",
           "type": "address"
         },
         {
           "internalType": "address",
-          "name": "_oldStakedQlpTracker",
+          "name": "_oldStakedGllTracker",
           "type": "address"
         },
         {
           "internalType": "address",
-          "name": "_oldFeeQlpTracker",
+          "name": "_oldFeeGllTracker",
           "type": "address"
         }
       ],
@@ -77,7 +76,7 @@
           "type": "uint256"
         }
       ],
-      "name": "StakeQlp",
+      "name": "StakeGll",
       "type": "event"
     },
     {
@@ -96,7 +95,7 @@
           "type": "uint256"
         }
       ],
-      "name": "UnstakeQlp",
+      "name": "UnstakeGll",
       "type": "event"
     },
     {
@@ -134,7 +133,7 @@
         },
         {
           "internalType": "bool",
-          "name": "_shouldAddIntoQLP",
+          "name": "_shouldAddIntoGLL",
           "type": "bool"
         },
         {
@@ -157,7 +156,7 @@
     },
     {
       "inputs": [],
-      "name": "feeQlpTracker",
+      "name": "feeGllTracker",
       "outputs": [
         {
           "internalType": "address",
@@ -190,7 +189,7 @@
         },
         {
           "internalType": "bool",
-          "name": "_shouldAddIntoQLP",
+          "name": "_shouldAddIntoGLL",
           "type": "bool"
         }
       ],
@@ -233,16 +232,16 @@
         },
         {
           "internalType": "uint256",
-          "name": "_minUsdq",
+          "name": "_minUsdg",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "_minQlp",
+          "name": "_minGll",
           "type": "uint256"
         }
       ],
-      "name": "mintAndStakeQlp",
+      "name": "mintAndStakeGll",
       "outputs": [
         {
           "internalType": "uint256",
@@ -257,16 +256,16 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_minUsdq",
+          "name": "_minUsdg",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "_minQlp",
+          "name": "_minGll",
           "type": "uint256"
         }
       ],
-      "name": "mintAndStakeQlpETH",
+      "name": "mintAndStakeGllETH",
       "outputs": [
         {
           "internalType": "uint256",
@@ -279,7 +278,7 @@
     },
     {
       "inputs": [],
-      "name": "oldFeeQlpTracker",
+      "name": "oldFeeGllTracker",
       "outputs": [
         {
           "internalType": "address",
@@ -292,7 +291,7 @@
     },
     {
       "inputs": [],
-      "name": "oldStakedQlpTracker",
+      "name": "oldStakedGllTracker",
       "outputs": [
         {
           "internalType": "address",
@@ -324,7 +323,7 @@
     },
     {
       "inputs": [],
-      "name": "qlp",
+      "name": "gll",
       "outputs": [
         {
           "internalType": "address",
@@ -337,7 +336,7 @@
     },
     {
       "inputs": [],
-      "name": "qlpManager",
+      "name": "gllManager",
       "outputs": [
         {
           "internalType": "address",
@@ -396,7 +395,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_qlpAmount",
+          "name": "_gllAmount",
           "type": "uint256"
         },
         {
@@ -410,7 +409,7 @@
           "type": "address"
         }
       ],
-      "name": "unstakeAndRedeemQlp",
+      "name": "unstakeAndRedeemGll",
       "outputs": [
         {
           "internalType": "uint256",
@@ -425,7 +424,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_qlpAmount",
+          "name": "_gllAmount",
           "type": "uint256"
         },
         {
@@ -439,7 +438,7 @@
           "type": "address"
         }
       ],
-      "name": "unstakeAndRedeemQlpETH",
+      "name": "unstakeAndRedeemGllETH",
       "outputs": [
         {
           "internalType": "uint256",

@@ -13,7 +13,7 @@ function AssetDropdown({ assetSymbol, assetInfo, showReserves }) {
   const { chainId } = useChainId();
   let { coingecko, polygon, zkSync } = ICONLINKS[chainId][assetSymbol];
   const unavailableTokenSymbols = {
-    56: ["BNB"],
+    5611: ["tBNB"],
   };
 
   return (

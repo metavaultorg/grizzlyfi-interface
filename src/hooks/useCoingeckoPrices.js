@@ -46,7 +46,7 @@ export function useCoingeckoPrices(symbol) {
         USDT: "tether",
         DAI: "dai",
         BUSD: "binance-usd",
-        STMATIC: "lido-staked-matic",
+        tBNB: "binancecoin",
     }[symbol];
 
     const from = NOW_TS - 86400;
@@ -101,16 +101,18 @@ export function useCoingeckoPrices(symbol) {
 export function useTokenPairMarketData() {
     const [btcPrices] = useCoingeckoPrices("BTC");
     const [ethPrices] = useCoingeckoPrices("ETH");
-    const [daiPrices] = useCoingeckoPrices("DAI");
-    const [busdPrices] = useCoingeckoPrices("BUSD");
+    const [bnbPrices] = useCoingeckoPrices("tBNB");
+    const [usdcPrices] = useCoingeckoPrices("USDC");
+    const [usdtPrices] = useCoingeckoPrices("USDT");
 
     const data = useMemo(() => {
         const ret = [];
-        if (btcPrices) ret.push(btcPrices);
+        if (bnbPrices) ret.push(bnbPrices);
         if (ethPrices) ret.push(ethPrices);
-        if (daiPrices) ret.push(daiPrices);
-        if (busdPrices) ret.push(busdPrices);
+        if (btcPrices) ret.push(btcPrices);
+        if (usdcPrices) ret.push(usdcPrices);
+        if (usdtPrices) ret.push(usdtPrices);
         return ret;
-    }, [btcPrices, busdPrices, daiPrices, ethPrices])
+    }, [bnbPrices, ethPrices, btcPrices, usdcPrices, usdtPrices])
     return data;
 }

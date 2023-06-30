@@ -2,12 +2,12 @@ import { ethers } from "ethers";
 import { gql } from "@apollo/client";
 import { useState, useEffect } from "react";
 
-import { BSC, MAX_REFERRAL_CODE_LENGTH, bigNumberify } from "../Helpers";
+import { opBNB, MAX_REFERRAL_CODE_LENGTH, bigNumberify } from "../Helpers";
 import { referralsGraphClient} from "./common";
 
 
 function getGraphClient(chainId) {
-  if (chainId === BSC) {
+  if (chainId === opBNB) {
     return referralsGraphClient;
   } 
   throw new Error(`Unsupported chain ${chainId}`);

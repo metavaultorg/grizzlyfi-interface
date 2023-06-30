@@ -13,7 +13,6 @@ import {
   LONG,
   SHORT,
   USD_DECIMALS,
-  USD_DISPLAY_DECIMALS,
   getExplorerUrl,
   helperToast,
   formatAmount,
@@ -23,7 +22,6 @@ import {
   getPositionKey,
   getPositionContractKey,
   getLeverage,
-  useLocalStorageSerializeKey,
   useLocalStorageByChainId,
   getDeltaStr,
   useChainId,
@@ -31,7 +29,7 @@ import {
   getPageTitle,
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
-import { approvePlugin, useInfoTokens, useMinExecutionFee, cancelMultipleOrders,useTrailingStopOrders } from "../../Api";
+import { approvePlugin, useInfoTokens, useMinExecutionFee, cancelMultipleOrders } from "../../Api";
 
 import { getContract } from "../../Addresses";
 import { getTokens, getToken, getWhitelistedTokens, getTokenBySymbol } from "../../data/Tokens";
@@ -458,7 +456,7 @@ export const Exchange = forwardRef((props, ref) => {
 
   const tokenAddresses = tokens.map((token) => token.address);
   const { data: tokenBalances } = useSWR(active && [active, chainId, readerAddress, "getTokenBalances", account], {
-    fetcher: fetcher(library, Reader, [tokenAddresses]),
+      fetcher: fetcher(library, Reader, [tokenAddresses]),
   });
 
   const { data: positionData, error: positionDataError } = useSWR(
@@ -490,7 +488,6 @@ export const Exchange = forwardRef((props, ref) => {
   });
 
   const orderBookAddress = getContract(chainId, "OrderBook");
-  const orderBookSwapAddress = getContract(chainId, "OrderBookSwap");
   const routerAddress = getContract(chainId, "Router");
   const { data: orderBookApproved } = useSWR(
     active && [active, chainId, routerAddress, "approvedPlugins", account, orderBookAddress],
@@ -499,16 +496,10 @@ export const Exchange = forwardRef((props, ref) => {
     }
   );
 
-  const { data: orderBookSwapApproved } = useSWR(
-    active && [active, chainId, routerAddress, "approvedPlugins", account, orderBookSwapAddress],
-    {
-      fetcher: fetcher(library, Router),
-    }
-  );
-
   const { data: positionRouterApproved } = useSWR(
     active && [active, chainId, routerAddress, "approvedPlugins", account, positionRouterAddress],
     {
+      dedupingInterval: 60000,
       fetcher: fetcher(library, Router),
     }
   );
@@ -700,7 +691,6 @@ export const Exchange = forwardRef((props, ref) => {
 
   const flagOrdersEnabled = true;
   const [orders] = useAccountOrders(flagOrdersEnabled);
-  const { trailingStopOrders } = useTrailingStopOrders( account);
 
   const [isWaitingForPluginApproval, setIsWaitingForPluginApproval] = useState(false);
   const [isWaitingForPositionRouterApproval, setIsWaitingForPositionRouterApproval] = useState(false);
@@ -758,23 +748,8 @@ export const Exchange = forwardRef((props, ref) => {
       });
   };
 
-  const approveOrderBookSwap = () => {
-    setIsPluginApproving(true);
-    return approvePlugin(chainId, orderBookSwapAddress, {
-      library,
-      pendingTxns,
-      setPendingTxns,
-      sentMsg: "Enable orders sent.",
-      failMsg: "Enable orders failed.",
-    })
-      .then(() => {
-        setIsWaitingForPluginApproval(true);
-      })
-      .finally(() => {
-        setIsPluginApproving(false);
-      });
-  };  
-
+  const [approvePositionRouterSentMsg, setApprovePositionRouterSentMsg] = useState("");
+  const [approvePositionRouterFailMsg, setApprovePositionRouterFailMsg] = useState("");
   const approvePositionRouter = ({ sentMsg, failMsg }) => {
     setIsPositionRouterApproving(true);
     return approvePlugin(chainId, positionRouterAddress, {
@@ -853,14 +828,12 @@ export const Exchange = forwardRef((props, ref) => {
             setIsWaitingForPluginApproval={setIsWaitingForPluginApproval}
             setIsWaitingForPositionRouterApproval={setIsWaitingForPositionRouterApproval}
             approveOrderBook={approveOrderBook}
-            approveOrderBookSwap={approveOrderBookSwap}
             approvePositionRouter={approvePositionRouter}
             isPluginApproving={isPluginApproving}
             isPositionRouterApproving={isPositionRouterApproving}
             isWaitingForPluginApproval={isWaitingForPluginApproval}
             isWaitingForPositionRouterApproval={isWaitingForPositionRouterApproval}
             orderBookApproved={orderBookApproved}
-            orderBookSwapApproved={orderBookSwapApproved}
             positionRouterApproved={positionRouterApproved}
             positions={positions}
             positionsMap={positionsMap}
@@ -882,7 +855,6 @@ export const Exchange = forwardRef((props, ref) => {
             minExecutionFeeErrorMessage={minExecutionFeeErrorMessage}
             usdgSupply={usdgSupply}
             totalTokenWeights={totalTokenWeights}
-            trailingStopOrders={trailingStopOrders}
           />
         )}
         {listSection === "Orders" && (
@@ -932,14 +904,13 @@ export const Exchange = forwardRef((props, ref) => {
         positions={positions}
         savedShouldShowPositionLines={savedShouldShowPositionLines}
         orders={orders}
-        trailingStopOrders={trailingStopOrders}
         setToTokenAddress={setToTokenAddress}
       />
     );
   };
 
   return (
-    <div className="Exchange page-layout">
+    <div className="Exchange page-layout" style={{marginTop:12}}>
       <div className="Exchange-content">
         <div className="Exchange-left">
           {renderChart()}
@@ -952,14 +923,12 @@ export const Exchange = forwardRef((props, ref) => {
             setIsWaitingForPluginApproval={setIsWaitingForPluginApproval}
             setIsWaitingForPositionRouterApproval={setIsWaitingForPositionRouterApproval}
             approveOrderBook={approveOrderBook}
-            approveOrderBookSwap={approveOrderBookSwap}
             approvePositionRouter={approvePositionRouter}
             isPluginApproving={isPluginApproving}
             isPositionRouterApproving={isPositionRouterApproving}
             isWaitingForPluginApproval={isWaitingForPluginApproval}
             isWaitingForPositionRouterApproval={isWaitingForPositionRouterApproval}
             orderBookApproved={orderBookApproved}
-            orderBookSwapApproved={orderBookSwapApproved}
             positionRouterApproved={positionRouterApproved}
             orders={orders}
             flagOrdersEnabled={flagOrdersEnabled}

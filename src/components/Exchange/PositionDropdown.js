@@ -22,14 +22,6 @@ function PositionDropdown({ handleEditCollateral, handleAddTrailingStop, handleS
               <p>Edit Collateral</p>
             </div>
           </Menu.Item>
-          {!hasTrailingStopOrder && position.leverage &&
-          <Menu.Item>
-            <div className="menu-item" onClick={handleAddTrailingStop}>
-              <img src={IconPlus} alt="IconPlus"/>
-              <p>Add Trailing Stop</p>
-            </div>
-          </Menu.Item>
-          }
           <Menu.Item>
             <div className="menu-item" onClick={handleMarketSelect}>
               <img src={IconTickNew} alt="IconTickNew"/>

@@ -62,7 +62,6 @@ import {
   adjustForDecimals,
   REFERRAL_CODE_KEY,
   isHashZero,
-  TRAILING_STOP_FEE,
 } from "../../Helpers";
 import { getConstant } from "../../Constants";
 import * as Api from "../../Api";
@@ -161,21 +160,19 @@ export default function SwapBox(props) {
     orders,
     savedIsPnlInLeverage,
     orderBookApproved,
-    orderBookSwapApproved,
     positionRouterApproved,
     isWaitingForPluginApproval,
     approveOrderBook,
-    approveOrderBookSwap,
     approvePositionRouter,
     setIsWaitingForPluginApproval,
     isWaitingForPositionRouterApproval,
     setIsWaitingForPositionRouterApproval,
     isPluginApproving,
     isPositionRouterApproving,
-    savedShouldDisableOrderValidation,
     minExecutionFee,
     minExecutionFeeUSD,
     minExecutionFeeErrorMessage,
+    showModal,
   } = props;
 
   const [fromValue, setFromValue] = useState("");
@@ -188,15 +185,6 @@ export default function SwapBox(props) {
   const [isHigherSlippageAllowed, setIsHigherSlippageAllowed] = useState(false);
   const { userReferralCode } = Api.useUserReferralCode(library, chainId, account);
   const userReferralCodeInLocalStorage = window.localStorage.getItem(REFERRAL_CODE_KEY);
-
-  const [takeProfitPrice, setTakeProfitPrice] = useState();
-  const [stopLossPrice, setStopLossPrice] = useState();
-  const [trailingStopPerc, setTrailingStopPerc] = useState();
-  const [isStopLoss, setIsStopLoss] = useState();
-  const [receiveToken, setReceiveToken] = useState();
-  const [isTrailingEnabled, setIsTrailingEnabled] = useState(true);
-
-  let totalExecutionFee;
 
   let allowedSlippage = savedSlippageAmount;
   if (isHigherSlippageAllowed) {
@@ -212,10 +200,6 @@ export default function SwapBox(props) {
   const isLong = swapOption === LONG;
   const isShort = swapOption === SHORT;
   const isSwap = swapOption === SWAP;
-
-  const getLeaderboardLink = () => {
-    return "https://leaderboard.metavault.trade";
-  };
 
   function getTokenLabel() {
     switch (true) {
@@ -233,11 +217,10 @@ export default function SwapBox(props) {
     [chainId, "Exchange-swap-leverage-option"],
     "2"
   );
-  /*const [isLeverageSliderEnabled, setIsLeverageSliderEnabled] = useLocalStorageSerializeKey(
+  const [isLeverageSliderEnabled, setIsLeverageSliderEnabled] = useLocalStorageSerializeKey(
     [chainId, "Exchange-swap-leverage-slider-enabled"],
     true
-  );*/
-  const isLeverageSliderEnabled = true;
+  );
 
   const hasLeverageOption = isLeverageSliderEnabled && !isNaN(parseFloat(leverageOption));
 
@@ -282,7 +265,7 @@ export default function SwapBox(props) {
   const tokens = getTokens(chainId);
   const fromTokens = tokens;
   const stableTokens = tokens.filter((token) => token.isStable);
-  const indexTokens = whitelistedTokens.filter((token) => !token.isStable && !token.isWrapped && token.symbol !== "stMATIC");
+  const indexTokens = whitelistedTokens.filter((token) => !token.isStable && !token.isWrapped);
   const shortableTokens = indexTokens.filter((token) => token.isShortable);
 
   let toTokens = tokens;
@@ -293,11 +276,7 @@ export default function SwapBox(props) {
     toTokens = shortableTokens;
   }
 
-  let needOrderBookApproval = !isMarketOrder && ((isSwap && !orderBookSwapApproved) || (!isSwap && !orderBookApproved));
-  const isTrailerSetted = (stopLossPrice && stopLossPrice.gt(0)) || (takeProfitPrice && takeProfitPrice.gt(0) || trailingStopPerc > 0)
-  if(isMarketOrder && isTrailingEnabled && isTrailerSetted && !orderBookApproved){
-    needOrderBookApproval = true
-  }
+  const needOrderBookApproval = !isMarketOrder && !orderBookApproved;
   const prevNeedOrderBookApproval = usePrevious(needOrderBookApproval);
 
   const needPositionRouterApproval = (isLong || isShort) && isMarketOrder && !positionRouterApproved;
@@ -338,18 +317,12 @@ export default function SwapBox(props) {
     }
   );
 
-  const positionRouterAddress = getContract(chainId, "PositionRouter");
-
-  const { data: hasOutdatedUi } = Api.useHasOutdatedUi();
-
   const fromToken = getToken(chainId, fromTokenAddress);
   const toToken = getToken(chainId, toTokenAddress);
   const shortCollateralToken = getTokenInfo(infoTokens, shortCollateralAddress);
 
   const fromTokenInfo = getTokenInfo(infoTokens, fromTokenAddress);
   const toTokenInfo = getTokenInfo(infoTokens, toTokenAddress);
-  const toTokenAvailableUsd = toTokenInfo.availableUsd;
-  const displayDecimals = toTokenInfo.displayDecimals;
 
   const renderAvailableLongLiquidity = () => {
     if (!isLong) {
@@ -362,7 +335,6 @@ export default function SwapBox(props) {
         <div className="align-right">
           <Tooltip
             handle={`${formatAmount(toTokenInfo.maxAvailableLong, USD_DECIMALS, 2, true)}`}
-            handleClassName="font-number"
             position="right-bottom"
             renderContent={() => {
               return (
@@ -430,7 +402,7 @@ export default function SwapBox(props) {
   }, [maxToTokenOut, toTokenAddress, infoTokens]);
 
   const maxFromTokenInUSD = useMemo(() => {
-    const value = fromTokenInfo.maxUsdgAmount
+    const value = fromTokenInfo.maxUsdqAmount
       ?.sub(fromTokenInfo.usdgAmount)
       .mul(expandDecimals(1, USD_DECIMALS))
       .div(expandDecimals(1, USDG_DECIMALS));
@@ -780,7 +752,7 @@ export default function SwapBox(props) {
     }
 
     if (!isMarketOrder) {
-      if ((toToken.isStable || toToken.isUsdg) && (fromToken.isStable || fromToken.isUsdg)) {
+      if ((toToken.isStable || toToken.isUsdq) && (fromToken.isStable || fromToken.isUsdq)) {
         return ["Select different tokens"];
       }
 
@@ -794,10 +766,10 @@ export default function SwapBox(props) {
     }
 
     if (!fromAmount || fromAmount.eq(0)) {
-      return ["ENTER AN AMOUNT"];
+      return ["Enter an amount"];
     }
     if (!toAmount || toAmount.eq(0)) {
-      return ["ENTER AN AMOUNT"];
+      return ["Enter an amount"];
     }
 
     const fromTokenInfo = getTokenInfo(infoTokens, fromTokenAddress);
@@ -805,7 +777,7 @@ export default function SwapBox(props) {
       return ["Incorrect network"];
     }
     if (fromTokenInfo && fromTokenInfo.balance && fromAmount && fromAmount.gt(fromTokenInfo.balance)) {
-      return [`INSUFFICIENT ${fromTokenInfo.symbol} BALANCE`];
+      return [`Insufficient ${fromTokenInfo.symbol} balance`];
     }
 
     const toTokenInfo = getTokenInfo(infoTokens, toTokenAddress);
@@ -843,15 +815,15 @@ export default function SwapBox(props) {
 
     if (
       fromUsdMin &&
-      fromTokenInfo.maxUsdgAmount &&
-      fromTokenInfo.maxUsdgAmount.gt(0) &&
+      fromTokenInfo.maxUsdqAmount &&
+      fromTokenInfo.maxUsdqAmount.gt(0) &&
       fromTokenInfo.usdgAmount &&
       fromTokenInfo.maxPrice
     ) {
       const usdgFromAmount = adjustForDecimals(fromUsdMin, USD_DECIMALS, USDG_DECIMALS);
-      const nextUsdgAmount = fromTokenInfo.usdgAmount.add(usdgFromAmount);
+      const nextUsdqAmount = fromTokenInfo.usdgAmount.add(usdgFromAmount);
 
-      if (nextUsdgAmount.gt(fromTokenInfo.maxUsdgAmount)) {
+      if (nextUsdqAmount.gt(fromTokenInfo.maxUsdqAmount)) {
         return [`${fromTokenInfo.symbol} pool exceeded`];
       }
     }
@@ -860,12 +832,9 @@ export default function SwapBox(props) {
   };
 
   const getLeverageError = () => {
-    if (hasOutdatedUi) {
-      return ["PAGE OUTDATED, PLEASE REFRESH"];
-    }
 
     if (!toAmount || toAmount.eq(0)) {
-      return ["ENTER AN AMOUNT"];
+      return ["Enter an amount"];
     }
 
     let toTokenInfo = getTokenInfo(infoTokens, toTokenAddress);
@@ -875,44 +844,34 @@ export default function SwapBox(props) {
 
     const fromTokenInfo = getTokenInfo(infoTokens, fromTokenAddress);
     if (fromTokenInfo && fromTokenInfo.balance && fromAmount && fromAmount.gt(fromTokenInfo.balance)) {
-      return [`INSUFFICIENT ${fromTokenInfo.symbol} BALANCE`];
+      return [`Insufficient ${fromTokenInfo.symbol} balance`];
     }
 
     if (leverage && leverage.eq(0)) {
-      return ["ENTER AN AMOUNT"];
+      return ["Enter an amount"];
     }
     if (!isMarketOrder && (!triggerPriceValue || triggerPriceUsd.eq(0))) {
-      return ["ENTER A PRICE"];
+      return ["Enter a price"];
     }
 
-    if (!hasExistingPosition && fromUsdMin && fromUsdMin.lt(expandDecimals(10, USD_DECIMALS))) {
-      return ["MIN ORDER: 10 USD"];
+    if (!hasExistingPosition && fromUsdMin && fromUsdMin.lt(expandDecimals(25, USD_DECIMALS))) {
+      return ["Min order: 25 USD"];
     }
 
     if (leverage && leverage.lt(1.1 * BASIS_POINTS_DIVISOR)) {
-      return ["MIN LEVERAGE: 1.1x"];
+      return ["Min leverage: 1.1x"];
     }
 
     if (leverage && leverage.gt(50.5 * BASIS_POINTS_DIVISOR)) {
-      return ["MAX LEVERAGE: 50.5x"];
-    }
-
-    if (entryMarkPrice && takeProfitPrice && takeProfitPrice.gt(0)) 
-    { 
-        if(isLong && takeProfitPrice.lt(entryMarkPrice) ) 
-          return ["PROFIT PRICE BELOW MKT. PRICE"];
-        else if(!isLong && takeProfitPrice.gt(entryMarkPrice) ) 
-          return ["PROFIT PRICE ABOVE MKT. PRICE"];
-
-
+      return ["Max leverage: 50.5x"];
     }
 
     if (!isMarketOrder && entryMarkPrice && triggerPriceUsd) {
       if (isLong && entryMarkPrice.lt(triggerPriceUsd)) {
-        return ["PRICE ABOVE MKT. PRICE"];
+        return ["Price above Mkt. price"];
       }
       if (!isLong && entryMarkPrice.gt(triggerPriceUsd)) {
-        return ["PRICE BELOW MKT. PRICE"];
+        return ["Price below Mkt. price"];
       }
     }
 
@@ -947,19 +906,19 @@ export default function SwapBox(props) {
           toTokenInfo.bufferAmount &&
           toTokenInfo.bufferAmount.gt(toTokenInfo.poolAmount.sub(swapAmount))
         ) {
-          return ["Insufficient liquidity", true, "BUFFER"];
+          return ["Insufficient liquidity", true, "buffer"];
         }
 
         if (
           fromUsdMin &&
-          fromTokenInfo.maxUsdgAmount &&
-          fromTokenInfo.maxUsdgAmount.gt(0) &&
+          fromTokenInfo.maxUsdqAmount &&
+          fromTokenInfo.maxUsdqAmount.gt(0) &&
           fromTokenInfo.minPrice &&
           fromTokenInfo.usdgAmount
         ) {
           const usdgFromAmount = adjustForDecimals(fromUsdMin, USD_DECIMALS, USDG_DECIMALS);
-          const nextUsdgAmount = fromTokenInfo.usdgAmount.add(usdgFromAmount);
-          if (nextUsdgAmount.gt(fromTokenInfo.maxUsdgAmount)) {
+          const nextUsdqAmount = fromTokenInfo.usdgAmount.add(usdgFromAmount);
+          if (nextUsdqAmount.gt(fromTokenInfo.maxUsdqAmount)) {
             return [`${fromTokenInfo.symbol} pool exceeded, try different token`, true, "MAX_USDG"];
           }
         }
@@ -1008,14 +967,14 @@ export default function SwapBox(props) {
         }
 
         if (
-          fromTokenInfo.maxUsdgAmount &&
-          fromTokenInfo.maxUsdgAmount.gt(0) &&
+          fromTokenInfo.maxUsdqAmount &&
+          fromTokenInfo.maxUsdqAmount.gt(0) &&
           fromTokenInfo.minPrice &&
           fromTokenInfo.usdgAmount
         ) {
           const usdgFromAmount = adjustForDecimals(fromUsdMin, USD_DECIMALS, USDG_DECIMALS);
-          const nextUsdgAmount = fromTokenInfo.usdgAmount.add(usdgFromAmount);
-          if (nextUsdgAmount.gt(fromTokenInfo.maxUsdgAmount)) {
+          const nextUsdqAmount = fromTokenInfo.usdgAmount.add(usdgFromAmount);
+          if (nextUsdqAmount.gt(fromTokenInfo.maxUsdqAmount)) {
             return [`${fromTokenInfo.symbol} pool exceeded, try different token`, true, "MAX_USDG"];
           }
         }
@@ -1083,9 +1042,7 @@ export default function SwapBox(props) {
       <OrdersToa
         setIsVisible={setOrdersToaOpen}
         approveOrderBook={approveOrderBook}
-        approveOrderBookSwap={approveOrderBookSwap}
         isPluginApproving={isPluginApproving}
-        isSwap={isSwap}
       />
     );
   };
@@ -1101,12 +1058,13 @@ export default function SwapBox(props) {
     const swapTokenSymbol = isLong ? toToken.symbol : shortCollateralToken.symbol;
     const inputTokenSymbol = isLong ? fromToken.symbol : shortCollateralToken.symbol;
 
-
+      let quickswapUrl = `https://quickswap.exchange/#/swap`;
+    let kyberswapUrl = `https://kyberswap.com/swap/polygon/${inputCurrency}-to-${outputCurrency}`;
     const label =
       modalError === "BUFFER" ? `${shortCollateralToken.symbol} Required` : `${fromToken.symbol} Capacity Reached`;
     return (
       <Modal isVisible={!!modalError} setIsVisible={setModalError} label={label} className="Error-modal font-base">
-        <div style={{ marginTop:32 }}>
+        <div style={{ padding: 10 }}>
           <p>You need to select {swapTokenSymbol} as the "Pay" token to initiate this trade.</p>
           <br />
           {isShort && (
@@ -1116,7 +1074,19 @@ export default function SwapBox(props) {
               <br />
             </p>
           )}
-
+          <div style={{ display: "flex", alignItems: "center", flexDirection: "column", gap: "10px" }}>
+                    <a style={{ textDecoration: "none", color: "#ffaa27" }} href={quickswapUrl} target="_blank" rel="noreferrer">
+                        Buy {swapTokenSymbol} on Quickswap
+            </a>
+            {/* <a
+              style={{ textDecoration: "none", color: "#ffaa27" }}
+              href={kyberswapUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Buy {swapTokenSymbol} on KyberSwap
+            </a> */}
+          </div>
         </div>
       </Modal>
     );
@@ -1288,6 +1258,7 @@ export default function SwapBox(props) {
 
     const contract = new ethers.Contract(nativeTokenAddress, WETH.abi, library.getSigner());
     Api.callContract(chainId, contract, "deposit", {
+      gasLimit: bigNumberify(50000),
       value: fromAmount,
       sentMsg: "Swap submitted.",
       successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${
@@ -1295,8 +1266,10 @@ export default function SwapBox(props) {
       } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
       failMsg: "Swap failed.",
       setPendingTxns,
+      showModal,
     })
       .then(async (res) => {})
+      .catch((e) => console.log("error: ", e))
       .finally(() => {
         setIsSubmitting(false);
       });
@@ -1307,14 +1280,17 @@ export default function SwapBox(props) {
 
     const contract = new ethers.Contract(nativeTokenAddress, WETH.abi, library.getSigner());
     Api.callContract(chainId, contract, "withdraw", [fromAmount], {
+      gasLimit: bigNumberify(50000),
       sentMsg: "Swap submitted!",
       failMsg: "Swap failed.",
       successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${
         fromToken.symbol
       } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
       setPendingTxns,
+      showModal,
     })
       .then(async (res) => {})
+      .catch((e) => console.log("error: ", e))
       .finally(() => {
         setIsSubmitting(false);
       });
@@ -1417,6 +1393,7 @@ export default function SwapBox(props) {
     contract = new ethers.Contract(routerAddress, Router.abi, library.getSigner());
 
     Api.callContract(chainId, contract, method, params, {
+      gasLimit: bigNumberify(500000),
       value,
       sentMsg: `Swap ${!isMarketOrder ? " order " : ""} submitted!`,
       successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${
@@ -1424,10 +1401,12 @@ export default function SwapBox(props) {
       } for ${formatAmount(toAmount, toToken.decimals, 4, true)} ${toToken.symbol}!`,
       failMsg: "Swap failed.",
       setPendingTxns,
+      showModal,
     })
       .then(async () => {
         setIsConfirming(false);
       })
+      .catch((e) => console.log("error: ", e))
       .finally(() => {
         setIsSubmitting(false);
         setIsPendingConfirmation(false);
@@ -1435,6 +1414,16 @@ export default function SwapBox(props) {
   };
 
   const createIncreaseOrder = () => {
+    let path = [fromTokenAddress];
+
+    if (path[0] === USDG_ADDRESS) {
+      if (isLong) {
+        const stableToken = getMostAbundantStableToken(chainId, infoTokens);
+        path.push(stableToken.address);
+      } else {
+        path.push(shortCollateralAddress);
+      }
+    }
 
     const minOut = 0;
     const indexToken = getToken(chainId, indexTokenAddress);
@@ -1445,34 +1434,11 @@ export default function SwapBox(props) {
       USD_DISPLAY_DECIMALS
     )} USD!
     `;
-    const orderProps = ethers.utils.defaultAbiCoder.encode(
-      ["uint256", "uint256", "uint256", "address", "bool"],
-      [
-        Math.round(trailingStopPerc * 100),
-        stopLossPrice,
-        takeProfitPrice,
-        receiveToken ? receiveToken.address === AddressZero ? nativeTokenAddress: receiveToken.address.toString() : AddressZero,
-        receiveToken && receiveToken.address === AddressZero,
-      ]
-    );
-    // (uint256 trailingStopPercentage,uint256 slPrice,uint256 tpPrice,receiveTokenAddress,bool withdrawETH) = abi.decode(_orderProps, ( uint256,uint256,uint256,address,bool));
-
-    totalExecutionFee = getConstant(chainId, "INCREASE_ORDER_EXECUTION_GAS_FEE");
-    if(stopLossPrice.gt(0)){
-      totalExecutionFee = totalExecutionFee.add(getConstant(chainId, "DECREASE_ORDER_EXECUTION_GAS_FEE"))
-    }else if(trailingStopPerc > 0){
-      totalExecutionFee = totalExecutionFee.add(getConstant(chainId, "TRAILING_STOP_EXECUTION_GAS_FEE"))
-    }
-    if(takeProfitPrice.gt(0)){
-      totalExecutionFee = totalExecutionFee.add(getConstant(chainId, "DECREASE_ORDER_EXECUTION_GAS_FEE"))
-    }
-
-
     return Api.createIncreaseOrder(
       chainId,
       library,
       nativeTokenAddress,
-      fromTokenAddress,
+      path,
       fromAmount,
       indexTokenAddress,
       minOut,
@@ -1480,8 +1446,6 @@ export default function SwapBox(props) {
       collateralTokenAddress,
       isLong,
       triggerPriceUsd,
-      orderProps,
-      totalExecutionFee,
       {
         pendingTxns,
         setPendingTxns,
@@ -1556,31 +1520,6 @@ export default function SwapBox(props) {
       }
     }
 
-    const orderProps = ethers.utils.defaultAbiCoder.encode(
-      ["uint256", "uint256", "uint256", "address", "bool"],
-      [
-        Math.round(trailingStopPerc * 100),
-        stopLossPrice,
-        takeProfitPrice,
-        receiveToken ? receiveToken.address === AddressZero ? nativeTokenAddress: receiveToken.address.toString() : AddressZero,
-        receiveToken && receiveToken.address === AddressZero,
-      ]
-    );
-    // (uint256 trailingStopPercentage,uint256 slPrice,uint256 tpPrice,receiveTokenAddress,bool withdrawETH) = abi.decode(_orderProps, ( uint256,uint256,uint256,address,bool));
-
-
-    let method = "createIncreasePosition";
-    totalExecutionFee = minExecutionFee;
-    if(stopLossPrice.gt(0)){
-      totalExecutionFee = totalExecutionFee.add(getConstant(chainId, "DECREASE_ORDER_EXECUTION_GAS_FEE"))
-    }else if(trailingStopPerc > 0){
-      totalExecutionFee = totalExecutionFee.add(getConstant(chainId, "TRAILING_STOP_EXECUTION_GAS_FEE"))
-    }
-    if(takeProfitPrice.gt(0)){
-      totalExecutionFee = totalExecutionFee.add(getConstant(chainId, "DECREASE_ORDER_EXECUTION_GAS_FEE"))
-    }
-
-
     let params = [
       path, // _path
       indexTokenAddress, // _indexToken
@@ -1589,15 +1528,16 @@ export default function SwapBox(props) {
       toUsdMax, // _sizeDelta
       isLong, // _isLong
       priceLimit, // _acceptablePrice
-      totalExecutionFee, // _executionFee
+      minExecutionFee, // _executionFee
       referralCode, // _referralCode
-      orderProps, // _orderProps []
+      AddressZero, // _callbackTarget
     ];
 
-    let value = totalExecutionFee;
+    let method = "createIncreasePosition";
+    let value = minExecutionFee;
     if (fromTokenAddress === AddressZero) {
       method = "createIncreasePositionETH";
-      value = boundedFromAmount.add(totalExecutionFee);
+      value = boundedFromAmount.add(minExecutionFee);
       params = [
         path, // _path
         indexTokenAddress, // _indexToken
@@ -1605,9 +1545,9 @@ export default function SwapBox(props) {
         toUsdMax, // _sizeDelta
         isLong, // _isLong
         priceLimit, // _acceptablePrice
-        totalExecutionFee, // _executionFee
+        minExecutionFee, // _executionFee
         referralCode, // _referralCode
-        orderProps, // _orderProps []
+        AddressZero, // _callbackTarget
       ];
     }
 
@@ -1631,11 +1571,13 @@ export default function SwapBox(props) {
     )} USD.`;
 
     Api.callContract(chainId, contract, method, params, {
+      gasLimit: bigNumberify(600000),
       value,
       setPendingTxns,
       sentMsg: `${isLong ? "Long" : "Short"} submitted.`,
       failMsg: `${isLong ? "Long" : "Short"} failed.`,
       successMsg,
+      showModal,
     })
       .then(async () => {
         setIsConfirming(false);
@@ -1655,6 +1597,7 @@ export default function SwapBox(props) {
 
         setPendingPositions({ ...pendingPositions });
       })
+      .catch((e) => console.log("error: ", e))
       .finally(() => {
         setIsSubmitting(false);
         setIsPendingConfirmation(false);
@@ -1690,10 +1633,7 @@ export default function SwapBox(props) {
     }
 
     if (needOrderBookApproval) {
-      if(isSwap)
-        approveOrderBookSwap();
-      else 
-        approveOrderBook();
+      approveOrderBook();
       return;
     }
 
@@ -1791,14 +1731,9 @@ export default function SwapBox(props) {
   let feeBps;
   let swapFees;
   let positionFee;
-  let trailingStopFeeUsd;
   let executionFee = 0;
   let executionFeeUsd = 0;
   let totalFeesUsd; // fees + executionFee
-  const stopLossFee = getConstant(chainId, "DECREASE_ORDER_EXECUTION_GAS_FEE");
-  const stopLossFeeUsd = getUsd(stopLossFee, nativeTokenAddress, false, infoTokens);
-  const takeProfitFee = getConstant(chainId, "DECREASE_ORDER_EXECUTION_GAS_FEE");
-  const takeProfitFeeUsd = getUsd(takeProfitFee, nativeTokenAddress, false, infoTokens);
   const nativeTokenSymbol = getConstant(chainId, "nativeTokenSymbol");
 
   if (isSwap) {
@@ -1824,11 +1759,8 @@ export default function SwapBox(props) {
       feeBps = feeBasisPoints;
     }
   } else if (toUsdMax) {
-
     positionFee = toUsdMax.mul(MARGIN_FEE_BASIS_POINTS).div(BASIS_POINTS_DIVISOR);
     feesUsd = positionFee;
-    trailingStopFeeUsd = toUsdMax.mul(TRAILING_STOP_FEE).div(BASIS_POINTS_DIVISOR);
-
 
     const { feeBasisPoints } = getNextToAmount(
       chainId,
@@ -1848,7 +1780,6 @@ export default function SwapBox(props) {
     }
     feeBps = feeBasisPoints;
   }
-
   if (fromAmount?.gt(bigNumberify(0))) {
     if (isSwap && isMarketOrder) {executionFee = 0;}
     if (isSwap && !isMarketOrder) {executionFee = getConstant(chainId, "SWAP_ORDER_EXECUTION_GAS_FEE");}
@@ -1930,70 +1861,6 @@ export default function SwapBox(props) {
     return (<>-</>);
   };
 
-  const renderTrailingStopFeeTooltip = () => {
-    return (
-      <Tooltip
-        handle={`$${formatAmount(trailingStopFeeUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}`}
-        handleClassName="font-number"
-        position="right-bottom"
-        renderContent={() => {
-          return (
-            <div>
-              Only in case of TS position closing a fee of 0.5% based on the position size will be deducted from your collateral, otherwise the order will be auto canceled and no fees are charged.
-            </div>
-          );
-        }}
-      />)
-  };
-
-  const renderStopLossFeeTooltip = () => {
-    return (
-      <Tooltip
-        handle={`$${formatAmount(stopLossFeeUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}`}
-        handleClassName="font-number"
-        position="right-bottom"
-        renderContent={() => {
-          return (
-            <div>
-              Only in case of the Stop Loss order being executed the execution fee will be used,
-              otherwise the order will be auto canceled and you will receive the reserved execution fee back.
-            </div>
-          );
-        }}
-      />)
-  };
-  const renderTakeProfitFeeTooltip = () => {
-    return (
-      <Tooltip
-        handle={`$${formatAmount(takeProfitFeeUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}`}
-        handleClassName="font-number"
-        position="right-bottom"
-        renderContent={() => {
-          return (
-            <div>
-              Only in case of the Take Profit order being executed the execution fee will be used,
-              otherwise the order will be auto canceled and you will receive the reserved execution fee back.
-            </div>
-          );
-        }}
-      />)
-  };
-  const renderStopLossTakeProfitFeeTooltip = () => {
-    return (
-      <Tooltip
-        handle={`$${formatAmount(takeProfitFeeUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}`}
-        handleClassName="font-number"
-        position="right-bottom"
-        renderContent={() => {
-          return (
-            <div>
-              Only in case of the Stop Loss/Take Profit order being executed the execution fee will be used,
-              otherwise the order will be auto canceled and you will receive the reserved execution fee back. 
-            </div>
-          );
-        }}
-      />)
-  };
 
   const leverageMarks = {
     2: "2x",
@@ -2257,7 +2124,7 @@ export default function SwapBox(props) {
             {/*
             <div className="Exchange-leverage-slider-settings">
               <Checkbox isChecked={isLeverageSliderEnabled} setIsChecked={setIsLeverageSliderEnabled}>
-                <span className="muted">Leverage slider</span>
+                <span>Leverage slider</span>
               </Checkbox>
             </div>
         */}
@@ -2372,69 +2239,44 @@ export default function SwapBox(props) {
               </div>
             </div>
             <ExchangeInfoRow label="Fees">
-              <div className="">
+              <div>
                 {!feesUsd && "-"}
                 {feesUsd && (
-                   renderFeesTooltip()
+                  <Tooltip
+                    handle={`$${formatAmount(totalFeesUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}`}
+                    position="right-bottom"
+                    renderContent={() => {
+                      return (
+                        <>
+                          {swapFees && (
+                            <div>
+                              {collateralToken.symbol} is required for collateral. <br />
+                              <br />
+                              Swap {fromToken.symbol} to {collateralToken.symbol} Fee: &nbsp;$
+                              {formatAmount(swapFees, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}
+                              <br />
+                              <br />
+                            </div>
+                          )}
+                          <div>
+                            Position Fee (0.1% of position size): &nbsp;$
+                            {formatAmount(positionFee, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}
+                          </div>
+                          <br />
+                          <div>
+                            Execution Fee: &nbsp;
+                            {formatAmount(executionFee, nativeTokenSymbol.decimals, nativeTokenSymbol.displayDecimals, true)}
+                            &nbsp; {nativeTokenSymbol}
+                            &nbsp; (${formatAmount(executionFeeUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)})
+                          </div>
+                        </>
+                      );
+                    }}
+                  />
                 )}
               </div>
             </ExchangeInfoRow>
-            {trailingStopPerc > 0 &&
-              <ExchangeInfoRow label="Trailing Stop Fee">
-                <div>
-                  {!trailingStopFeeUsd && "-"}
-                  {trailingStopFeeUsd && (
-                    renderTrailingStopFeeTooltip()
-                  )}
-                </div>
-              </ExchangeInfoRow>
-            }
-            {stopLossPrice && stopLossPrice.gt(0) && !(takeProfitPrice && takeProfitPrice.gt(0)) &&
-              <ExchangeInfoRow label="Stop Loss Fee">
-                <div>
-                  {!stopLossFeeUsd && "-"}
-                  {stopLossFeeUsd && (
-                    renderStopLossFeeTooltip()
-                  )}
-                </div>
-              </ExchangeInfoRow>
-            }
-            {takeProfitPrice && takeProfitPrice.gt(0) && !(stopLossPrice && stopLossPrice.gt(0)) &&
-              <ExchangeInfoRow label="Take Profit Fee">
-                <div>
-                  {!takeProfitFeeUsd && "-"}
-                  {takeProfitFeeUsd && (
-                    renderTakeProfitFeeTooltip()
-                  )}
-                </div>
-              </ExchangeInfoRow>
-            }
-            {takeProfitPrice && takeProfitPrice.gt(0) && stopLossPrice && stopLossPrice.gt(0) &&
-              <ExchangeInfoRow label="Stop Loss/Take Profit Fee">
-                <div>
-                  {!takeProfitFeeUsd && "-"}
-                  {takeProfitFeeUsd && (
-                    renderStopLossTakeProfitFeeTooltip()
-                  )}
-                </div>
-              </ExchangeInfoRow>
-            }
           </div>
-        )}
-
-        {!isSwap && !isStopOrder && !hasExistingPosition && (
-          <Trailer
-            leverageOption={leverageOption}
-            tokenPriceInUsd={nextAveragePrice}
-            isLong={isLong}
-            setTakeProfitPrice={setTakeProfitPrice}
-            setStopLossPrice={setStopLossPrice}
-            setIsStopLoss={setIsStopLoss}
-            setTrailingStopPerc={setTrailingStopPerc}
-            tokenInfo={toTokenInfo}
-            isTrailingEnabled={isTrailingEnabled}
-            setIsTrailingEnabled={setIsTrailingEnabled}
-          ></Trailer>
         )}
         {isStopOrder && (
           <div className="Exchange-swap-section Exchange-trigger-order-info">
@@ -2736,18 +2578,12 @@ export default function SwapBox(props) {
           minExecutionFee={minExecutionFee}
           minExecutionFeeUSD={minExecutionFeeUSD}
           minExecutionFeeErrorMessage={minExecutionFeeErrorMessage}
-          isStopLoss={isStopLoss}
-          stopLossPrice={stopLossPrice}
-          takeProfitPrice={takeProfitPrice}
-          trailingStopPerc={trailingStopPerc}
-          receiveToken={receiveToken}
-          setReceiveToken={setReceiveToken}
-          trailingStopFeeUsd={trailingStopFeeUsd}
+          totalFeesUsd={totalFeesUsd}
+          executionFee={executionFee}
+          executionFeeUsd={executionFeeUsd}
+          swapFees={swapFees}
+          positionFee={positionFee}
           renderFeesTooltip={renderFeesTooltip}
-          renderTrailingStopFeeTooltip={renderTrailingStopFeeTooltip}
-          renderStopLossFeeTooltip={renderStopLossFeeTooltip}
-          renderTakeProfitFeeTooltip={renderTakeProfitFeeTooltip}
-          renderStopLossTakeProfitFeeTooltip={renderStopLossTakeProfitFeeTooltip}
         />
       )}
     </div>

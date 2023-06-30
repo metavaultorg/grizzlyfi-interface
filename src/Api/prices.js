@@ -152,8 +152,8 @@ function getCandlesFromPrices(prices, period) {
 }
 
 function getCandlePricesFromGraph(tokenSymbol, period) {
-  if (["BNB"].includes(tokenSymbol)) {
-    tokenSymbol = "W"+tokenSymbol;
+  if (["tBNB"].includes(tokenSymbol)) {
+    tokenSymbol = "WBNB";
   }
 
   const token = getTokenBySymbol(DEFAULT_CHAIN_ID, tokenSymbol);

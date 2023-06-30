@@ -25,7 +25,7 @@ import {
   useLocalStorageSerializeKey,
   useDebounce,
   isAddressZero,
-  BSC,
+  opBNB,
 } from "../../Helpers";
 import { decodeReferralCode, encodeReferralCode, useReferralsData } from "../../Api/referrals";
 
@@ -97,10 +97,10 @@ function isRecentReferralCodeNotExpired(referralCodeInfo) {
 async function getReferralCodeTakenStatus(account, referralCode, chainId) {
   const referralCodeBytes32 = encodeReferralCode(referralCode);
 
-  const codeOwner = await getReferralCodeOwner(BSC, referralCodeBytes32);
+  const codeOwner = await getReferralCodeOwner(opBNB, referralCodeBytes32);
 
   const takenOnBsc =
-    !isAddressZero(codeOwner) && (codeOwner !== account || (codeOwner === account && chainId === BSC));
+    !isAddressZero(codeOwner) && (codeOwner !== account || (codeOwner === account && chainId === opBNB));
   if (takenOnBsc) {
     return { status: "current", info: codeOwner };
   }

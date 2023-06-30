@@ -31,7 +31,7 @@ import {
   getInfoTokens,
   isAddressZero,
   helperToast,
-  BSC,
+  opBNB,
   ZKSYNC,
   FIRST_DATE_TS,
   getUsd,
@@ -51,7 +51,7 @@ export * from "./prices";
 const { AddressZero } = ethers.constants;
 
 function getCoreGraphClient(chainId) {
-  if (chainId === BSC) {
+  if (chainId === opBNB) {
     return coreGraphClient;
   }
   throw new Error(`Unsupported chain ${chainId}`);
@@ -467,7 +467,7 @@ export function useMinExecutionFee(library, active, chainId, infoTokens) {
   let multiplier;
 
   // multiplier for bsc is just the average gas usage
-  if (chainId === BSC) {
+  if (chainId === opBNB) {
     multiplier = 700000;
   }
 
@@ -927,7 +927,7 @@ export async function callContract(chainId, contract, method, params, opts) {
     const [message, type] = extractError(e);
     switch (type) {
       case NOT_ENOUGH_FUNDS:
-        failMsg = <div>There is not enough BNB in your account on Bsc to send this transaction.</div>;
+        failMsg = <div>There is not enough tBNB in your account on Bsc to send this transaction.</div>;
         break;
       case USER_DENIED:
         failMsg = "Transaction was cancelled.";

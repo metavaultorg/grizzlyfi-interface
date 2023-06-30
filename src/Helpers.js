@@ -26,11 +26,11 @@ export const UI_VERSION = "1.3";
 // use a random placeholder account instead of the zero address as the zero address might have tokens
 export const PLACEHOLDER_ACCOUNT = ethers.Wallet.createRandom().address;
 
-export const BSC = 56;
+export const opBNB = 5611;
 export const ZKSYNC = 324;
 export const MUMBAI_TESTNET = 80001;
 
-export const DEFAULT_CHAIN_ID = BSC;
+export const DEFAULT_CHAIN_ID = opBNB;
 export const CHAIN_ID = DEFAULT_CHAIN_ID;
 
 export const MIN_PROFIT_TIME = 0;
@@ -38,19 +38,18 @@ export const MIN_PROFIT_TIME = 0;
 const SELECTED_NETWORK_LOCAL_STORAGE_KEY = "SELECTED_NETWORK";
 
 const CHAIN_NAMES_MAP = {
-  [BSC]: "Bsc",
+  [opBNB]: "Bsc",
 };
 
 const GAS_PRICE_ADJUSTMENT_MAP = {
-  [BSC]: 20000000000,
+  [opBNB]: 200000000,
 };
 
 const MAX_GAS_PRICE_MAP = {
-  [BSC]: 300000000000,
+  [opBNB]: 2000000000,
 };
 
 const BSC_RPC_PROVIDERS = process.env.REACT_APP_BSC_RPC_URLS.split(" ");
-// const ZKSYNC_RPC_PROVIDERS = process.env.REACT_APP_ZKSYNC_RPC_URLS.split(" ");
 
 export const WALLET_CONNECT_LOCALSTORAGE_KEY = "walletconnect";
 export const WALLET_LINK_LOCALSTORAGE_PREFIX = "-walletlink";
@@ -144,14 +143,14 @@ export const GLLPOOLCOLORS = {
   stMATIC: "#25c0ff",
 };
 export const HIGH_EXECUTION_FEES_MAP = {
-  [BSC]: 3, // 3 USD
+  [opBNB]: 3, // 3 USD
 };
 export const ICONLINKS = {
-  56: {
+  5611: {
     GLL: {
       bsc: "https://bscscan.com/address/0x9F4f8bc00F48663B7C204c96b932C29ccc43A2E8",
     },
-    BNB: {
+    tBNB: {
       coingecko: "https://www.coingecko.com/en/coins/bsc",
       bsc: "https://bscscan.com/address/0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
     },
@@ -199,19 +198,19 @@ export const ICONLINKS = {
 };
 
 export const platformTokens = {
-  56: {
+  5611: {
     // bsc
     GLL: {
       name: "GrizzlyFi Leverage Liquidity",
       symbol: "GLL",
       decimals: 18,
-      address: getContract(BSC, "StakedGllTracker"),
+      address: getContract(opBNB, "FeeGllTracker"),
       imageUrl: "https://res.cloudinary.com/grizzlyfi/image/upload/v1662984581/website-assets/gll-token.png",
     },
   },
 };
 
-const supportedChainIds = [BSC];
+const supportedChainIds = [opBNB];
 const injectedConnector = new InjectedConnector({
   supportedChainIds,
 });
@@ -220,7 +219,7 @@ const getWalletConnectConnector = () => {
   const chainId = localStorage.getItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY) || DEFAULT_CHAIN_ID;
   return new WalletConnectConnector({
     rpc: {
-      [BSC]: BSC_RPC_PROVIDERS[0],
+      [opBNB]: BSC_RPC_PROVIDERS[0],
       
     },
     qrcode: true,
@@ -361,7 +360,7 @@ export function getServerBaseUrl(chainId) {
       return fromLocalStorage;
     }
   }
-  if (chainId === BSC) {
+  if (chainId === opBNB) {
     return process.env.REACT_APP_GRIZZLYFI_API_URL;
   }
   return process.env.REACT_APP_GRIZZLYFI_API_URL;
@@ -1157,14 +1156,13 @@ export function getSwapFeeBasisPoints(isStable) {
 }
 
 const RPC_PROVIDERS = {
-  [BSC]: BSC_RPC_PROVIDERS,
+  [opBNB]: BSC_RPC_PROVIDERS,
 //   [ZKSYNC]: ZKSYNC_RPC_PROVIDERS,
 
 };
 
 const FALLBACK_PROVIDERS = {
-  [BSC]: process.env.REACT_APP_BSC_FALLBACK_PROVIDERS.split(" "),
-//   [ZKSYNC]: process.env.REACT_APP_ZKSYNC_FALLBACK_PROVIDERS.split(" "),
+  [opBNB]: process.env.REACT_APP_BSC_FALLBACK_PROVIDERS.split(" "),
 };
 
 export function shortenAddress(address, length) {
@@ -1720,7 +1718,6 @@ export function useAccountOrders(flagOrdersEnabled, overrideAccount) {
   const shouldRequest = active && account && flagOrdersEnabled;
 
   const orderBookAddress = getContract(chainId, "OrderBook");
-  const orderBookSwapAddress = getContract(chainId, "OrderBookSwap");
   const orderBookReaderAddress = getContract(chainId, "OrderBookReader");
 
   const key = shouldRequest ? [active, chainId, orderBookAddress, account] : false;
@@ -1799,7 +1796,7 @@ export function useAccountOrders(flagOrdersEnabled, overrideAccount) {
         const validIndexes = indexes.filter((i)=>i>=0);
         // console.log("method",validIndexes,indexes,method)
         const ordersData = await orderBookReaderContract[method](
-          method === "getSwapOrders" ? orderBookSwapAddress : orderBookAddress,
+          orderBookAddress,
           account,
           validIndexes
         );
@@ -1900,7 +1897,7 @@ export function numberWithCommas(x) {
 }
 
 export function getExplorerUrl(chainId) {
-  if (chainId === BSC) {
+  if (chainId === opBNB) {
     return process.env.REACT_APP_EXPLORER_BSC_URL;
   }
   return process.env.REACT_APP_EXPLORER_BSC_URL;
@@ -1928,37 +1925,27 @@ export function usePrevious(value) {
   return ref.current;
 }
 
-export const getFees = async () => {
-  try {
-    const response = await fetch(process.env.REACT_APP_GAS_API_URL);
-    const fees = await response.json();
-    const maxPriorityFee = bigNumberify((parseFloat(fees["fast"]["maxPriorityFee"]) * 1000000000).toFixed());
-    const maxFee = bigNumberify((parseFloat(fees["fast"]["maxFee"]) * 1000000000).toFixed());
-    return { maxPriorityFee: maxPriorityFee, maxFee: maxFee };
-  } catch (e) {
-    return { maxPriorityFee: bigNumberify(0), maxFee: bigNumberify(0) };
-  }
+export const getApiGasPrice = async () => {
+  return bigNumberify(0);
 };
 
 export async function setGasPrice(txnOpts, provider, chainId) {
   let maxGasPrice = MAX_GAS_PRICE_MAP[chainId];
   const premium = GAS_PRICE_ADJUSTMENT_MAP[chainId] || bigNumberify(0);
 
-  const fees = await getFees();
+  const gasPrice = await getApiGasPrice();
+  if (gasPrice.gt(0)) {
+      txnOpts["gasPrice"] = gasPrice;//.add(premium);
+  } else if (maxGasPrice) {
+      const gasPrice = await provider.getGasPrice();
+      if (gasPrice.gt(maxGasPrice)) {
+          txnOpts["gasPrice"] = bigNumberify(maxGasPrice);//.add(premium);
+      }else{
+          txnOpts["gasPrice"] = gasPrice;//.add(premium);
+      }
 
-  if (maxGasPrice) {
-    const gasPrice = await provider.getGasPrice();
-    if (gasPrice.gt(maxGasPrice)) {
-      maxGasPrice = gasPrice;
-    }
-
-    txnOpts.maxFeePerGas = maxGasPrice;
-    if (fees.maxPriorityFee.gt(0)) {
-      txnOpts.maxPriorityFeePerGas = fees.maxPriorityFee.add(premium);
-    } else {
-      const feeData = await provider.getFeeData();
-      txnOpts.maxPriorityFeePerGas = feeData.maxPriorityFeePerGas.add(premium);
-    }
+      // const feeData = await provider.getFeeData();
+      // txnOpts["maxPriorityFeePerGas"] = feeData.maxPriorityFeePerGas.add(priority);
   }
 }
 
@@ -1969,7 +1956,7 @@ export async function getGasLimit(contract, method, params = [], value, gasBuffe
   if (!value) {
     value = defaultValue;
   }
-
+  console.log("getGasLimit", contract, method, params);
   let gasLimit = await contract.estimateGas[method](...params, { value });
 
   if (!gasBuffer) {
@@ -2029,7 +2016,7 @@ export function approveTokens({
       ) {
         failMsg = (
           <div>
-            There is not enough BNB in your account on Bsc to send this transaction.
+            There is not enough tBNB in your account on Bsc to send this transaction.
             <br />
           </div>
         );
@@ -2072,16 +2059,16 @@ export const getTokenInfo = (infoTokens, tokenAddress, replaceNative, nativeToke
 };
 
 const NETWORK_METADATA = {
-  [BSC]: {
-    chainId: "0x" + BSC.toString(16),
+  [opBNB]: {
+    chainId: "0x" + opBNB.toString(16),
     chainName: "BSC",
     nativeCurrency: {
-      name: "BNB",
-      symbol: "BNB",
+      name: "tBNB",
+      symbol: "tBNB",
       decimals: 18,
     },
     rpcUrls: BSC_RPC_PROVIDERS,
-    blockExplorerUrls: [getExplorerUrl(BSC)],
+    blockExplorerUrls: [getExplorerUrl(opBNB)],
   },
 };
 
@@ -2451,7 +2438,7 @@ export function getProcessedData(
   data.totalNativeTokenRewardsUsd = data.feeGllTrackerRewardsUsd;
 
   data.totalRewardsUsd = data.totalNativeTokenRewardsUsd;
-
+  data.nativeTokenPrice = nativeTokenPrice;
   return data;
 }
 

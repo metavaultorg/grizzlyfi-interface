@@ -1,23 +1,23 @@
 import { ethers } from "ethers";
 
-import { BSC } from "./Helpers";
+import { opBNB } from "./Helpers";
 
 const { parseEther } = ethers.utils;
 
 const constants = {
-  [BSC]: {
-    nativeTokenSymbol: "BNB",
+  [opBNB]: {
+    nativeTokenSymbol: "tBNB",
     wrappedTokenSymbol: "WBNB",
     defaultCollateralSymbol: "USDC",
     defaultFlagOrdersEnabled: true,
     positionReaderPropsLength: 9,
     v2: true,
 
-    SWAP_ORDER_EXECUTION_GAS_FEE: parseEther("0.5"),
-    INCREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.5"),
+    SWAP_ORDER_EXECUTION_GAS_FEE: parseEther("0.005"),
+    INCREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.005"),
     // contract requires that execution fee be strictly greater than instead of gte
-    DECREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.55"),
-    TRAILING_STOP_EXECUTION_GAS_FEE: parseEther("1"),
+    DECREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.0055"),
+    TRAILING_STOP_EXECUTION_GAS_FEE: parseEther("0.01"),
   },
 };
 

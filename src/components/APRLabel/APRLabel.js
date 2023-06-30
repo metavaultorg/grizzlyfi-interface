@@ -25,8 +25,8 @@ import { useInfoTokens } from "../../Api";
 
 import { getContract } from "../../Addresses";
 
-export default function APRLabel({ chainId, label }) {
-  let { active,library } = useWeb3React();
+export default function APRLabel({ chainId, label, usePercentage=true, tokenDecimals=2, displayDecimals=2 }) {
+  let { active,library, account } = useWeb3React();
 
 
   const rewardReaderAddress = getContract(chainId, "RewardReader");
@@ -55,21 +55,21 @@ export default function APRLabel({ chainId, label }) {
   ];
 
   const { data: walletBalances } = useSWR(
-    [`StakeV2:walletBalances:${active}`, chainId, readerAddress, "getTokenBalancesWithSupplies", PLACEHOLDER_ACCOUNT],
+    [`StakeV2:walletBalances:${active}`, chainId, readerAddress, "getTokenBalancesWithSupplies", account  || PLACEHOLDER_ACCOUNT],
     {
       fetcher: fetcher(undefined, Reader, [walletTokens]),
     }
   );
 
   const { data: depositBalances } = useSWR(
-    [`StakeV2:depositBalances:${active}`, chainId, rewardReaderAddress, "getDepositBalances", PLACEHOLDER_ACCOUNT],
+    [`StakeV2:depositBalances:${active}`, chainId, rewardReaderAddress, "getDepositBalances", account  || PLACEHOLDER_ACCOUNT],
     {
       fetcher: fetcher(undefined, RewardReader, [depositTokens, rewardTrackersForDepositBalances]),
     }
   );
 
   const { data: stakingInfo } = useSWR(
-    [`StakeV2:stakingInfo:${active}`, chainId, rewardReaderAddress, "getStakingInfo", PLACEHOLDER_ACCOUNT],
+    [`StakeV2:stakingInfo:${active}`, chainId, rewardReaderAddress, "getStakingInfo", account  || PLACEHOLDER_ACCOUNT],
     {
       fetcher: fetcher(undefined, RewardReader, [rewardTrackersForStakingInfo]),
     }
@@ -107,5 +107,5 @@ export default function APRLabel({ chainId, label }) {
     nativeTokenPrice,
   );
 
-  return <>{`${formatKeyAmount(processedData, label, 2, 2, true)}%`}</>;
+  return <>{`${formatKeyAmount(processedData, label, tokenDecimals, displayDecimals, true)}${usePercentage? "%" : ""}`}</>;
 }

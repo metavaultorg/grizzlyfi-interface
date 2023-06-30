@@ -28,15 +28,11 @@ import {
   SHORT,
   INCREASE,
   DECREASE,
-  BASIS_POINTS_DIVISOR,
-  expandDecimals,
 } from "../../Helpers";
 import PositionShare from "./PositionShare";
 import PositionDropdown from "./PositionDropdown";
-import AddTrailingStopEditor from "./AddTrailingStopEditor";
-import { BigNumber } from "ethers";
 
-const getOrdersForPosition = (account, position, orders, nativeTokenAddress, trailingStopOrders) => {
+const getOrdersForPosition = (account, position, orders, nativeTokenAddress) => {
   if (!orders || orders.length === 0) {
     return [];
   }
@@ -59,24 +55,6 @@ const getOrdersForPosition = (account, position, orders, nativeTokenAddress, tra
       }
     })
     .map((order) => {
-      if (order.orderType && order.orderType.toNumber() === 3 && trailingStopOrders) {
-        const trailingStopOrder = trailingStopOrders.filter((o) => o.orderIndex === order.index);
-        if (trailingStopOrder.length > 0) {
-          const trailingStopRefPrice = bigNumberify(trailingStopOrder[0].referencePrice).mul(expandDecimals(1, 24));
-          order.triggerPrice = order.isLong
-            ? trailingStopRefPrice
-                .mul(BASIS_POINTS_DIVISOR - order.trailingStopPercentage.toNumber())
-                .div(BASIS_POINTS_DIVISOR)
-            : trailingStopRefPrice
-                .mul(BASIS_POINTS_DIVISOR + order.trailingStopPercentage.toNumber())
-                .div(BASIS_POINTS_DIVISOR);
-        }
-      }
-
-      if (order.orderType && order.orderType.toNumber() > 0) {
-        order.sizeDelta = position.size;
-      }
-
       order.error = getOrderError(account, order, undefined, position);
       if (order.type === DECREASE && order.sizeDelta.gt(position.size)) {
         order.error = "Order size is bigger than position, will only be executable if position increases";
@@ -106,11 +84,9 @@ export default function PositionsList(props) {
     orders,
     setIsWaitingForPluginApproval,
     approveOrderBook,
-    approveOrderBookSwap,
     isPluginApproving,
     isWaitingForPluginApproval,
     orderBookApproved,
-    orderBookSwapApproved,
     positionRouterApproved,
     isWaitingForPositionRouterApproval,
     isPositionRouterApproving,
@@ -122,14 +98,12 @@ export default function PositionsList(props) {
     minExecutionFeeErrorMessage,
     usdgSupply,
     totalTokenWeights,
-    trailingStopOrders,
   } = props;
 
   const [positionToEditKey, setPositionToEditKey] = useState(undefined);
   const [positionToSellKey, setPositionToSellKey] = useState(undefined);
   const [positionToShare, setPositionToShare] = useState(null);
   const [isPositionEditorVisible, setIsPositionEditorVisible] = useState(undefined);
-  const [isAddTrailingStopVisible, setIsAddTrailingStopVisible] = useState(undefined);
   const [isPositionSellerVisible, setIsPositionSellerVisible] = useState(undefined);
   const [collateralTokenAddress, setCollateralTokenAddress] = useState(undefined);
   const [isPositionShareModalOpen, setIsPositionShareModalOpen] = useState(false);
@@ -140,12 +114,6 @@ export default function PositionsList(props) {
     setCollateralTokenAddress(position.collateralToken.address);
     setPositionToEditKey(position.key);
     setIsPositionEditorVisible(true);
-  };
-
-  const addTrailingStop = (position) => {
-    setCollateralTokenAddress(position.collateralToken.address);
-    setPositionToEditKey(position.key);
-    setIsAddTrailingStopVisible(true);
   };
 
   const sellPosition = (position) => {
@@ -161,32 +129,6 @@ export default function PositionsList(props) {
 
   return (
     <div className="PositionsList">
-    <AddTrailingStopEditor
-      pendingPositions={pendingPositions}
-      setPendingPositions={setPendingPositions}
-      positionsMap={positionsMap}
-      positionKey={positionToEditKey}
-      isVisible={isAddTrailingStopVisible}
-      setIsVisible={setIsAddTrailingStopVisible}
-      infoTokens={infoTokens}
-      active={active}
-      account={account}
-      library={library}
-      collateralTokenAddress={collateralTokenAddress}
-      pendingTxns={pendingTxns}
-      setPendingTxns={setPendingTxns}
-      getUsd={getUsd}
-      getLeverage={getLeverage}
-      savedIsPnlInLeverage={savedIsPnlInLeverage}
-      positionRouterApproved={positionRouterApproved}
-      isPositionRouterApproving={isPositionRouterApproving}
-      isWaitingForPositionRouterApproval={isWaitingForPositionRouterApproval}
-      approvePositionRouter={approvePositionRouter}
-      chainId={chainId}
-      minExecutionFee={minExecutionFee}
-      minExecutionFeeUSD={minExecutionFeeUSD}
-      minExecutionFeeErrorMessage={minExecutionFeeErrorMessage}
-    />
       <PositionEditor
         pendingPositions={pendingPositions}
         setPendingPositions={setPendingPositions}
@@ -217,9 +159,7 @@ export default function PositionsList(props) {
         <OrdersToa
           setIsVisible={setOrdersToaOpen}
           approveOrderBook={approveOrderBook}
-          approveOrderBookSwap={approveOrderBookSwap}
           isPluginApproving={isPluginApproving}
-          isSwap={false}
         />
       )}
       {isPositionShareModalOpen && (
@@ -235,9 +175,7 @@ export default function PositionsList(props) {
         <OrdersToa
           setIsVisible={setOrdersToaOpen}
           approveOrderBook={approveOrderBook}
-          approveOrderBookSwap={approveOrderBookSwap}
           isPluginApproving={isPluginApproving}
-          isSwap={false}
         />
       )}
       {isPositionSellerVisible && (
@@ -246,11 +184,9 @@ export default function PositionsList(props) {
           setPendingPositions={setPendingPositions}
           setIsWaitingForPluginApproval={setIsWaitingForPluginApproval}
           approveOrderBook={approveOrderBook}
-          approveOrderBookSwap={approveOrderBookSwap}
           isPluginApproving={isPluginApproving}
           isWaitingForPluginApproval={isWaitingForPluginApproval}
           orderBookApproved={orderBookApproved}
-          orderBookSwapApproved={orderBookSwapApproved}
           positionsMap={positionsMap}
           positionKey={positionToSellKey}
           isVisible={isPositionSellerVisible}
@@ -293,8 +229,7 @@ export default function PositionsList(props) {
               </div>
             )}
             {positions.map((position) => {
-              const positionOrders = getOrdersForPosition(account, position, orders, nativeTokenAddress, trailingStopOrders);
-              const hasTrailingStopOrder = !!positionOrders.find((order) => order.orderType && order.orderType.eq(BigNumber.from("3")));
+              const positionOrders = getOrdersForPosition(account, position, orders, nativeTokenAddress);
               const liquidationPrice = getLiquidationPrice(position);
               const hasPositionProfit = position[showPnlAfterFees ? "hasProfitAfterFees" : "hasProfit"];
               const positionDelta =
@@ -485,15 +420,6 @@ export default function PositionsList(props) {
                     >
                       Edit
                     </button>
-                    {!hasTrailingStopOrder && position.leverage &&
-                    <button
-                      className="App-button-option App-card-option"
-                      disabled={position.size.eq(0)}
-                      onClick={() => addTrailingStop(position)}
-                    >
-                      Add Trailing Stop
-                    </button>
-                    }
                     <button
                       className="App-button-option App-card-option"
                       onClick={() => {
@@ -543,9 +469,8 @@ export default function PositionsList(props) {
           )}
           {positions.map((position) => {
             const liquidationPrice = getLiquidationPrice(position) || bigNumberify(0);
-            const positionOrders = getOrdersForPosition(account, position, orders, nativeTokenAddress, trailingStopOrders);
+            const positionOrders = getOrdersForPosition(account, position, orders, nativeTokenAddress);
             const hasOrderError = !!positionOrders.find((order) => order.error);
-            const hasTrailingStopOrder = !!positionOrders.find((order) => order.orderType && order.orderType.eq(BigNumber.from("3")));
             const hasPositionProfit = position[showPnlAfterFees ? "hasProfitAfterFees" : "hasProfit"];
             const positionDelta =
               position[showPnlAfterFees ? "pendingDeltaAfterFees" : "pendingDelta"] || bigNumberify(0);
@@ -751,9 +676,6 @@ export default function PositionsList(props) {
                     handleEditCollateral={() => {
                       editPosition(position);
                     }}
-                    handleAddTrailingStop={() => {
-                      addTrailingStop(position);
-                    }}
                     handleShare={() => {
                       setPositionToShare(position);
                       setIsPositionShareModalOpen(true);
@@ -761,8 +683,6 @@ export default function PositionsList(props) {
                     handleMarketSelect={() => {
                       onPositionClick(position);
                     }}
-                    hasTrailingStopOrder={hasTrailingStopOrder}
-                    position={position}
                   />
                 </td>
               </tr>

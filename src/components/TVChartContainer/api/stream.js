@@ -1,10 +1,12 @@
-import { getTokenBySymbol } from "../../../data/Tokens";
 import historyProvider from "./historyProvider.js";
-import { DEFAULT_CHAIN_ID } from "../../../Helpers";
+import {
+  getPythProgramKeyForCluster,
+  getPythClusterApiUrl,
+  PythHttpClient,
+} from "@pythnetwork/client";
+import { Connection } from "@solana/web3.js";
 
 // Websocket creation
-var socket_url = process.env.REACT_APP_PRICE_API_WS_URL;
-var socket;
 connect();
 // keep track of subscriptions
 var _subs = [];
@@ -96,54 +98,32 @@ function updateBar(data, sub) {
   return _lastBar;
 }
 
-function onMessage(message) {
-  // console.log(`onMessage`);
+async function connect() {
+  const PYTHNET_CLUSTER_NAME = "pythnet";
+  const connection = new Connection(getPythClusterApiUrl(PYTHNET_CLUSTER_NAME));
+  const pythPublicKey = getPythProgramKeyForCluster(PYTHNET_CLUSTER_NAME);
   try {
-    if (_subs.length === 0) return;
-    const data = JSON.parse(message.data);
-    const tokenPrices = {
-      BTC: data.prices[0],
-      ETH: data.prices[1],
-      LINK: data.prices[2],
-      UNI: data.prices[3],
-      MATIC: data.prices[4],
-      AAVE: data.prices[5],
-    };
-    for (let i = 0; i < _subs.length; i++) {
-      const chartSubcription = _subs[i];
-      const tokenSymbol = chartSubcription.symbolInfo.name.split("/")[0];
-      const tokenPrice = tokenPrices[tokenSymbol];
-      if (tokenPrice) {
-        // console.log("tokenPrice: " + tokenPrice);
+    const pythClient = new PythHttpClient(connection, pythPublicKey);
+
+    setInterval(async () => {
+      const data = await pythClient.getData();
+      for (let i = 0; i < _subs.length; i++) {
+        const chartSubcription = _subs[i];
+        const tokenSymbol = chartSubcription.symbolInfo.name.split("/")[0];
+        const pythSymbol = (symbol) => `Crypto.${symbol}/USD`;
+        const product = data.productPrice.get(pythSymbol(tokenSymbol));
         const barData = {
-          ts: data.ts / 1000,
-          price: tokenPrice / 10000,
+          ts: product.timestamp.toString(),
+          price: product.price,
         };
         var _lastBar = updateBar(barData, chartSubcription);
         chartSubcription.listener(_lastBar);
         chartSubcription.lastBar = _lastBar;
       }
-    }
-  } catch (error) {
-    console.log(error);
-  }
-}
+    }, 3000);
 
-function onClose() {
-  console.log("Websocket Closed");
-  _interval = setInterval(connect, 10000);
-}
 
-function connect() {
-  try {
-    socket = new WebSocket(socket_url);
-    socket.onmessage = onMessage;
-    socket.onclose = onClose;
-    if (_interval) clearInterval(_interval);
-    console.log("Websocket Connected");
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 }
 
 export default { subscribeBars, unsubscribeBars, updateBar, updateBarWithAveragePrice };

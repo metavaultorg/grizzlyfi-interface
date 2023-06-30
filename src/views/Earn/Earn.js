@@ -21,7 +21,7 @@ import {
   useChainId,
   USD_DECIMALS,
   BASIS_POINTS_DIVISOR,
-  BSC,
+  opBNB,
 } from "../../Helpers";
 import {
   useInfoTokens,
@@ -45,7 +45,7 @@ export default function Earn(props) {
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
 
-  
+
   useEffect(() => {
     const hash = history.location.hash.replace("#", "");
     const buying = hash === "redeem" ? false : true;
@@ -70,6 +70,8 @@ export default function Earn(props) {
       adjustedUsdgSupply = adjustedUsdgSupply.add(tokenInfo.usdgAmount);
     }
   }
+
+
   const getWeightText = (tokenInfo) => {
     if (
       !tokenInfo.weight ||
@@ -151,10 +153,10 @@ export default function Earn(props) {
       </div>
       <div className='Earn-content'>
         <div className='Earn-left'>
-          <div className="info-card-section" style={{maxWidth:912}}>
-            <ItemCard style={{ minWidth: 218 }} label='APR' value={<APRLabel chainId={BSC} label="gllAprTotal" key="BSC" />} icon={IconPercentage} />
-            <ItemCard style={{ minWidth: 298 }}  label='Assets Under Management' value={ <AUMLabel />} icon={IconMoney} />
-            <ItemCard style={{ width: '-webkit-fill-available', minWidth: 320 }}  label='Claimable Rewards' value='$92.21' icon={IconClaim} buttonEle={<button
+          <div className="info-card-section" style={{ maxWidth: 912 }}>
+            <ItemCard style={{ minWidth: 218 }} label='APR' value={<APRLabel chainId={opBNB} label="gllAprTotal" key="BSC" />} icon={IconPercentage} />
+            <ItemCard style={{ minWidth: 298 }} label='Assets Under Management' value={<AUMLabel />} icon={IconMoney} />
+            <ItemCard style={{ width: '-webkit-fill-available', minWidth: 320 }} label='Claimable Rewards (BNB)' value={<APRLabel usePercentage={false} tokenDecimals={18} chainId={opBNB} label="feeGllTrackerRewards" key="BSC" />} icon={IconClaim} buttonEle={<button
               className="btn-secondary "
               style={{ width: 75, height: 32 }}
             >
@@ -166,7 +168,7 @@ export default function Earn(props) {
         </div>
         <div className='Earn-right'>
           <div className='Exchange-swap-box'>
-            <GllSwapBox {...props} isBuying={isBuying} setIsBuying={setIsBuying} getWeightText={getWeightText}/>
+            <GllSwapBox {...props} isBuying={isBuying} setIsBuying={setIsBuying} getWeightText={getWeightText} />
           </div>
         </div>
       </div>
@@ -205,7 +207,7 @@ export default function Earn(props) {
 
                   <tr
                     key={index}
-                    style={{ background:'rgba(255,255,255,0.05)'}}
+                    style={{ background: 'rgba(255,255,255,0.05)' }}
                   >
                     <td>
                       <div style={{ display: "flex", alignItems: 'center', gap: 16 }}>
@@ -222,22 +224,22 @@ export default function Earn(props) {
                     </td>
                     <td className="font-number">{formatKeyAmount(tokenInfo, "managedAmount", token.decimals, 2, true)}</td>
                     <td>
-                    <TooltipComponent
-                            handle={`$${formatKeyAmount(tokenInfo, "managedUsd", USD_DECIMALS, 0, true)}`}
-                            position="right-bottom"
-                            handleClassName="font-number"
-                            renderContent={() => {
-                              return (
-                                <>
-                                  Pool Amount: {formatKeyAmount(tokenInfo, "managedAmount", token.decimals, 2, true)}{" "}
-                                  {token.symbol}
-                                  <br />
-                                  <br />
-                                  Max {tokenInfo.symbol} Capacity: ${formatAmount(maxUsdgAmount, 18, 0, true)}
-                                </>
-                              );
-                            }}
-                          />  
+                      <TooltipComponent
+                        handle={`$${formatKeyAmount(tokenInfo, "managedUsd", USD_DECIMALS, 0, true)}`}
+                        position="right-bottom"
+                        handleClassName="font-number"
+                        renderContent={() => {
+                          return (
+                            <>
+                              Pool Amount: {formatKeyAmount(tokenInfo, "managedAmount", token.decimals, 2, true)}{" "}
+                              {token.symbol}
+                              <br />
+                              <br />
+                              Max {tokenInfo.symbol} Capacity: ${formatAmount(maxUsdgAmount, 18, 0, true)}
+                            </>
+                          );
+                        }}
+                      />
                     </td>
                     <td className="font-number">{formatAmount(utilization, 2, 2, false)}%</td>
                     <td>{getWeightText(tokenInfo)}</td>
@@ -310,7 +312,7 @@ export default function Earn(props) {
                             </>
                           );
                         }}
-                      />  
+                      />
                     </div>
                   </div>
                   <div className="App-card-row">
@@ -322,7 +324,7 @@ export default function Earn(props) {
                     <div className="font-number">{getWeightText(tokenInfo)}</div>
                   </div>
                 </div>
-                
+
               </div>
             )
           }

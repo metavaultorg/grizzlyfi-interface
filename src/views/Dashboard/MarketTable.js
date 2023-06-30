@@ -9,7 +9,7 @@ import { getImageUrl } from "../../cloudinary/getImageUrl";
 export default function MarketTable() {
     const [sorter, setSorter] = useState({ sortBy: 'change', isAsc: true })
     const tokenPairMarketList = useTokenPairMarketData();
-
+    console.log("tokenPairMarketList", tokenPairMarketList);
 
 
     function SortTh({ value, title, }) {

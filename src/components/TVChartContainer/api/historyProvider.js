@@ -13,7 +13,7 @@ export default {
     return axios
       .get(`${api_root}/api/candles/${url}`, {
         params: {
-          preferableChainId: "56",
+          preferableChainId: "5611",
           period:
             resolution === "1D"
               ? "1d"

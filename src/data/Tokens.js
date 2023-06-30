@@ -2,32 +2,32 @@ import { ethers } from "ethers";
 import { getContract } from "../Addresses";
 
 const TOKENS = {
-  56: [
+  5611: [
     // bsc
     {
-      name: "Bnb",
-      symbol: "BNB",
+      name: "tBnb",
+      symbol: "tBNB",
       decimals: 18,
       address: ethers.constants.AddressZero,
       coingeckoUrl: "https://www.coingecko.com/en/coins/bnb",
       isNative: true,
-      isShortable: true,
-      displayDecimals:4
+      isShortable: false,
+      displayDecimals:3
     },
     {
       name: "W.Bnb",
       symbol: "WBNB",
       decimals: 18,
-      address: "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      address: "0x617d91847b74b70a3d3e3745445cb0d1b3c8560e",
       coingeckoUrl: "https://www.coingecko.com/en/coins/polygon",
       isWrapped: true,
       baseSymbol: "BNB",
-      displayDecimals:4
+      displayDecimals:3
     },
     {
       name: "Ethereum",
       symbol: "ETH",
-      address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+      address: "0xC27f7aa3D8097Bb4E624844010Af804Dae23818c",
       coingeckoUrl: "https://www.coingecko.com/en/coins/ethereum",
       decimals: 18,
       isShortable: true,
@@ -36,7 +36,7 @@ const TOKENS = {
     {
       name: "Bitcoin",
       symbol: "BTC",
-      address: "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
+      address: "0xB30AED2ea16d77dD0Ccb97172cCcfC483E713DCE",
       coingeckoUrl: "https://www.coingecko.com/en/coins/bitcoin",
       decimals: 8,
       isShortable: true,
@@ -45,7 +45,7 @@ const TOKENS = {
     {
       name: "USDC",
       symbol: "USDC",
-      address: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+      address: "0x9367c561915f9D062aFE3b57B18e30dEC62b8488",
       coingeckoUrl: "https://www.coingecko.com/en/coins/usd-coin",
       decimals: 6,
       isStable: true,
@@ -54,63 +54,28 @@ const TOKENS = {
     {
       name: "USDT",
       symbol: "USDT",
-      address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+      address: "0x85778C9284B24D5f4D58568a0707fb55ECc50023",
       coingeckoUrl: "https://www.coingecko.com/en/coins/tether",
       decimals: 6,
       isStable: true,
       displayDecimals:4
     },
-    {
-      name: "Dai",
-      symbol: "DAI",
-      address: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
-      coingeckoUrl: "https://www.coingecko.com/en/coins/dai",
-      decimals: 18,
-      isStable: true,
-      displayDecimals:4
-    },
-    {
-      name: "Binance USD",
-      symbol: "BUSD",
-      address: "0x9C9e5fD8bbc25984B178FdCE6117Defa39d2db39",
-      coingeckoUrl: "https://www.coingecko.com/en/coins/binance-usd",
-      decimals: 18,
-      isStable: true,
-      displayDecimals:4,
-      isNew: false
-    },
   ],
 };
 
-export const CHAIN_FEED_IDS = {
-  56: {
-    MATIC_USD: "0xab594600376ec9fd91f8e885dadf0ce036862de0",
-    ETH_USD: "0xf9680d99d6c9589e2a93a78a04a279e509205945",
-    BTC_USD: "0xc907e116054ad103354f2d350fd2514433d57f6f",
-    LINK_USD: "0xd9ffdb71ebe7496cc440152d43986aae0ab76665",
-    UNI_USD: "0xdf0fb4e4f928d2dcb76f438575fdd8682386e13c",
-    BNB_USD: "0x82a6c4af830caa6c97bb504425f6a66165c2c26e",
-    AAVE_USD: "0x72484b12719e23115761d5da1646945632979bb6",
-    USDC_USD: "0xfe4a8cc5b5b2366c1b58bea3858e81843581b2f7",
-    DAI_USD: "0x4746dec9e833a82ec7c2c1356372ccf2cfcd2f3d",
-    USDT_USD: "0x0a6513e40db6eb1b165753ad52e80663aea50545",
-    BUSD_USD: "0xe0dc07d5ed74741ceeda61284ee56a2a0f7a4cc9",
-    stMATIC_USD: "0x97371df4492605486e23da797fa68e55fc38a13f",
-  },
-};
 
 const ADDITIONAL_TOKENS = {
-  56: [
+  5611: [
     {
       name: "GrizzlyFi Leverage Liquidity",
       symbol: "GLL",
-      address: getContract(56, "GLL"),
+      address: getContract(5611, "GLL"),
       decimals: 18,
     },
   ],
 };
 
-const CHAIN_IDS = [56];
+const CHAIN_IDS = [5611];
 
 const TOKENS_MAP = {};
 const TOKENS_MAP_LOWER = {};

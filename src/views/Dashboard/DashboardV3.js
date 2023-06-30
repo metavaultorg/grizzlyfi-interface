@@ -16,7 +16,7 @@ import {
     USD_DECIMALS,
     GLL_DISPLAY_DECIMALS,
     GLL_DECIMALS,
-    BSC,
+    opBNB,
     getPageTitle,
     getProcessedData,
     getBalanceAndSupplyData,
@@ -59,6 +59,7 @@ import MarketTable from "./MarketTable";
 import OpenedPositions from "./OpenedPositions";
 import AUMLabel from "../../components/AUMLabel/AUMLabel";
 import { useGllData } from "../../views/Earn/dataProvider";
+import APRLabel from "../../components/APRLabel/APRLabel";
 
 export default function DashboardV3(props) {
 
@@ -286,7 +287,7 @@ export default function DashboardV3(props) {
                 <div className="info-card-section" style={{ margin: '40px auto', maxWidth: 952 }}>
                     <ItemCard label='Total PnL' value={`$${formatKeyAmount(processedData, "totalGllRewardsUsd", USD_DECIMALS, 2, true)}`} icon={IconPercentage} />
                     <ItemCard label='Your GLL deposit' value={`$${formatKeyAmount(processedData, "gllBalanceUsd", USD_DECIMALS, 2, true)}`} icon={IconMoney} />
-                    <ItemCard style={{ width: '-webkit-fill-available', }} label='Claimable' value='$92.21' icon={IconClaim} buttonEle={<button
+                    <ItemCard style={{ width: '-webkit-fill-available', }} label='Claimable Rewards (BNB)' value={<APRLabel usePercentage={false} tokenDecimals={18} chainId={opBNB} label="feeGllTrackerRewards" key="BSC" />} icon={IconClaim} buttonEle={<button
                         className="btn-secondary "
                         style={{ width: 75, height: 32 }}
                     >
@@ -458,7 +459,7 @@ export default function DashboardV3(props) {
                     <ItemCard label='Price of GLL' value={`$${formatKeyAmount(processedData, "gllPrice", USD_DECIMALS, GLL_DISPLAY_DECIMALS, true)}`} icon={IconToken} />
                     <ItemCard label='Assets in GLL' value={`$${formatKeyAmount(processedData, "gllSupplyUsd", USD_DECIMALS, 2, true)}`} icon={IconMoney} />
                     <ItemCard label='GLL APY' value={`${formatKeyAmount(processedData, "gllAprTotal", 2, 2, true)}%`} icon={IconPercentage} />
-                    <ItemCard label='GLL 24h Rewards' value='$521' icon={IconClaim} />
+                    <ItemCard label='GLL 24h Rewards' value='$...' icon={IconClaim} />
                 </div>
                 <div style={{ maxWidth: 500, margin: 'auto', marginTop: 80, position: 'relative' }}>
                     <div style={{ position: 'absolute', zIndex: '-1', left: 17, width: '90%', height: 48, background: '#f2c75c', opacity: '0.6', filter: 'blur(41px)' }}></div>

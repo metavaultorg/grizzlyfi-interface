@@ -37,7 +37,7 @@ import {
     GLL_COOLDOWN_DURATION,
     SECONDS_PER_YEAR,
     USDG_DECIMALS,
-    BSC,
+    opBNB,
     PLACEHOLDER_ACCOUNT,
     SLIPPAGE_BPS_KEY,
     DEFAULT_SLIPPAGE_AMOUNT,
@@ -118,12 +118,11 @@ export default function GllSwapBox(props) {
     const rewardReaderAddress = getContract(chainId, "RewardReader");
     const vaultAddress = getContract(chainId, "Vault");
     const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
-    const stakedGllTrackerAddress = getContract(chainId, "StakedGllTracker");
     const feeGllTrackerAddress = getContract(chainId, "FeeGllTracker");
     const usdgAddress = getContract(chainId, "USDG");
     const gllManagerAddress = getContract(chainId, "GllManager");
     const rewardRouterAddress = getContract(chainId, "RewardRouter");
-    const tokensForBalanceAndSupplyQuery = [stakedGllTrackerAddress, usdgAddress];
+    const tokensForBalanceAndSupplyQuery = [feeGllTrackerAddress, usdgAddress];
 
     const tokenAddresses = tokens.map((token) => token.address);
     const { data: tokenBalances } = useSWR(
@@ -213,7 +212,6 @@ export default function GllSwapBox(props) {
     }
     const gllSupplyUsd = gllSupply.mul(gllPrice).div(expandDecimals(1, GLL_DECIMALS));
 
-
     const swapToken = getToken(chainId, swapTokenAddress);
     const swapTokenInfo = getTokenInfo(infoTokens, swapTokenAddress);
 
@@ -228,7 +226,6 @@ export default function GllSwapBox(props) {
     const swapUsdMin = getUsd(swapAmount, swapTokenAddress, false, infoTokens);
     const gllUsdMax =
         gllAmount && gllPrice ? gllAmount.mul(gllPrice).div(expandDecimals(1, GLL_DECIMALS)) : undefined;
-
     let isSwapTokenCapReached;
     if (swapTokenInfo.managedUsd && swapTokenInfo.maxUsdgAmount) {
         isSwapTokenCapReached = swapTokenInfo.managedUsd.gt(
@@ -639,7 +636,7 @@ export default function GllSwapBox(props) {
                     label='Current Deposit'
                     value={
                         <div className="font-number" style={{ display: "inline-flex",alignItems:"center", fontSize: "24px", fontWeight: "500" }}>
-                            {formatAmount(gllBalance, GLL_DECIMALS, 4, true)} GLL
+                            {formatAmount(gllBalance, GLL_DECIMALS, 2, true)} GLL
                             <div className="font-number" style={{ display: "inline-flex", fontSize: "16px", fontWeight:"400", opacity: "0.5" }}>
                                 (~${formatAmount(gllBalanceUsd, USD_DECIMALS, 2, true)})
                             </div>
