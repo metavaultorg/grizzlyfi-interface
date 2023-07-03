@@ -695,7 +695,7 @@ function FullApp() {
                     alt="Logo"
                   /> */}
                   <Logo />
-                  <div className="logo-text">FUTURES</div>
+                  <div className="logo-text">TRADE</div>
                 </a>
                 
               </div>

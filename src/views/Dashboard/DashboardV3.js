@@ -186,6 +186,64 @@ export default function DashboardV3(props) {
 
     return <SEO title={getPageTitle("Dashboard")}>
         <div className="default-container DashboardV2 page-layout">
+            <div
+                className="fauce"
+                
+            >
+                <div style={{ fontSize: 20, fontWeight: 600,color:'#afafaf' }}>
+                    <span style={{ color: '#fff' }}>Grizzlyfi</span>
+                    &nbsp;   is launching on&nbsp;
+                    <a href="https://testnet.binance.org/" style={{ fontWeight: 'bold', color: '#fff',textDecoration:'none' }}>opBNB Tesnet.</a>
+                    &nbsp;  Get your Testnet tokens now
+                </div>
+                <div className="fauce-right">
+                    <div>
+                        <img
+                            style={{ objectFit: "contain" }}
+                            src={getImageUrl({path: `coins/eth`,})}
+                            alt={''}
+                            width={40}
+                            height={40}
+                        />
+                        <img
+                            style={{ objectFit: "contain" }}
+                            src={getImageUrl({ path: `coins/btc`, })}
+                            alt={''}
+                            width={40}
+                            height={40}
+                        />
+                        <img
+                            style={{ objectFit: "contain" }}
+                            src={getImageUrl({ path: `coins/tbnb`, })}
+                            alt={''}
+                            width={40}
+                            height={40}
+                        />
+                        <img
+                            style={{ objectFit: "contain" }}
+                            src={getImageUrl({ path: `coins/usdc`, })}
+                            alt={''}
+                            width={40}
+                            height={40}
+                        />
+                        <img
+                            style={{ objectFit: "contain" }}
+                            src={getImageUrl({ path: `coins/usdt`, })}
+                            alt={''}
+                            width={40}
+                            height={40}
+                        />
+                    </div>
+                    <button
+                        className="claim-btn"
+                        style={{
+                            
+                        }}
+                    >
+                        Claim
+                    </button>
+                </div>
+            </div>
             <div className="section-total-info">
                 <div className="total-info">
                     <div className="label">Total Trading Volume</div>

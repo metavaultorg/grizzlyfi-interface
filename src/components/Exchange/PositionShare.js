@@ -209,7 +209,7 @@ function PositionShareCard({
         <div className="bg-card--backdrop">
           <div className="logo">
             <Logo />
-            <div className="logo-text">FUTURES</div>
+            <div className="logo-text">TRADE</div>
           </div>
           <div className="share-infos" >
             <div className="share-token-infos">
