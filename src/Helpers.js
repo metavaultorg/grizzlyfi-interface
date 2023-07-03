@@ -2471,7 +2471,7 @@ export function sleep(ms) {
 }
 
 export function getPageTitle(data) {
-  return `${data} | Grizzly.fi Futures - Perpetual trading exchange`;
+  return `${data} | Grizzly.fi Trade - Perpetual trading exchange`;
 }
 
 export function isHashZero(value) {
