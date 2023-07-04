@@ -193,7 +193,7 @@ export default function DashboardV3(props) {
                 <div style={{ fontSize: 20, fontWeight: 600,color:'#afafaf' }}>
                     <span style={{ color: '#fff' }}>Grizzlyfi</span>
                     &nbsp;   is launching on&nbsp;
-                    <a href="https://testnet.binance.org/" style={{ fontWeight: 'bold', color: '#fff',textDecoration:'none' }}>opBNB Tesnet.</a>
+                    <a href="https://testnet.binance.org/" style={{ fontWeight: 'bold', color: '#fff',textDecoration:'none' }}>opBNB Testnet.</a>
                     &nbsp;  Get your Testnet tokens now
                 </div>
                 <div className="fauce-right">
