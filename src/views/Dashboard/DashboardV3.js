@@ -302,7 +302,7 @@ export default function DashboardV3(props) {
                 <div className="section section-noinvestments">
                     <div className="section-header">
                         <h1>No investment Yet</h1>
-                        <p className="text-description" style={{ margin: '16px auto 56px', maxWidth: 658, }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas varius tortor nibh, sit amet tempor nibh finibus et. Aenean eu enim justo. Vestibulum aliquam hendrerit molestie. Mauris </p>
+                        <p className="text-description" style={{ margin: '16px auto 56px', maxWidth: 658, }}>Start putting your money to work. You can trade BTC, ETH & BNB with up to 50x leverage, or provide liquidity and earn the fees paid by traders.</p>
                     </div>
 
                     <div className="DashboardV3-cards">
