@@ -6,20 +6,14 @@ import Checkbox from "../Checkbox/Checkbox";
 import "./OrdersToa.css";
 
 export default function OrdersToa(props) {
-  const { setIsVisible, isPluginApproving, approveOrderBook, approveOrderBookSwap,isSwap } = props;
+  const { setIsVisible, isPluginApproving, approveOrderBook } = props;
 
   const [isChecked, setIsChecked] = useState(false);
 
   const onConfirmationClick = () => {
-    if(isSwap)
-      approveOrderBookSwap().then(() => {
-        setIsVisible(false);
-      });
-    else  
-      approveOrderBook().then(() => {
-        setIsVisible(false);
-      });
-
+    approveOrderBook().then(() => {
+      setIsVisible(false);
+    });
   };
 
   const getPrimaryText = () => {

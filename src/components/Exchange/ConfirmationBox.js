@@ -379,20 +379,38 @@ export default function ConfirmationBox(props) {
   }, [existingOrder, isSwap, chainId]);
 
   const renderMain = useCallback(() => {
+
     if (isSwap) {
-      return (
-        <div className="Confirmation-box-main">
-          <div>
-            Pay&nbsp;{formatAmount(fromAmount, fromToken.decimals, 4, true)} {fromToken.symbol} ($
-            {formatAmount(fromUsdMin, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)})
-          </div>
-          <div className="Confirmation-box-main-icon"></div>
-          <div>
-            Receive&nbsp;{formatAmount(toAmount, toToken.decimals, 4, true)} {toToken.symbol} ($
-            {formatAmount(toUsdMax, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)})
-          </div>
-        </div>
-      );
+        return (
+            <div className="Confirmation-box-top">
+                <div className="Confirmation-box-top-label"><span>Pay</span><span>Receive</span></div>
+                <div className="Confirmation-box-top-token-row">
+                    <div className="Confirmation-box-top-token-box">
+                        <span className="token font-number">
+                            {formatAmount(fromAmount, fromToken.decimals, 4, true)} {fromToken.symbol}
+                        </span>
+                        <span className="usd font-number">
+                            ${formatAmount(fromUsdMin, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}
+                        </span>
+                    </div>
+                    <div className="Swap-next-container">
+                        <div className="Swap-next">
+                            <img src={IconNext} alt="" width={16} style={{ marginBottom: "-8px", opacity: "0.3" }} />
+                            <img src={IconNext} alt="" width={16} />
+                        </div>
+                    </div>
+                    <div className="Confirmation-box-top-token-box">
+                        <span className={cx("token font-number", isLong ? "positive" : isShort? "negative":"")}>
+                            {formatAmount(toAmount, toToken.decimals, 4, true)} {toToken.symbol}
+                        </span>
+                        <span className="usd font-number">
+                            ${formatAmount(toUsdMax, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        )
     }
 
     return (
@@ -414,7 +432,7 @@ export default function ConfirmationBox(props) {
             </div>
           </div>
           <div className="Confirmation-box-top-token-box">
-            <span className={cx("token font-number", isLong ? "positive" : "negative")}>
+            <span className={cx("token font-number", isLong ? "positive" : isShort? "negative":"")}>
               {formatAmount(toAmount, toToken.decimals, 4, true)} {toToken.symbol}
             </span>
             <span className="usd font-number">
@@ -615,7 +633,7 @@ export default function ConfirmationBox(props) {
             </ExchangeInfoRow>
           )}
           {!isMarketOrder && (
-            <ExchangeInfoRow label="Limit Price" isTop={true}>
+            <ExchangeInfoRow label="Limit Price" isTop={false}>
               ${formatAmount(triggerPriceUsd, USD_DECIMALS, toToken ? toToken.displayDecimals : 2, true)}
             </ExchangeInfoRow>
           )}
@@ -777,6 +795,9 @@ export default function ConfirmationBox(props) {
           {renderMain()}
           {renderFeeWarning()}
           {renderSpreadWarning()}
+
+          <div style={{height:8}} />
+          <div className="Confirmation-box-info-box">
           {orderOption === LIMIT && renderAvailableLiquidity()}
           <ExchangeInfoRow label="Min. Receive">
             {formatAmount(minOut, toTokenInfo.decimals, 4, true)} {toTokenInfo.symbol}
@@ -813,6 +834,7 @@ export default function ConfirmationBox(props) {
               <div className="align-right font-number">{toTokenUsd} USD</div>
             </div>
           )}
+         </div>
         </div>
       </>
     );
@@ -845,7 +867,7 @@ export default function ConfirmationBox(props) {
           <button
             style={{ }}
             onClick={onConfirmationClick}
-            className={cx("App-cta Confirmation-box-button text-uppercase", isLong?"positive":"negative")}
+            className={cx("App-cta Confirmation-box-button text-uppercase", isLong?"positive":isShort?"negative":"")}
             disabled={!isPrimaryEnabled()}
           >
             {getPrimaryText()}

@@ -25,7 +25,7 @@ import {
   useLocalStorageSerializeKey,
   useDebounce,
   isAddressZero,
-  POLYGON,
+  opBNB,
 } from "../../Helpers";
 import { decodeReferralCode, encodeReferralCode, useReferralsData } from "../../Api/referrals";
 
@@ -97,11 +97,11 @@ function isRecentReferralCodeNotExpired(referralCodeInfo) {
 async function getReferralCodeTakenStatus(account, referralCode, chainId) {
   const referralCodeBytes32 = encodeReferralCode(referralCode);
 
-  const codeOwner = await getReferralCodeOwner(POLYGON, referralCodeBytes32);
+  const codeOwner = await getReferralCodeOwner(opBNB, referralCodeBytes32);
 
-  const takenOnPolygon =
-    !isAddressZero(codeOwner) && (codeOwner !== account || (codeOwner === account && chainId === POLYGON));
-  if (takenOnPolygon) {
+  const takenOnBsc =
+    !isAddressZero(codeOwner) && (codeOwner !== account || (codeOwner === account && chainId === opBNB));
+  if (takenOnBsc) {
     return { status: "current", info: codeOwner };
   }
   return { status: "none", info: codeOwner };
@@ -915,7 +915,7 @@ function AffiliatesInfo({
                                 handle={<BiErrorCircle color="#e82e56" size={16} />}
                                 renderContent={() => (
                                   <div>
-                                    This code has been taken by someone else on Polygon, you will not receive
+                                    This code has been taken by someone else on Bsc, you will not receive
                                     fee-cashback from traders using this code on.
                                   </div>
                                 )}

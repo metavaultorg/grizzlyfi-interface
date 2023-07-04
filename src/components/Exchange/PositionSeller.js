@@ -14,7 +14,7 @@ import {
   USD_DISPLAY_DECIMALS,
   DUST_USD,
   BASIS_POINTS_DIVISOR,
-  USDM_ADDRESS,
+  USDG_ADDRESS,
   SLIPPAGE_BPS_KEY,
   TRIGGER_PREFIX_BELOW,
   TRIGGER_PREFIX_ABOVE,
@@ -40,7 +40,7 @@ import {
   getTimeRemaining,
   getNextToAmount,
   getUsd,
-  USDM_DECIMALS,
+  USDG_DECIMALS,
   CLOSE_POSITION_RECEIVE_TOKEN_KEY,
   useLocalStorageByChainId,
 } from "../../Helpers";
@@ -71,7 +71,7 @@ export function getTokenAmount(usdAmount, tokenAddress, max, infoTokens) {
   if (!usdAmount) {
     return;
   }
-  if (tokenAddress === USDM_ADDRESS) {
+  if (tokenAddress === USDG_ADDRESS) {
     return usdAmount.mul(expandDecimals(1, 18)).div(PRECISION);
   }
   const info = getTokenInfo(infoTokens, tokenAddress);
@@ -97,14 +97,14 @@ export function getSwapLimits(infoTokens, fromTokenAddress, toTokenAddress) {
   let maxOut;
   let maxOutUsd;
 
-  if (!fromInfo?.maxUsdmAmount) {
+  if (!fromInfo?.maxUsdgAmount) {
     maxInUsd = bigNumberify(0);
     maxIn = bigNumberify(0);
   } else {
-    maxInUsd = fromInfo.maxUsdmAmount
-      .sub(fromInfo.usdmAmount)
+    maxInUsd = fromInfo.maxUsdgAmount
+      .sub(fromInfo.usdgAmount)
       .mul(expandDecimals(1, USD_DECIMALS))
-      .div(expandDecimals(1, USDM_DECIMALS));
+      .div(expandDecimals(1, USDG_DECIMALS));
 
     maxIn = maxInUsd.mul(expandDecimals(1, fromInfo.decimals)).div(fromInfo.maxPrice).toString();
   }

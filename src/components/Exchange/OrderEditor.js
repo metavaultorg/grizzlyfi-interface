@@ -47,7 +47,7 @@ export default function OrderEditor(props) {
     setPendingTxns,
     library,
     totalTokenWeights,
-    usdmSupply,
+    usdgSupply,
     getPositionForOrder,
     positionsMap,
   } = props;
@@ -132,7 +132,7 @@ export default function OrderEditor(props) {
       infoTokens,
       undefined,
       triggerRatio,
-      usdmSupply,
+      usdgSupply,
       totalTokenWeights
     );
     toAmount = amount;

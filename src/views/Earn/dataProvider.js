@@ -4,7 +4,7 @@ import { sortBy } from "lodash";
 
 
 
-const subgraphUrl = process.env.RAZZLE_SUBGRAPH_URL;
+const coreSubgraphUrl = process.env.REACT_APP_GRIZZLYFI_CORE_SUBGRAPH;
 const DEFAULT_GROUP_PERIOD = 86400;
 
 
@@ -13,9 +13,6 @@ export const FROM_DATE_TS = NOW_TS - NOW_TS % 86400 - DEFAULT_GROUP_PERIOD * 30;
 export const FIRST_DATE_TS = parseInt(+new Date(2022, 5, 1) / 1000);
 // hourly  daily weekly total
 
-function getChainSubgraph(chainName) {
-    return "sdcrypt0/metavault-mvx-subgraph";
-}
 function fillNa(arr, keys) {
     const prevValues = {};
     if (!keys && arr.length > 0) {
@@ -36,15 +33,10 @@ function fillNa(arr, keys) {
     }
     return arr;
 }
-export function useGraph(querySource, { subgraph = null, subgraphUrl = null, chainName = "polygon" } = {}) {
+export function useGraph(querySource, { subgraph = null, subgraphUrl = coreSubgraphUrl, chainName = "bsc" } = {}) {
     const query = gql(querySource);
 
-    if (!subgraphUrl) {
-        if (!subgraph) {
-            subgraph = getChainSubgraph(chainName);
-        }
-        subgraphUrl = `https://api.thegraph.com/subgraphs/name/${subgraph}`;
-    }
+
 
     const client = new ApolloClient({
         link: new HttpLink({ uri: subgraphUrl, fetch }),
@@ -77,65 +69,65 @@ export function useGraph(querySource, { subgraph = null, subgraphUrl = null, cha
 
 
 
-export function useMvlpData({ from = FROM_DATE_TS, to = NOW_TS, period = "daily", chainName = "polygon" } = {}) {
+export function useGllData({ from = FROM_DATE_TS, to = NOW_TS, period = "daily", chainName = "bsc" } = {}) {
     console.log(from, to, 123456)
 
     const query = `{
-    mvlpStats(
+    gllStats(
       first: 1000
       orderBy: timestamp
       orderDirection: desc
       where: {period: ${period}, timestamp_gte: ${from}, timestamp_lte: ${to}}
     ) {
       timestamp
-      aumInUsdm
-      mvlpSupply
+      aumInUsdg
+      gllSupply
       distributedUsd
       distributedEth
     }
   }`;
-    let [data, loading, error] = useGraph(query, { chainName, subgraphUrl });
+    let [data, loading, error] = useGraph(query, { chainName });
 
-    let cumulativeDistributedUsdPerMvlp = 0;
-    let cumulativeDistributedEthPerMvlp = 0;
-    const mvlpChartData = useMemo(() => {
-        if (!data || (data && data.mvlpStats.length === 0)) {
+    let cumulativeDistributedUsdPerGll = 0;
+    let cumulativeDistributedEthPerGll = 0;
+    const gllChartData = useMemo(() => {
+        if (!data || (data && data.gllStats.length === 0)) {
             return null;
         }
 
         const getTimestamp = (item) => item.timestamp;
 
-        let prevMvlpSupply;
+        let prevGllSupply;
         let prevAum;
 
-        let ret = sortBy(data.mvlpStats, (item) => item.timestamp)
+        let ret = sortBy(data.gllStats, (item) => item.timestamp)
             .filter((item) => item.timestamp % 86400 === 0)
             .reduce((memo, item) => {
                 const last = memo[memo.length - 1];
 
-                const aum = Number(item.aumInUsdm) / 1e18;
-                const mvlpSupply = Number(item.mvlpSupply) / 1e18;
+                const aum = Number(item.aumInUsdg) / 1e18;
+                const gllSupply = Number(item.gllSupply) / 1e18;
 
                 const distributedUsd = Number(item.distributedUsd) / 1e30;
-                const distributedUsdPerMvlp = distributedUsd / mvlpSupply || 0;
-                cumulativeDistributedUsdPerMvlp += distributedUsdPerMvlp;
+                const distributedUsdPerGll = distributedUsd / gllSupply || 0;
+                cumulativeDistributedUsdPerGll += distributedUsdPerGll;
 
                 const distributedEth = Number(item.distributedEth) / 1e18;
-                const distributedEthPerMvlp = distributedEth / mvlpSupply || 0;
-                cumulativeDistributedEthPerMvlp += distributedEthPerMvlp;
+                const distributedEthPerGll = distributedEth / gllSupply || 0;
+                cumulativeDistributedEthPerGll += distributedEthPerGll;
 
-                const mvlpPrice = aum / mvlpSupply;
+                const gllPrice = aum / gllSupply;
                 const timestamp = parseInt(item.timestamp);
 
                 const newItem = {
                     timestamp,
                     aum,
-                    mvlpSupply,
-                    mvlpPrice,
-                    cumulativeDistributedEthPerMvlp,
-                    cumulativeDistributedUsdPerMvlp,
-                    distributedUsdPerMvlp,
-                    distributedEthPerMvlp,
+                    gllSupply,
+                    gllPrice,
+                    cumulativeDistributedEthPerGll,
+                    cumulativeDistributedUsdPerGll,
+                    distributedUsdPerGll,
+                    distributedEthPerGll,
                 };
 
                 if (last && last.timestamp === timestamp) {
@@ -147,18 +139,18 @@ export function useMvlpData({ from = FROM_DATE_TS, to = NOW_TS, period = "daily"
                 return memo;
             }, [])
             .map((item) => {
-                let { mvlpSupply, aum } = item;
-                if (!mvlpSupply) {
-                    mvlpSupply = prevMvlpSupply;
+                let { gllSupply, aum } = item;
+                if (!gllSupply) {
+                    gllSupply = prevGllSupply;
                 }
                 if (!aum) {
                     aum = prevAum;
                 }
-                item.mvlpSupplyChange = prevMvlpSupply ? ((mvlpSupply - prevMvlpSupply) / prevMvlpSupply) * 100 : 0;
-                if (item.mvlpSupplyChange > 1000) item.mvlpSupplyChange = 0;
+                item.gllSupplyChange = prevGllSupply ? ((gllSupply - prevGllSupply) / prevGllSupply) * 100 : 0;
+                if (item.gllSupplyChange > 1000) item.gllSupplyChange = 0;
                 item.aumChange = prevAum ? ((aum - prevAum) / prevAum) * 100 : 0;
                 if (item.aumChange > 1000) item.aumChange = 0;
-                prevMvlpSupply = mvlpSupply;
+                prevGllSupply = gllSupply;
                 prevAum = aum;
                 return item;
             });
@@ -167,10 +159,10 @@ export function useMvlpData({ from = FROM_DATE_TS, to = NOW_TS, period = "daily"
         return ret;
     }, [data]);
 
-    return [mvlpChartData, loading, error];
+    return [gllChartData, loading, error];
 }
 
-export function useFastPrice({ token, from = FROM_DATE_TS, to = NOW_TS, chainName = "polygon" } = {}) {
+export function useFastPrice({ token, from = FROM_DATE_TS, to = NOW_TS, chainName = "bsc" } = {}) {
     const timestampProp = "timestamp";
     const tokenLowerCase = token.toLowerCase();
     const query = `{
@@ -186,7 +178,7 @@ export function useFastPrice({ token, from = FROM_DATE_TS, to = NOW_TS, chainNam
             value
           }
     }`;
-    const [graphData, loading, error] = useGraph(query, { chainName, subgraph: "sdcrypt0/metavault-mvx-prices" });
+    const [graphData, loading, error] = useGraph(query, { chainName, subgraphUrl: process.env.REACT_APP_PRICE_SUBGRAPH });
 
     const data = useMemo(() => {
         if (!graphData) {
@@ -204,7 +196,7 @@ export function useFastPrice({ token, from = FROM_DATE_TS, to = NOW_TS, chainNam
     return [data, loading, error];
 }
 
-export function useHourlyVolumeByToken({ token, from = FROM_DATE_TS, to = NOW_TS, chainName = "polygon" } = {}) {
+export function useHourlyVolumeByToken({ token, from = FROM_DATE_TS, to = NOW_TS, chainName = "bsc" } = {}) {
     const PROPS = "margin liquidation swap mint burn".split(" ");
     // const PROPS = "margin".split(" ");
     const timestampProp = "timestamp";
@@ -219,7 +211,7 @@ export function useHourlyVolumeByToken({ token, from = FROM_DATE_TS, to = NOW_TS
         ${PROPS.join("\n")}
       }
     }`;
-    const [graphData, loading, error] = useGraph(query, { chainName, subgraphUrl });
+    const [graphData, loading, error] = useGraph(query, { chainName });
     const [prices] = useFastPrice({ token, from, to });
     const data = useMemo(() => {
         if (!graphData || !prices) {

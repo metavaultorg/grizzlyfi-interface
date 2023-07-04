@@ -10,8 +10,6 @@ import { callContract } from "../../Api";
 import Modal from "../../components/Modal/Modal";
 import Footer from "../../Footer";
 
-import Token from "../../abis/Token.json";
-import Vester from "../../abis/Vester.json";
 import RewardTracker from "../../abis/RewardTracker.json";
 import RewardRouter from "../../abis/RewardRouter.json";
 
@@ -47,95 +45,41 @@ export default function BeginAccountTransfer(props) {
     parsedReceiver = receiver;
   }
 
-  const mvxAddress = getContract(chainId, "MVX");
-  const mvxVesterAddress = getContract(chainId, "MvxVester");
-  const mvlpVesterAddress = getContract(chainId, "MvlpVester");
 
   const rewardRouterAddress = getContract(chainId, "RewardRouter");
 
-  const { data: mvxVesterBalance } = useSWR([active, chainId, mvxVesterAddress, "balanceOf", account], {
-    fetcher: fetcher(library, Token),
-  });
 
-  const { data: mvlpVesterBalance } = useSWR([active, chainId, mvlpVesterAddress, "balanceOf", account], {
-    fetcher: fetcher(library, Token),
-  });
-
-  const stakedMvxTrackerAddress = getContract(chainId, "StakedMvxTracker");
-  const { data: cumulativeMvxRewards } = useSWR(
-    [active, chainId, stakedMvxTrackerAddress, "cumulativeRewards", parsedReceiver],
+  const feeGllTrackerAddress = getContract(chainId, "feeGllTracker");
+  const { data: cumulativeGllRewards } = useSWR(
+    [active, chainId, feeGllTrackerAddress, "cumulativeRewards", parsedReceiver],
     {
       fetcher: fetcher(library, RewardTracker),
     }
   );
 
-  const stakedMvlpTrackerAddress = getContract(chainId, "StakedMvlpTracker");
-  const { data: cumulativeMvlpRewards } = useSWR(
-    [active, chainId, stakedMvlpTrackerAddress, "cumulativeRewards", parsedReceiver],
-    {
-      fetcher: fetcher(library, RewardTracker),
-    }
-  );
 
-  const { data: transferredCumulativeMvxRewards } = useSWR(
-    [active, chainId, mvxVesterAddress, "transferredCumulativeRewards", parsedReceiver],
-    {
-      fetcher: fetcher(library, Vester),
-    }
-  );
-
-  const { data: transferredCumulativeMvlpRewards } = useSWR(
-    [active, chainId, mvlpVesterAddress, "transferredCumulativeRewards", parsedReceiver],
-    {
-      fetcher: fetcher(library, Vester),
-    }
-  );
 
   const { data: pendingReceiver } = useSWR([active, chainId, rewardRouterAddress, "pendingReceivers", account], {
     fetcher: fetcher(library, RewardRouter),
   });
 
-  const { data: mvxAllowance } = useSWR([active, chainId, mvxAddress, "allowance", account, stakedMvxTrackerAddress], {
-    fetcher: fetcher(library, Token),
-  });
 
-  const { data: mvxStaked } = useSWR(
-    [active, chainId, stakedMvxTrackerAddress, "depositBalances", account, mvxAddress],
-    {
-      fetcher: fetcher(library, RewardTracker),
-    }
-  );
+  const needApproval = false;
 
-  const needApproval = mvxAllowance && mvxStaked && mvxStaked.gt(mvxAllowance);
 
-  const hasVestedMvx = mvxVesterBalance && mvxVesterBalance.gt(0);
-  const hasVestedMvlp = mvlpVesterBalance && mvlpVesterBalance.gt(0);
-  const hasStakedMvx =
-    (cumulativeMvxRewards && cumulativeMvxRewards.gt(0)) ||
-    (transferredCumulativeMvxRewards && transferredCumulativeMvxRewards.gt(0));
-  const hasStakedMvlp =
-    (cumulativeMvlpRewards && cumulativeMvlpRewards.gt(0)) ||
-    (transferredCumulativeMvlpRewards && transferredCumulativeMvlpRewards.gt(0));
+  const hasStakedGll =
+    (cumulativeGllRewards && cumulativeGllRewards.gt(0));
   const hasPendingReceiver = pendingReceiver && pendingReceiver !== ethers.constants.AddressZero;
 
   const getError = () => {
     if (!account) {
       return "Wallet is not connected";
     }
-    if (hasVestedMvx) {
-      return "Vested MVX not withdrawn";
-    }
-    if (hasVestedMvlp) {
-      return "Vested MVLP not withdrawn";
-    }
     if (!receiver || receiver.length === 0) {
       return "Enter Receiver Address";
     }
     if (!ethers.utils.isAddress(receiver)) {
       return "Invalid Receiver Address";
-    }
-    if (hasStakedMvx || hasStakedMvlp) {
-      return "Invalid Receiver";
     }
     if ((parsedReceiver || "").toString().toLowerCase() === (account || "").toString().toLowerCase()) {
       return "Self-transfer not supported";
@@ -168,9 +112,7 @@ export default function BeginAccountTransfer(props) {
     if (error) {
       return error;
     }
-    if (needApproval) {
-      return "Approve MVX";
-    }
+
     if (isApproving) {
       return "Approving...";
     }
@@ -183,13 +125,6 @@ export default function BeginAccountTransfer(props) {
 
   const onClickPrimary = () => {
     if (needApproval) {
-      approveTokens({
-        setIsApproving,
-        library,
-        tokenAddress: mvxAddress,
-        spender: stakedMvxTrackerAddress,
-        chainId,
-      });
       return;
     }
 
@@ -232,7 +167,7 @@ export default function BeginAccountTransfer(props) {
           <div className="Page-description">
             Please only use this for full account transfers.
             <br />
-            This will transfer all your GLL and Multiplier Points to your new account.
+            This will transfer all your GLL tokens to your new account.
             <br />
             Transfers are only supported if the receiving account has not staked GLL token before.
             <br />
@@ -258,14 +193,7 @@ export default function BeginAccountTransfer(props) {
               </div>
             </div>
             <div className="BeginAccountTransfer-validations">
-              {/* <ValidationRow isValid={!hasVestedMvx}>
-                Sender has withdrawn all tokens from MVX Vesting Vault
-              </ValidationRow> */}
-              <ValidationRow isValid={!hasVestedMvlp}>
-                Sender has withdrawn all tokens from GLL Vesting Vault
-              </ValidationRow>
-              {/* <ValidationRow isValid={!hasStakedMvx}>Receiver has not staked MVX tokens before</ValidationRow> */}
-              <ValidationRow isValid={!hasStakedMvlp}>Receiver has not staked GLL tokens before</ValidationRow>
+              <ValidationRow isValid={!hasStakedGll}>Receiver has not staked GLL tokens before</ValidationRow>
             </div>
             <div className="input-row">
               <button

@@ -1,7 +1,7 @@
 const SECONDS_PER_WEEK = 604800;
 
 const FEES = {
-  137: []
+  5611: []
 };
 
 export function getFeeHistory(chainId) {

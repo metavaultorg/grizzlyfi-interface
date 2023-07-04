@@ -92,7 +92,7 @@ export default function AddTrailingStopEditor(props) {
   useEffect(() => {
     if (!receiveToken && position && infoTokens && nativeTokenAddress) {
       let _receiveToken =
-        position.isLong && position.collateralToken.symbol === "MATIC"
+        position.isLong && position.collateralToken.symbol === "tBNB"
           ? getTokenInfo(infoTokens, nativeTokenAddress)
           : position.collateralToken;
       setReceiveToken(_receiveToken);

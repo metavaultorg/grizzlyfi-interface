@@ -13,8 +13,8 @@ export default function ExchangeWalletTokens(props) {
         let info = infoTokens ? infoTokens[token.address] : {};
         let mintAmount;
         let balance = info.balance;
-        if (mintingCap && info.usdmAmount) {
-          mintAmount = mintingCap.sub(info.usdmAmount);
+        if (mintingCap && info.usdgAmount) {
+          mintAmount = mintingCap.sub(info.usdgAmount);
         }
         if (mintAmount && mintAmount.lt(0)) {
           mintAmount = bigNumberify(0);
