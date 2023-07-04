@@ -70,8 +70,6 @@ export function useGraph(querySource, { subgraph = null, subgraphUrl = coreSubgr
 
 
 export function useGllData({ from = FROM_DATE_TS, to = NOW_TS, period = "daily", chainName = "bsc" } = {}) {
-    console.log(from, to, 123456)
-
     const query = `{
     gllStats(
       first: 1000

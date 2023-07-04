@@ -70,8 +70,7 @@ const claimTypes = [
 ]
 
 export default function DashboardV3(props) {
-
-    
+    const { connectWallet } = props
     const { active, library, account } = useWeb3React();
     const { chainId } = useChainId();
 
@@ -84,7 +83,7 @@ export default function DashboardV3(props) {
     const totalVolumeSum = useTotalVolume();
     const volumeInfo = useHourlyVolume();
 
-    
+
 
     const vaultAddress = getContract(chainId, "Vault");
     const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
@@ -171,26 +170,26 @@ export default function DashboardV3(props) {
         nativeTokenPrice,
     );
 
-    const totalParams = { from: yesterday(), to: today() } 
-    const [totalGllData, ] = useGllData(totalParams);
+    const totalParams = { from: yesterday(), to: today() }
+    const [totalGllData,] = useGllData(totalParams);
     const [totalAum, totalAumDelta, totalAumDeltaPercentage] = useMemo(() => {
         if (!totalGllData) {
-          return [];
+            return [];
         }
         const total = totalGllData[totalGllData.length - 1]?.aum;
         const delta = total - totalGllData[totalGllData.length - 2]?.aum;
-        const percentage = Math.abs(delta)/total *100;
+        const percentage = Math.abs(delta) / total * 100;
         return [total, delta, percentage];
-      }, [totalGllData]);
+    }, [totalGllData]);
 
-    
+
 
     const vaultList = [
         { symbol: 'GLL', apy: `${formatKeyAmount(processedData, "gllAprTotal", 2, 2, true)}%`, locked: '104.41', invest: `${formatKeyAmount(processedData, "gllBalance", GLL_DECIMALS, 2, true)}`, poolShare: '0.96%', profit: `$${formatKeyAmount(processedData, "totalGllRewardsUsd", USD_DECIMALS, 2, true)}`, },
 
     ]
 
-    function requestToken(){
+    function requestToken() {
         const token = getTokenBySymbol(chainId, selectedClaimToken.token)
         const faucetAddress = getContract(chainId, "GrizzlyFaucet")
         const contract = new ethers.Contract(faucetAddress, GrizzlyFaucet.abi, library.getSigner());
@@ -201,26 +200,22 @@ export default function DashboardV3(props) {
             successMsg: `Claim Succeed!`,
             // setPendingTxns,
         })
-        .then(async () => { })
-        .catch (error=> {console.log(error)})
-        .finally(() => {
-            setIsSubmitting(false);
-        });
+            .then(async () => { })
+            .catch(error => { console.log(error) })
+            .finally(() => {
+                setIsSubmitting(false);
+            });
 
     }
 
 
     return <SEO title={getPageTitle("Dashboard")}>
         <div className="default-container DashboardV2 page-layout">
-            {active &&
-            <div
-                className="faucet"
-                
-            >
-                <div style={{ fontSize: 20, fontWeight: 600,color:'#afafaf' }}>
-                    <span style={{ color: '#fff' }}>Grizzlyfi</span>
+            <div className="faucet">
+                <div style={{ fontSize: 20, fontWeight: 600, color: '#afafaf' }}>
+                    <span style={{ color: '#fff' }}>GrizzlyFsi</span>
                     &nbsp;   is launching on&nbsp;
-                    <a href="https://testnet.binance.org/" style={{ fontWeight: 'bold', color: '#fff',textDecoration:'none' }}>opBNB Testnet.</a>
+                    <a href="https://testnet.binance.org/" style={{ fontWeight: 'bold', color: '#fff', textDecoration: 'none' }}>opBNB Testnet.</a>
                     &nbsp;  Get your Testnet tokens now
                 </div>
                 <div className="faucet-right">
@@ -228,7 +223,7 @@ export default function DashboardV3(props) {
                         {claimTypes.map((item) => (
                             <div style={{
                                 display: 'inline-flex',
-                                marginRight:8,
+                                marginRight: 8,
                             }}>
                                 <img
                                     style={{
@@ -236,7 +231,7 @@ export default function DashboardV3(props) {
                                         opacity: selectedClaimToken.id === item.id ? '1' : '0.4',
                                         border: selectedClaimToken.id === item.id ? 'solid 1px #fff' : 'none',
                                         borderRadius: 13,
-                                        boxShadow: selectedClaimToken.id === item.id ? '0 0 0 3px rgba(255, 255, 255, 0.2)':'none'
+                                        boxShadow: selectedClaimToken.id === item.id ? '0 0 0 3px rgba(255, 255, 255, 0.2)' : 'none'
                                     }}
                                     src={getImageUrl({ path: item.iconPath, })}
                                     alt={''}
@@ -245,20 +240,27 @@ export default function DashboardV3(props) {
                                     onClick={() => setSelectedClaimToken(item)}
                                 />
                             </div>
-                            
+
                         ))}
-                        
+
                     </div>
-                    <button
-                        disabled={isSubmitting || !active}  
-                        className="claim-btn"
-                        style={{
-                            
-                        }}
-                        onClick={requestToken}
-                    >
-                        Claim&nbsp;{selectedClaimToken.token}
-                    </button>
+                    {active ? (
+                        <button
+                            disabled={isSubmitting || !active}
+                            className="claim-btn"
+                            onClick={requestToken}
+                        >
+                            Claim&nbsp;{selectedClaimToken.token}
+                        </button>
+                    ) : (
+                        <button
+                            className="claim-btn"
+                            onClick={connectWallet}
+                        >
+                            Connect
+                        </button>
+                    )}
+
                 </div>
             </div>
                     }
@@ -342,7 +344,7 @@ export default function DashboardV3(props) {
                         <div className="invest-card">
                             <img src={getImageUrl({
                                 path: `earn-real-yield`,
-                                format:'png'
+                                format: 'png'
                             })} alt="" />
                             <h1>Earn Real Yield</h1>
                             <p className="text-description">Get to earn real yield in BTC, ETH and other bluechip
