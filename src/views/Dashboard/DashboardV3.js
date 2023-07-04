@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 import useSWR from "swr";
@@ -61,13 +61,21 @@ import AUMLabel from "../../components/AUMLabel/AUMLabel";
 import { useGllData } from "../../views/Earn/dataProvider";
 import APRLabel from "../../components/APRLabel/APRLabel";
 
+const claimTypes = [
+    { id: 'eth', iconPath: 'coins/eth', token: 'wETH' },
+    { id: 'btc', iconPath: 'coins/btc', token: 'BTC' },
+    { id: 'usdc', iconPath: 'coins/usdc', token: 'USDC' },
+    { id: 'usdt', iconPath: 'coins/usdt', token: 'USDT' },
+
+]
+
 export default function DashboardV3(props) {
 
     
     const { active, library, account } = useWeb3React();
     const { chainId } = useChainId();
 
-    
+    const [selectedClaimToken, setSelectedClaimToken] = useState('eth')
 
     const tokenPairMarketList = useTokenPairMarketData();
 
@@ -198,41 +206,32 @@ export default function DashboardV3(props) {
                 </div>
                 <div className="fauce-right">
                     <div>
-                        <img
-                            style={{ objectFit: "contain" }}
-                            src={getImageUrl({path: `coins/eth`,})}
-                            alt={''}
-                            width={40}
-                            height={40}
-                        />
-                        <img
-                            style={{ objectFit: "contain" }}
-                            src={getImageUrl({ path: `coins/btc`, })}
-                            alt={''}
-                            width={40}
-                            height={40}
-                        />
-                        <img
-                            style={{ objectFit: "contain" }}
-                            src={getImageUrl({ path: `coins/tbnb`, })}
-                            alt={''}
-                            width={40}
-                            height={40}
-                        />
-                        <img
-                            style={{ objectFit: "contain" }}
-                            src={getImageUrl({ path: `coins/usdc`, })}
-                            alt={''}
-                            width={40}
-                            height={40}
-                        />
-                        <img
-                            style={{ objectFit: "contain" }}
-                            src={getImageUrl({ path: `coins/usdt`, })}
-                            alt={''}
-                            width={40}
-                            height={40}
-                        />
+                        {claimTypes.map((item) => (
+                            <div style={{
+                                display: 'inline-flex',
+                                justifyContent:'center',
+                                borderRadius: 16,
+                                background: selectedClaimToken === item.id ? 'rgba(255, 255, 255, 0.05)' : 'transparent',
+                                padding: 4,
+                                marginRight:8,
+                            }}>
+                                <img
+                                    style={{
+                                        objectFit: "contain", cursor: 'pointer',
+                                        opacity: selectedClaimToken === item.id ? '1' : '0.4',
+                                        border: selectedClaimToken === item.id ? 'solid 1px #fff' : 'none',
+                                        borderRadius: 13,
+                                    }}
+                                    src={getImageUrl({ path: item.iconPath, })}
+                                    alt={''}
+                                    width={40}
+                                    height={40}
+                                    onClick={() => setSelectedClaimToken(item.id)}
+                                />
+                            </div>
+                            
+                        ))}
+                        
                     </div>
                     <button
                         className="claim-btn"
@@ -240,7 +239,7 @@ export default function DashboardV3(props) {
                             
                         }}
                     >
-                        Claim
+                        Claim&nbsp;{claimTypes.find(item => item.id === selectedClaimToken).token}
                     </button>
                 </div>
             </div>
