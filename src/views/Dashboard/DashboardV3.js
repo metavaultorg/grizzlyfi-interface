@@ -5,8 +5,6 @@ import useSWR from "swr";
 import { getImageUrl } from "../../cloudinary/getImageUrl";
 import cx from "classnames";
 
-import Token from "../../abis/Token.json";
-
 import {
     fetcher,
     formatAmount,
@@ -23,12 +21,11 @@ import {
     PLACEHOLDER_ACCOUNT,
     getDepositBalanceData,
     getStakingData,
-    getVestingData,
     yesterday,
     today,
 } from "../../Helpers";
 import {
-    useInfoTokens,
+    callContract,
 } from "../../Api";
 import { getContract } from "../../Addresses";
 import RewardReader from "../../abis/RewardReader.json";
@@ -60,9 +57,12 @@ import OpenedPositions from "./OpenedPositions";
 import AUMLabel from "../../components/AUMLabel/AUMLabel";
 import { useGllData } from "../../views/Earn/dataProvider";
 import APRLabel from "../../components/APRLabel/APRLabel";
+import { getTokenBySymbol } from "../../data/Tokens";
+import { ethers } from "ethers";
+import GrizzlyFaucet from "../../abis/GrizzlyFaucet.json";
 
 const claimTypes = [
-    { id: 'eth', iconPath: 'coins/eth', token: 'wETH' },
+    { id: 'eth', iconPath: 'coins/eth', token: 'ETH' },
     { id: 'btc', iconPath: 'coins/btc', token: 'BTC' },
     { id: 'usdc', iconPath: 'coins/usdc', token: 'USDC' },
     { id: 'usdt', iconPath: 'coins/usdt', token: 'USDT' },
@@ -75,7 +75,8 @@ export default function DashboardV3(props) {
     const { active, library, account } = useWeb3React();
     const { chainId } = useChainId();
 
-    const [selectedClaimToken, setSelectedClaimToken] = useState('eth')
+    const [selectedClaimToken, setSelectedClaimToken] = useState(claimTypes[0])
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
     const tokenPairMarketList = useTokenPairMarketData();
 
@@ -95,8 +96,6 @@ export default function DashboardV3(props) {
     const { data: aums } = useSWR([`Dashboard:getAums:${active}`, chainId, gllManagerAddress, "getAums"], {
         fetcher: fetcher(library, GllManager),
     });
-
-    const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
     let aum;
     if (aums && aums.length > 0) {
@@ -191,11 +190,30 @@ export default function DashboardV3(props) {
 
     ]
 
+    function requestToken(){
+        const token = getTokenBySymbol(chainId, selectedClaimToken.token)
+        const faucetAddress = getContract(chainId, "GrizzlyFaucet")
+        const contract = new ethers.Contract(faucetAddress, GrizzlyFaucet.abi, library.getSigner());
+        setIsSubmitting(true);
+        callContract(chainId, contract, "requestToken", [token.address], {
+            sentMsg: "Claiming...",
+            failMsg: "Claim failed.",
+            successMsg: `Claim Succeed!`,
+            // setPendingTxns,
+        })
+        .then(async () => { })
+        .catch (error=> {console.log(error)})
+        .finally(() => {
+            setIsSubmitting(false);
+        });
+
+    }
+
 
     return <SEO title={getPageTitle("Dashboard")}>
         <div className="default-container DashboardV2 page-layout">
             <div
-                className="fauce"
+                className="faucet"
                 
             >
                 <div style={{ fontSize: 20, fontWeight: 600,color:'#afafaf' }}>
@@ -204,7 +222,7 @@ export default function DashboardV3(props) {
                     <a href="https://testnet.binance.org/" style={{ fontWeight: 'bold', color: '#fff',textDecoration:'none' }}>opBNB Testnet.</a>
                     &nbsp;  Get your Testnet tokens now
                 </div>
-                <div className="fauce-right">
+                <div className="faucet-right">
                     <div>
                         {claimTypes.map((item) => (
                             <div style={{
@@ -214,16 +232,16 @@ export default function DashboardV3(props) {
                                 <img
                                     style={{
                                         objectFit: "contain", cursor: 'pointer',
-                                        opacity: selectedClaimToken === item.id ? '1' : '0.4',
-                                        border: selectedClaimToken === item.id ? 'solid 1px #fff' : 'none',
+                                        opacity: selectedClaimToken.id === item.id ? '1' : '0.4',
+                                        border: selectedClaimToken.id === item.id ? 'solid 1px #fff' : 'none',
                                         borderRadius: 13,
-                                        boxShadow: selectedClaimToken === item.id ? '0 0 0 3px rgba(255, 255, 255, 0.2)':'none'
+                                        boxShadow: selectedClaimToken.id === item.id ? '0 0 0 3px rgba(255, 255, 255, 0.2)':'none'
                                     }}
                                     src={getImageUrl({ path: item.iconPath, })}
                                     alt={''}
                                     width={40}
                                     height={40}
-                                    onClick={() => setSelectedClaimToken(item.id)}
+                                    onClick={() => setSelectedClaimToken(item)}
                                 />
                             </div>
                             
@@ -231,12 +249,14 @@ export default function DashboardV3(props) {
                         
                     </div>
                     <button
+                        disabled={isSubmitting}  
                         className="claim-btn"
                         style={{
                             
                         }}
+                        onClick={requestToken}
                     >
-                        Claim&nbsp;{claimTypes.find(item => item.id === selectedClaimToken).token}
+                        Claim&nbsp;{selectedClaimToken.token}
                     </button>
                 </div>
             </div>
@@ -297,8 +317,8 @@ export default function DashboardV3(props) {
             {!(processedData.gllBalanceUsd > 0) &&
                 <div className="section section-noinvestments">
                     <div className="section-header">
-                        <h1>No investment Yet</h1>
-                        <p className="text-description" style={{ margin: '16px auto 56px', maxWidth: 658, }}>Start putting your money to work. You can trade BTC, ETH & BNB with up to 50x leverage, or provide liquidity and earn the fees paid by traders.</p>
+                        <h1>No Investment Yet</h1>
+                        <p className="text-description" style={{ margin: '16px auto 56px', maxWidth: 658, }}>Start putting your money to work. You can trade BTC, ETH & BNB with up to 50x leverage or provide liquidity and earn the fees paid by traders.</p>
                     </div>
 
                     <div className="DashboardV3-cards">
