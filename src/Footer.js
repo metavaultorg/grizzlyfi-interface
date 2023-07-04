@@ -76,7 +76,7 @@ export default function Footer() {
         </a>
         <a
           style={{ textDecoration: "none" }}
-          href="https://discord.gg/metavault"
+          href="https://discord.gg/grizzlyfi"
           target="_blank"
           rel="noreferrer"
           className="footer-link--container"
@@ -97,7 +97,7 @@ export default function Footer() {
         </a>
         <a
           style={{ textDecoration: "none" }}
-          href="https://medium.com/@metavault.trade"
+          href="https://medium.com/@grizzly.fi"
           target="_blank"
           rel="noreferrer"
           className="footer-link--container"
@@ -118,7 +118,7 @@ export default function Footer() {
         </a>
         <a
           style={{ textDecoration: "none" }}
-          href="https://github.com/metavaultorg/"
+          href="https://github.com/grizzlyfi/"
           target="_blank"
           rel="noreferrer"
           className="footer-link--container"
@@ -139,7 +139,7 @@ export default function Footer() {
         </a>
         <a
           style={{ textDecoration: "none" }}
-          href="https://docs.metavault.trade"
+          href="https://docs.grizzly.fi"
           target="_blank"
           rel="noreferrer"
           className="footer-link--container"

@@ -785,6 +785,7 @@ function FullApp() {
               <Dashboard 
                 savedShowPnlAfterFees={savedShowPnlAfterFees}
                 savedIsPnlInLeverage={savedIsPnlInLeverage}
+                connectWallet={connectWallet}
               />
             </Route>
             <Route exact path="/earn">

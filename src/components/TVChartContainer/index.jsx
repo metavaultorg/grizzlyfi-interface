@@ -13,7 +13,7 @@ export class TVChartContainer extends React.PureComponent {
     symbol: "BTC/USD",
     interval: "15",
     libraryPath: "/charting_library/",
-    chartsStorageUrl: "https://sltv.metavault.trade",
+    // chartsStorageUrl: "https://sltv.grizzly.fi",
     chartsStorageApiVersion: "1.1",
     clientId: "metavault.trade",
     userId: "metavault.trade",
