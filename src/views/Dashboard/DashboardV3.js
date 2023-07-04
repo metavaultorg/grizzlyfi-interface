@@ -212,6 +212,7 @@ export default function DashboardV3(props) {
 
     return <SEO title={getPageTitle("Dashboard")}>
         <div className="default-container DashboardV2 page-layout">
+            {active &&
             <div
                 className="faucet"
                 
@@ -249,7 +250,7 @@ export default function DashboardV3(props) {
                         
                     </div>
                     <button
-                        disabled={isSubmitting}  
+                        disabled={isSubmitting || !active}  
                         className="claim-btn"
                         style={{
                             
@@ -260,6 +261,7 @@ export default function DashboardV3(props) {
                     </button>
                 </div>
             </div>
+                    }
             <div className="section-total-info">
                 <div className="total-info">
                     <div className="label">Total Trading Volume</div>
