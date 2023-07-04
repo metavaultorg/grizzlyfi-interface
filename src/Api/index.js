@@ -627,7 +627,7 @@ export async function createIncreaseOrder(
   chainId,
   library,
   nativeTokenAddress,
-  fromTokenAddress,
+  path,
   amountIn,
   indexTokenAddress,
   minOut,
@@ -635,36 +635,35 @@ export async function createIncreaseOrder(
   collateralTokenAddress,
   isLong,
   triggerPrice,
-  orderProps,
-  executionFees,
   opts = {}
 ) {
   invariant(!isLong || indexTokenAddress === collateralTokenAddress, "invalid token addresses");
   invariant(indexTokenAddress !== AddressZero, "indexToken is 0");
   invariant(collateralTokenAddress !== AddressZero, "collateralToken is 0");
 
-  const fromETH = fromTokenAddress === AddressZero;
-  const purchaseToken = fromETH ? nativeTokenAddress : fromTokenAddress;
+  const fromETH = path[0] === AddressZero;
 
+  path = replaceNativeTokenAddress(path, nativeTokenAddress);
   const shouldWrap = fromETH;
   const triggerAboveThreshold = !isLong;
+  const executionFee = getConstant(chainId, "INCREASE_ORDER_EXECUTION_GAS_FEE");
 
   const params = [
-    purchaseToken,
+    path,
     amountIn,
     indexTokenAddress,
+    minOut,
     sizeDelta,
     collateralTokenAddress,
     isLong,
     triggerPrice,
     triggerAboveThreshold,
-    executionFees,
+    executionFee,
     shouldWrap,
-    orderProps,
   ];
 
   if (!opts.value) {
-    opts.value = fromETH ? amountIn.add(executionFees) : executionFees;
+    opts.value = fromETH ? amountIn.add(executionFee) : executionFee;
   }
 
   const orderBookAddress = getContract(chainId, "OrderBook");
@@ -678,39 +677,34 @@ export async function createDecreaseOrder(
   library,
   indexTokenAddress,
   sizeDelta,
-  path,
+  collateralToken,
+  receiveToken,
   collateralDelta,
   isLong,
   triggerPrice,
   triggerAboveThreshold,
   minOut,
   withdrawETH,
-  trailingStopPercentage,
   opts = {}
 ) {
-  const collateralToken = path[0]
   invariant(!isLong || indexTokenAddress === collateralToken, "invalid token addresses");
   invariant(indexTokenAddress !== AddressZero, "indexToken is 0");
   invariant(collateralToken !== AddressZero, "collateralToken is 0");
 
-  let executionFee = getConstant(chainId, "DECREASE_ORDER_EXECUTION_GAS_FEE");
-  if(trailingStopPercentage > 0){
-    executionFee =  getConstant(chainId, "TRAILING_STOP_EXECUTION_GAS_FEE")
-  }
-  
+  const executionFee = getConstant(chainId, "DECREASE_ORDER_EXECUTION_GAS_FEE");
+
   const params = [
     indexTokenAddress,
     sizeDelta,
-    path,
+    collateralToken,
+    receiveToken,
     collateralDelta,
     isLong,
     triggerPrice,
     triggerAboveThreshold,
     minOut,
     withdrawETH,
-    trailingStopPercentage
   ];
-
   opts.value = executionFee;
   const orderBookAddress = getContract(chainId, "OrderBook");
   const contract = new ethers.Contract(orderBookAddress, OrderBook.abi, library.getSigner());
@@ -786,10 +780,9 @@ export async function updateDecreaseOrder(
   sizeDelta,
   triggerPrice,
   triggerAboveThreshold,
-  trailingStopPercentage,
   opts
 ) {
-  const params = [index, collateralDelta, sizeDelta, triggerPrice, triggerAboveThreshold,trailingStopPercentage];
+  const params = [index, collateralDelta, sizeDelta, triggerPrice, triggerAboveThreshold];
   const method = "updateDecreaseOrder";
   const orderBookAddress = getContract(chainId, "OrderBook");
   const contract = new ethers.Contract(orderBookAddress, OrderBook.abi, library.getSigner());

@@ -143,7 +143,7 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
           <a
             style={{ width: 21, height: 21 }}
             className="App-header-link-main"
-            href="https://perp.grizzly.fi"
+            href="https://trade.grizzly.fi/"
             rel="noopener noreferrer"
           >
             {/* <img
@@ -160,7 +160,7 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
         </div>
       )}
       <div className="App-header-link-container App-header-link-home">
-        <a href="https://perp.grizzly.fi" rel="noopener noreferrer">
+        <a href="https://trade.grizzly.fi/" rel="noopener noreferrer">
           Home
         </a>
       </div>
@@ -295,7 +295,7 @@ function AppHeaderUser({
             <img src={IconToken} alt="icon" width={24} />
             <APRLabel chainId={chainId} label="nativeTokenPrice" usePercentage={false} tokenDecimals={30}/>
           </div>
-          <div className="App-header-network"><img src={IconBnb} alt="icon" /></div>
+          {/* <div className="App-header-network"><img src={IconBnb} alt="icon" /></div> */}
           <div style={{ position: 'relative' }} >
             <LinkDropdown />
           </div>
@@ -683,7 +683,7 @@ function FullApp() {
           <header>
             <div className="App-header large">
               <div className="App-header-container-left">
-                <a className="App-header-link-main" href="https://perp.grizzly.fi">
+                <a className="App-header-link-main" href="https://trade.grizzly.fi/">
                   {/* <img
                     style={{ width: "169px", height: "56px", flexBasis: "none" }}
                     src={getImageUrl({
