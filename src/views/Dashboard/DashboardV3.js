@@ -263,7 +263,6 @@ export default function DashboardV3(props) {
 
                 </div>
             </div>
-                    }
             <div className="section-total-info">
                 <div className="total-info">
                     <div className="label">Total Trading Volume</div>
