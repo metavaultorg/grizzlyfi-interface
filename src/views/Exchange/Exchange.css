@@ -474,8 +474,9 @@
 }
 
 .PositionEditor-token-symbol {
-  font-size: 1.35rem;
+  font-size: 18px;
   text-align: right;
+  font-weight: 600;
 }
 
 .PositionEditor .Modal-content .Tab.block {
@@ -690,7 +691,7 @@ table.Exchange-list th:last-child {
 .Confirmation-box-warning,
 .Confirmation-box-warning a {
   color: #ff7b41;
-  font-size: 0.9rem;
+  font-size: 14px;
   text-align: center;
   margin-top: 10px;
   margin-bottom: 1rem;
@@ -698,7 +699,7 @@ table.Exchange-list th:last-child {
 
 .Exchange-swap-left {
   display: flex;
-  font-size: 0.9rem;
+  font-size: 14px;
   height: 18px;
   gap: 4px;
   font-weight: 600;
@@ -708,10 +709,10 @@ table.Exchange-list th:last-child {
 }
 .Exchange-swap-right {
   display: flex;
-  font-size: 0.9rem;
+  font-size: 14px;
   height: 18px;
   gap: 4px;
-  font-weight: 600;
+  font-weight: 500;
   align-items: center;
   justify-content: right;
   text-align: center;
@@ -811,6 +812,12 @@ table.Exchange-list th:last-child {
   padding: 1.5rem;
 }
 
+.Exchange-swap-option-tabs.Tab.block {
+  gap: 0px;
+  grid-gap: 0px;
+  border-radius: 20px;
+}
+
 .Exchange-swap-option-tabs.Tab.block .Tab-option {
   padding: 0.8rem;
   font-size: 16px;
@@ -821,6 +828,8 @@ table.Exchange-list th:last-child {
   letter-spacing: normal;
   text-align: center;
   color: #fff;
+  border: solid 1px rgba(255, 255, 255, 0.1);
+  height: 48px;
 }
 
 .Exchange-swap-option-tabs.Tab.block .Tab-option.long.active {
@@ -838,6 +847,15 @@ table.Exchange-list th:last-child {
   color: #ff7b41;
   border: solid 1px rgba(255, 123, 65, 0.2);
   background-color: rgba(255, 123, 65, 0.05);
+  border-radius: 0px 0px 0px 0px;
+}
+
+.Exchange-swap-option-tabs.Tab.block .Tab-option.swap.active {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  border: solid 1px #9c9c9c;
+  background-color: #3d3d3d;
   border-radius: 0px 20px 20px 0px;
 }
 
@@ -947,7 +965,7 @@ input.Exchange-swap-input.small {
 .App-cta.Exchange-swap-button.positive:hover,
 .App-cta.Confirmation-box-button.positive:hover {
   background-image: linear-gradient(to bottom, #f2c75c, #cb9612);
-  filter: brightness(125%);
+  filter: brightness(115%);
 }
 
 .App-cta.Exchange-swap-button.negative,
@@ -960,7 +978,7 @@ input.Exchange-swap-input.small {
 .App-cta.Confirmation-box-button.negative:hover {
   box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.2);
   background-image: linear-gradient(to bottom, #ff7b41, #ff570d);
-  filter: brightness(125%);
+  filter: brightness(115%);
 }
 
 .Exchange-swap-ball-container {

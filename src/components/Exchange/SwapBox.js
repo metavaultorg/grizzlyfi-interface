@@ -84,7 +84,8 @@ import longImg from "../../assets/icons/icon-long.svg";
 import longGrayImg from "../../assets/icons/icon-long-gray.svg";
 import shortImg from "../../assets/icons/icon-short.svg";
 import shortGrayImg from "../../assets/icons/icon-short-gray.svg";
-import swapImg from "../../assets/icons/icon-swap.svg";
+import swapBallImg from "../../assets/icons/icon-swap.svg";
+import swapImg from "../../assets/icons/swap.svg";
 import Trailer from "../Trailer/Trailer";
 
 const SWAP_ICONS = {
@@ -92,6 +93,8 @@ const SWAP_ICONS = {
   [LONG+INACTIVE]: longGrayImg,
   [SHORT]: shortImg,
   [SHORT+INACTIVE]: shortGrayImg,
+  [SWAP]: swapImg,
+  [SWAP+INACTIVE]: swapImg,
 };
 const { AddressZero } = ethers.constants;
 
@@ -335,6 +338,7 @@ export default function SwapBox(props) {
         <div className="align-right">
           <Tooltip
             handle={`${formatAmount(toTokenInfo.maxAvailableLong, USD_DECIMALS, 2, true)}`}
+            handleClassName="font-number"
             position="right-bottom"
             renderContent={() => {
               return (
@@ -1922,7 +1926,7 @@ export default function SwapBox(props) {
             option={swapOption}
             onChange={onSwapOptionChange}
             className="Exchange-swap-option-tabs text-uppercase"
-            optionClassNames={{[LONG]: "long", [SHORT]: "short"}}
+            optionClassNames={{[LONG]: "long", [SHORT]: "short", [SWAP]: "swap"}}
           />
           <div className="Exchange-swap-box-splitter"></div>
           {flagOrdersEnabled && (
@@ -1986,7 +1990,7 @@ export default function SwapBox(props) {
             </div>
             <div className="Exchange-swap-ball-container">
               <div className="Exchange-swap-ball" onClick={switchTokens}>
-                <img src={swapImg} alt="" className="Exchange-swap-ball-icon" />
+                <img src={swapBallImg} alt="" className="Exchange-swap-ball-icon" />
               </div>
             </div>
             <div className="Exchange-swap-section">
@@ -2059,7 +2063,7 @@ export default function SwapBox(props) {
                   type="number"
                   min="0"
                   placeholder="0.0"
-                  className={cx("Exchange-swap-input small font-number", {positive: isLong,negative: isShort})}
+                  className={cx("Exchange-swap-input font-number", {positive: isLong,negative: isShort})}
                   value={triggerRatioValue}
                   onChange={onTriggerRatioChange}
                 />
@@ -2299,7 +2303,7 @@ export default function SwapBox(props) {
         )}
         <div className="Exchange-swap-button-container">
           <button
-            className={cx("App-cta Exchange-swap-button", isLong?"positive":"negative")}
+            className={cx("App-cta Exchange-swap-button", isLong?"positive":isShort?"negative":"")}
             onClick={onClickPrimary}
             disabled={!isPrimaryEnabled()}
           >
