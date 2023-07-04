@@ -213,10 +213,10 @@ export default function DashboardV3(props) {
         <div className="default-container DashboardV2 page-layout">
             <div className="faucet">
                 <div style={{ fontSize: 20, fontWeight: 600, color: '#afafaf' }}>
-                    <span style={{ color: '#fff' }}>GrizzlyFsi</span>
-                    &nbsp;   is launching on&nbsp;
-                    <a href="https://testnet.binance.org/" style={{ fontWeight: 'bold', color: '#fff', textDecoration: 'none' }}>opBNB Testnet.</a>
-                    &nbsp;  Get your Testnet tokens now
+                    <span style={{ color: '#fff' }}>GrizzlyFi</span>
+                    &nbsp;   is live on&nbsp;
+                    <a href="https://opbnb.bnbchain.org" target="_blank" rel="noreferrer" style={{ fontWeight: 'bold', color: '#fff', textDecoration: 'none' }}>opBNB Testnet.</a>
+                    &nbsp;  Get your Testnet token via faucet
                 </div>
                 <div className="faucet-right">
                     <div>
