@@ -315,7 +315,7 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
         <div className="referrals-header">
           <div className="referrals-header--text">
             <h3>Invite Friends & Earn Commissions</h3>
-            <p>Enjoy Fee-Cashback and Fee-Commissions through the Metavault.Trade referral program.</p>
+            <p>Enjoy Fee-Cashback and Fee-Commissions through the GrizzlyFi.Trade referral program.</p>
           </div>
           <div>
             <img

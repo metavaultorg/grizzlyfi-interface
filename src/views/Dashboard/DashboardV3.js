@@ -318,7 +318,9 @@ export default function DashboardV3(props) {
                 <div className="section section-noinvestments">
                     <div className="section-header">
                         <h1>No Investment Yet</h1>
-                        <p className="text-description" style={{ margin: '16px auto 56px', maxWidth: 658, }}>Start putting your money to work. You can trade BTC, ETH & BNB with up to 50x leverage or provide liquidity and earn the fees paid by traders.</p>
+                        <p className="text-description" style={{ margin: '16px auto 56px', maxWidth: 658, }}>
+                            On Grizzly Trade you can earn in two ways. Outperform the market by trading or go with the market and provide liquidity to traders.
+                        </p>
                     </div>
 
                     <div className="DashboardV3-cards">

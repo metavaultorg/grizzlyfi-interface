@@ -105,7 +105,7 @@ export default function ChartPrice() {
                             isAnimationActive={false}
                             type="monotone"
                             unit="$"
-                            strokeWidth={1}
+                            strokeWidth={2}
                             yAxisId="right"
                             dot={false}
                             dataKey="gllPrice"

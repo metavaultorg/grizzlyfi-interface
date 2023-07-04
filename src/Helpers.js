@@ -2511,7 +2511,7 @@ export function isLocal() {
 }
 
 export function getHomeUrl() {
-  return "https://perp.grizzly.fi";
+  return "https://trade.grizzly.fi/";
 }
 
 export function getRootShareApiUrl() {
@@ -2519,7 +2519,7 @@ export function getRootShareApiUrl() {
 }
 
 export function getTradePageUrl() {
-  return "https://perp.grizzly.fi/#/trade";
+  return "https://trade.grizzly.fi//#/trade";
 }
 
 export function tokenImage24(name) {
