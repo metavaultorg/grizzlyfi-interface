@@ -209,10 +209,6 @@ export default function DashboardV3(props) {
                         {claimTypes.map((item) => (
                             <div style={{
                                 display: 'inline-flex',
-                                justifyContent:'center',
-                                borderRadius: 16,
-                                background: selectedClaimToken === item.id ? 'rgba(255, 255, 255, 0.05)' : 'transparent',
-                                padding: 4,
                                 marginRight:8,
                             }}>
                                 <img
@@ -221,6 +217,7 @@ export default function DashboardV3(props) {
                                         opacity: selectedClaimToken === item.id ? '1' : '0.4',
                                         border: selectedClaimToken === item.id ? 'solid 1px #fff' : 'none',
                                         borderRadius: 13,
+                                        boxShadow: selectedClaimToken === item.id ? '0 0 0 3px rgba(255, 255, 255, 0.2)':'none'
                                     }}
                                     src={getImageUrl({ path: item.iconPath, })}
                                     alt={''}
