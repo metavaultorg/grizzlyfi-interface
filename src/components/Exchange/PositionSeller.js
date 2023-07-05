@@ -617,7 +617,7 @@ export default function PositionSeller(props) {
     if (hasPendingProfit) {
       return "Close without profit";
     }
-    return isSubmitting ? "Closing..." : "Close";
+    return isSubmitting ? "Closing..." : "Close Position";
   };
 
   const resetForm = () => {
