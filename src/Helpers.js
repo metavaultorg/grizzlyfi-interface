@@ -19,6 +19,10 @@ import OrderBook from "./abis/OrderBook.json";
 
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 
+import IconSuccess from './assets/icons/icon-success.svg'
+import IconError from './assets/icons/icon-failed.svg'
+import IconPending from './assets/icons/icon-waiting.svg'
+
 const { AddressZero } = ethers.constants;
 
 export const UI_VERSION = "1.3";
@@ -35,7 +39,7 @@ export const CHAIN_ID = DEFAULT_CHAIN_ID;
 
 export const MIN_PROFIT_TIME = 0;
 
-const SELECTED_NETWORK_LOCAL_STORAGE_KEY = "SELECTED_NETWORK";
+export const SELECTED_NETWORK_LOCAL_STORAGE_KEY = "SELECTED_NETWORK";
 
 const CHAIN_NAMES_MAP = {
   [opBNB]: "opBNB",
@@ -247,11 +251,15 @@ export function isHomeSite() {
 export const helperToast = {
   success: (content) => {
     toast.dismiss();
-    toast.success(content);
+    toast.success(content, {
+      icon: <img src={IconSuccess} alt="" />
+    });
   },
   error: (content) => {
     toast.dismiss();
-    toast.error(content);
+    toast.error(content, {
+      icon: <img src={IconError } alt="" />
+    });
   },
 };
 
@@ -2126,12 +2134,13 @@ export const getWalletConnectHandler = (activate, deactivate, setActivatingConne
   return fn;
 };
 
-export const getInjectedHandler = (activate) => {
+export const getInjectedHandler = (activate, setWrongNetworkIsOpen) => {
   const fn = async () => {
     activate(getInjectedConnector(), (e) => {
       const chainId = localStorage.getItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY) || DEFAULT_CHAIN_ID;
 
       if (e instanceof UnsupportedChainIdError) {
+
         helperToast.error(
           <div>
             <div>Your wallet is not connected to {getChainName(chainId)}.</div>
@@ -2144,7 +2153,8 @@ export const getInjectedHandler = (activate) => {
             </div>
           </div>
         );
-        return;
+        // setWrongNetworkIsOpen(true)
+        return 
       }
       const errString = e.message ?? e.toString();
       helperToast.error(errString);
@@ -2511,7 +2521,7 @@ export function isLocal() {
 }
 
 export function getHomeUrl() {
-  return "https://trade.grizzly.fi/";
+  return "https://trade.grizzly.fi/#/dashboard";
 }
 
 export function getRootShareApiUrl() {
@@ -2519,7 +2529,7 @@ export function getRootShareApiUrl() {
 }
 
 export function getTradePageUrl() {
-  return "https://trade.grizzly.fi//#/trade";
+  return "https://trade.grizzly.fi/#/trade";
 }
 
 export function tokenImage24(name) {
