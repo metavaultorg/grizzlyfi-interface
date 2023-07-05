@@ -21,7 +21,7 @@ export default function MarketTable() {
     return (
         <>
         <div className="market-card list-table">
-            <table style={{ width: '100%', textAlign: 'left', borderSpacing: '0px 10px' }} cellspacing="0" cellpadding="0">
+            <table style={{ width: '100%', textAlign: 'left', borderSpacing: '0px 10px' }} cellSpacing="0" cellPadding="0">
                 <thead>
                     <tr>
                         <th>Pair</th>

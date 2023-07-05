@@ -1,50 +1,45 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { useWeb3React } from "@web3-react/core";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import './Earn.css'
-import "../Exchange/Exchange.css";
 import useSWR from "swr";
-import ItemCard from '../../components/ItemCard/ItemCard'
-import IconPercentage from '../../assets/icons/icon-percentage.svg'
-import IconMoney from '../../assets/icons/icon-investments-money.svg'
-import IconClaim from '../../assets/icons/icon-claim-reward.svg'
-import { getImageUrl } from "../../cloudinary/getImageUrl";
-import GllSwapBox from "./GllSwapBox";
-import TooltipComponent from "../../components/Tooltip/Tooltip";
-import { getWhitelistedTokens } from "../../data/Tokens";
+import { getContract } from "../../Addresses";
+import { useInfoTokens } from "../../Api";
 import {
+  BASIS_POINTS_DIVISOR,
+  USD_DECIMALS,
+  bigNumberify,
   fetcher,
   formatAmount,
   formatKeyAmount,
-  bigNumberify,
-  useChainId,
-  USD_DECIMALS,
-  BASIS_POINTS_DIVISOR,
   opBNB,
+  useChainId,
 } from "../../Helpers";
-import {
-  useInfoTokens,
-} from "../../Api";
-import { getContract } from "../../Addresses";
 import Vault from "../../abis/Vault.json";
-import AssetDropdown from "../Dashboard/AssetDropdown";
-import ChartPrice from './ChartPrice'
-import TextBadge from '../../components/Common/TextBadge'
+import IconClaim from "../../assets/icons/icon-claim-reward.svg";
+import IconMoney from "../../assets/icons/icon-investments-money.svg";
+import IconPercentage from "../../assets/icons/icon-percentage.svg";
+import { getImageUrl } from "../../cloudinary/getImageUrl";
 import APRLabel from "../../components/APRLabel/APRLabel";
 import AUMLabel from "../../components/AUMLabel/AUMLabel";
+import TextBadge from "../../components/Common/TextBadge";
+import ItemCard from "../../components/ItemCard/ItemCard";
+import TooltipComponent from "../../components/Tooltip/Tooltip";
+import { getWhitelistedTokens } from "../../data/Tokens";
+import useWeb3Onboard from "../../hooks/useWeb3Onboard";
+import AssetDropdown from "../Dashboard/AssetDropdown";
+import "../Exchange/Exchange.css";
+import ChartPrice from "./ChartPrice";
+import "./Earn.css";
+import GllSwapBox from "./GllSwapBox";
 
 export default function Earn(props) {
   const history = useHistory();
   const [isBuying, setIsBuying] = useState(true);
-  const { active, library } = useWeb3React();
+  const { active, library } = useWeb3Onboard();
   const { chainId } = useChainId();
 
   const whitelistedTokens = getWhitelistedTokens(chainId);
   const tokenList = whitelistedTokens.filter((t) => !t.isWrapped);
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
-
-
 
   useEffect(() => {
     const hash = history.location.hash.replace("#", "");
@@ -70,7 +65,6 @@ export default function Earn(props) {
       adjustedUsdgSupply = adjustedUsdgSupply.add(tokenInfo.usdgAmount);
     }
   }
-
 
   const getWeightText = (tokenInfo) => {
     if (
@@ -147,35 +141,63 @@ export default function Earn(props) {
 
   return (
     <div className="Earn  page-layout">
-      <div className="section-header" style={{ maxWidth: 1006, margin: '0 auto' }}>
-        <h1>Grizzly Leverage Liquidity<TextBadge text='Low Risk' bgColor={'rgba(158,206,255,0.1)'} textColor='#9eceff' /></h1>
-        <p className="text-description" style={{ marginTop: 16, marginBottom: 48 }}>The Grizzly Leverage Liquidity tokens (GLL) is the counterparty to everyone trading with leverage. Deposit your favourite cryptocurrency and earn a solid yield which comes from the trading fees paid on Grizzly Trade. Earn like an exchange. </p>
+      <div className="section-header" style={{ maxWidth: 1006, margin: "0 auto" }}>
+        <h1>
+          Grizzly Leverage Liquidity
+          <TextBadge text="Low Risk" bgColor={"rgba(158,206,255,0.1)"} textColor="#9eceff" />
+        </h1>
+        <p className="text-description" style={{ marginTop: 16, marginBottom: 48 }}>
+          The Grizzly Leverage Liquidity tokens (GLL) is the counterparty to everyone trading with leverage. Deposit
+          your favourite cryptocurrency and earn a solid yield which comes from the trading fees paid on Grizzly Trade.
+          Earn like an exchange.{" "}
+        </p>
       </div>
-      <div className='Earn-content'>
-        <div className='Earn-left'>
+      <div className="Earn-content">
+        <div className="Earn-left">
           <div className="info-card-section" style={{ maxWidth: 912 }}>
-            <ItemCard style={{ minWidth: 218 }} label='APR' value={<APRLabel chainId={opBNB} label="gllAprTotal" key="BSC" />} icon={IconPercentage} />
-            <ItemCard style={{ minWidth: 298 }} label='Assets Under Management' value={<AUMLabel />} icon={IconMoney} />
-            <ItemCard style={{ width: '-webkit-fill-available', minWidth: 320 }} label='Claimable Rewards (BNB)' value={<APRLabel usePercentage={false} tokenDecimals={18} chainId={opBNB} label="feeGllTrackerRewards" key="BSC" />} icon={IconClaim} buttonEle={<button
-              className="btn-secondary "
-              style={{ width: 75, height: 32 }}
-            >
-              Claim
-            </button>}
+            <ItemCard
+              style={{ minWidth: 218 }}
+              label="APR"
+              value={<APRLabel chainId={opBNB} label="gllAprTotal" key="BSC" />}
+              icon={IconPercentage}
+            />
+            <ItemCard style={{ minWidth: 298 }} label="Assets Under Management" value={<AUMLabel />} icon={IconMoney} />
+            <ItemCard
+              style={{ width: "-webkit-fill-available", minWidth: 320 }}
+              label="Claimable Rewards (BNB)"
+              value={
+                <APRLabel
+                  usePercentage={false}
+                  tokenDecimals={18}
+                  chainId={opBNB}
+                  label="feeGllTrackerRewards"
+                  key="BSC"
+                />
+              }
+              icon={IconClaim}
+              buttonEle={
+                <button className="btn-secondary " style={{ width: 75, height: 32 }}>
+                  Claim
+                </button>
+              }
             />
           </div>
           <ChartPrice />
         </div>
-        <div className='Earn-right'>
-          <div className='Exchange-swap-box'>
+        <div className="Earn-right">
+          <div className="Exchange-swap-box">
             <GllSwapBox {...props} isBuying={isBuying} setIsBuying={setIsBuying} getWeightText={getWeightText} />
           </div>
         </div>
       </div>
-      <div className='earn-statistics'>
+      <div className="earn-statistics">
         <div className="inner-card-title">GLL Statistics</div>
         <div className="list-table">
-          <table style={{ width: '100%', textAlign: 'left', borderSpacing: '0px 10px' }} cellspacing="0" cellpadding="0">
+          <table
+            style={{ width: "100%", textAlign: "left", borderSpacing: "0px 10px" }}
+            cellSpacing="0"
+            cellPadding="0"
+          >
             <thead>
               <tr>
                 <th>Asset</th>
@@ -204,13 +226,9 @@ export default function Earn(props) {
                   console.error(error);
                 }
                 return (
-
-                  <tr
-                    key={index}
-                    style={{ background: 'rgba(255,255,255,0.05)' }}
-                  >
+                  <tr key={index} style={{ background: "rgba(255,255,255,0.05)" }}>
                     <td>
-                      <div style={{ display: "flex", alignItems: 'center', gap: 16 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                         <img
                           style={{ objectFit: "contain" }}
                           src={tokenImage || tokenImage.default}
@@ -222,7 +240,9 @@ export default function Earn(props) {
                         <AssetDropdown assetSymbol={token.symbol} assetInfo={token} />
                       </div>
                     </td>
-                    <td className="font-number">{formatKeyAmount(tokenInfo, "managedAmount", token.decimals, 2, true)}</td>
+                    <td className="font-number">
+                      {formatKeyAmount(tokenInfo, "managedAmount", token.decimals, 2, true)}
+                    </td>
                     <td>
                       <TooltipComponent
                         handle={`$${formatKeyAmount(tokenInfo, "managedUsd", USD_DECIMALS, 0, true)}`}
@@ -244,9 +264,8 @@ export default function Earn(props) {
                     <td className="font-number">{formatAmount(utilization, 2, 2, false)}%</td>
                     <td>{getWeightText(tokenInfo)}</td>
                   </tr>
-                )
-              }
-              )}
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -269,12 +288,9 @@ export default function Earn(props) {
               console.error(error);
             }
             return (
-
-              <div
-                className="App-card" key={token.name}
-              >
+              <div className="App-card" key={token.name}>
                 <div className="App-card-title">
-                  <div style={{ display: "flex", alignItems: 'center', gap: 16 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                     <img
                       style={{ objectFit: "contain" }}
                       src={tokenImage || tokenImage.default}
@@ -324,13 +340,11 @@ export default function Earn(props) {
                     <div className="font-number">{getWeightText(tokenInfo)}</div>
                   </div>
                 </div>
-
               </div>
-            )
-          }
-          )}
+            );
+          })}
         </div>
       </div>
     </div>
-  )
+  );
 }

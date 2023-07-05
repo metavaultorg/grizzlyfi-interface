@@ -1,11 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { InjectedConnector } from "@web3-react/injected-connector";
-import {
-  WalletConnectConnector,
-  UserRejectedRequestError as UserRejectedRequestErrorWalletConnect,
-} from "@web3-react/walletconnect-connector";
 import { toast } from "react-toastify";
-import { useWeb3React, UnsupportedChainIdError } from "@web3-react/core";
+
 import { useLocalStorage } from "react-use";
 import { ethers } from "ethers";
 import { format as formatDateFn } from "date-fns";
@@ -18,6 +13,7 @@ import OrderBookReader from "./abis/OrderBookReader.json";
 import OrderBook from "./abis/OrderBook.json";
 
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
+import useWeb3Onboard from "./hooks/useWeb3Onboard";
 
 const { AddressZero } = ethers.constants;
 
@@ -103,13 +99,13 @@ export const INACTIVE = "Inactive";
 export const MARKET = "Market";
 export const LIMIT = "Limit";
 export const STOP = "Stop";
-export const LEVERAGE_ORDER_OPTIONS = [MARKET, LIMIT/*, STOP*/];
+export const LEVERAGE_ORDER_OPTIONS = [MARKET, LIMIT /*, STOP*/];
 export const SWAP_ORDER_OPTIONS = [MARKET, LIMIT];
 export const SWAP_OPTIONS = [LONG, SHORT, SWAP];
 export const DEFAULT_SLIPPAGE_AMOUNT = 30;
 export const DEFAULT_HIGHER_SLIPPAGE_AMOUNT = 100;
 
-export const DECREASE_ORDER_TYPES = ["Decrease", "(SL)", "(TP)","(TS)"];
+export const DECREASE_ORDER_TYPES = ["Decrease", "(SL)", "(TP)", "(TS)"];
 
 export const SLIPPAGE_BPS_KEY = "Exchange-swap-slippage-basis-points-v3";
 export const CLOSE_POSITION_RECEIVE_TOKEN_KEY = "Close-position-receive-token";
@@ -211,21 +207,6 @@ export const platformTokens = {
 };
 
 const supportedChainIds = [opBNB];
-const injectedConnector = new InjectedConnector({
-  supportedChainIds,
-});
-
-const getWalletConnectConnector = () => {
-  const chainId = localStorage.getItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY) || DEFAULT_CHAIN_ID;
-  return new WalletConnectConnector({
-    rpc: {
-      [opBNB]: BSC_RPC_PROVIDERS[0],
-      
-    },
-    qrcode: true,
-    chainId,
-  });
-};
 
 export function isSupportedChain(chainId) {
   return supportedChainIds.includes(chainId);
@@ -532,14 +513,7 @@ export function getBuyGllToAmount(fromAmount, swapTokenAddress, infoTokens, gllP
   return { amount: gllAmount, feeBasisPoints };
 }
 
-export function getSellGllFromAmount(
-  toAmount,
-  swapTokenAddress,
-  infoTokens,
-  gllPrice,
-  usdgSupply,
-  totalTokenWeights
-) {
+export function getSellGllFromAmount(toAmount, swapTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0), feeBasisPoints: 0 };
   if (!toAmount || !swapTokenAddress || !infoTokens || !gllPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
@@ -916,11 +890,11 @@ export function calculatePositionDelta(
   if (!sizeDelta) {
     sizeDelta = size;
   }
-  if(!averagePrice){
-    return
+  if (!averagePrice) {
+    return;
   }
   const priceDelta = averagePrice.gt(price) ? averagePrice.sub(price) : price.sub(averagePrice);
-  
+
   let delta = sizeDelta.mul(priceDelta).div(averagePrice);
   const pendingDelta = delta;
 
@@ -1157,8 +1131,7 @@ export function getSwapFeeBasisPoints(isStable) {
 
 const RPC_PROVIDERS = {
   [opBNB]: BSC_RPC_PROVIDERS,
-//   [ZKSYNC]: ZKSYNC_RPC_PROVIDERS,
-
+  //   [ZKSYNC]: ZKSYNC_RPC_PROVIDERS,
 };
 
 const FALLBACK_PROVIDERS = {
@@ -1243,12 +1216,8 @@ export function activateInjectedProvider(providerName) {
   }
 }
 
-export function getInjectedConnector() {
-  return injectedConnector;
-}
-
 export function useChainId() {
-  let { chainId } = useWeb3React();
+  let { chainId } = useWeb3Onboard();
 
   if (!chainId) {
     const chainIdFromLocalStorage = localStorage.getItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY);
@@ -1274,9 +1243,7 @@ export function useENS(address) {
     async function resolveENS() {
       if (address) {
         try {
-          const provider = new ethers.providers.JsonRpcProvider(
-            BSC_RPC_PROVIDERS[0]
-          );
+          const provider = new ethers.providers.JsonRpcProvider(BSC_RPC_PROVIDERS[0]);
           const name = await provider.lookupAddress(address.toLowerCase());
           if (name) setENSName(name);
         } catch (e) {
@@ -1300,116 +1267,6 @@ export function clearWalletLinkData() {
     .map((x) => x[0])
     .filter((x) => x.startsWith(WALLET_LINK_LOCALSTORAGE_PREFIX))
     .map((x) => localStorage.removeItem(x));
-}
-
-export function useEagerConnect(setActivatingConnector) {
-  const { activate, active } = useWeb3React();
-  const [tried, setTried] = useState(false);
-
-  useEffect(() => {
-    (async function () {
-      if (Boolean(localStorage.getItem(SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY)) !== true) {
-        // only works with WalletConnect
-        clearWalletConnectData();
-        // force clear localStorage connection for MM/CB Wallet (Brave legacy)
-        clearWalletLinkData();
-        return;
-      }
-
-      let shouldTryWalletConnect = false;
-      try {
-        // naive validation to not trigger Wallet Connect if data is corrupted
-        const rawData = localStorage.getItem(WALLET_CONNECT_LOCALSTORAGE_KEY);
-        if (rawData) {
-          const data = JSON.parse(rawData);
-          if (data && data.connected) {
-            shouldTryWalletConnect = true;
-          }
-        }
-      } catch (ex) {
-        if (ex instanceof SyntaxError) {
-          // rawData is not a valid json
-          clearWalletConnectData();
-        }
-      }
-
-      if (shouldTryWalletConnect) {
-        try {
-          const connector = getWalletConnectConnector();
-          setActivatingConnector(connector);
-          await activate(connector, undefined, true);
-          // in case Wallet Connect is activated no need to check injected wallet
-          return;
-        } catch (ex) {
-          // assume data in localstorage is corrupted and delete it to not retry on next page load
-          clearWalletConnectData();
-        }
-      }
-
-      try {
-        const connector = getInjectedConnector();
-        const currentProviderName = localStorage.getItem(CURRENT_PROVIDER_LOCALSTORAGE_KEY) ?? false;
-        if (currentProviderName !== false) {
-          activateInjectedProvider(currentProviderName);
-        }
-        const authorized = await connector.isAuthorized();
-        if (authorized) {
-          setActivatingConnector(connector);
-          await activate(connector, undefined, true);
-        }
-      } catch (ex) {}
-
-      setTried(true);
-    })();
-  }, []); // intentionally only running on mount (make sure it's only mounted once :))
-
-  // if the connection worked, wait until we get confirmation of that to flip the flag
-  useEffect(() => {
-    if (!tried && active) {
-      setTried(true);
-    }
-  }, [tried, active]);
-
-  return tried;
-}
-
-export function useInactiveListener(suppress = false) {
-  const injected = getInjectedConnector();
-  const { active, error, activate } = useWeb3React();
-
-  useEffect(() => {
-    const { ethereum } = window;
-    if (ethereum && ethereum.on && !active && !error && !suppress) {
-      const handleConnect = () => {
-        activate(injected);
-      };
-      const handleChainChanged = (chainId) => {
-        activate(injected);
-      };
-      const handleAccountsChanged = (accounts) => {
-        if (accounts.length > 0) {
-          activate(injected);
-        }
-      };
-      const handleNetworkChanged = (networkId) => {
-        activate(injected);
-      };
-
-      ethereum.on("connect", handleConnect);
-      ethereum.on("chainChanged", handleChainChanged);
-      ethereum.on("accountsChanged", handleAccountsChanged);
-      ethereum.on("networkChanged", handleNetworkChanged);
-
-      return () => {
-        if (ethereum.removeListener) {
-          ethereum.removeListener("connect", handleConnect);
-          ethereum.removeListener("chainChanged", handleChainChanged);
-          ethereum.removeListener("accountsChanged", handleAccountsChanged);
-          ethereum.removeListener("networkChanged", handleNetworkChanged);
-        }
-      };
-    }
-  }, [active, error, suppress, activate]);
 }
 
 export function getProvider(library, chainId) {
@@ -1551,19 +1408,19 @@ export const limitDecimals = (amount, maxDecimals) => {
   return amountStr;
 };
 
-export const compactNumber = value => {
-  const abs = Math.abs(value)
+export const compactNumber = (value) => {
+  const abs = Math.abs(value);
   if (abs >= 1e9) {
-    return `${(value / 1e9).toFixed(abs < 1e10 ? 2 : 1)}B`
+    return `${(value / 1e9).toFixed(abs < 1e10 ? 2 : 1)}B`;
   }
   if (abs >= 1e6) {
-    return `${(value / 1e6).toFixed(abs < 1e7 ? 2 : 1)}M`
+    return `${(value / 1e6).toFixed(abs < 1e7 ? 2 : 1)}M`;
   }
   if (abs >= 1e3) {
-    return `${(value / 1e3).toFixed(abs < 1e4 ? 2 : 1)}K`
+    return `${(value / 1e3).toFixed(abs < 1e4 ? 2 : 1)}K`;
   }
-  return `${value.toFixed(1)}`
-}
+  return `${value.toFixed(1)}`;
+};
 
 export const formatNumber = (value, displayDecimals, useComma, compact) => {
   if (!value) {
@@ -1571,13 +1428,13 @@ export const formatNumber = (value, displayDecimals, useComma, compact) => {
   }
   let ret = limitDecimals(value, displayDecimals);
   if (compact) {
-    ret = compactNumber(ret)
+    ret = compactNumber(ret);
   }
   if (useComma) {
     ret = numberWithCommas(ret);
   }
   return ret;
-}
+};
 
 export const padDecimals = (amount, minDecimals) => {
   let amountStr = amount.toString();
@@ -1647,8 +1504,8 @@ function parseDecreaseOrdersData(chainId, decreaseOrdersData, account, indexes) 
       isLong,
       triggerPrice: sliced[6],
       triggerAboveThreshold: sliced[7].toString() === "1",
-      orderType:sliced[8],
-      trailingStopPercentage:sliced[9],
+      orderType: sliced[8],
+      trailingStopPercentage: sliced[9],
       type: DECREASE,
     };
   };
@@ -1710,7 +1567,7 @@ export function getOrderKey(order) {
 }
 
 export function useAccountOrders(flagOrdersEnabled, overrideAccount) {
-  const { library, account: connectedAccount } = useWeb3React();
+  const { library, account: connectedAccount } = useWeb3Onboard();
   const active = true; // this is used in Actions.js so set active to always be true
   const account = overrideAccount || connectedAccount;
 
@@ -1791,19 +1648,16 @@ export function useAccountOrders(flagOrdersEnabled, overrideAccount) {
       };
 
       const getOrders = async (method, knownIndexes, lastIndex, parseFunc) => {
-        const indexes = method === "getDecreaseOrders"? await getIndexesDec(knownIndexes, lastIndex) : getIndexes(knownIndexes, lastIndex);
+        const indexes =
+          method === "getDecreaseOrders"
+            ? await getIndexesDec(knownIndexes, lastIndex)
+            : getIndexes(knownIndexes, lastIndex);
         //const indexes = getIndexes(knownIndexes, lastIndex);
-        const validIndexes = indexes.filter((i)=>i>=0);
+        const validIndexes = indexes.filter((i) => i >= 0);
         // console.log("method",validIndexes,indexes,method)
-        const ordersData = await orderBookReaderContract[method](
-          orderBookAddress,
-          account,
-          validIndexes
-        );
+        const ordersData = await orderBookReaderContract[method](orderBookAddress, account, validIndexes);
 
         const orders = parseFunc(chainId, ordersData, account, validIndexes);
-
-       
 
         return orders;
       };
@@ -1826,7 +1680,6 @@ export function useAccountOrders(flagOrdersEnabled, overrideAccount) {
           getOrders("getIncreaseOrders", serverIndexes.increase, lastIndexes.increase, parseIncreaseOrdersData),
           getOrders("getDecreaseOrders", serverIndexes.decrease, lastIndexes.decrease, parseDecreaseOrdersData),
         ]);
-
 
         return [...swapOrders, ...increaseOrders, ...decreaseOrders];
       } catch (ex) {
@@ -1883,7 +1736,7 @@ export const parseValue = (value, tokenDecimals) => {
     const amount = ethers.utils.parseUnits(value, tokenDecimals);
     return bigNumberify(amount);
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 };
 
@@ -1935,17 +1788,17 @@ export async function setGasPrice(txnOpts, provider, chainId) {
 
   const gasPrice = await getApiGasPrice();
   if (gasPrice.gt(0)) {
-      txnOpts["gasPrice"] = gasPrice;//.add(premium);
+    txnOpts["gasPrice"] = gasPrice; //.add(premium);
   } else if (maxGasPrice) {
-      const gasPrice = await provider.getGasPrice();
-      if (gasPrice.gt(maxGasPrice)) {
-          txnOpts["gasPrice"] = bigNumberify(maxGasPrice);//.add(premium);
-      }else{
-          txnOpts["gasPrice"] = gasPrice;//.add(premium);
-      }
+    const gasPrice = await provider.getGasPrice();
+    if (gasPrice.gt(maxGasPrice)) {
+      txnOpts["gasPrice"] = bigNumberify(maxGasPrice); //.add(premium);
+    } else {
+      txnOpts["gasPrice"] = gasPrice; //.add(premium);
+    }
 
-      // const feeData = await provider.getFeeData();
-      // txnOpts["maxPriorityFeePerGas"] = feeData.maxPriorityFeePerGas.add(priority);
+    // const feeData = await provider.getFeeData();
+    // txnOpts["maxPriorityFeePerGas"] = feeData.maxPriorityFeePerGas.add(priority);
   }
 }
 
@@ -2105,52 +1958,6 @@ export const switchNetwork = async (chainId, active) => {
 
     console.error("error", ex);
   }
-};
-
-export const getWalletConnectHandler = (activate, deactivate, setActivatingConnector) => {
-  const fn = async () => {
-    const walletConnect = getWalletConnectConnector();
-    setActivatingConnector(walletConnect);
-    activate(walletConnect, (ex) => {
-      if (ex instanceof UnsupportedChainIdError) {
-        helperToast.error("Unsupported chain. Switch to Bsc network on your wallet and try again");
-        console.warn(ex);
-      } else if (!(ex instanceof UserRejectedRequestErrorWalletConnect)) {
-        helperToast.error(ex.message);
-        console.warn(ex);
-      }
-      clearWalletConnectData();
-      deactivate();
-    });
-  };
-  return fn;
-};
-
-export const getInjectedHandler = (activate) => {
-  const fn = async () => {
-    activate(getInjectedConnector(), (e) => {
-      const chainId = localStorage.getItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY) || DEFAULT_CHAIN_ID;
-
-      if (e instanceof UnsupportedChainIdError) {
-        helperToast.error(
-          <div>
-            <div>Your wallet is not connected to {getChainName(chainId)}.</div>
-            <br />
-            <div className="clickable underline margin-bottom" onClick={() => switchNetwork(chainId, true)}>
-              Switch to {getChainName(chainId)}
-            </div>
-            <div className="clickable underline" onClick={() => switchNetwork(chainId, true)}>
-              Add {getChainName(chainId)}
-            </div>
-          </div>
-        );
-        return;
-      }
-      const errString = e.message ?? e.toString();
-      helperToast.error(errString);
-    });
-  };
-  return fn;
 };
 
 export function isMobileDevice(navigator) {
@@ -2326,7 +2133,7 @@ export function getBalanceAndSupplyData(balances) {
     return {};
   }
 
-  const keys = [ "gll"];
+  const keys = ["gll"];
   const balanceData = {};
   const supplyData = {};
   const propsLength = 2;
@@ -2345,9 +2152,7 @@ export function getDepositBalanceData(depositBalances) {
     return;
   }
 
-  const keys = [
-    "gllInStakedGll",
-  ];
+  const keys = ["gllInStakedGll"];
   const data = {};
 
   for (let i = 0; i < keys.length; i++) {
@@ -2357,7 +2162,6 @@ export function getDepositBalanceData(depositBalances) {
 
   return data;
 }
-
 
 export function getStakingData(stakingInfo) {
   if (!stakingInfo || stakingInfo.length === 0) {
@@ -2382,29 +2186,12 @@ export function getStakingData(stakingInfo) {
   return data;
 }
 
-export function getProcessedData(
-  balanceData,
-  supplyData,
-  depositBalanceData,
-  stakingData,
-  aum,
-  nativeTokenPrice,
-
-) {
-  if (
-    !balanceData ||
-    !supplyData ||
-    !depositBalanceData ||
-    !stakingData ||
-    !aum ||
-    !nativeTokenPrice
-  ) {
+export function getProcessedData(balanceData, supplyData, depositBalanceData, stakingData, aum, nativeTokenPrice) {
+  if (!balanceData || !supplyData || !depositBalanceData || !stakingData || !aum || !nativeTokenPrice) {
     return {};
   }
 
   const data = {};
-
-
 
   data.gllSupply = supplyData.gll;
   data.gllPrice =
@@ -2431,8 +2218,6 @@ export function getProcessedData(
   data.gllAprTotal = data.gllAprForNativeToken;
 
   data.totalGllRewardsUsd = data.feeGllTrackerRewardsUsd;
-
-
 
   data.totalNativeTokenRewards = data.feeGllTrackerRewards;
   data.totalNativeTokenRewardsUsd = data.feeGllTrackerRewardsUsd;
@@ -2606,12 +2391,11 @@ export function shouldShowRedirectModal(timestamp) {
   return !isValidTimestamp(timestamp) || Date.now() > expiryTime;
 }
 
-export function today(){
-  const now =  parseInt(new Date()/1000);
-  return now - now%86400;
+export function today() {
+  const now = parseInt(new Date() / 1000);
+  return now - (now % 86400);
 }
 
-
-export function yesterday(){
+export function yesterday() {
   return today() - 86400;
 }

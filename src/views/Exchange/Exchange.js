@@ -1,54 +1,54 @@
-import React, { useEffect, useState, useMemo, useCallback, forwardRef, useImperativeHandle } from "react";
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from "react";
 
-import { useWeb3React } from "@web3-react/core";
-import useSWR from "swr";
-import { ethers } from "ethers";
 import cx from "classnames";
+import { ethers } from "ethers";
+import useSWR from "swr";
 
-import {
-  FUNDING_RATE_PRECISION,
-  BASIS_POINTS_DIVISOR,
-  MARGIN_FEE_BASIS_POINTS,
-  SWAP,
-  LONG,
-  SHORT,
-  USD_DECIMALS,
-  getExplorerUrl,
-  helperToast,
-  formatAmount,
-  bigNumberify,
-  getTokenInfo,
-  fetcher,
-  getPositionKey,
-  getPositionContractKey,
-  getLeverage,
-  useLocalStorageByChainId,
-  getDeltaStr,
-  useChainId,
-  useAccountOrders,
-  getPageTitle,
-} from "../../Helpers";
+import { approvePlugin, cancelMultipleOrders, useInfoTokens, useMinExecutionFee } from "../../Api";
 import { getConstant } from "../../Constants";
-import { approvePlugin, useInfoTokens, useMinExecutionFee, cancelMultipleOrders } from "../../Api";
+import {
+  BASIS_POINTS_DIVISOR,
+  FUNDING_RATE_PRECISION,
+  LONG,
+  MARGIN_FEE_BASIS_POINTS,
+  SHORT,
+  SWAP,
+  USD_DECIMALS,
+  bigNumberify,
+  fetcher,
+  formatAmount,
+  getDeltaStr,
+  getExplorerUrl,
+  getLeverage,
+  getPageTitle,
+  getPositionContractKey,
+  getPositionKey,
+  getTokenInfo,
+  helperToast,
+  useAccountOrders,
+  useChainId,
+  useLocalStorageByChainId,
+} from "../../Helpers";
 
 import { getContract } from "../../Addresses";
-import { getTokens, getToken, getWhitelistedTokens, getTokenBySymbol } from "../../data/Tokens";
+import { getToken, getTokenBySymbol, getTokens, getWhitelistedTokens } from "../../data/Tokens";
 
 import Reader from "../../abis/Reader.json";
-import Vault from "../../abis/Vault.json";
 import Router from "../../abis/Router.json";
 import Token from "../../abis/Token.json";
+import Vault from "../../abis/Vault.json";
 
 import Checkbox from "../../components/Checkbox/Checkbox";
-import SwapBox from "../../components/Exchange/SwapBox";
 import ExchangeTVChart, { getChartToken } from "../../components/Exchange/ExchangeTVChart";
-import PositionsList from "../../components/Exchange/PositionsList";
-import OrdersList from "../../components/Exchange/OrdersList";
-import TradeHistory from "../../components/Exchange/TradeHistory";
 import ExchangeWalletTokens from "../../components/Exchange/ExchangeWalletTokens";
+import OrdersList from "../../components/Exchange/OrdersList";
+import PositionsList from "../../components/Exchange/PositionsList";
+import SwapBox from "../../components/Exchange/SwapBox";
+import TradeHistory from "../../components/Exchange/TradeHistory";
 import Tab from "../../components/Tab/Tab";
 import Footer from "./FooterExchange";
 
+import useWeb3Onboard from "../../hooks/useWeb3Onboard";
 import "./Exchange.css";
 const { AddressZero } = ethers.constants;
 
@@ -371,7 +371,7 @@ export const Exchange = forwardRef((props, ref) => {
     window.scrollTo(0, 0);
   }, []);
 
-  const { active, account, library } = useWeb3React();
+  const { active, account, library } = useWeb3Onboard();
   const { chainId } = useChainId();
   const currentAccount = account;
 
@@ -456,7 +456,7 @@ export const Exchange = forwardRef((props, ref) => {
 
   const tokenAddresses = tokens.map((token) => token.address);
   const { data: tokenBalances } = useSWR(active && [active, chainId, readerAddress, "getTokenBalances", account], {
-      fetcher: fetcher(library, Reader, [tokenAddresses]),
+    fetcher: fetcher(library, Reader, [tokenAddresses]),
   });
 
   const { data: positionData, error: positionDataError } = useSWR(
@@ -910,7 +910,7 @@ export const Exchange = forwardRef((props, ref) => {
   };
 
   return (
-    <div className="Exchange page-layout" style={{marginTop:12}}>
+    <div className="Exchange page-layout" style={{ marginTop: 12 }}>
       <div className="Exchange-content">
         <div className="Exchange-left">
           {renderChart()}

@@ -1,106 +1,97 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import { SWRConfig } from "swr";
 import { ethers } from "ethers";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { SWRConfig } from "swr";
 
-import { motion, AnimatePresence } from "framer-motion";
-import { useSafeAppConnection, SafeAppConnector } from "@gnosis.pm/safe-apps-web3-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 import NotFound from "./404";
 
-import { Web3ReactProvider, useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 
-import TopRightArrColored from "./assets/icons/TopRightArrColored";
-import TopRightArrWhite from "./assets/icons/TopRightArrWhite";
-import Logo from './assets/logos/Logo.jsx'
-import { Switch, Route, NavLink, Redirect } from "react-router-dom";
+import { NavLink, Redirect, Route, Switch } from "react-router-dom";
+import Logo from "./assets/logos/Logo.jsx";
 
 import {
-  DEFAULT_SLIPPAGE_AMOUNT,
-  SLIPPAGE_BPS_KEY,
-  IS_PNL_IN_LEVERAGE_KEY,
-  SHOW_PNL_AFTER_FEES_KEY,
-  BASIS_POINTS_DIVISOR,
-  SHOULD_SHOW_POSITION_LINES_KEY,
-  clearWalletConnectData,
-  switchNetwork,
-  helperToast,
-  getChainName,
-  useChainId,
-  getAccountUrl,
-  getInjectedHandler,
-  useEagerConnect,
-  useLocalStorageSerializeKey,
-  useInactiveListener,
-  getExplorerUrl,
-  getWalletConnectHandler,
   activateInjectedProvider,
-  hasMetaMaskWalletExtension,
-  hasCoinBaseWalletExtension,
-  isMobileDevice,
+  BASIS_POINTS_DIVISOR,
+  clearWalletConnectData,
   clearWalletLinkData,
-  SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
   CURRENT_PROVIDER_LOCALSTORAGE_KEY,
+  DEFAULT_SLIPPAGE_AMOUNT,
+  getAccountUrl,
+  getChainName,
+  getExplorerUrl,
+  getInjectedHandler,
+  getWalletConnectHandler,
+  hasCoinBaseWalletExtension,
+  hasExodusWalletExtension,
+  hasMetaMaskWalletExtension,
+  helperToast,
+  IS_PNL_IN_LEVERAGE_KEY,
+  isMobileDevice,
+  opBNB,
   REFERRAL_CODE_KEY,
   REFERRAL_CODE_QUERY_PARAMS,
-  opBNB,
-  hasExodusWalletExtension,
+  SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
+  SHOULD_SHOW_POSITION_LINES_KEY,
+  SHOW_PNL_AFTER_FEES_KEY,
+  SLIPPAGE_BPS_KEY,
+  switchNetwork,
+  useChainId,
+  useLocalStorageSerializeKey,
   ZKSYNC,
 } from "./Helpers";
 
-import Dashboard from "./views/Dashboard/Dashboard";
-import { Exchange } from "./views/Exchange/Exchange";
 import Actions from "./views/Actions/Actions";
-import Referrals from "./views/Referrals/Referrals";
 import BeginAccountTransfer from "./views/BeginAccountTransfer/BeginAccountTransfer";
 import CompleteAccountTransfer from "./views/CompleteAccountTransfer/CompleteAccountTransfer";
+import Dashboard from "./views/Dashboard/Dashboard";
+import { Exchange } from "./views/Exchange/Exchange";
+import Referrals from "./views/Referrals/Referrals";
 
 import cx from "classnames";
 import { cssTransition, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import NetworkSelector from "./components/NetworkSelector/NetworkSelector";
-import Modal from "./components/Modal/Modal";
 import Checkbox from "./components/Checkbox/Checkbox";
+import Modal from "./components/Modal/Modal";
+import NetworkSelector from "./components/NetworkSelector/NetworkSelector";
 
-import { RiMenuLine } from "react-icons/ri";
 import { FaTimes } from "react-icons/fa";
 import { FiX } from "react-icons/fi";
+import { RiMenuLine } from "react-icons/ri";
 
-import "./Font.css";
-import "./Shared.css";
 import "./App.css";
-import "./Input.css";
 import "./AppOrder.css";
+import "./Font.css";
+import "./Input.css";
+import "./Shared.css";
+import "./components/Common/Button.css";
 
-import connectWalletImg from "./img/ic_wallet_24.svg";
-
-import metamaskImg from "./img/ic_metamask_hover_16.svg";
-import exodusImg from "./img/ic_exodus.svg";
-import coinbaseImg from "./img/coinbaseWallet.png";
-import walletConnectImg from "./img/walletconnect-circle-blue.svg";
-import AddressDropdown from "./components/AddressDropdown/AddressDropdown";
-import { ConnectWalletButton } from "./components/Common/Button";
-import useEventToast from "./components/EventToast/useEventToast";
-import EventToastContainer from "./components/EventToast/EventToastContainer";
-import SEO from "./components/Common/SEO";
-import useRouteQuery from "./hooks/useRouteQuery";
 import { encodeReferralCode } from "./Api/referrals";
+import AddressDropdown from "./components/AddressDropdown/AddressDropdown";
+import SEO from "./components/Common/SEO";
+import EventToastContainer from "./components/EventToast/EventToastContainer";
+import useEventToast from "./components/EventToast/useEventToast";
+import useRouteQuery from "./hooks/useRouteQuery";
+import coinbaseImg from "./img/coinbaseWallet.png";
+import exodusImg from "./img/ic_exodus.svg";
+import metamaskImg from "./img/ic_metamask_hover_16.svg";
+import walletConnectImg from "./img/walletconnect-circle-blue.svg";
 
 import { getContract } from "./Addresses";
 
-import Vault from "./abis/Vault.json";
-import PositionRouter from "./abis/PositionRouter.json";
-import ReferralTerms from "./views/ReferralTerms/ReferralTerms";
-import { getImageUrl } from "./cloudinary/getImageUrl";
-import Earn from "./views/Earn/Earn";
-import IconProfile from './assets/icons/icon-profile.svg'
-import IconToken from './assets/icons/honey-token.svg'
-import IconBnb from './assets/icons/icon-bnb.svg'
-import LinkDropdown from "./components/LinkDropdown/LinkDropdown";
+import IconToken from "./assets/icons/honey-token.svg";
+import IconProfile from "./assets/icons/icon-profile.svg";
 import APRLabel from "./components/APRLabel/APRLabel";
+import LinkDropdown from "./components/LinkDropdown/LinkDropdown";
+import Earn from "./views/Earn/Earn";
+import ReferralTerms from "./views/ReferralTerms/ReferralTerms";
 
+import { useConnectWallet, Web3OnboardProvider } from "@web3-onboard/react";
 
-const safeMultisigConnector = new SafeAppConnector();
+import { initWeb3Onboard } from "./services";
+
+import useWeb3Onboard from "./hooks/useWeb3Onboard";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -229,8 +220,10 @@ function AppHeaderUser({
   showNetworkSelectorModal,
   disconnectAccountAndCloseSettings,
 }) {
-  const { chainId } = useChainId();
-  const { active, account } = useWeb3React();
+  const { account, active, library, chainId } = useWeb3Onboard();
+
+  const [{ wallet }, connect, disconnect] = useConnectWallet();
+
   const showSelector = false;
   const networkOptions = [
     {
@@ -270,6 +263,14 @@ function AppHeaderUser({
 
   const accountUrl = getAccountUrl(chainId, account);
 
+  const handleConnectWallet = async () => {
+    try {
+      await connect();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <div className="App-header-user">
       {showSelector && (
@@ -290,13 +291,13 @@ function AppHeaderUser({
         </NavLink>
       </div> */}
       {active ? (
-        <div style={{display:'flex',gap:8}}>
+        <div style={{ display: "flex", gap: 8 }}>
           <div className="App-header-balance">
             <img src={IconToken} alt="icon" width={24} />
-            <APRLabel chainId={chainId} label="nativeTokenPrice" usePercentage={false} tokenDecimals={30}/>
+            <APRLabel chainId={chainId} label="nativeTokenPrice" usePercentage={false} tokenDecimals={30} />
           </div>
           {/* <div className="App-header-network"><img src={IconBnb} alt="icon" /></div> */}
-          <div style={{ position: 'relative' }} >
+          <div style={{ position: "relative" }}>
             <LinkDropdown />
           </div>
           <div className="App-header-user-address">
@@ -310,18 +311,17 @@ function AppHeaderUser({
             />
           </div>
         </div>
-        
       ) : (
-          <div style={{ display: 'flex', gap: 8,alignItems:'center' }}>
-            <div style={{position:'relative'}}>
-              <LinkDropdown />
-            </div>
-            <button className={"btn btn-yellow btn-wallet"} onClick={() => setWalletModalVisible(true)}>
-              {/* {small ? "Connect" : "Connect Wallet"} */}
-              Connect
-            </button>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <div style={{ position: "relative" }}>
+            <LinkDropdown />
           </div>
-        
+          <button className={"btn btn-yellow btn-wallet"} onClick={() => handleConnectWallet()}>
+            {/* {small ? "Connect" : "Connect Wallet"} */}
+            Connect
+          </button>
+        </div>
+
         // <ConnectWalletButton onClick={() => setWalletModalVisible(true)} imgSrc={connectWalletImg}>
         //   {small ? "Connect" : "Connect Wallet"}
         // </ConnectWalletButton>
@@ -332,25 +332,20 @@ function AppHeaderUser({
 
 function FullApp() {
   const exchangeRef = useRef();
-  const { connector, library, deactivate, activate, active } = useWeb3React();
+  const { connector, library, deactivate, activate, active } = useWeb3Onboard();
+
+  const [{ wallet }, connect, disconnect] = useConnectWallet();
+
   const { chainId } = useChainId();
+
   useEventToast();
   const [activatingConnector, setActivatingConnector] = useState();
-  const triedToConnectToSafe = useSafeAppConnection(safeMultisigConnector);
-
-  useEffect(() => {
-    if (triedToConnectToSafe) {
-      // fallback to other providers
-    }
-  }, [triedToConnectToSafe]);
 
   useEffect(() => {
     if (activatingConnector && activatingConnector === connector) {
       setActivatingConnector(undefined);
     }
   }, [activatingConnector, connector, chainId]);
-  const triedEager = useEagerConnect(setActivatingConnector);
-  useInactiveListener(!triedEager || !!activatingConnector);
 
   const query = useRouteQuery();
 
@@ -376,83 +371,20 @@ function FullApp() {
     }
   }, []);
 
-  const disconnectAccount = useCallback(() => {
+  const disconnectAccount = useCallback(async () => {
     // only works with WalletConnect
     clearWalletConnectData();
     // force clear localStorage connection for MM/CB Wallet (Brave legacy)
     clearWalletLinkData();
-    deactivate();
-  }, [deactivate]);
+    await disconnect(wallet);
+
+  }, [wallet]);
 
   const disconnectAccountAndCloseSettings = () => {
     disconnectAccount();
     localStorage.removeItem(SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY);
     localStorage.removeItem(CURRENT_PROVIDER_LOCALSTORAGE_KEY);
     setIsSettingsVisible(false);
-  };
-
-  const connectInjectedWallet = getInjectedHandler(activate);
-  const activateWalletConnect = () => {
-    getWalletConnectHandler(activate, deactivate, setActivatingConnector)();
-  };
-
-  const userOnMobileDevice = "navigator" in window && isMobileDevice(window.navigator);
-
-  const activateMetaMask = () => {
-    if (!hasMetaMaskWalletExtension()) {
-      helperToast.error(
-        <div>
-          MetaMask not detected.
-          <br />
-          <br />
-          <a href="https://metamask.io" target="_blank" rel="noopener noreferrer" className="ahreftextcolorwallet">
-            Install MetaMask
-          </a>
-          {userOnMobileDevice ? ", and use GrizzlyFi with its built-in browser" : " to start using GrizzlyFi"}.
-        </div>
-      );
-      return false;
-    }
-    attemptActivateWallet("MetaMask");
-  };
-  const activateExodus = () => {
-    if (!hasExodusWalletExtension()) {
-      helperToast.error(
-        <div>
-          Exodus not detected.
-          <br />
-          <br />
-          <a href="https://exodus.com" target="_blank" rel="noopener noreferrer" className="ahreftextcolorwallet">
-            Install Exodus
-          </a>
-          {userOnMobileDevice ? ", and use GrizzlyFi with its built-in browser" : " to start using GrizzlyFi"}.
-        </div>
-      );
-      return false;
-    }
-    attemptActivateWallet("Exodus");
-  };
-  const activateCoinBase = () => {
-    if (!hasCoinBaseWalletExtension()) {
-      helperToast.error(
-        <div>
-          Coinbase Wallet not detected.
-          <br />
-          <br />
-          <a
-            href="https://www.coinbase.com/wallet"
-            target="_blank"
-            className="ahreftextcolorwallet"
-            rel="noopener noreferrer"
-          >
-            Install Coinbase Wallet
-          </a>
-          {userOnMobileDevice ? ", and use GrizzlyFi with its built-in browser" : " to start using GrizzlyFi"}.
-        </div>
-      );
-      return false;
-    }
-    attemptActivateWallet("CoinBase");
   };
 
   const attemptActivateWallet = (providerName) => {
@@ -463,7 +395,9 @@ function FullApp() {
   };
 
   const [walletModalVisible, setWalletModalVisible] = useState();
-  const connectWallet = () => setWalletModalVisible(true);
+  const connectWallet = async () => {
+    await connect();
+  };
 
   const [isDrawerVisible, setIsDrawerVisible] = useState(undefined);
   const [isNativeSelectorModalVisible, setisNativeSelectorModalVisible] = useState(false);
@@ -697,9 +631,10 @@ function FullApp() {
                   <Logo />
                   <div className="logo-text">TRADE</div>
                 </a>
-                
               </div>
-              <div className="App-header-container-left"><AppHeaderLinks /></div>
+              <div className="App-header-container-left">
+                <AppHeaderLinks />
+              </div>
               <div className="App-header-container-right">
                 <AppHeaderUser
                   disconnectAccountAndCloseSettings={disconnectAccountAndCloseSettings}
@@ -782,7 +717,7 @@ function FullApp() {
               />
             </Route>
             <Route exact path="/dashboard">
-              <Dashboard 
+              <Dashboard
                 savedShowPnlAfterFees={savedShowPnlAfterFees}
                 savedIsPnlInLeverage={savedIsPnlInLeverage}
                 connectWallet={connectWallet}
@@ -829,29 +764,6 @@ function FullApp() {
       />
       <EventToastContainer />
       <Modal
-        className="Connect-wallet-modal"
-        isVisible={walletModalVisible}
-        setIsVisible={setWalletModalVisible}
-        label="Connect Wallet"
-      >
-        <button className="Wallet-btn MetaMask-btn" onClick={activateMetaMask}>
-          <img src={metamaskImg} alt="MetaMask" />
-          <div>MetaMask</div>
-        </button>
-        <button className="Wallet-btn CoinbaseWallet-btn" onClick={activateCoinBase}>
-          <img src={coinbaseImg} alt="Coinbase Wallet" />
-          <div>Coinbase Wallet</div>
-        </button>
-        <button className="Wallet-btn WalletConnect-btn" onClick={activateWalletConnect}>
-          <img src={walletConnectImg} alt="WalletConnect" />
-          <div>WalletConnect</div>
-        </button>
-        <button className="Wallet-btn Exodus-btn" onClick={activateExodus}>
-          <img src={exodusImg} alt="Exodus" />
-          <div>Exodus</div>
-        </button>
-      </Modal>
-      <Modal
         className="App-settings"
         isVisible={isSettingsVisible}
         setIsVisible={setIsSettingsVisible}
@@ -891,13 +803,21 @@ function FullApp() {
 }
 
 function App() {
+  const [web3Onboard, setWeb3Onboard] = useState(null);
+
+  useEffect(() => {
+    setWeb3Onboard(initWeb3Onboard);
+  }, []);
+
+  if (!web3Onboard) return <div>Loading...</div>;
+
   return (
     <SWRConfig value={{ refreshInterval: 5000 }}>
-      <Web3ReactProvider getLibrary={getLibrary}>
+      <Web3OnboardProvider web3Onboard={web3Onboard}>
         <SEO>
           <FullApp />
         </SEO>
-      </Web3ReactProvider>
+      </Web3OnboardProvider>
     </SWRConfig>
   );
 }
