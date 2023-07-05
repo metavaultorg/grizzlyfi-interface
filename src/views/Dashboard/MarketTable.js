@@ -115,7 +115,9 @@ export default function MarketTable() {
                                 <div className="App-card-divider"></div>
                                 <div className="App-card-content">
                                     <div className="App-card-row">
-                                        <div className="label">Last Price <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /></div>
+                                        <div className="label">Last Price
+                                            {/* <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /> */}
+                                        </div>
                                         <div className={cx({
                                             positive: pairItem.change > 0,
                                             negative: pairItem.change < 0,

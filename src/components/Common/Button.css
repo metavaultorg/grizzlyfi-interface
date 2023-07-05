@@ -16,7 +16,7 @@ a.btn {
   padding: 15px 30px;
   font-size: 15px;
   font-weight: 600;
-  height: 52px;
+  height: 48px;
   cursor: pointer;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -27,29 +27,29 @@ a.btn {
   padding-right: 6px;
 } */
 
-@media (max-width: 1300px) {
+/* @media (max-width: 1300px) {
   .btn {
     padding: 10px 6px;
     margin: 0;
     height: 36px;
     font-weight: 600;
   }
-}
+} */
 
-@media (max-width: 1046px) {
+/* @media (max-width: 1046px) {
   .btn {
     padding: 6px 24px;
     height: 36px;
     font-weight: 600;
   }
-}
+} */
 
-@media (max-width: 525px) {
+/* @media (max-width: 525px) {
   .btn {
     padding: 3px 8px;
     font-weight: 500;
   }
-}
+} */
 
 .btn-blue {
   background: #625df5;

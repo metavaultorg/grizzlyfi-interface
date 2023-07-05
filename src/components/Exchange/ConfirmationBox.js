@@ -312,7 +312,7 @@ export default function ConfirmationBox(props) {
           return (
             <div className="Confirmation-box-warning">
               Increasing this position at the current price will forfeit a&nbsp;
-              <a href="https://docs.metavault.trade/trading" target="_blank" rel="noopener noreferrer">
+              <a href="https://docs.grizzly.fi/v/eng/product/grizzly-trade" target="_blank" rel="noopener noreferrer">
                 pending profit
               </a>{" "}
               of {existingPosition.deltaStr}.<br />
@@ -331,7 +331,7 @@ export default function ConfirmationBox(props) {
             return (
               <div className="Confirmation-box-warning">
                 This order will forfeit a&nbsp;
-                <a href="https://docs.metavault.trade/trading" target="_blank" rel="noopener noreferrer">
+                <a href="https://docs.grizzly.fi/v/eng/product/grizzly-trade" target="_blank" rel="noopener noreferrer">
                   profit
                 </a>{" "}
                 of {existingPosition.deltaStr}.<br />
@@ -348,7 +348,7 @@ export default function ConfirmationBox(props) {
       return (
         <div className="Confirmation-box-warning">
           A minimum price change of&nbsp;
-          <a href="https://docs.metavault.trade/trading" target="_blank" rel="noopener noreferrer">
+          <a href="https://docs.grizzly.fi/v/eng/product/grizzly-trade" target="_blank" rel="noopener noreferrer">
             1.5%
           </a>{" "}
           is required for a position to be in profit. This only applies for the first {MIN_PROFIT_TIME / 60 / 60} hours

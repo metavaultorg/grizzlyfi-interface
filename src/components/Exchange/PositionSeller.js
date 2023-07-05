@@ -56,7 +56,7 @@ import Tooltip from "../Tooltip/Tooltip";
 import TokenSelector from "./TokenSelector";
 import { getTokens } from "../../data/Tokens";
 import "./PositionSeller.css";
-import { tokenImage24 } from "../../Helpers";
+import { tokenImageCloud } from "../../Helpers";
 import AutosizeInput from 'react-input-autosize';
 
 const { AddressZero } = ethers.constants;
@@ -307,7 +307,7 @@ export default function PositionSeller(props) {
     //title = `Close ${position.isLong ? "Long" : "Short"} ${position.indexToken.symbol}`;
     title = () => {
       return (<>
-      <img src={tokenImage24(position.indexToken.symbol.toLowerCase())} alt=" " style={{height:32, width:32}} />
+      <img src={tokenImageCloud(position.indexToken.symbol.toLowerCase())} alt=" " style={{height:32, width:32}} />
       Close {position.isLong ? "Long" : "Short"} {position.indexToken.symbol}
       </>)
     }
@@ -691,14 +691,14 @@ export default function PositionSeller(props) {
         library,
         indexTokenAddress,
         sizeDelta,
-        path,
+        path[0],
+        path.length >1?path[1]:AddressZero,
         collateralDelta,
         position.isLong,
         triggerPriceUsd,
         triggerAboveThreshold,
         0, // _minOut
         withdrawETH, // _withdrawETH
-        0,
         {
           sentMsg: "Order submitted!",
           successMsg: "Order created!",
@@ -727,6 +727,7 @@ export default function PositionSeller(props) {
       0, // _minOut
       minExecutionFee, // _executionFee
       withdrawETH, // _withdrawETH
+      AddressZero, // _callbackTarget
     ];
 
     const successMsg = `Requested decrease of ${position.indexToken.symbol} ${
@@ -796,7 +797,7 @@ export default function PositionSeller(props) {
         return (
           <div className="Confirmation-box-warning">
             Reducing the position at the current price will forfeit a&nbsp;
-            <a href="https://docs.metavault.trade/trading" target="_blank" rel="noopener noreferrer">
+            <a href="https://docs.grizzly.fi/v/eng/product/grizzly-trade" target="_blank" rel="noopener noreferrer">
               pending profit
             </a>{" "}
             of {deltaStr}. <br />
@@ -810,7 +811,7 @@ export default function PositionSeller(props) {
       return (
         <div className="Confirmation-box-warning">
           This order will forfeit a&nbsp;
-          <a href="https://docs.metavault.trade/trading" target="_blank" rel="noopener noreferrer">
+          <a href="https://docs.grizzly.fi/v/eng/product/grizzly-trade" target="_blank" rel="noopener noreferrer">
             profit
           </a>{" "}
           of {deltaStr}. <br />
@@ -1098,7 +1099,7 @@ export default function PositionSeller(props) {
                       <br />
 
                       <div className="PositionSeller-fee-item">
-                        <a href="https://docs.metavault.trade/trading" target="_blank" rel="noopener noreferrer">
+                        <a href="https://docs.grizzly.fi/v/eng/product/grizzly-trade" target="_blank" rel="noopener noreferrer">
                           More Info
                         </a>{" "}
                         about fees.

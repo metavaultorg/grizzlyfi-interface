@@ -86,6 +86,7 @@ import APRLabel from "./components/APRLabel/APRLabel";
 import LinkDropdown from "./components/LinkDropdown/LinkDropdown";
 import Earn from "./views/Earn/Earn";
 import ReferralTerms from "./views/ReferralTerms/ReferralTerms";
+import WrongNetwork from './components/WrongNetwork/WrongNetwork'
 
 import { useConnectWallet, Web3OnboardProvider } from "@web3-onboard/react";
 
@@ -134,7 +135,7 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
           <a
             style={{ width: 21, height: 21 }}
             className="App-header-link-main"
-            href="https://trade.grizzly.fi/"
+            href=" https://trade.grizzly.fi/#/dashboard"
             rel="noopener noreferrer"
           >
             {/* <img
@@ -151,7 +152,7 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
         </div>
       )}
       <div className="App-header-link-container App-header-link-home">
-        <a href="https://trade.grizzly.fi/" rel="noopener noreferrer">
+        <a href="https://trade.grizzly.fi/#/dashboard" rel="noopener noreferrer">
           Home
         </a>
       </div>
@@ -183,7 +184,7 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
       </div>
       
       <div className="App-header-link-container">
-        <a href="https://perp-docs.grizzly.fi/" target="_blank" rel="noopener noreferrer">
+        <a href="https://docs.grizzly.fi/v/eng/product/grizzly-trade" target="_blank" rel="noopener noreferrer">
           <span
             className="hover-white"
             style={{
@@ -418,6 +419,7 @@ function FullApp() {
   const [slippageAmount, setSlippageAmount] = useState(0);
   const [isPnlInLeverage, setIsPnlInLeverage] = useState(false);
   const [showPnlAfterFees, setShowPnlAfterFees] = useState(false);
+  
 
   const [savedIsPnlInLeverage, setSavedIsPnlInLeverage] = useLocalStorageSerializeKey(
     [chainId, IS_PNL_IN_LEVERAGE_KEY],
@@ -617,7 +619,7 @@ function FullApp() {
           <header>
             <div className="App-header large">
               <div className="App-header-container-left">
-                <a className="App-header-link-main" href="https://trade.grizzly.fi/">
+                <a className="App-header-link-main" href=" https://trade.grizzly.fi/#/dashboard">
                   {/* <img
                     style={{ width: "169px", height: "56px", flexBasis: "none" }}
                     src={getImageUrl({
@@ -698,6 +700,7 @@ function FullApp() {
               </motion.div>
             )}
           </AnimatePresence>
+          <div><WrongNetwork isOpen={wrongNetworkisOpen} setIsOpen={setWrongNetworkIsOpen} /></div>
           <Switch>
             <Route exact path="/">
               <Redirect to="/trade" />
@@ -754,7 +757,7 @@ function FullApp() {
       <ToastContainer
         limit={1}
         transition={Zoom}
-        position="bottom-right"
+        position="top-right"
         autoClose={7000}
         hideProgressBar={true}
         newestOnTop={false}

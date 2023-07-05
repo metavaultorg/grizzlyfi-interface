@@ -456,14 +456,25 @@
 
   width: 100%;
 }
+.instructions-container{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+@media  screen and (max-width: 800px){
+  .instructions-container{
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+}
+
 
 .instruction-container {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 20px;
   padding: 24px;
-  flex-basis: 100%;
+  /* flex-basis: 100%; */
   text-align: center;
-  max-width: 438px;
+  /* max-width: 438px; */
+  width: 100%;
 }
 
 .instruction-container--header {
@@ -555,4 +566,13 @@
     text-align: center;
     margin: 0 auto;
   }
+}
+.referrals-header-img{
+  margin: 0;
+}
+@media screen and (max-width: 724px){
+  .referrals-header-img{
+    margin-top: 60px;
+  }
+  
 }

@@ -728,7 +728,7 @@ table.Exchange-list th:last-child {
 }
 
 .Exchange-swap-box {
-  width: 27rem;
+  width: 25rem;
   display: grid;
   position: relative;
 }
@@ -1121,11 +1121,11 @@ table.Exchange-list-small td {
   height: 5rem;
 }
 
-@media (max-width: 1500px) {
+/* @media (max-width: 1500px) {
   .Exchange-swap-box {
     width: 25rem;
   }
-}
+} */
 
 @media (max-width: 1300px) {
   .Exchange-list.large {

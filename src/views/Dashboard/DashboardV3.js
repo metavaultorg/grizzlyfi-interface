@@ -480,79 +480,87 @@ export default function DashboardV3(props) {
                           </span>
                         </td>
 
-                        <td>
-                          <button className="btn-secondary ">Claim</button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-            <div className="token-grid" style={{ gridTemplateColumns: "1fr" }}>
-              {vaultList.map((item, index) => {
-                return (
-                  <div className="App-card" key={index}>
-                    <div className="App-card-title">
-                      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                        <img
-                          style={{ objectFit: "contain" }}
-                          src={IconToken}
-                          alt={item.symbol}
-                          width={32}
-                          height={32}
-                        />
-                        <span>{item.symbol}</span>
-                      </div>
+                                            <td><button
+                                                className="btn-secondary "
+
+                                            >
+                                                Claim
+                                            </button></td>
+                                        </tr>
+                                    )
+                                }
+
+                                )}
+                            </tbody>
+                        </table></div>
+                    <div className="token-grid" style={{ gridTemplateColumns: '1fr' }}>
+                        {vaultList.map((item, index) => {
+
+                            return (
+                                <div className="App-card" key={index}>
+                                    <div className="App-card-title">
+                                        <div style={{ display: "flex", alignItems: 'center', gap: 16 }}>
+                                            <img
+                                                style={{ objectFit: "contain" }}
+                                                src={IconToken}
+                                                alt={item.symbol}
+                                                width={32}
+                                                height={32}
+                                            />
+                                            <span>{item.symbol}</span>
+                                        </div>
+                                    </div>
+                                    <div className="App-card-divider"></div>
+                                    <div className="App-card-content">
+                                        <div className="App-card-row">
+                                            <div className="label">APY <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /></div>
+                                            <div className="font-number">
+                                                {item.apy}
+                                            </div>
+                                        </div>
+                                        <div className="App-card-row">
+                                            <div className="label">Locked in GLL</div>
+                                            <div className="font-number">
+                                                {item.locked}
+                                            </div>
+                                        </div>
+                                        <div className="App-card-row">
+                                            <div className="label">Your Investment</div>
+                                            <div className="font-number">
+                                                {item.invest}
+                                            </div>
+                                        </div>
+                                        <div className="App-card-row">
+                                            <div className="label">Pool Share</div>
+                                            <div className="font-number">
+                                                {item.poolShare}
+                                            </div>
+                                        </div>
+                                        <div className="App-card-row">
+                                            <div className="label">Profit</div>
+                                            <div>
+                                                <span className={cx({
+                                                    positive: item.profit > 0,
+                                                    negative: item.profit < 0,
+                                                    muted: item.profit === 0,
+                                                }, "font-number")}>{item.profit}%</span>
+                                            </div>
+                                        </div>
+                                        <div className="App-card-row"><button
+                                            className="btn-secondary w-full "
+
+                                        >
+                                            Claim
+                                        </button></div>
+                                    </div>
+                                </div>
+                            )
+                        })}
                     </div>
-                    <div className="App-card-divider"></div>
-                    <div className="App-card-content">
-                      <div className="App-card-row">
-                        <div className="label">
-                          APY <img src={IconDown} alt="change" style={{ marginBottom: "-4px" }} />
-                        </div>
-                        <div className="font-number">{item.apy}</div>
-                      </div>
-                      <div className="App-card-row">
-                        <div className="label">Locked in GLL</div>
-                        <div className="font-number">{item.locked}</div>
-                      </div>
-                      <div className="App-card-row">
-                        <div className="label">Your Investment</div>
-                        <div className="font-number">{item.invest}</div>
-                      </div>
-                      <div className="App-card-row">
-                        <div className="label">Pool Share</div>
-                        <div className="font-number">{item.poolShare}</div>
-                      </div>
-                      <div className="App-card-row">
-                        <div className="label">Profit</div>
-                        <div>
-                          <span
-                            className={cx(
-                              {
-                                positive: item.profit > 0,
-                                negative: item.profit < 0,
-                                muted: item.profit === 0,
-                              },
-                              "font-number"
-                            )}
-                          >
-                            {item.profit}%
-                          </span>
-                        </div>
-                      </div>
-                      <div className="App-card-row">
-                        <button className="btn-secondary w-full ">Claim</button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+                </InnerCard>
+
             </div>
-          </InnerCard>
-        </div>
-        {/* } */}
+            {/* } */}
 
         <div className=" section-markets">
           <div className="section-header">

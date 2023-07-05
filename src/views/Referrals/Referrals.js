@@ -311,7 +311,7 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
             <h3>Invite Friends & Earn Commissions</h3>
             <p>Enjoy Fee-Cashback and Fee-Commissions through the Grizzly Trade referral program.</p>
           </div>
-          <div>
+          <div className="referrals-header-img">
             <img
               src={getImageUrl({
                 path: "referralBanner",
@@ -338,11 +338,6 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
         >
           {showInfo() ? (
             <div
-              style={{
-                flexDirection: "row",
-                // flexDirection: account && windowWidth > 800 ? "row" : "column",
-                flexBasis: "50%",
-              }}
               className="instructions-container"
             >
               <div className="instruction-container">
@@ -368,7 +363,9 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
                     alt="Referral Code"
                   />
                 </div>
-                <p style={{ maxWidth: 460 }}>2. Enter your own unique code</p>
+                <p>
+                  2. Enter your own unique code
+                </p>
                 <p>(Combination of Letters, Numbers or underscores) e.g. Grz_44</p>
               </div>
               <div className="instruction-container">
@@ -381,8 +378,11 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
                     alt="Cashback"
                   />
                 </div>
-                <p style={{ maxWidth: 460 }}>3.Share your referral link on social media.</p>
-                <p>Enjoy up to 15% Fee-Commission. Referred Traders can get up to 10% Cashback.</p>
+                <p>
+                  3.Share your referral link on social media.
+                </p>
+                <p>Enjoy up to 15% Fee-Commission.
+                  Referred Traders can get up to 10% Cashback.</p>
               </div>
             </div>
           ) : (
@@ -435,7 +435,7 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
                 color: "#f2c75c",
                 borderRadius: 15,
               }}
-              href="https://docs.metavault.trade/referral-program"
+              href="https://docs.grizzly.fi/v/eng/product/grizzly-trade"
               target="_blank"
               rel="noreferrer"
             >
@@ -462,7 +462,7 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
                 color: "#f2c75c",
                 borderRadius: 15,
               }}
-              href="https://stats.metavault.trade/referrals"
+              href="https://stats.grizzly.fi/referrals"
               target="_blank"
               rel="noreferrer"
             >
@@ -890,7 +890,7 @@ function AffiliatesInfo({
                           <div
                             onClick={() => {
                               copyToClipboard(
-                                `https://app.metavault.trade/#/?${REFERRAL_CODE_QUERY_PARAMS}=${stat.referralCode}`
+                                `https://trade.grizzly.fi/#/trade/?${REFERRAL_CODE_QUERY_PARAMS}=${stat.referralCode}`
                               );
                               helperToast.success("Referral link copied to your clipboard");
                             }}

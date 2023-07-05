@@ -262,7 +262,7 @@ export default function OrderEditor(props) {
       return (
         <div className="Confirmation-box-warning">
           This order will forfeit a&nbsp;
-          <a href="https://docs.metavault.trade/trading" target="_blank" rel="noopener noreferrer">
+          <a href="https://docs.grizzly.fi/v/eng/product/grizzly-trade" target="_blank" rel="noopener noreferrer">
             profit
           </a>{" "}
           of {deltaStr}. <br />

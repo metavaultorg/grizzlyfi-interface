@@ -15,6 +15,18 @@ import OrderBook from "./abis/OrderBook.json";
 import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 import useWeb3Onboard from "./hooks/useWeb3Onboard";
 
+import IconSuccess from './assets/icons/icon-success.svg'
+import IconError from './assets/icons/icon-failed.svg'
+import IconPending from './assets/icons/icon-waiting.svg'
+import { getImageUrl } from "./cloudinary/getImageUrl";
+
+
+import IconSuccess from './assets/icons/icon-success.svg'
+import IconError from './assets/icons/icon-failed.svg'
+import IconPending from './assets/icons/icon-waiting.svg'
+import { getImageUrl } from "./cloudinary/getImageUrl";
+
+
 const { AddressZero } = ethers.constants;
 
 export const UI_VERSION = "1.3";
@@ -31,7 +43,7 @@ export const CHAIN_ID = DEFAULT_CHAIN_ID;
 
 export const MIN_PROFIT_TIME = 0;
 
-const SELECTED_NETWORK_LOCAL_STORAGE_KEY = "SELECTED_NETWORK";
+export const SELECTED_NETWORK_LOCAL_STORAGE_KEY = "SELECTED_NETWORK";
 
 const CHAIN_NAMES_MAP = {
   [opBNB]: "opBNB",
@@ -228,11 +240,15 @@ export function isHomeSite() {
 export const helperToast = {
   success: (content) => {
     toast.dismiss();
-    toast.success(content);
+    toast.success(content, {
+      icon: <img src={IconSuccess} alt="" />
+    });
   },
   error: (content) => {
     toast.dismiss();
-    toast.error(content);
+    toast.error(content, {
+      icon: <img src={IconError } alt="" />
+    });
   },
 };
 
@@ -1809,7 +1825,6 @@ export async function getGasLimit(contract, method, params = [], value, gasBuffe
   if (!value) {
     value = defaultValue;
   }
-  console.log("getGasLimit", contract, method, params);
   let gasLimit = await contract.estimateGas[method](...params, { value });
 
   if (!gasBuffer) {
@@ -2288,7 +2303,7 @@ export function useDebounce(value, delay) {
 }
 
 export function isDevelopment() {
-  return !window.location.host?.includes("perp.grizzly.fi") && !window.location.host?.includes("perp.grizzly.fi");
+  return !window.location.host?.includes("trade.grizzly.fi") && !window.location.host?.includes("trade.grizzly.fi");
 }
 
 export function isLocal() {
@@ -2296,7 +2311,7 @@ export function isLocal() {
 }
 
 export function getHomeUrl() {
-  return "https://trade.grizzly.fi/";
+  return "https://trade.grizzly.fi/#/dashboard";
 }
 
 export function getRootShareApiUrl() {
@@ -2304,7 +2319,19 @@ export function getRootShareApiUrl() {
 }
 
 export function getTradePageUrl() {
-  return "https://trade.grizzly.fi//#/trade";
+  return "https://trade.grizzly.fi/#/trade";
+}
+
+export function tokenImageCloud(name) {
+  var tokenImage = null;
+  try {
+    tokenImage = getImageUrl({
+      path: `coins/${name}`,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+  return tokenImage;
 }
 
 export function tokenImage24(name) {

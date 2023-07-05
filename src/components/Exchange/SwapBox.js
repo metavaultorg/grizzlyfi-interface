@@ -2291,7 +2291,7 @@ export default function SwapBox(props) {
             <br />
             For screenshots and more information, please see the{" "}
             <a
-              href="https://docs.metavault.trade/trading#stop-loss-take-profit-orders"
+              href="https://docs.grizzly.fi/v/eng/product/grizzly-trade"
               target="_blank"
               rel="noopener noreferrer"
               className="doc-link"
@@ -2388,7 +2388,7 @@ export default function SwapBox(props) {
                       <br />
                       <br />
                       <a
-                        href=" https://docs.metavault.trade/trading#opening-a-position"
+                        href=" https://docs.grizzly.fi/v/eng/product/grizzly-trade"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="ahreftextcolorwallet"
@@ -2419,7 +2419,7 @@ export default function SwapBox(props) {
                       <br />
                       <br />
                       <a
-                        href=" https://docs.metavault.trade/trading#opening-a-position"
+                        href=" https://docs.grizzly.fi/v/eng/product/grizzly-trade"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="ahreftextcolorwallet"
@@ -2458,7 +2458,7 @@ export default function SwapBox(props) {
                       )}
                       <br />
                       <a
-                        href=" https://docs.metavault.trade/trading#opening-a-position"
+                        href=" https://docs.grizzly.fi/v/eng/product/grizzly-trade"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="ahreftextcolorwallet"
@@ -2506,17 +2506,17 @@ export default function SwapBox(props) {
         <div className="App-card-divider"></div>
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }} className="Exchange-info-row">
           <div className="Exchange-info-label-button">
-            <a href=" https://docs.metavault.trade/trading" target="_blank" rel="noopener noreferrer">
+            <a href="https://docs.grizzly.fi/v/eng/product/grizzly-trade" target="_blank" rel="noopener noreferrer">
               Trading guide
             </a>
           </div>
           <div className="Exchange-info-label-button">
-            <a href="https://leaderboard.metavault.trade" target="_blank" rel="noopener noreferrer">
+            <a href="https://leaderboard.grizzly.fi/" target="_blank" rel="noopener noreferrer">
               Leaderboard
             </a>
           </div>
           <div className="Exchange-info-label-button">
-            <a href="https://app.metavault.trade/#/orders_overview" target="_blank" rel="noopener noreferrer">
+            <a href="https://trade.grizzly.fi/" target="_blank" rel="noopener noreferrer">
               Speed up page loading
             </a>
           </div>
@@ -2530,7 +2530,7 @@ export default function SwapBox(props) {
         </div>
         <div className="Exchange-info-row">
           <div className="Exchange-info-label-button">
-            <a href=" https://docs.metavault.trade/trading#backup-rpc-urls" target="_blank" rel="noopener noreferrer">
+            <a href=" https://docs.grizzly.fi/v/eng/product/grizzly-trade#backup-rpc-urls" target="_blank" rel="noopener noreferrer">
               Speed up page loading
             </a>
           </div>

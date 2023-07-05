@@ -605,6 +605,9 @@ button.btn-link:hover .logout-icon {
     align-items: center;
     justify-content: center;
 }
+.btn-secondary:hover{
+    background-color: rgba(242, 199, 92, 0.2);
+}
 .btn-primary:hover{
     filter: brightness(1.1);
 }
