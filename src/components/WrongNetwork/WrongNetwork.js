@@ -4,6 +4,15 @@ import './WrongNetwork.css'
 import { useWeb3React, UnsupportedChainIdError } from "@web3-react/core";
 export default function WrongNetwork({ isOpen, setIsOpen }) {
 
+  const [currentChainId, setCurrentChainId] = useState();
+
+  useEffect(() => {
+    const getCurrentChainId = async () => {
+      const chainIdHex = await window.ethereum.request({ method: 'eth_chainId' });
+      setCurrentChainId(chainIdHex ? parseInt(chainIdHex) : null);
+    }
+    getCurrentChainId();
+  }, [])
   // useEffect(() => {
   //   if (isOpen) {
   //     setTimeout(() => {
@@ -12,7 +21,8 @@ export default function WrongNetwork({ isOpen, setIsOpen }) {
   //   }
     
   // }, [isOpen, setIsOpen])
-  let { chainId:currentChainId } = useWeb3React();
+  // let { chainId:currentChainId } = useWeb3React();
+  // let currentChainId = getCurrentChainId()
   // const { chainId:currentChainId } = useChainId();
   const chainId = localStorage.getItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY) || DEFAULT_CHAIN_ID;
   return (
