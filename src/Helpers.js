@@ -21,12 +21,6 @@ import IconPending from './assets/icons/icon-waiting.svg'
 import { getImageUrl } from "./cloudinary/getImageUrl";
 
 
-import IconSuccess from './assets/icons/icon-success.svg'
-import IconError from './assets/icons/icon-failed.svg'
-import IconPending from './assets/icons/icon-waiting.svg'
-import { getImageUrl } from "./cloudinary/getImageUrl";
-
-
 const { AddressZero } = ethers.constants;
 
 export const UI_VERSION = "1.3";
