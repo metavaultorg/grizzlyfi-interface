@@ -468,7 +468,7 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
                 color: "#f2c75c",
                 borderRadius: 15,
               }}
-              href="https://stats.metavault.trade/referrals"
+              href="https://stats.grizzly.fi/referrals"
               target="_blank"
               rel="noreferrer"
             >
@@ -894,7 +894,7 @@ function AffiliatesInfo({
                           <div
                             onClick={() => {
                               copyToClipboard(
-                                `https://app.metavault.trade/#/?${REFERRAL_CODE_QUERY_PARAMS}=${stat.referralCode}`
+                                `https://trade.grizzly.fi/#/trade/?${REFERRAL_CODE_QUERY_PARAMS}=${stat.referralCode}`
                               );
                               helperToast.success("Referral link copied to your clipboard");
                             }}

@@ -260,7 +260,7 @@ function PositionShareCard({
                     <div className="share-referral-value">{code}</div>
                   </>
                 ) : (
-                  <div className="share-referral-value">https://app.metavault.trade</div>
+                    <div className="share-referral-value">https://trade.grizzly.fi/#/trade</div>
                 )}
               </div>
             </div>

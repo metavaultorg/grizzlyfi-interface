@@ -4,15 +4,15 @@ let eventsData = [
     title: "Metavault Official Domains",
     isActive: true,
     validTill: "02/01/2023 12:00:00 PM",
-    bodyText: "Please verify that you are on the correct domain. https://app.metavault.trade/",
+    bodyText: "Please verify that you are on the correct domain. https://trade.grizzly.fi/#/trade",
     buttons: [
       {
-        text: "app.metavault.org",
-        link: "https://app.metavault.org",
+        text: "trade.grizzly.fi",
+        link: "https://trade.grizzly.fi/#/trade",
       },
       {
-        text: "app.metavault.trade",
-        link: "https://app.metavault.trade",
+        text: "trade.grizzly.fi",
+        link: "https://trade.grizzly.fi/#/trade",
       }
     ],
   },
@@ -24,8 +24,8 @@ let eventsData = [
     bodyText: "We have updated the orderbook contract, we ask you to cancel old orders (limit, SL, TP) via the link below and place them again on the regular dApp.",
     buttons: [
       {
-        text: "https://cancel-order.metavault.trade",
-        link: "https://cancel-order.metavault.trade",
+        text: "https://cancel-order.grizzly.trade",
+        link: "https://trade.grizzly.fi/#/trade",
       }
     ],
   },
