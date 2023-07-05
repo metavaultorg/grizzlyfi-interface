@@ -21,13 +21,13 @@ export default function LinkDropdown() {
             <div>
                 <Menu.Items as="div" className="menu-items" style={{right:'-88px'}}>
                     <Menu.Item>
-                        <a href='/' target="_blank" rel="noopener noreferrer" className="menu-item">
+                        <a href='https://docs.grizzly.fi/v/eng/product/grizzly-trade' target="_blank" rel="noopener noreferrer" className="menu-item">
                             <img src={doc} alt="" />
                             <p>Documents</p>
                         </a>
                     </Menu.Item>
                     <Menu.Item>
-                        <a href='/' target="_blank" rel="noopener noreferrer" className="menu-item">
+                        <a href='https://stats.grizzly.fi/' target="_blank" rel="noopener noreferrer" className="menu-item">
                             <img src={track} alt="" />
                             <p>Stats</p>
                         </a>
