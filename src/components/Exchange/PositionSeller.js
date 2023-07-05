@@ -56,7 +56,7 @@ import Tooltip from "../Tooltip/Tooltip";
 import TokenSelector from "./TokenSelector";
 import { getTokens } from "../../data/Tokens";
 import "./PositionSeller.css";
-import { tokenImage24 } from "../../Helpers";
+import { tokenImageCloud } from "../../Helpers";
 import AutosizeInput from 'react-input-autosize';
 
 const { AddressZero } = ethers.constants;
@@ -307,7 +307,7 @@ export default function PositionSeller(props) {
     //title = `Close ${position.isLong ? "Long" : "Short"} ${position.indexToken.symbol}`;
     title = () => {
       return (<>
-      <img src={tokenImage24(position.indexToken.symbol.toLowerCase())} alt=" " style={{height:32, width:32}} />
+      <img src={tokenImageCloud(position.indexToken.symbol.toLowerCase())} alt=" " style={{height:32, width:32}} />
       Close {position.isLong ? "Long" : "Short"} {position.indexToken.symbol}
       </>)
     }

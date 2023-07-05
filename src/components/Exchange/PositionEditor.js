@@ -29,7 +29,7 @@ import { callContract } from "../../Api";
 
 import PositionRouter from "../../abis/PositionRouter.json";
 import Token from "../../abis/Token.json";
-import { tokenImage24 } from "../../Helpers";
+import { tokenImageCloud } from "../../Helpers";
 import "./PositionEditor.css";
 
 const DEPOSIT = "Deposit";
@@ -110,7 +110,7 @@ export default function PositionEditor(props) {
   if (position) {
     title = () => {
       return (<>
-      <img src={tokenImage24(position.indexToken.symbol.toLowerCase())} alt=" " style={{height:32, width:32}} />
+      <img src={tokenImageCloud(position.indexToken.symbol.toLowerCase())} alt=" " style={{height:32, width:32}} />
       Edit {position.isLong ? "Long" : "Short"} {position.indexToken.symbol}
       </>)
     }
@@ -483,7 +483,7 @@ export default function PositionEditor(props) {
                           )}
                         <div className="PositionEditor-token-symbol">
                           {isDeposit ? <>
-                            <img src={tokenImage24(position.collateralToken.symbol.toLowerCase())} style={{ height: 32, width: 32 }} alt=" " />
+                            <img src={tokenImageCloud(position.collateralToken.symbol.toLowerCase())} style={{ height: 32, width: 32 }} alt=" " />
                             <div style={{ width: 8 }}></div> {position.collateralToken.symbol}</>
                             : <div style={{ paddingLeft:40 }}>USD</div>}
                         </div>

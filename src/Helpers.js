@@ -22,6 +22,8 @@ import { getWhitelistedTokens, isValidToken } from "./data/Tokens";
 import IconSuccess from './assets/icons/icon-success.svg'
 import IconError from './assets/icons/icon-failed.svg'
 import IconPending from './assets/icons/icon-waiting.svg'
+import { getImageUrl } from "./cloudinary/getImageUrl";
+
 
 const { AddressZero } = ethers.constants;
 
@@ -2529,6 +2531,18 @@ export function getRootShareApiUrl() {
 
 export function getTradePageUrl() {
   return "https://trade.grizzly.fi/#/trade";
+}
+
+export function tokenImageCloud(name) {
+  var tokenImage = null;
+  try {
+    tokenImage = getImageUrl({
+      path: `coins/${name}`,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+  return tokenImage;
 }
 
 export function tokenImage24(name) {
