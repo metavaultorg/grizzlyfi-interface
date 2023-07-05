@@ -14,7 +14,6 @@ body,
 * {
   box-sizing: border-box;
   font-family: "Boston",sans-serif;
-  word-break: break-word;
 }
 
 ::-webkit-scrollbar {
