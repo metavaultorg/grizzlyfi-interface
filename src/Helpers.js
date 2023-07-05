@@ -2153,7 +2153,7 @@ export const getInjectedHandler = (activate, setWrongNetworkIsOpen) => {
             </div>
           </div>
         );
-        // setWrongNetworkIsOpen(true)
+        setWrongNetworkIsOpen(true)
         return 
       }
       const errString = e.message ?? e.toString();

@@ -19,7 +19,7 @@ export default function WrongNetwork({ isOpen, setIsOpen }) {
     <div>
       { isOpen && 
         <div className='wrong-network-container'>
-          App network ({getChainName(chainId)}) doesn't match to network selected in wallet (network with id: {currentChainId}).
+          <p>App network ({getChainName(chainId)}) doesn't match to network selected in wallet (network with id: {currentChainId}).</p>
           <div style={{marginLeft:16}} className="clickable underline" onClick={() => switchNetwork(chainId, true)}>
             Add to {getChainName(chainId)}
           </div>
