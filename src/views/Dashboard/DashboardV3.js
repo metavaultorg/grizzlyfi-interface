@@ -70,7 +70,7 @@ const claimTypes = [
 ]
 
 export default function DashboardV3(props) {
-    const { connectWallet } = props
+    const { connectWallet, savedShowPnlAfterFees, savedIsPnlInLeverage } = props
     const { active, library, account } = useWeb3React();
     const { chainId } = useChainId();
 
@@ -375,7 +375,11 @@ export default function DashboardV3(props) {
                     />
                 </div>
                 <InnerCard title='Your Opened Positions'>
-                    <OpenedPositions tokenPairMarketList={tokenPairMarketList} />
+                    <OpenedPositions 
+                    tokenPairMarketList={tokenPairMarketList} 
+                    savedShowPnlAfterFees={savedShowPnlAfterFees} 
+                    savedIsPnlInLeverage={savedIsPnlInLeverage}
+                    />
                 </InnerCard>
                 <InnerCard title='Your GLL Vault' style={{ marginTop: 8 }}>
                     <div className="list-table">

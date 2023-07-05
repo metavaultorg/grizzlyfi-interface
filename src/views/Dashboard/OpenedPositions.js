@@ -88,6 +88,8 @@ export default function OpenedPositions(props) {
                   <tbody>
                       {positions.length > 0 && sortArr(positions, sorter.sortBy, sorter.isAsc).map((position, index) => {
                           const liquidationPrice = getLiquidationPrice(position) || bigNumberify(0);
+                          const hasPositionProfit = position[savedShowPnlAfterFees ? "hasProfitAfterFees" : "hasProfit"];
+                          const positionDelta = position[savedShowPnlAfterFees ? "pendingDeltaAfterFees" : "pendingDelta"] || bigNumberify(0);
                           var tokenImage = null;
                           const marketToken = tokenPairMarketList.find((token) => token.symbol === position.indexToken.symbol);
                           try {
@@ -143,10 +145,10 @@ export default function OpenedPositions(props) {
                                       true
                                   )}</td>
                                   <td><span className={cx({
-                                      positive: position.change > 0,
-                                      negative: position.change < 0,
-                                      muted: position.change === 0,
-                                  }, "font-number")}>{position.deltaBeforeFeesStr}</span></td>
+                                      positive: hasPositionProfit && positionDelta.gt(0),
+                                      negative: !hasPositionProfit && positionDelta.gt(0),
+                                      muted: positionDelta.eq(0),
+                                  }, "font-number")}>{position.deltaStr} ({position.deltaPercentageStr})</span></td>
                                   <td><button
                                       className="table-trade-btn"
                                       onClick={() => history.push('/trade')}
@@ -164,6 +166,8 @@ export default function OpenedPositions(props) {
               {positions.map((position, index) => {
                   const liquidationPrice = getLiquidationPrice(position) || bigNumberify(0);
                   const marketToken = tokenPairMarketList.find((token) => token.symbol === position.indexToken.symbol);
+                  const hasPositionProfit = position[savedShowPnlAfterFees ? "hasProfitAfterFees" : "hasProfit"];
+                  const positionDelta = position[savedShowPnlAfterFees ? "pendingDeltaAfterFees" : "pendingDelta"] || bigNumberify(0);
                   var tokenImage = null;
 
                   try {
@@ -242,10 +246,10 @@ export default function OpenedPositions(props) {
                                   <div className="label">PnL</div>
                                   <div>
                                       <span className={cx({
-                                          positive: position.change > 0,
-                                          negative: position.change < 0,
-                                          muted: position.change === 0,
-                                      }, "font-number")}>{position.deltaBeforeFeesStr}</span>
+                                          positive: hasPositionProfit && positionDelta.gt(0),
+                                          negative: !hasPositionProfit && positionDelta.gt(0),
+                                          muted: positionDelta.eq(0),
+                                      }, "font-number")}>{position.deltaStr} ({position.deltaPercentageStr})</span>
                                   </div>
                               </div>
                               <div className="App-card-row">
