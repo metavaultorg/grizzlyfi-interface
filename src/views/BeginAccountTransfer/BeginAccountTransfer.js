@@ -49,7 +49,7 @@ export default function BeginAccountTransfer(props) {
   const rewardRouterAddress = getContract(chainId, "RewardRouter");
 
 
-  const feeGllTrackerAddress = getContract(chainId, "feeGllTracker");
+  const feeGllTrackerAddress = getContract(chainId, "FeeGllTracker");
   const { data: cumulativeGllRewards } = useSWR(
     [active, chainId, feeGllTrackerAddress, "cumulativeRewards", parsedReceiver],
     {
