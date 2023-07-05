@@ -193,7 +193,7 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
       </div>
       
       <div className="App-header-link-container">
-        <a href="https://perp-docs.grizzly.fi/" target="_blank" rel="noopener noreferrer">
+        <a href="https://docs.grizzly.fi/v/eng/product/grizzly-trade" target="_blank" rel="noopener noreferrer">
           <span
             className="hover-white"
             style={{

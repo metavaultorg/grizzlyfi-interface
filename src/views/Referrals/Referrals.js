@@ -441,7 +441,7 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
                 color: "#f2c75c",
                 borderRadius: 15,
               }}
-              href="https://docs.metavault.trade/referral-program"
+              href="https://docs.grizzly.fi/v/eng/product/grizzly-trade"
               target="_blank"
               rel="noreferrer"
             >

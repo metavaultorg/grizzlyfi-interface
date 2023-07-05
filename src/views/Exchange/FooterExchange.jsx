@@ -138,7 +138,7 @@ export default function Footer() {
         </a>
         <a
           style={{ textDecoration: "none" }}
-          href="https://docs.metavault.trade"
+          href="https://docs.grizzly.fi/v/eng/product/grizzly-trade"
           target="_blank"
           rel="noreferrer"
           className="footer-link--container"

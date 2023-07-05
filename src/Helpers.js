@@ -2512,7 +2512,7 @@ export function useDebounce(value, delay) {
 }
 
 export function isDevelopment() {
-  return !window.location.host?.includes("perp.grizzly.fi") && !window.location.host?.includes("perp.grizzly.fi");
+  return !window.location.host?.includes("trade.grizzly.fi") && !window.location.host?.includes("trade.grizzly.fi");
 }
 
 export function isLocal() {

@@ -134,7 +134,7 @@ export default function Earn(props) {
               )}
               {/* <br />
               <div>
-                <a href="https://perp-docs.grizzly.fi/gll" target="_blank" rel="noopener noreferrer">
+                <a href="https://docs.grizzly.fi/v/eng/product/grizzly-trade" target="_blank" rel="noopener noreferrer">
                   More Info
                 </a>
               </div> */}
