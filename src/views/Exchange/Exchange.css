@@ -1045,10 +1045,12 @@ table.Exchange-list-small td {
   white-space: nowrap;
   font-size: 18px;
   font-weight: 600;
+  line-height: normal;
 }
 
 .Exchange-list .Tooltip-handle {
-  font-size: 16px;
+  font-size: 18px;
+  font-weight: 500;
 }
 
 .Exchange-list-info-label {
@@ -1056,6 +1058,7 @@ table.Exchange-list-small td {
   gap: 4px;
   font-size: 1rem;
   font-weight: 400;
+  line-height: normal;
   color: #fff;
 }
 
