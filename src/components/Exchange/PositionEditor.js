@@ -292,17 +292,6 @@ export default function PositionEditor(props) {
     const priceBasisPoints = position.isLong ? 11000 : 9000;
     const priceLimit = position.indexToken.maxPrice.mul(priceBasisPoints).div(10000);
 
-    const orderProps = ethers.utils.defaultAbiCoder.encode(
-      ["uint256", "uint256", "uint256", "address", "bool"],
-      [
-        0,
-        0,
-        0,
-        AddressZero,
-        false,
-      ]
-    );
-
     const referralCode = ethers.constants.HashZero;
     let params = [
       path, // _path
@@ -314,7 +303,7 @@ export default function PositionEditor(props) {
       priceLimit, // _acceptablePrice
       minExecutionFee, // _executionFee
       referralCode, // _referralCode
-      orderProps,
+      AddressZero, // _callbackTarget
     ];
 
     let method = "createIncreasePosition";
@@ -331,7 +320,7 @@ export default function PositionEditor(props) {
         priceLimit, // _acceptablePrice
         minExecutionFee, // _executionFee
         referralCode, // _referralCode
-        orderProps,
+        AddressZero, // _callbackTarget
       ];
     }
 
@@ -390,6 +379,7 @@ export default function PositionEditor(props) {
       0, // _minOut
       minExecutionFee, // _executionFee
       withdrawETH, // _withdrawETH
+      AddressZero, // _callbackTarget
     ];
 
     const method = "createDecreasePosition";

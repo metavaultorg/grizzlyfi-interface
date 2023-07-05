@@ -98,8 +98,9 @@ import IconToken from './assets/icons/honey-token.svg'
 import IconBnb from './assets/icons/icon-bnb.svg'
 import LinkDropdown from "./components/LinkDropdown/LinkDropdown";
 import APRLabel from "./components/APRLabel/APRLabel";
+import WrongNetwork from './components/WrongNetwork/WrongNetwork'
 
-
+// const chainId = localStorage.getItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY) || DEFAULT_CHAIN_ID;
 const safeMultisigConnector = new SafeAppConnector();
 
 if ("ethereum" in window) {
@@ -143,7 +144,7 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
           <a
             style={{ width: 21, height: 21 }}
             className="App-header-link-main"
-            href="https://trade.grizzly.fi/"
+            href=" https://trade.grizzly.fi/#/dashboard"
             rel="noopener noreferrer"
           >
             {/* <img
@@ -160,7 +161,7 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
         </div>
       )}
       <div className="App-header-link-container App-header-link-home">
-        <a href="https://trade.grizzly.fi/" rel="noopener noreferrer">
+        <a href="https://trade.grizzly.fi/#/dashboard" rel="noopener noreferrer">
           Home
         </a>
       </div>
@@ -391,7 +392,9 @@ function FullApp() {
     setIsSettingsVisible(false);
   };
 
-  const connectInjectedWallet = getInjectedHandler(activate);
+  const [wrongNetworkisOpen, setWrongNetworkIsOpen] = useState(false);
+
+  const connectInjectedWallet = getInjectedHandler(activate,setWrongNetworkIsOpen);
   const activateWalletConnect = () => {
     getWalletConnectHandler(activate, deactivate, setActivatingConnector)();
   };
@@ -484,6 +487,7 @@ function FullApp() {
   const [slippageAmount, setSlippageAmount] = useState(0);
   const [isPnlInLeverage, setIsPnlInLeverage] = useState(false);
   const [showPnlAfterFees, setShowPnlAfterFees] = useState(false);
+  
 
   const [savedIsPnlInLeverage, setSavedIsPnlInLeverage] = useLocalStorageSerializeKey(
     [chainId, IS_PNL_IN_LEVERAGE_KEY],
@@ -683,7 +687,7 @@ function FullApp() {
           <header>
             <div className="App-header large">
               <div className="App-header-container-left">
-                <a className="App-header-link-main" href="https://trade.grizzly.fi/">
+                <a className="App-header-link-main" href=" https://trade.grizzly.fi/#/dashboard">
                   {/* <img
                     style={{ width: "169px", height: "56px", flexBasis: "none" }}
                     src={getImageUrl({
@@ -763,6 +767,7 @@ function FullApp() {
               </motion.div>
             )}
           </AnimatePresence>
+          <div><WrongNetwork isOpen={wrongNetworkisOpen} setIsOpen={setWrongNetworkIsOpen} /></div>
           <Switch>
             <Route exact path="/">
               <Redirect to="/trade" />
@@ -819,7 +824,7 @@ function FullApp() {
       <ToastContainer
         limit={1}
         transition={Zoom}
-        position="bottom-right"
+        position="top-right"
         autoClose={7000}
         hideProgressBar={true}
         newestOnTop={false}

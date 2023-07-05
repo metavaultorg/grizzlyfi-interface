@@ -14,7 +14,6 @@ body,
 * {
   box-sizing: border-box;
   font-family: "Boston",sans-serif;
-  word-break: break-word;
 }
 
 ::-webkit-scrollbar {
@@ -313,8 +312,8 @@ button.btn-link:hover .logout-icon {
   margin-top: 24px;
   max-width: 1440px;
   margin: auto;
-  position: relative;
-  z-index: 10;
+  /* position: relative;
+  z-index: 10; */
 }
 
 .d-flex {
@@ -605,6 +604,9 @@ button.btn-link:hover .logout-icon {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+.btn-secondary:hover{
+    background-color: rgba(242, 199, 92, 0.2);
 }
 .btn-primary:hover{
     filter: brightness(1.1);

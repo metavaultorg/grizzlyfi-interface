@@ -5,6 +5,24 @@ const TOKENS = {
   5611: [
     // bsc
     {
+      name: "Bitcoin",
+      symbol: "BTC",
+      address: "0xB30AED2ea16d77dD0Ccb97172cCcfC483E713DCE",
+      coingeckoUrl: "https://www.coingecko.com/en/coins/bitcoin",
+      decimals: 8,
+      isShortable: true,
+      displayDecimals:2
+    },
+    {
+      name: "Ethereum",
+      symbol: "ETH",
+      address: "0xC27f7aa3D8097Bb4E624844010Af804Dae23818c",
+      coingeckoUrl: "https://www.coingecko.com/en/coins/ethereum",
+      decimals: 18,
+      isShortable: true,
+      displayDecimals:2
+    },
+    {
       name: "tBnb",
       symbol: "tBNB",
       decimals: 18,
@@ -23,24 +41,6 @@ const TOKENS = {
       isWrapped: true,
       baseSymbol: "BNB",
       displayDecimals:3
-    },
-    {
-      name: "Ethereum",
-      symbol: "ETH",
-      address: "0xC27f7aa3D8097Bb4E624844010Af804Dae23818c",
-      coingeckoUrl: "https://www.coingecko.com/en/coins/ethereum",
-      decimals: 18,
-      isShortable: true,
-      displayDecimals:2
-    },
-    {
-      name: "Bitcoin",
-      symbol: "BTC",
-      address: "0xB30AED2ea16d77dD0Ccb97172cCcfC483E713DCE",
-      coingeckoUrl: "https://www.coingecko.com/en/coins/bitcoin",
-      decimals: 8,
-      isShortable: true,
-      displayDecimals:2
     },
     {
       name: "USDC",

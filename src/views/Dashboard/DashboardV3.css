@@ -67,9 +67,9 @@
 }
 
 
-p{
+/* p{
      word-break: break-word;
-}
+} */
 .card-btn{
     padding: 0 40px;
     border-radius: 16px;
@@ -85,6 +85,9 @@ p{
     border-radius: 13px;
     background-color: rgba(255, 255, 255, 0.05);
     color: #fff;
+}
+.table-trade-btn:hover{
+  background-color: rgba(255, 255, 255, 0.1);
 }
 .market-card{
     padding: 24px;
@@ -236,4 +239,7 @@ p{
   font-weight: bold;
   color: #fff;
   width: 240px;
+}
+.faucet .faucet-right .claim-btn:hover{
+  background: rgba(255, 255, 255, 0.1);
 }

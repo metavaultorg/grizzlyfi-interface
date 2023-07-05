@@ -102,17 +102,13 @@ export function useTokenPairMarketData() {
     const [btcPrices] = useCoingeckoPrices("BTC");
     const [ethPrices] = useCoingeckoPrices("ETH");
     const [bnbPrices] = useCoingeckoPrices("tBNB");
-    const [usdcPrices] = useCoingeckoPrices("USDC");
-    const [usdtPrices] = useCoingeckoPrices("USDT");
 
     const data = useMemo(() => {
         const ret = [];
         if (bnbPrices) ret.push(bnbPrices);
         if (ethPrices) ret.push(ethPrices);
         if (btcPrices) ret.push(btcPrices);
-        if (usdcPrices) ret.push(usdcPrices);
-        if (usdtPrices) ret.push(usdtPrices);
         return ret;
-    }, [bnbPrices, ethPrices, btcPrices, usdcPrices, usdtPrices])
+    }, [bnbPrices, ethPrices, btcPrices])
     return data;
 }

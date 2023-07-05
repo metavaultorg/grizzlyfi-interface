@@ -70,7 +70,7 @@ const claimTypes = [
 ]
 
 export default function DashboardV3(props) {
-    const { connectWallet } = props
+    const { connectWallet, savedShowPnlAfterFees, savedIsPnlInLeverage } = props
     const { active, library, account } = useWeb3React();
     const { chainId } = useChainId();
 
@@ -229,7 +229,7 @@ export default function DashboardV3(props) {
                                     style={{
                                         objectFit: "contain", cursor: 'pointer',
                                         opacity: selectedClaimToken.id === item.id ? '1' : '0.4',
-                                        border: selectedClaimToken.id === item.id ? 'solid 1px #fff' : 'none',
+                                        border: selectedClaimToken.id === item.id ? 'solid 2px #fff' : 'none',
                                         borderRadius: 13,
                                         boxShadow: selectedClaimToken.id === item.id ? '0 0 0 3px rgba(255, 255, 255, 0.2)' : 'none'
                                     }}
@@ -375,7 +375,11 @@ export default function DashboardV3(props) {
                     />
                 </div>
                 <InnerCard title='Your Opened Positions'>
-                    <OpenedPositions tokenPairMarketList={tokenPairMarketList} />
+                    <OpenedPositions 
+                    tokenPairMarketList={tokenPairMarketList} 
+                    savedShowPnlAfterFees={savedShowPnlAfterFees} 
+                    savedIsPnlInLeverage={savedIsPnlInLeverage}
+                    />
                 </InnerCard>
                 <InnerCard title='Your GLL Vault' style={{ marginTop: 8 }}>
                     <div className="list-table">
@@ -467,7 +471,9 @@ export default function DashboardV3(props) {
                                     <div className="App-card-divider"></div>
                                     <div className="App-card-content">
                                         <div className="App-card-row">
-                                            <div className="label">APY <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /></div>
+                                            <div className="label">APY
+                                                {/* <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /> */}
+                                            </div>
                                             <div className="font-number">
                                                 {item.apy}
                                             </div>

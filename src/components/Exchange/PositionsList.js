@@ -10,6 +10,8 @@ import { ImSpinner2 } from "react-icons/im";
 import IconNoPosition from "../../assets/icons/no-open-position.png";
 import longImg from "../../assets/icons/icon-long.svg";
 import shortImg from "../../assets/icons/icon-short.svg";
+import IconEdit from "../../assets/icons/icon-edit.svg";
+import IconShare from "../../assets/icons/icon-share.svg";
 import { getImageUrl } from "../../cloudinary/getImageUrl";
 
 import {
@@ -242,30 +244,49 @@ export default function PositionsList(props) {
                   .div(FUNDING_RATE_PRECISION);
                 borrowFeeText = `Borrow Fee / Day: $${formatAmount(borrowFeeRate, USD_DECIMALS, USD_DISPLAY_DECIMALS)}`;
               }
+              var tokenImage = null;
+
+              try {
+                tokenImage = getImageUrl({
+                  path: `coins/${position.indexToken.symbol.toLowerCase()}`,
+                });
+              } catch (error) {
+                console.error(error);
+              }
 
               return (
                 <div key={position.key} className="App-card">
-                  <div className="App-card-title">
-                    <span className="Exchange-list-title">{position.indexToken.symbol}</span>
-                  </div>
-                  <div className="App-card-divider"></div>
-                  <div className="App-card-content">
-                    <div className="App-card-row">
-                      <div className="label">Leverage</div>
+                  <div className={`App-card-title ${position.isLong?"background-long":"background-short"}`}>
+                    <div className="Exchange-list-asset">
+                      <img
+                          style={{ objectFit: "contain" }}
+                          src={tokenImage || tokenImage.default}
+                          alt={position.indexToken.symbol}
+                          width={32}
+                          height={32}
+                        />
+                    <div style={{display:"flex",flexDirection:"column"}}>
+                      <div className="Exchange-list-title">
+                        {position.indexToken.symbol}
+                        {position.hasPendingChanges && <ImSpinner2 className="spin position-loading-icon" />}
+                      </div>
                       <div className="Exchange-list-info-label">
-                        <img src={position.isLong ? longImg : shortImg} alt="" />
+                        <img src={position.isLong? longImg: shortImg} alt=""/>
                         {position.leverage && (
                           <span className="font-number">{formatAmount(position.leverage, 4, 2, true)}x&nbsp;</span>
                         )}
                       </div>
                     </div>
+                  </div>
+                  </div>
+                  <div className="App-card-content">
                     <div className="App-card-row">
                       <div className="label">Size</div>
-                      <div className="font-number">${formatAmount(position.size, USD_DECIMALS, 2, true)}</div>
+                      <div className="font-number value">${formatAmount(position.size, USD_DECIMALS, 2, true)}</div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">Collateral</div>
-                      <div>
+                      <div className="value">
                         <Tooltip
                           handle={`$${formatAmount(
                             position.collateralAfterFee,
@@ -304,7 +325,7 @@ export default function PositionsList(props) {
                       <div className="label">PnL</div>
                       <div>
                         <span
-                          className={cx("Exchange-list-info-label", "font-number", {
+                          className={cx("Exchange-list-info-label", "font-number","value", {
                             positive: hasPositionProfit && positionDelta.gt(0),
                             negative: !hasPositionProfit && positionDelta.gt(0),
                             muted: positionDelta.eq(0),
@@ -316,7 +337,7 @@ export default function PositionsList(props) {
                     </div>
                     <div className="App-card-row">
                       <div className="label">Net Value</div>
-                      <div>
+                      <div className="value">
                         <Tooltip
                           handle={`$${formatAmount(position.netValue, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}`}
                           position="right-bottom"
@@ -350,7 +371,7 @@ export default function PositionsList(props) {
                     </div>
                     <div className="App-card-row">
                       <div className="label">Orders</div>
-                      <div>
+                      <div className="value">
                         {positionOrders.length === 0 && "None"}
                         {positionOrders.map((order) => {
                           const orderText = () => (
@@ -387,19 +408,19 @@ export default function PositionsList(props) {
                   <div className="App-card-content">
                     <div className="App-card-row">
                       <div className="label">Mkt. Price</div>
-                      <div className="font-number">
+                      <div className="font-number value">
                         ${formatAmount(position.markPrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}
                       </div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">Entry Price</div>
-                      <div className="font-number">
+                      <div className="font-number value">
                         ${formatAmount(position.averagePrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}
                       </div>
                     </div>
                     <div className="App-card-row">
                       <div className="label">Liq. Price</div>
-                      <div className="font-number">
+                      <div className="font-number value">
                         ${formatAmount(liquidationPrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}
                       </div>
                     </div>
@@ -407,7 +428,7 @@ export default function PositionsList(props) {
                   <div className="App-card-divider"></div>
                   <div className="App-card-options">
                     <button
-                      className="App-button-option App-card-option"
+                      className="App-button-option App-card-option App-button-close"
                       disabled={position.size.eq(0)}
                       onClick={() => sellPosition(position)}
                     >
@@ -418,7 +439,8 @@ export default function PositionsList(props) {
                       disabled={position.size.eq(0)}
                       onClick={() => editPosition(position)}
                     >
-                      Edit
+                      <img src={IconEdit} alt="IconEdit"/>
+                      <p>Edit Collateral</p>
                     </button>
                     <button
                       className="App-button-option App-card-option"
@@ -428,7 +450,8 @@ export default function PositionsList(props) {
                       }}
                       disabled={position.size.eq(0)}
                     >
-                      Share
+                      <img src={IconShare} alt="IconShare"/>
+                      <p style={{ border: "none" }}>Share Position</p>
                     </button>
                   </div>
                 </div>
