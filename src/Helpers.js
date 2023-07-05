@@ -38,7 +38,7 @@ export const MIN_PROFIT_TIME = 0;
 const SELECTED_NETWORK_LOCAL_STORAGE_KEY = "SELECTED_NETWORK";
 
 const CHAIN_NAMES_MAP = {
-  [opBNB]: "Bsc",
+  [opBNB]: "opBNB",
 };
 
 const GAS_PRICE_ADJUSTMENT_MAP = {
