@@ -691,14 +691,14 @@ export default function PositionSeller(props) {
         library,
         indexTokenAddress,
         sizeDelta,
-        path,
+        path[0],
+        path.length >1?path[1]:AddressZero,
         collateralDelta,
         position.isLong,
         triggerPriceUsd,
         triggerAboveThreshold,
         0, // _minOut
         withdrawETH, // _withdrawETH
-        0,
         {
           sentMsg: "Order submitted!",
           successMsg: "Order created!",
@@ -727,6 +727,7 @@ export default function PositionSeller(props) {
       0, // _minOut
       minExecutionFee, // _executionFee
       withdrawETH, // _withdrawETH
+      AddressZero, // _callbackTarget
     ];
 
     const successMsg = `Requested decrease of ${position.indexToken.symbol} ${
