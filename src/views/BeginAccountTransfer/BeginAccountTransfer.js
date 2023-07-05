@@ -8,7 +8,6 @@ import { getContract } from "../../Addresses";
 import { callContract } from "../../Api";
 
 import Modal from "../../components/Modal/Modal";
-import Footer from "../../Footer";
 
 import RewardTracker from "../../abis/RewardTracker.json";
 import RewardRouter from "../../abis/RewardRouter.json";
@@ -207,7 +206,6 @@ export default function BeginAccountTransfer(props) {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }
