@@ -240,3 +240,6 @@
   color: #fff;
   width: 240px;
 }
+.faucet .faucet-right .claim-btn:hover{
+  background: rgba(255, 255, 255, 0.1);
+}
