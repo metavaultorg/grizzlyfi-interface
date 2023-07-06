@@ -1,30 +1,25 @@
-import React, {  } from "react";
-import { useWeb3React } from "@web3-react/core";
+import React from "react";
 import useSWR from "swr";
 
-import {
-    fetcher,
-    formatAmount,
-    useChainId,
-    USD_DECIMALS,
-} from "../../Helpers";
 import { getContract } from "../../Addresses";
+import { USD_DECIMALS, fetcher, formatAmount, useChainId } from "../../Helpers";
 import GllManager from "../../abis/GllManager.json";
+import useWeb3Onboard from "../../hooks/useWeb3Onboard";
 
 export default function AUMLabel() {
-    const { active, library } = useWeb3React();
-    const { chainId } = useChainId();
+  const { active, library } = useWeb3Onboard();
+  const { chainId } = useChainId();
 
-    const gllManagerAddress = getContract(chainId, "GllManager");
+  const gllManagerAddress = getContract(chainId, "GllManager");
 
-    const { data: aums } = useSWR([`Dashboard:getAums:${active}`, chainId, gllManagerAddress, "getAums"], {
-        fetcher: fetcher(library, GllManager),
-    });
+  const { data: aums } = useSWR([`Dashboard:getAums:${active}`, chainId, gllManagerAddress, "getAums"], {
+    fetcher: fetcher(library, GllManager),
+  });
 
-    let aum;
-    if (aums && aums.length > 0) {
-        aum = aums[0].add(aums[1]).div(2);
-    }
+  let aum;
+  if (aums && aums.length > 0) {
+    aum = aums[0].add(aums[1]).div(2);
+  }
 
-    return <>{`$${formatAmount(aum, USD_DECIMALS, 0, true)}`}</>;
+  return <>{`$${formatAmount(aum, USD_DECIMALS, 0, true)}`}</>;
 }

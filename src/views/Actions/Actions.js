@@ -1,29 +1,29 @@
-import React from "react";
-import useSWR from "swr";
 import { ethers } from "ethers";
-import { useWeb3React } from "@web3-react/core";
+import React from "react";
 import { useParams } from "react-router-dom";
+import useSWR from "swr";
 
 import "./Actions.css";
 
 import { getContract } from "../../Addresses";
-import { formatAmount, fetcher, getTokenInfo, getServerBaseUrl, useChainId, useAccountOrders } from "../../Helpers";
+import { fetcher, formatAmount, getTokenInfo, useAccountOrders, useChainId } from "../../Helpers";
 
 import { useInfoTokens } from "../../Api";
 import { getToken, getTokens, getWhitelistedTokens } from "../../data/Tokens";
-import { getPositions, getPositionQuery } from "../Exchange/Exchange";
+import { getPositionQuery, getPositions } from "../Exchange/Exchange";
 
-import PositionsList from "../../components/Exchange/PositionsList";
 import OrdersList from "../../components/Exchange/OrdersList";
+import PositionsList from "../../components/Exchange/PositionsList";
 
-import TradeHistory from "../../components/Exchange/TradeHistory";
 import Reader from "../../abis/Reader.json";
+import TradeHistory from "../../components/Exchange/TradeHistory";
+import useWeb3Onboard from "../../hooks/useWeb3Onboard";
 
 const USD_DECIMALS = 30;
 
 export default function Actions() {
   const { account } = useParams();
-  const { active, library } = useWeb3React();
+  const { active, library } = useWeb3Onboard();
 
   const { chainId } = useChainId();
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
@@ -36,7 +36,6 @@ export default function Actions() {
   if (ethers.utils.isAddress(account)) {
     checkSummedAccount = ethers.utils.getAddress(account);
   }
-
 
   // const pnlUrl = `${getServerBaseUrl(chainId)}/pnl?account=${checkSummedAccount}`;
   // const { data: pnlData } = useSWR([pnlUrl], {

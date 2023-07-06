@@ -1,15 +1,15 @@
 import { Menu } from "@headlessui/react";
 import { FiChevronDown } from "react-icons/fi";
-import "./AssetDropdown.css";
+import { addTokenToMetamask, ICONLINKS, platformTokens, useChainId } from "../../Helpers";
+import useWeb3Onboard from "../../hooks/useWeb3Onboard";
 import coingeckoIcon from "../../img/coingecko.png";
+import metamaskIcon from "../../img/ic_metamask_hover_16.svg";
 import maticIcon from "../../img/ic_polygon_16.svg";
 import zkSyncEraIcon from "../../img/ic_zksync_era.svg";
-import metamaskIcon from "../../img/ic_metamask_hover_16.svg";
-import { addTokenToMetamask, ICONLINKS, platformTokens, useChainId } from "../../Helpers";
-import { useWeb3React } from "@web3-react/core";
+import "./AssetDropdown.css";
 
 function AssetDropdown({ assetSymbol, assetInfo, showReserves }) {
-  const { active } = useWeb3React();
+  const { active } = useWeb3Onboard();
   const { chainId } = useChainId();
   let { coingecko, polygon, zkSync } = ICONLINKS[chainId][assetSymbol];
   const unavailableTokenSymbols = {

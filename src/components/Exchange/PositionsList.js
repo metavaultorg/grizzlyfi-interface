@@ -420,7 +420,7 @@ export default function PositionsList(props) {
                     </div>
                     <div className="App-card-row">
                       <div className="label">Liq. Price</div>
-                      <div className="font-number value">
+                      <div className="font-number value negative">
                         ${formatAmount(liquidationPrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}
                       </div>
                     </div>
@@ -681,7 +681,7 @@ export default function PositionsList(props) {
                 <td className="clickable font-number" onClick={() => onPositionClick(position)}>
                   ${formatAmount(position.averagePrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}
                 </td>
-                <td className="clickable font-number" onClick={() => onPositionClick(position)}>
+                <td className="clickable font-number negative" onClick={() => onPositionClick(position)}>
                   ${formatAmount(liquidationPrice, USD_DECIMALS, position.indexToken.displayDecimals, true)}
                 </td>
 

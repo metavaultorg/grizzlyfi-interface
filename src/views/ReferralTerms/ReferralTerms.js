@@ -61,8 +61,8 @@ export default function ReferralTerms(props) {
               </p>
               <p className="body-text ">
               Fee-Commissions or Fee-Discounts percentages for the default tier Tier 1, and instructions to upgrade to Tier 2 and Tier 3, are contained in{" "}
-                <a target="_blank" rel="noopener noreferrer" className="ahreftextcolor" href="https://perp-docs.grizzly.fi/referral-program">
-                https://perp-docs.grizzly.fi/referral-program
+                <a target="_blank" rel="noopener noreferrer" className="ahreftextcolor" href="https://docs.grizzly.fi/v/eng/product/grizzly-trade">
+                  https://docs.grizzly.fi/v/eng/product/grizzly-trade
                 </a>
               </p>
             </div>

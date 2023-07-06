@@ -1,39 +1,40 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useRef, useState } from "react";
-import { useWeb3React } from "@web3-react/core";
 
 import Card from "../../components/Common/Card";
 import SEO from "../../components/Common/SEO";
 import Tab from "../../components/Tab/Tab";
 // import Footer from "../../Footer";
 import { format as formatDateFn } from "date-fns";
+import { decodeReferralCode, encodeReferralCode, useReferralsData } from "../../Api/referrals";
 import {
-  useChainId,
-  getPageTitle,
-  formatAmount,
-  USD_DECIMALS,
-  helperToast,
-  // formatDate,
-  getExplorerUrl,
-  shortenAddress,
-  bigNumberify,
-  REFERRAL_CODE_QUERY_PARAMS,
   MAX_REFERRAL_CODE_LENGTH,
-  isHashZero,
   REFERRALS_SELECTED_TAB_KEY,
   REFERRAL_CODE_KEY,
-  useLocalStorageSerializeKey,
-  useDebounce,
+  REFERRAL_CODE_QUERY_PARAMS,
+  USD_DECIMALS,
+  bigNumberify,
+  formatAmount,
+  // formatDate,
+  getExplorerUrl,
+  getPageTitle,
+  helperToast,
   isAddressZero,
+  isHashZero,
   opBNB,
+  shortenAddress,
+  useChainId,
+  useDebounce,
+  useLocalStorageSerializeKey,
 } from "../../Helpers";
-import { decodeReferralCode, encodeReferralCode, useReferralsData } from "../../Api/referrals";
 
 // import AffiliatesIcon from "../../assets/icons/AffiliatesIcon";
 // import CashbackIcon from "../../assets/icons/CashbackIcon";
 // import ReferralCodeIcon from "../../assets/icons/ReferralCodeIcon";
 
-import "./Referrals.css";
+import { BiCopy, BiEditAlt, BiErrorCircle } from "react-icons/bi";
+import { FiPlus } from "react-icons/fi";
+import { useCopyToClipboard, useLocalStorage } from "react-use";
 import {
   getReferralCodeOwner,
   registerReferralCode,
@@ -42,16 +43,14 @@ import {
   useReferrerTier,
   useUserReferralCode,
 } from "../../Api";
-import { BiCopy, BiEditAlt, BiErrorCircle } from "react-icons/bi";
-import { IoWarningOutline } from "react-icons/io5";
-import Tooltip from "../../components/Tooltip/Tooltip";
-import { useCopyToClipboard, useLocalStorage } from "react-use";
+import { getImageUrl } from "../../cloudinary/getImageUrl";
+import Checkbox from "../../components/Checkbox/Checkbox";
 import Loader from "../../components/Common/Loader";
 import Modal from "../../components/Modal/Modal";
-import { FiPlus } from "react-icons/fi";
-import { getToken, getNativeToken } from "../../data/Tokens";
-import Checkbox from "../../components/Checkbox/Checkbox";
-import { getImageUrl } from "../../cloudinary/getImageUrl";
+import Tooltip from "../../components/Tooltip/Tooltip";
+import { getNativeToken, getToken } from "../../data/Tokens";
+import useWeb3Onboard from "../../hooks/useWeb3Onboard";
+import "./Referrals.css";
 
 const REFERRAL_DATA_MAX_TIME = 60000 * 5; // 5 minutes
 const TRADERS = "Traders";
@@ -60,13 +59,13 @@ const TAB_OPTIONS = [TRADERS, AFFILIATES];
 export const CODE_REGEX = /^\w+$/; // only number, string and underscore is allowed
 
 const intervals = [
-  { label: 'year', seconds: 31536000 },
-  { label: 'month', seconds: 2592000 },
-  { label: 'day', seconds: 86400 },
-  { label: 'hour', seconds: 3600 },
-  { label: 'min', seconds: 60 },
-  { label: 'second', seconds: 1 }
-]
+  { label: "year", seconds: 31536000 },
+  { label: "month", seconds: 2592000 },
+  { label: "day", seconds: 86400 },
+  { label: "hour", seconds: 3600 },
+  { label: "min", seconds: 60 },
+  { label: "second", seconds: 1 },
+];
 const tierDiscountInfo = {
   0: 5,
   1: 10,
@@ -78,21 +77,18 @@ async function validateReferralCodeExists(referralCode, chainId) {
   return !isAddressZero(referralCodeOwner);
 }
 export function timeSince(time) {
-  const seconds = Date.now() / 1000 - time | 0
-  const interval = intervals.find(i => i.seconds < seconds)
+  const seconds = (Date.now() / 1000 - time) | 0;
+  const interval = intervals.find((i) => i.seconds < seconds);
 
-  if (!interval)
-    return ''
-  const count = seconds / interval.seconds | 0
-  return `${count} ${interval.label}${count !== 1 ? 's' : ''} ago`
+  if (!interval) return "";
+  const count = (seconds / interval.seconds) | 0;
+  return `${count} ${interval.label}${count !== 1 ? "s" : ""} ago`;
 }
 function isRecentReferralCodeNotExpired(referralCodeInfo) {
   if (referralCodeInfo.time) {
     return referralCodeInfo.time + REFERRAL_DATA_MAX_TIME > Date.now();
   }
 }
-
-
 
 async function getReferralCodeTakenStatus(account, referralCode, chainId) {
   const referralCodeBytes32 = encodeReferralCode(referralCode);
@@ -119,8 +115,6 @@ const tierRebateInfo = {
   1: 10,
   2: 15,
 };
-
-
 
 const getSampleReferrarStat = (code, ownerOnOtherNetwork, account) => {
   return {
@@ -162,7 +156,7 @@ export function getCodeError(value) {
 }
 
 function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
-  const { active, account, library, chainId: chainIdWithoutLocalStorage } = useWeb3React();
+  const { active, account, library, chainId: chainIdWithoutLocalStorage } = useWeb3Onboard();
   const { chainId } = useChainId();
   const [activeTab, setActiveTab] = useLocalStorage(REFERRALS_SELECTED_TAB_KEY, TRADERS);
   const { data: referralsData, loading } = useReferralsData(chainIdWithoutLocalStorage, account);
@@ -194,13 +188,13 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
   }
   const showInfo = () => {
     if (activeTab === TRADERS && referralCodeInString && active) {
-      return false
+      return false;
     }
     if (activeTab === AFFILIATES && referralsData?.codes?.length && active) {
-      return false
+      return false;
     }
-    return true
-  }
+    return true;
+  };
   function handleCreateReferralCode(code) {
     const referralCodeHex = encodeReferralCode(code);
     return registerReferralCode(chainId, referralCodeHex, {
@@ -320,8 +314,8 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
           <div className="referrals-header-img">
             <img
               src={getImageUrl({
-                path: 'referralBanner',
-                format:'png'
+                path: "referralBanner",
+                format: "png",
               })}
               alt=""
             />
@@ -339,10 +333,10 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
             alignItems: "flex-start",
             gap: 30,
             // flexDirection: account || windowWidth < 1130 ? "column" : "row",
-            flexDirection:"column"
+            flexDirection: "column",
           }}
         >
-          {showInfo() ?
+          {showInfo() ? (
             <div
               className="instructions-container"
             >
@@ -390,11 +384,12 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
                 <p>Enjoy up to 15% Fee-Commission.
                   Referred Traders can get up to 10% Cashback.</p>
               </div>
-            </div> :
+            </div>
+          ) : (
             <>
-              {activeTab === AFFILIATES ?
+              {activeTab === AFFILIATES ? (
                 <AffiliatesStats referralsData={referralsData} />
-                : 
+              ) : (
                 <TraderStats
                   account={account}
                   referralCodeInString={referralCodeInString}
@@ -405,11 +400,10 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
                   pendingTxns={pendingTxns}
                   traderTier={traderTier}
                 />
-              }
+              )}
             </>
+          )}
 
-          }
-          
           <div style={{ display: "flex", flexDirection: "column", width: "100%", flexBasis: "50%" }}>
             <div
               className="ref-container"
@@ -441,7 +435,7 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
                 color: "#f2c75c",
                 borderRadius: 15,
               }}
-              href="https://docs.metavault.trade/referral-program"
+              href="https://docs.grizzly.fi/v/eng/product/grizzly-trade"
               target="_blank"
               rel="noreferrer"
             >
@@ -468,7 +462,7 @@ function Referrals({ connectWallet, setPendingTxns, pendingTxns }) {
                 color: "#f2c75c",
                 borderRadius: 15,
               }}
-              href="https://stats.metavault.trade/referrals"
+              href="https://stats.grizzly.fi/referrals"
               target="_blank"
               rel="noreferrer"
             >
@@ -805,11 +799,9 @@ function AffiliatesInfo({
   }, referrerTotalStats);
 
   const tierId = referrerTierInfo?.tierId;
-  
 
   return (
     <div className="referral-body-container">
-
       <div className="list">
         <Modal
           className="Connect-wallet-modal"
@@ -856,7 +848,11 @@ function AffiliatesInfo({
                   {referrerTierInfo && `Tier ${getTierIdDisplay(tierId)} (${tierRebateInfo[tierId]}% fee-commissions)`}
                 </span>
               </p>
-              <button className="transparent-btn transparent-btnmargintop create-btn" onClick={open} style={{marginBottom:8,background:'rgba(255,255,255,0.05)',border:'none',borderRadius:18,}}>
+              <button
+                className="transparent-btn transparent-btnmargintop create-btn"
+                onClick={open}
+                style={{ marginBottom: 8, background: "rgba(255,255,255,0.05)", border: "none", borderRadius: 18 }}
+              >
                 <FiPlus size={24} /> <span className="ml-small">Create new</span>
               </button>
             </div>
@@ -894,7 +890,7 @@ function AffiliatesInfo({
                           <div
                             onClick={() => {
                               copyToClipboard(
-                                `https://app.metavault.trade/#/?${REFERRAL_CODE_QUERY_PARAMS}=${stat.referralCode}`
+                                `https://trade.grizzly.fi/#/trade/?${REFERRAL_CODE_QUERY_PARAMS}=${stat.referralCode}`
                               );
                               helperToast.success("Referral link copied to your clipboard");
                             }}
@@ -910,8 +906,8 @@ function AffiliatesInfo({
                                 handle={<BiErrorCircle color="#e82e56" size={16} />}
                                 renderContent={() => (
                                   <div>
-                                    This code has been taken by someone else on Bsc, you will not receive
-                                    fee-cashback from traders using this code on.
+                                    This code has been taken by someone else on Bsc, you will not receive fee-cashback
+                                    from traders using this code on.
                                   </div>
                                 )}
                               />
@@ -961,7 +957,9 @@ function AffiliatesInfo({
                       <tr key={index}>
                         <td className="table-head" data-label="Date">
                           <div>{timeSince(rebate.timestamp)}</div>
-                          <div style={{ fontSize: 16, color: 'rgba(255,255,255,0.6)' }}>{formatDateFn(rebate.timestamp * 1000, "dd/MM/yyyy")}</div>
+                          <div style={{ fontSize: 16, color: "rgba(255,255,255,0.6)" }}>
+                            {formatDateFn(rebate.timestamp * 1000, "dd/MM/yyyy")}
+                          </div>
                         </td>
                         <td className="table-head" data-label="Amount">
                           {formatAmount(rebate.amount, tokenInfo.decimals, 4, true)} {tokenInfo.symbol}
@@ -981,11 +979,16 @@ function AffiliatesInfo({
                               copyToClipboard(rebate.transactionHash);
                               helperToast.success("Transaction hash copied to your clipboard");
                             }}
-                          ><img alt="copy" src={getImageUrl({ path: 'icon-copy-new' })} /></span>
-                          <a target="_blank"
+                          >
+                            <img alt="copy" src={getImageUrl({ path: "icon-copy-new" })} />
+                          </span>
+                          <a
+                            target="_blank"
                             rel="noopener noreferrer"
-                            href={explorerURL + `tx/${rebate.transactionHash}`} className="td-icon">
-                            <img alt="link" src={getImageUrl({ path: 'icon-send-token' })} />
+                            href={explorerURL + `tx/${rebate.transactionHash}`}
+                            className="td-icon"
+                          >
+                            <img alt="link" src={getImageUrl({ path: "icon-send-token" })} />
                           </a>
                         </td>
                       </tr>
@@ -1017,13 +1020,11 @@ function TradersInfo({
   pendingTxns,
 }) {
   const { referralTotalStats, discountDistributions } = referralsData;
-  
-  const [, copyToClipboard] = useCopyToClipboard();
 
+  const [, copyToClipboard] = useCopyToClipboard();
 
   return (
     <div className="rebate-container">
-
       {discountDistributions.length > 0 ? (
         <div className="reward-history">
           <Card title="Fee-cashback Distribution History" tooltipText="Fee-cashback are airdropped weekly.">
@@ -1055,7 +1056,9 @@ function TradersInfo({
                       <tr key={index}>
                         <td data-label="Date">
                           <div>{timeSince(rebate.timestamp)}</div>
-                          <div style={{ fontSize: 16, color: 'rgba(255,255,255,0.6)' }}>{formatDateFn(rebate.timestamp * 1000, "dd/MM/yyyy")}</div>
+                          <div style={{ fontSize: 16, color: "rgba(255,255,255,0.6)" }}>
+                            {formatDateFn(rebate.timestamp * 1000, "dd/MM/yyyy")}
+                          </div>
                         </td>
                         <td data-label="Amount">
                           {formatAmount(rebate.amount, tokenInfo.decimals, 4, true)} {tokenInfo.symbol}
@@ -1076,10 +1079,16 @@ function TradersInfo({
                               copyToClipboard(rebate.transactionHash);
                               helperToast.success("Transaction hash copied to your clipboard");
                             }}
-                          ><img alt="copy" src={getImageUrl({ path: 'icon-copy-new' })} /></span>
-                          <a target="_blank" rel="noopener noreferrer" href={explorerURL + `tx/${rebate.transactionHash}`}
-                            className="td-icon">
-                            <img alt="copy" src={getImageUrl({ path: 'icon-send-token' })} />
+                          >
+                            <img alt="copy" src={getImageUrl({ path: "icon-copy-new" })} />
+                          </span>
+                          <a
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href={explorerURL + `tx/${rebate.transactionHash}`}
+                            className="td-icon"
+                          >
+                            <img alt="copy" src={getImageUrl({ path: "icon-send-token" })} />
                           </a>
                         </td>
                       </tr>
@@ -1188,18 +1197,18 @@ function JoinReferralCode({
   );
 }
 
-export function InfoCard({ label, data, tooltipText, toolTipPosition = "left-bottom",iconPath }) {
+export function InfoCard({ label, data, tooltipText, toolTipPosition = "left-bottom", iconPath }) {
   return (
     <div className="info-card">
       <div className="card-icon">
         <img
           src={getImageUrl({
-            path: iconPath
+            path: iconPath,
           })}
           alt=""
         />
       </div>
-      
+
       <div className="card-details">
         <h3 className="label">
           {tooltipText ? (
@@ -1231,10 +1240,16 @@ function EmptyMessage({ message = "", tooltipText }) {
   );
 }
 function TraderStats({
-  referralsData, referralCodeInString, traderTier, chainId,
-  library, account, setPendingTxns, pendingTxns,
+  referralsData,
+  referralCodeInString,
+  traderTier,
+  chainId,
+  library,
+  account,
+  setPendingTxns,
+  pendingTxns,
 }) {
-  const { referralTotalStats, } = referralsData;
+  const { referralTotalStats } = referralsData;
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editReferralCode, setEditReferralCode] = useState("");
   const [isUpdateSubmitting, setIsUpdateSubmitting] = useState(false);
@@ -1245,7 +1260,6 @@ function TraderStats({
   const editModalRef = useRef(null);
   const debouncedEditReferralCode = useDebounce(editReferralCode, 300);
 
-
   const open = () => setIsEditModalOpen(true);
   const close = () => {
     setEditReferralCode("");
@@ -1253,7 +1267,6 @@ function TraderStats({
     setError("");
     setIsEditModalOpen(false);
   };
-
 
   useEffect(() => {
     let cancelled = false;
@@ -1394,12 +1407,10 @@ function TraderStats({
         </div>
       </Modal>
     </div>
-  )
+  );
 }
-function AffiliatesStats({
-  referralsData,
-}) {
-  let { cumulativeStats, } = referralsData;
+function AffiliatesStats({ referralsData }) {
+  let { cumulativeStats } = referralsData;
   let referrerRebates = bigNumberify(0);
   if (cumulativeStats && cumulativeStats.rebates && cumulativeStats.discountUsd) {
     referrerRebates = cumulativeStats.rebates.sub(cumulativeStats.discountUsd);
@@ -1425,7 +1436,7 @@ function AffiliatesStats({
         iconPath="icon-percentage"
       />
     </div>
-  )
+  );
 }
 
 export default Referrals;

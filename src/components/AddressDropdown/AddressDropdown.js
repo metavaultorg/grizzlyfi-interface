@@ -15,13 +15,14 @@ function AddressDropdown({ account, accountUrl, disconnectAccountAndCloseSetting
   const useBreakpoint = createBreakpoint({ L: 600, M: 550, S: 400 });
   const breakpoint = useBreakpoint();
   const [, copyToClipboard] = useCopyToClipboard();
-  const { ensName } = useENS(account);
+  //const { ensName } = useENS(account);
 
   return (
     <Menu>
       <Menu.Button as="div">
         <button className="App-cta small transparent address-btn">
-          <span className="user-address">{ensName || shortenAddress(account, breakpoint === "S" ? 9 : 13)}</span>
+          {/* <span className="user-address">{ensName || shortenAddress(account, breakpoint === "S" ? 9 : 13)}</span> */}
+          <span className="user-address">{shortenAddress(account, breakpoint === "S" ? 9 : 13)}</span>
           <FaChevronDown />
         </button>
       </Menu.Button>

@@ -1,30 +1,26 @@
-import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
-import { useWeb3React } from "@web3-react/core";
 import cx from "classnames";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import stream from "../TVChartContainer/api/stream";
 
 import { TVChartContainer } from "../TVChartContainer/index";
 
+import { useChartPrices } from "../../Api";
 import {
-  USD_DECIMALS,
-  SWAP,
-  INCREASE,
-  CHART_PERIODS,
-  getTokenInfo,
-  formatAmount,
-  formatDateTime,
   BASIS_POINTS_DIVISOR,
-  TRIGGER_PREFIX_ABOVE,
-  TRIGGER_PREFIX_BELOW,
+  CHART_PERIODS,
+  INCREASE,
+  SWAP,
+  USD_DECIMALS,
   bigNumberify,
   expandDecimals,
-  usePrevious,
+  formatAmount,
   getLiquidationPrice,
+  getTokenInfo,
   useLocalStorageSerializeKey,
+  usePrevious,
 } from "../../Helpers";
-import { useChartPrices, useInfoTokens } from "../../Api";
 
-import { getTokens, getToken } from "../../data/Tokens";
+import { getToken, getTokens } from "../../data/Tokens";
 import ChartTokenSelector from "./ChartTokenSelector";
 
 const PRICE_LINE_TEXT_WIDTH = 15;
@@ -78,8 +74,6 @@ export default function ExchangeTVChart(props) {
     infoTokens,
     setToTokenAddress,
   } = props;
-
-  const { library, account, active } = useWeb3React();
 
   let [period, setPeriod] = useLocalStorageSerializeKey([chainId, "Chart-period"], DEFAULT_PERIOD);
   if (!(period in CHART_PERIODS)) {
@@ -201,28 +195,27 @@ export default function ExchangeTVChart(props) {
           if (indexToken && indexToken.symbol) {
             tokenSymbol = indexToken.isWrapped ? indexToken.baseSymbol : indexToken.symbol;
           }
-          let title = `${order.type === INCREASE ? "Inc." : "Dec."} ${tokenSymbol} ${
-            order.isLong ? "Long" : "Short"
-          }`;
+          let title = `${order.type === INCREASE ? "Inc." : "Dec."} ${tokenSymbol} ${order.isLong ? "Long" : "Short"}`;
           const color = "#f2c75c";
           let orderTriggerPrice = order.triggerPrice;
 
-          if(order.orderType && order.orderType.toNumber()=== 3 && trailingStopOrders){
+          if (order.orderType && order.orderType.toNumber() === 3 && trailingStopOrders) {
             // console.log("trailingStopOrders-here",trailingStopOrders)
-            const trailingStopOrder = trailingStopOrders.filter((o)=>o.orderIndex === order.index);
+            const trailingStopOrder = trailingStopOrders.filter((o) => o.orderIndex === order.index);
 
-            title = "TS-" + title;            
+            title = "TS-" + title;
 
-            if(trailingStopOrder.length>0){
-              
-              const trailingStopRefPrice = bigNumberify(trailingStopOrder[0].referencePrice).mul(expandDecimals(1,24));
+            if (trailingStopOrder.length > 0) {
+              const trailingStopRefPrice = bigNumberify(trailingStopOrder[0].referencePrice).mul(expandDecimals(1, 24));
 
-              orderTriggerPrice = order.isLong ? 
-                trailingStopRefPrice.mul(BASIS_POINTS_DIVISOR - order.trailingStopPercentage).div(BASIS_POINTS_DIVISOR)
-                :trailingStopRefPrice.mul(BASIS_POINTS_DIVISOR + order.trailingStopPercentage).div(BASIS_POINTS_DIVISOR);
-
+              orderTriggerPrice = order.isLong
+                ? trailingStopRefPrice
+                    .mul(BASIS_POINTS_DIVISOR - order.trailingStopPercentage)
+                    .div(BASIS_POINTS_DIVISOR)
+                : trailingStopRefPrice
+                    .mul(BASIS_POINTS_DIVISOR + order.trailingStopPercentage)
+                    .div(BASIS_POINTS_DIVISOR);
             }
-
           }
 
           if (window.tvWidget && window.tvWidget._ready && marketName.startsWith(indexToken.symbol))
@@ -273,7 +266,7 @@ export default function ExchangeTVChart(props) {
 
           const liquidationPrice = getLiquidationPrice(position);
 
-          if (window.tvWidget && window.tvWidget._ready&& marketName.startsWith(position.indexToken.symbol))
+          if (window.tvWidget && window.tvWidget._ready && marketName.startsWith(position.indexToken.symbol))
             lines.push(
               window.tvWidget
                 .activeChart()
@@ -300,7 +293,7 @@ export default function ExchangeTVChart(props) {
     return () => {
       lines.forEach((line) => line.remove());
     };
-  }, [currentOrders,trailingStopOrders, positions, chainId, savedShouldShowPositionLines, showChartLines]);
+  }, [currentOrders, trailingStopOrders, positions, chainId, savedShouldShowPositionLines, showChartLines]);
 
   let high;
   let low;
@@ -365,7 +358,7 @@ export default function ExchangeTVChart(props) {
   };
 
   return (
-    <div  className="ExchangeChart tv" ref={ref}>
+    <div className="ExchangeChart tv" ref={ref}>
       <div className="ExchangeChart-top App-box App-box-border">
         <div className="ExchangeChart-top-inner">
           <div>

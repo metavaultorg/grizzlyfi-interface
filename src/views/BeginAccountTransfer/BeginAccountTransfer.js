@@ -1,21 +1,21 @@
+import { ethers } from "ethers";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import useSWR from "swr";
-import { ethers } from "ethers";
-import { useWeb3React } from "@web3-react/core";
 
 import { getContract } from "../../Addresses";
 import { callContract } from "../../Api";
 
 import Modal from "../../components/Modal/Modal";
 
-import RewardTracker from "../../abis/RewardTracker.json";
 import RewardRouter from "../../abis/RewardRouter.json";
+import RewardTracker from "../../abis/RewardTracker.json";
 
 import { FaCheck, FaTimes } from "react-icons/fa";
 
-import { fetcher, approveTokens, useChainId } from "../../Helpers";
+import { fetcher, useChainId } from "../../Helpers";
 
+import useWeb3Onboard from "../../hooks/useWeb3Onboard";
 import "./BeginAccountTransfer.css";
 
 function ValidationRow({ isValid, children }) {
@@ -32,7 +32,7 @@ function ValidationRow({ isValid, children }) {
 
 export default function BeginAccountTransfer(props) {
   const { setPendingTxns } = props;
-  const { active, library, account } = useWeb3React();
+  const { active, library, account } = useWeb3Onboard();
   const { chainId } = useChainId();
 
   const [receiver, setReceiver] = useState("");
@@ -44,9 +44,7 @@ export default function BeginAccountTransfer(props) {
     parsedReceiver = receiver;
   }
 
-
   const rewardRouterAddress = getContract(chainId, "RewardRouter");
-
 
   const feeGllTrackerAddress = getContract(chainId, "FeeGllTracker");
   const { data: cumulativeGllRewards } = useSWR(
@@ -56,18 +54,13 @@ export default function BeginAccountTransfer(props) {
     }
   );
 
-
-
   const { data: pendingReceiver } = useSWR([active, chainId, rewardRouterAddress, "pendingReceivers", account], {
     fetcher: fetcher(library, RewardRouter),
   });
 
-
   const needApproval = false;
 
-
-  const hasStakedGll =
-    (cumulativeGllRewards && cumulativeGllRewards.gt(0));
+  const hasStakedGll = cumulativeGllRewards && cumulativeGllRewards.gt(0);
   const hasPendingReceiver = pendingReceiver && pendingReceiver !== ethers.constants.AddressZero;
 
   const getError = () => {

@@ -8,26 +8,22 @@ import {
   formatKeyAmount,
   getBalanceAndSupplyData,
   getDepositBalanceData,
-  getVestingData,
-  getStakingData,
   getProcessedData,
+  getStakingData,
 } from "../../Helpers";
 
-import Vault from "../../abis/Vault.json";
+import GllManager from "../../abis/GllManager.json";
 import Reader from "../../abis/Reader.json";
 import RewardReader from "../../abis/RewardReader.json";
-import Token from "../../abis/Token.json";
-import GllManager from "../../abis/GllManager.json";
-
-import { useWeb3React } from "@web3-react/core";
+import Vault from "../../abis/Vault.json";
 
 import { useInfoTokens } from "../../Api";
 
 import { getContract } from "../../Addresses";
+import useWeb3Onboard from "../../hooks/useWeb3Onboard";
 
-export default function APRLabel({ chainId, label, usePercentage=true, tokenDecimals=2, displayDecimals=2 }) {
-  let { active,library, account } = useWeb3React();
-
+export default function APRLabel({ chainId, label, usePercentage = true, tokenDecimals = 2, displayDecimals = 2 }) {
+  let { active, library, account } = useWeb3Onboard();
 
   const rewardReaderAddress = getContract(chainId, "RewardReader");
   const readerAddress = getContract(chainId, "Reader");
@@ -41,40 +37,43 @@ export default function APRLabel({ chainId, label, usePercentage=true, tokenDeci
 
   const gllManagerAddress = getContract(chainId, "GllManager");
 
-
-
-  const walletTokens = [ gllAddress];
-  const depositTokens = [
-    gllAddress,
-  ];
-  const rewardTrackersForDepositBalances = [
-    feeGllTrackerAddress,
-  ];
-  const rewardTrackersForStakingInfo = [
-    feeGllTrackerAddress,
-  ];
+  const walletTokens = [gllAddress];
+  const depositTokens = [gllAddress];
+  const rewardTrackersForDepositBalances = [feeGllTrackerAddress];
+  const rewardTrackersForStakingInfo = [feeGllTrackerAddress];
 
   const { data: walletBalances } = useSWR(
-    [`StakeV2:walletBalances:${active}`, chainId, readerAddress, "getTokenBalancesWithSupplies", account  || PLACEHOLDER_ACCOUNT],
+    [
+      `StakeV2:walletBalances:${active}`,
+      chainId,
+      readerAddress,
+      "getTokenBalancesWithSupplies",
+      account || PLACEHOLDER_ACCOUNT,
+    ],
     {
       fetcher: fetcher(undefined, Reader, [walletTokens]),
     }
   );
 
   const { data: depositBalances } = useSWR(
-    [`StakeV2:depositBalances:${active}`, chainId, rewardReaderAddress, "getDepositBalances", account  || PLACEHOLDER_ACCOUNT],
+    [
+      `StakeV2:depositBalances:${active}`,
+      chainId,
+      rewardReaderAddress,
+      "getDepositBalances",
+      account || PLACEHOLDER_ACCOUNT,
+    ],
     {
       fetcher: fetcher(undefined, RewardReader, [depositTokens, rewardTrackersForDepositBalances]),
     }
   );
 
   const { data: stakingInfo } = useSWR(
-    [`StakeV2:stakingInfo:${active}`, chainId, rewardReaderAddress, "getStakingInfo", account  || PLACEHOLDER_ACCOUNT],
+    [`StakeV2:stakingInfo:${active}`, chainId, rewardReaderAddress, "getStakingInfo", account || PLACEHOLDER_ACCOUNT],
     {
       fetcher: fetcher(undefined, RewardReader, [rewardTrackersForStakingInfo]),
     }
   );
-
 
   const { data: aums } = useSWR([`StakeV2:getAums:${active}`, chainId, gllManagerAddress, "getAums"], {
     fetcher: fetcher(undefined, GllManager),
@@ -104,8 +103,10 @@ export default function APRLabel({ chainId, label, usePercentage=true, tokenDeci
     depositBalanceData,
     stakingData,
     aum,
-    nativeTokenPrice,
+    nativeTokenPrice
   );
 
-  return <>{`${formatKeyAmount(processedData, label, tokenDecimals, displayDecimals, true)}${usePercentage? "%" : ""}`}</>;
+  return (
+    <>{`${formatKeyAmount(processedData, label, tokenDecimals, displayDecimals, true)}${usePercentage ? "%" : ""}`}</>
+  );
 }
