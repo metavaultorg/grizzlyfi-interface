@@ -89,7 +89,7 @@ export const MARGIN_FEE_BASIS_POINTS = 10;
 
 export const TRAILING_STOP_FEE = 50;
 
-export const LIQUIDATION_FEE = expandDecimals(5, USD_DECIMALS);
+export const LIQUIDATION_FEE = expandDecimals(10, USD_DECIMALS);
 
 export const GLL_COOLDOWN_DURATION = 60;
 export const THRESHOLD_REDEMPTION_VALUE = expandDecimals(993, 27); // 0.993
@@ -305,9 +305,10 @@ export function getLiquidationPriceFromDelta({ liquidationAmount, size, collater
   }
 
   if (liquidationAmount.gt(collateral)) {
-    const liquidationDelta = liquidationAmount.sub(collateral);
-    const priceDelta = liquidationDelta.mul(averagePrice).div(size);
-    return isLong ? averagePrice.add(priceDelta) : averagePrice.sub(priceDelta);
+    return;
+    // const liquidationDelta = liquidationAmount.sub(collateral);
+    // const priceDelta = liquidationDelta.mul(averagePrice).div(size);
+    // return isLong ? averagePrice.add(priceDelta) : averagePrice.sub(priceDelta);
   }
 
   const liquidationDelta = collateral.sub(liquidationAmount);
