@@ -286,7 +286,7 @@ export default function GllSwapBox(props) {
             usdgSupply,
             totalTokenWeights
           );
-          const nextValue = formatAmountFree(nextAmount, GLL_DECIMALS, 2);
+          const nextValue = formatAmountFree(nextAmount, GLL_DECIMALS, GLL_DECIMALS);
           setGllValue(nextValue);
           setFeeBasisPoints(feeBps);
         } else {
@@ -298,7 +298,7 @@ export default function GllSwapBox(props) {
             usdgSupply,
             totalTokenWeights
           );
-          const nextValue = formatAmountFree(nextAmount, GLL_DECIMALS, 2);
+          const nextValue = formatAmountFree(nextAmount, GLL_DECIMALS, GLL_DECIMALS);
           setGllValue(nextValue);
           setFeeBasisPoints(feeBps);
         }
@@ -322,7 +322,7 @@ export default function GllSwapBox(props) {
             usdgSupply,
             totalTokenWeights
           );
-          const nextValue = formatAmountFree(nextAmount, swapToken.decimals, 2);
+          const nextValue = formatAmountFree(nextAmount, swapToken.decimals, swapToken.decimals);
           setSwapValue(nextValue);
           setFeeBasisPoints(feeBps);
         } else {
@@ -336,7 +336,7 @@ export default function GllSwapBox(props) {
             true
           );
 
-          const nextValue = formatAmountFree(nextAmount, swapToken.decimals, 2);
+          const nextValue = formatAmountFree(nextAmount, swapToken.decimals, swapToken.decimals);
           setSwapValue(nextValue);
           setFeeBasisPoints(feeBps);
         }
@@ -369,12 +369,12 @@ export default function GllSwapBox(props) {
   const fillMaxAmount = () => {
     if (isBuying) {
       setAnchorOnSwapAmount(true);
-      setSwapValue(formatAmountFree(swapTokenBalance, swapToken.decimals, 2));
+      setSwapValue(formatAmountFree(swapTokenBalance, swapToken.decimals, swapToken.decimals));
       return;
     }
 
     setAnchorOnSwapAmount(false);
-    setGllValue(formatAmountFree(maxSellAmount, GLL_DECIMALS, 2));
+    setGllValue(formatAmountFree(maxSellAmount, GLL_DECIMALS, GLL_DECIMALS));
   };
 
   const getError = () => {
@@ -671,7 +671,7 @@ export default function GllSwapBox(props) {
               tokenBalance={`${formatAmount(swapTokenBalance, swapToken.decimals, 4, true)}`}
               inputValue={swapValue}
               onInputValueChange={onSwapValueChange}
-              showMaxButton={swapValue !== formatAmountFree(swapTokenBalance, swapToken.decimals, 2)}
+              showMaxButton={swapValue !== formatAmountFree(swapTokenBalance, swapToken.decimals, swapToken.decimals)}
               onClickTopRightLabel={fillMaxAmount}
               onClickMax={fillMaxAmount}
               selectedToken={swapToken}
@@ -700,7 +700,7 @@ export default function GllSwapBox(props) {
               // tokenBalance={`${formatAmount(maxSellAmount, GLL_DECIMALS, 4, true)}`}
               inputValue={gllValue}
               onInputValueChange={onGllValueChange}
-              showMaxButton={gllValue !== formatAmountFree(maxSellAmount, GLL_DECIMALS, 2)}
+              showMaxButton={gllValue !== formatAmountFree(maxSellAmount, GLL_DECIMALS, GLL_DECIMALS}
               onClickTopRightLabel={fillMaxAmount}
               onClickMax={fillMaxAmount}
               balance={payBalance}
