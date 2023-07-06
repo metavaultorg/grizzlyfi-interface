@@ -112,3 +112,28 @@ export function useTokenPairMarketData() {
     }, [bnbPrices, ethPrices, btcPrices])
     return data;
 }
+
+export function useTokenPriceByPlatform() {
+    const platform = "binance-smart-chain";
+    const address = "0xa045e37a0d1dd3a45fefb8803d22457abc0a728a";
+    const url = `https://api.coingecko.com/api/v3/simple/token_price/${platform}?contract_addresses=${address}&vs_currencies=usd`;
+
+    const { data: res, error } = useSWR(
+        [url, address],
+        {
+            fetcher: defaultFetcher,
+            refreshInterval: 100000
+        }
+    );
+
+    const data = useMemo(() => {
+        if (!res || res === undefined || res.length === 0) {
+            return null;
+        }
+
+        return res[address].usd
+
+    }, [res]);
+
+    return data;
+}

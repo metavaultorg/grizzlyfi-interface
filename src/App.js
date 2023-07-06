@@ -9,7 +9,7 @@ import NotFound from "./404";
 import { Web3Provider } from "@ethersproject/providers";
 
 import { NavLink, Redirect, Route, Switch } from "react-router-dom";
-import Logo from "./assets/logos/Logo.jsx";
+import { useTokenPriceByPlatform } from './hooks/useCoingeckoPrices';import Logo from "./assets/logos/Logo.jsx";
 
 import {
   activateInjectedProvider,
@@ -264,6 +264,8 @@ function AppHeaderUser({
 
   const accountUrl = getAccountUrl(chainId, account);
 
+  const nativeTokenPrice = useTokenPriceByPlatform();
+
   const handleConnectWallet = async () => {
     try {
       await connect();
@@ -295,7 +297,7 @@ function AppHeaderUser({
         <div style={{ display: "flex", gap: 8 }}>
           <div className="App-header-balance">
             <img src={IconToken} alt="icon" width={24} />
-            <APRLabel chainId={chainId} label="nativeTokenPrice" usePercentage={false} tokenDecimals={30} />
+            <span>${nativeTokenPrice}</span>
           </div>
           {/* <div className="App-header-network"><img src={IconBnb} alt="icon" /></div> */}
           <div style={{ position: "relative" }}>
