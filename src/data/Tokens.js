@@ -23,8 +23,8 @@ const TOKENS = {
       displayDecimals:2
     },
     {
-      name: "tBnb",
-      symbol: "tBNB",
+      name: "BNB",
+      symbol: "BNB",
       decimals: 18,
       address: ethers.constants.AddressZero,
       coingeckoUrl: "https://www.coingecko.com/en/coins/bnb",
@@ -37,7 +37,7 @@ const TOKENS = {
       symbol: "WBNB",
       decimals: 18,
       address: "0x617d91847b74b70a3d3e3745445cb0d1b3c8560e",
-      coingeckoUrl: "https://www.coingecko.com/en/coins/polygon",
+      coingeckoUrl: "https://www.coingecko.com/en/coins/wbnb",
       isWrapped: true,
       baseSymbol: "BNB",
       displayDecimals:3

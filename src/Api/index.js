@@ -920,7 +920,7 @@ export async function callContract(chainId, contract, method, params, opts) {
     const [message, type] = extractError(e);
     switch (type) {
       case NOT_ENOUGH_FUNDS:
-        failMsg = <div>There is not enough tBNB in your account on Bsc to send this transaction.</div>;
+        failMsg = <div>There is not enough BNB in your account on Bsc to send this transaction.</div>;
         break;
       case USER_DENIED:
         failMsg = "Transaction was cancelled.";
