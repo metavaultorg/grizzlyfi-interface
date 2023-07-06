@@ -1734,6 +1734,8 @@ export const formatAmountFree = (amount, tokenDecimals, displayDecimals) => {
   }
   let amountStr = ethers.utils.formatUnits(amount, tokenDecimals);
   amountStr = limitDecimals(amountStr, displayDecimals);
+  amountStr = padDecimals(amountStr, displayDecimals)
+  amountStr = numberWithCommas(amountStr);
   return trimZeroDecimals(amountStr);
 };
 
