@@ -227,10 +227,10 @@ export default function DashboardV3(props) {
                 >
                   <img
                     style={{
-                      objectFit: "contain",
+                      objectFit: "none",
                       cursor: "pointer",
                       opacity: selectedClaimToken.id === item.id ? "1" : "0.4",
-                      border: selectedClaimToken.id === item.id ? "solid 1px #fff" : "none",
+                      border: selectedClaimToken.id === item.id ? "solid 2px #fff" : "none",
                       borderRadius: 13,
                       boxShadow: selectedClaimToken.id === item.id ? "0 0 0 3px rgba(255, 255, 255, 0.2)" : "none",
                     }}

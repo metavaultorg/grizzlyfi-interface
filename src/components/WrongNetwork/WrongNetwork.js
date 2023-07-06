@@ -3,7 +3,7 @@ import { DEFAULT_CHAIN_ID, SELECTED_NETWORK_LOCAL_STORAGE_KEY, getChainName, swi
 import "./WrongNetwork.css";
 export default function WrongNetwork({ isOpen, setIsOpen }) {
   const [currentChainId, setCurrentChainId] = useState();
-
+  const chainId = localStorage.getItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY) || DEFAULT_CHAIN_ID;
   useEffect(() => {
     const getCurrentChainId = async () => {
       const chainIdHex = await window.ethereum.request({ method: "eth_chainId" });
@@ -11,18 +11,15 @@ export default function WrongNetwork({ isOpen, setIsOpen }) {
     };
     getCurrentChainId();
   }, []);
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     setTimeout(() => {
-  //       setIsOpen(false)
-  //     }, 7000);
-  //   }
+  useEffect(() => {
+    if (chainId && currentChainId && chainId != currentChainId) {
+      setIsOpen(true)
+    } else {
+      setIsOpen(false)
+    }
+  }, [currentChainId,])
 
-  // }, [isOpen, setIsOpen])
-  // let { chainId:currentChainId } = useWeb3React();
-  // let currentChainId = getCurrentChainId()
-  // const { chainId:currentChainId } = useChainId();
-  const chainId = localStorage.getItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY) || DEFAULT_CHAIN_ID;
+  
   return (
     <div>
       {isOpen && (
