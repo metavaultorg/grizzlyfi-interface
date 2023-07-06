@@ -522,7 +522,7 @@ export default function SwapBox(props) {
             isSwap
           );
 
-          const nextToValue = formatAmountFree(nextToAmount, toToken.decimals, toToken.decimals);
+          const nextToValue = formatAmountFree(nextToAmount, toToken.decimals, toToken.displayDecimals);
           setToValue(nextToValue);
         }
         return;
@@ -545,7 +545,7 @@ export default function SwapBox(props) {
           totalTokenWeights,
           isSwap
         );
-        const nextFromValue = formatAmountFree(nextFromAmount, fromToken.decimals, fromToken.decimals);
+        const nextFromValue = formatAmountFree(nextFromAmount, fromToken.decimals, fromToken.displayDecimals);
         setFromValue(nextFromValue);
       }
     };
@@ -593,7 +593,7 @@ export default function SwapBox(props) {
 
           const nextToAmount = nextToUsd.mul(expandDecimals(1, toToken.decimals)).div(toTokenPriceUsd);
 
-          const nextToValue = formatAmountFree(nextToAmount, toToken.decimals, toToken.decimals);
+          const nextToValue = formatAmountFree(nextToAmount, toToken.decimals, toToken.displayDecimals);
 
           setToValue(nextToValue);
         }
@@ -635,7 +635,7 @@ export default function SwapBox(props) {
 
         const nextFromAmount = nextFromUsd.mul(expandDecimals(1, fromToken.decimals)).div(fromTokenInfo.minPrice);
 
-        const nextFromValue = formatAmountFree(nextFromAmount, fromToken.decimals, fromToken.decimals);
+        const nextFromValue = formatAmountFree(nextFromAmount, fromToken.decimals, fromToken.displayDecimals);
 
         setFromValue(nextFromValue);
       }
