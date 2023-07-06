@@ -700,7 +700,7 @@ export default function GllSwapBox(props) {
               // tokenBalance={`${formatAmount(maxSellAmount, GLL_DECIMALS, 4, true)}`}
               inputValue={gllValue}
               onInputValueChange={onGllValueChange}
-              showMaxButton={gllValue !== formatAmountFree(maxSellAmount, GLL_DECIMALS, GLL_DECIMALS}
+              showMaxButton={gllValue !== formatAmountFree(maxSellAmount, GLL_DECIMALS, GLL_DECIMALS)}
               onClickTopRightLabel={fillMaxAmount}
               onClickMax={fillMaxAmount}
               balance={payBalance}
