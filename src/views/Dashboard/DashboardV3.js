@@ -51,13 +51,15 @@ import UpChartArrow from "../../assets/icons/up-chart-arrow.svg";
 import APRLabel from "../../components/APRLabel/APRLabel";
 import AUMLabel from "../../components/AUMLabel/AUMLabel";
 import TextBadge from "../../components/Common/TextBadge";
-import { getTokenBySymbol } from "../../data/Tokens";
+import { getTokenBySymbol, getWhitelistedTokens } from "../../data/Tokens";
 import { useTokenPairMarketData } from "../../hooks/useCoingeckoPrices";
 import useWeb3Onboard from "../../hooks/useWeb3Onboard";
 import { useGllData } from "../../views/Earn/dataProvider";
 import MarketTable from "./MarketTable";
 import OpenedPositions from "./OpenedPositions";
 import animationData from "./animation_1.json";
+import { useInfoTokens } from "../../Api";
+import { getPositionQuery, getPositions } from "../Exchange/Exchange";
 
 const claimTypes = [
   { id: "eth", iconPath: "coins/eth", token: "ETH" },
@@ -199,6 +201,33 @@ export default function DashboardV3(props) {
       });
   }
 
+  const [pendingPositions, setPendingPositions] = useState({});
+  const [updatedPositions, setUpdatedPositions] = useState({});
+  const whitelistedTokens = getWhitelistedTokens(chainId);
+  const positionQuery = getPositionQuery(whitelistedTokens, nativeTokenAddress);
+  const { data: positionData, error: positionDataError } = useSWR(
+    active && [active, chainId, readerAddress, "getPositions", vaultAddress, account],
+    {
+      fetcher: fetcher(library, Reader, [
+        positionQuery.collateralTokens,
+        positionQuery.indexTokens,
+        positionQuery.isLong,
+      ]),
+    }
+  );
+  const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
+  const { positions, positionsMap } = getPositions(
+    chainId,
+    positionQuery,
+    positionData,
+    infoTokens,
+    savedIsPnlInLeverage,
+    savedShowPnlAfterFees,
+    account,
+    pendingPositions,
+    updatedPositions
+  );
+console.log("AAAA",(!processedData.gllBalanceUsd || processedData.gllBalanceUsd.eq(0) ) || (positions.length === 0))
   return (
     <SEO title={getPageTitle("Dashboard")}>
       <div className="default-container DashboardV2 page-layout">
@@ -318,7 +347,7 @@ export default function DashboardV3(props) {
           </div>
         </div>
 
-        {!(processedData.gllBalanceUsd > 0) && (
+        {(!processedData.gllBalanceUsd || processedData.gllBalanceUsd.eq(0) ) && (positions.length === 0) && (
           <div className="section section-noinvestments">
             <div className="section-header">
               <h1>No Investment Yet</h1>
@@ -370,7 +399,7 @@ export default function DashboardV3(props) {
             </div>
           </div>
         )}
-        {/* {(processedData.gllBalanceUsd > 0) && */}
+        {((processedData.gllBalanceUsd && processedData.gllBalanceUsd.gt(0)) || (positions.length > 0)) &&
         <div className="section section-investments">
           <div className="section-header">
             <h1>Your Investments </h1>
@@ -408,6 +437,7 @@ export default function DashboardV3(props) {
           </div>
           <InnerCard title="Your Opened Positions">
             <OpenedPositions
+              positions={positions}
               tokenPairMarketList={tokenPairMarketList}
               savedShowPnlAfterFees={savedShowPnlAfterFees}
               savedIsPnlInLeverage={savedIsPnlInLeverage}
@@ -560,7 +590,7 @@ export default function DashboardV3(props) {
                 </InnerCard>
 
             </div>
-            {/* } */}
+            }
 
         <div className=" section-markets">
           <div className="section-header">

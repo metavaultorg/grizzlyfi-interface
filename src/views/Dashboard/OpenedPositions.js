@@ -2,65 +2,24 @@ import cx from "classnames";
 import React, { useState } from "react";
 import { ImSpinner2 } from "react-icons/im";
 import { useHistory } from "react-router-dom";
-import useSWR from "swr";
-import { getContract } from "../../Addresses";
-import { useInfoTokens } from "../../Api";
+
 import {
   USD_DECIMALS,
   USD_DISPLAY_DECIMALS,
   bigNumberify,
-  fetcher,
   formatAmount,
   getLiquidationPrice,
-  useChainId,
 } from "../../Helpers";
-import Reader from "../../abis/Reader.json";
 import IconDown from "../../assets/icons/icon-down.svg";
 import IconLong from "../../assets/icons/icon-long.svg";
 import IconShort from "../../assets/icons/icon-short.svg";
 import { getImageUrl } from "../../cloudinary/getImageUrl";
-import { getWhitelistedTokens } from "../../data/Tokens";
-import useWeb3Onboard from "../../hooks/useWeb3Onboard";
-import { getPositionQuery, getPositions } from "../Exchange/Exchange";
 import { sortArr } from "./util";
 
 export default function OpenedPositions(props) {
   const history = useHistory();
-  const { savedIsPnlInLeverage, savedShowPnlAfterFees, tokenPairMarketList } = props;
+  const { savedIsPnlInLeverage, savedShowPnlAfterFees, tokenPairMarketList, positions } = props;
   const [sorter, setSorter] = useState({ sortBy: "change", isAsc: true });
-  const [pendingPositions, setPendingPositions] = useState({});
-  const [updatedPositions, setUpdatedPositions] = useState({});
-  const { chainId } = useChainId();
-  const { active, library, account } = useWeb3Onboard();
-  const whitelistedTokens = getWhitelistedTokens(chainId);
-  const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
-  const tokenList = whitelistedTokens.filter((t) => !t.isWrapped);
-  const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");
-  const positionQuery = getPositionQuery(whitelistedTokens, nativeTokenAddress);
-  const readerAddress = getContract(chainId, "Reader");
-  const vaultAddress = getContract(chainId, "Vault");
-  const { data: positionData, error: positionDataError } = useSWR(
-    active && [active, chainId, readerAddress, "getPositions", vaultAddress, account],
-    {
-      fetcher: fetcher(library, Reader, [
-        positionQuery.collateralTokens,
-        positionQuery.indexTokens,
-        positionQuery.isLong,
-      ]),
-    }
-  );
-  const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
-  const { positions, positionsMap } = getPositions(
-    chainId,
-    positionQuery,
-    positionData,
-    infoTokens,
-    savedIsPnlInLeverage,
-    savedShowPnlAfterFees,
-    account,
-    pendingPositions,
-    updatedPositions
-  );
 
   function SortTh({ value, title }) {
     return (
