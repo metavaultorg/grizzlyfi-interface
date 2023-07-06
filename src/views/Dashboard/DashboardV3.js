@@ -476,7 +476,7 @@ export default function DashboardV3(props) {
                               "font-number"
                             )}
                           >
-                            {item.profit}%
+                            {item.profit}
                           </span>
                         </td>
 
