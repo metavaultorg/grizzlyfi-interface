@@ -22,10 +22,11 @@ export default function BuyInputSection(props) {
     <div className={`Exchange-swap-section buy-input ${showBorder ? "border" : "noborder"}`}>
       <div style={{position: "relative",display:"flex",justifyContent:"space-between",width: "100%"}}>
         <div className="Exchange-swap-section-left">
-          <div className={cx("PositionEditor-token-symbol",{
+          {/* <div className={cx("PositionEditor-token-symbol",{
             largePadding: !tokenBalance,
             smallPadding: tokenBalance
-          })}>{props.children}</div>
+          })}>{props.children}</div> */}
+          {props.children}
           {tokenBalance && <div style={{ marginTop:"6px",marginLeft:"4px",justifyContent: "flex-start" }} className={cx("align-right", { clickable: onClickTopRightLabel })} onClick={onClickTopRightLabel}>
             <span className="Exchange-swap-label muted">{topRightLabel}</span>&nbsp;
             <span className="Exchange-swap-balance font-number">
