@@ -774,12 +774,13 @@ function FullApp() {
         setIsVisible={setIsSettingsVisible}
         label="Settings"
       >
+        <div style={{ height: 40 }}></div>
         <div className="App-settings-row query-modal">
           <div>Allowed Slippage</div>
           <div className="App-slippage-tolerance-input-container">
             <input
               type="number"
-              className="App-slippage-tolerance-input"
+              className="App-slippage-tolerance-input font-number"
               min="0"
               value={slippageAmount}
               onChange={(e) => setSlippageAmount(e.target.value)}
