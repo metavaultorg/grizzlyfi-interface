@@ -295,7 +295,7 @@ function AppHeaderUser({
       </div> */}
       {active ? (
         <div style={{ display: "flex", gap: 8 }}>
-          <div className="App-header-balance">
+          <div className="App-header-balance font-number">
             <img src={IconToken} alt="icon" width={24} />
             <span>${nativeTokenPrice}</span>
           </div>
