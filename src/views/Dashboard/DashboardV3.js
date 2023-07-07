@@ -227,7 +227,7 @@ export default function DashboardV3(props) {
     pendingPositions,
     updatedPositions
   );
-console.log("AAAA",(!processedData.gllBalanceUsd || processedData.gllBalanceUsd.eq(0) ) || (positions.length === 0))
+
   return (
     <SEO title={getPageTitle("Dashboard")}>
       <div className="default-container DashboardV2 page-layout">

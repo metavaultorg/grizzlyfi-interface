@@ -697,7 +697,7 @@ export default function GllSwapBox(props) {
             <BuyInputSection
               topLeftLabel={`≈ `}
               topRightLabel={`Available: `}
-              // tokenBalance={`${formatAmount(maxSellAmount, GLL_DECIMALS, 4, true)}`}
+              tokenBalance={`${formatAmount(maxSellAmount, GLL_DECIMALS, 4, true)}`}
               inputValue={gllValue}
               onInputValueChange={onGllValueChange}
               showMaxButton={gllValue !== formatAmountFree(maxSellAmount, GLL_DECIMALS, GLL_DECIMALS)}
@@ -742,7 +742,7 @@ export default function GllSwapBox(props) {
             <BuyInputSection
               topLeftLabel={`≈ `}
               topRightLabel={`Balance: `}
-              // tokenBalance={`${formatAmount(gllBalance, GLL_DECIMALS, 4, true)}`}
+              tokenBalance={`${formatAmount(gllBalance, GLL_DECIMALS, 4, true)}`}
               inputValue={gllValue}
               onInputValueChange={onGllValueChange}
               balance={receiveBalance}
