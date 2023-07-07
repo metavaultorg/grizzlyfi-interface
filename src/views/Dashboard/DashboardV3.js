@@ -237,9 +237,8 @@ export default function DashboardV3(props) {
         return hasPositionProfit ? accumulator.add(positionDelta) : accumulator.sub(positionDelta);
       }, bigNumberify(0));
 
-    const gllPnl = processedData["totalGllRewardsUsd"] || bigNumberify(0);
-    return positionsPnl.add(gllPnl);
-  }, [positions, processedData])
+    return positionsPnl;
+  }, [positions])
 
   return (
     <SEO title={getPageTitle("Dashboard")}>
