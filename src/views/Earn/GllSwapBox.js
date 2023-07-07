@@ -619,8 +619,10 @@ export default function GllSwapBox(props) {
   const onSwapOptionChange = (opt) => {
     if (opt === "Withdraw") {
       switchSwapOption("redeem");
+      setSwapValue("");
     } else {
       switchSwapOption();
+      setGllValue("");
     }
   };
 
