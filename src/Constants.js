@@ -6,7 +6,7 @@ const { parseEther } = ethers.utils;
 
 const constants = {
   [opBNB]: {
-    nativeTokenSymbol: "tBNB",
+    nativeTokenSymbol: "BNB",
     wrappedTokenSymbol: "WBNB",
     defaultCollateralSymbol: "USDC",
     defaultFlagOrdersEnabled: true,

@@ -77,7 +77,7 @@ export const initWeb3Onboard = init({
     // },
     {
       id: "0x15EB",
-      token: "tBNB",
+      token: "BNB",
       label: "opBNB Testnet",
       rpcUrl: "https://opbnb-testnet-rpc.bnbchain.org"
     }

@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { DEFAULT_CHAIN_ID, SELECTED_NETWORK_LOCAL_STORAGE_KEY, getChainName, switchNetwork } from "../../Helpers";
+import { DEFAULT_CHAIN_ID, SELECTED_NETWORK_LOCAL_STORAGE_KEY, getChainName, switchNetwork, } from "../../Helpers";
 import "./WrongNetwork.css";
-export default function WrongNetwork({ isOpen, setIsOpen }) {
+export default function WrongNetwork() {
   const [currentChainId, setCurrentChainId] = useState();
+  const [isOpen,setIsOpen] = useState(false)
   const chainId = localStorage.getItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY) || DEFAULT_CHAIN_ID;
+
+  // console.log(currentChainId, chainId);
   useEffect(() => {
     const getCurrentChainId = async () => {
       const chainIdHex = await window.ethereum.request({ method: "eth_chainId" });
@@ -17,7 +20,7 @@ export default function WrongNetwork({ isOpen, setIsOpen }) {
     } else {
       setIsOpen(false)
     }
-  }, [currentChainId,])
+  }, [currentChainId, chainId])
 
   
   return (

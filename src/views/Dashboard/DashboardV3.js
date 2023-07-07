@@ -227,7 +227,7 @@ export default function DashboardV3(props) {
     pendingPositions,
     updatedPositions
   );
-console.log("AAAA",(!processedData.gllBalanceUsd || processedData.gllBalanceUsd.eq(0) ) || (positions.length === 0))
+
   return (
     <SEO title={getPageTitle("Dashboard")}>
       <div className="default-container DashboardV2 page-layout">
@@ -260,7 +260,7 @@ console.log("AAAA",(!processedData.gllBalanceUsd || processedData.gllBalanceUsd.
                       cursor: "pointer",
                       opacity: selectedClaimToken.id === item.id ? "1" : "0.4",
                       border: selectedClaimToken.id === item.id ? "solid 2px #fff" : "none",
-                      borderRadius: 13,
+                      borderRadius: 14,
                       boxShadow: selectedClaimToken.id === item.id ? "0 0 0 3px rgba(255, 255, 255, 0.2)" : "none",
                     }}
                     src={getImageUrl({ path: item.iconPath })}

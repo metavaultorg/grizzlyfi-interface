@@ -702,7 +702,7 @@ function FullApp() {
               </motion.div>
             )}
           </AnimatePresence>
-          {/* <div><WrongNetwork isOpen={wrongNetworkisOpen} setIsOpen={setWrongNetworkIsOpen} /></div> */}
+          <div><WrongNetwork /></div>
           <Switch>
             <Route exact path="/">
               <Redirect to="/trade" />

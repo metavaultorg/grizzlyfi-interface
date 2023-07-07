@@ -152,7 +152,7 @@ export const ICONLINKS = {
     GLL: {
       bsc: "https://bscscan.com/address/0x9F4f8bc00F48663B7C204c96b932C29ccc43A2E8",
     },
-    tBNB: {
+    BNB: {
       coingecko: "https://www.coingecko.com/en/coins/bsc",
       bsc: "https://bscscan.com/address/0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
     },
@@ -1734,6 +1734,8 @@ export const formatAmountFree = (amount, tokenDecimals, displayDecimals) => {
   }
   let amountStr = ethers.utils.formatUnits(amount, tokenDecimals);
   amountStr = limitDecimals(amountStr, displayDecimals);
+  amountStr = padDecimals(amountStr, displayDecimals)
+  amountStr = numberWithCommas(amountStr);
   return trimZeroDecimals(amountStr);
 };
 
@@ -1879,7 +1881,7 @@ export function approveTokens({
       ) {
         failMsg = (
           <div>
-            There is not enough tBNB in your account on Bsc to send this transaction.
+            There is not enough BNB in your account on Bsc to send this transaction.
             <br />
           </div>
         );
@@ -1926,8 +1928,8 @@ const NETWORK_METADATA = {
     chainId: "0x" + opBNB.toString(16),
     chainName: "BSC",
     nativeCurrency: {
-      name: "tBNB",
-      symbol: "tBNB",
+      name: "BNB",
+      symbol: "BNB",
       decimals: 18,
     },
     rpcUrls: BSC_RPC_PROVIDERS,

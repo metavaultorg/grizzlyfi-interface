@@ -17,6 +17,7 @@ import { NavLink } from "react-router-dom";
 import { getImageUrl } from "./cloudinary/getImageUrl";
 
 export default function Footer() {
+  return null;
   return (
     <div className="Footer">
       <div className="footer-header">
