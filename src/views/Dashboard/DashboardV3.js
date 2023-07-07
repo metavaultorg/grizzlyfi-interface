@@ -12,6 +12,7 @@ import {
   PLACEHOLDER_ACCOUNT,
   USD_DECIMALS,
   fetcher,
+  bigNumberify,
   formatAmount,
   formatKeyAmount,
   formatNumber,
@@ -228,6 +229,18 @@ export default function DashboardV3(props) {
     updatedPositions
   );
 
+  const totalPnl = useMemo(() => {
+    const positionsPnl = positions.reduce(
+      (accumulator, position) => {
+        const hasPositionProfit = position[savedShowPnlAfterFees ? "hasProfitAfterFees" : "hasProfit"];
+        const positionDelta = position[savedShowPnlAfterFees ? "pendingDeltaAfterFees" : "pendingDelta"] || bigNumberify(0);
+        return hasPositionProfit ? accumulator.add(positionDelta) : accumulator.sub(positionDelta);
+      }, bigNumberify(0));
+
+    const gllPnl = processedData["totalGllRewardsUsd"] || bigNumberify(0);
+    return positionsPnl.add(gllPnl);
+  }, [positions, processedData])
+
   return (
     <SEO title={getPageTitle("Dashboard")}>
       <div className="default-container DashboardV2 page-layout">
@@ -407,7 +420,13 @@ export default function DashboardV3(props) {
           <div className="info-card-section" style={{ margin: "40px auto", maxWidth: 952 }}>
             <ItemCard
               label="Total PnL"
-              value={`$${formatKeyAmount(processedData, "totalGllRewardsUsd", USD_DECIMALS, 2, true)}`}
+                value={<span
+                  className={cx({
+                    positive: totalPnl.gt(0),
+                    negative: totalPnl.lt(0),
+                    muted: totalPnl.eq(0),
+                  })}
+                >${formatAmount(totalPnl, USD_DECIMALS, 2, true)}</span>}
               icon={IconPercentage}
             />
             <ItemCard
