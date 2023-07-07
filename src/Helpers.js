@@ -2310,7 +2310,7 @@ export function getHomeUrl() {
 }
 
 export function getRootShareApiUrl() {
-  return "https://perp-share.grizzly.fi";
+  return "https://grizzly-share-api-nine.vercel.app";
 }
 
 export function getTradePageUrl() {
