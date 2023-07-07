@@ -1111,7 +1111,9 @@ button.App-button-close:hover {
 
 .App-settings-row {
   margin-bottom: 0.5rem;
-  padding: 10px;
+  font-size: 16px;
+  color: rgba(255,255,255,0.6);
+  font-weight: 600;
 }
 
 .App-settings .App-cta {
@@ -1129,6 +1131,7 @@ button.App-button-close:hover {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
   width: 100%;
+  border-radius: 25px;
 }
 
 .App-slippage-tolerance-input-percent {
@@ -1707,13 +1710,13 @@ a:not([href]):not([class]):hover {
   }
 }
 .Toastify__toast{
-  border-radius: 23px;
-  box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.2);
-  border: solid 1px #3f3f3f;
-  background: #333;
+  border-radius: 23px !important;
+  box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.2) !important;
+  border: solid 1px #3f3f3f !important;
+  background: #333 !important;
 }
 .Toastify__close-button{
-  align-self: center;
+  align-self: center !important;
 }
 .Toastify__toast-container{
   top: 96px;

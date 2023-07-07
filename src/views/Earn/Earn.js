@@ -30,6 +30,7 @@ import "../Exchange/Exchange.css";
 import ChartPrice from "./ChartPrice";
 import "./Earn.css";
 import GllSwapBox from "./GllSwapBox";
+import ClaimButton from "../../components/ClaimButton/ClaimButton";
 
 export default function Earn(props) {
   const history = useHistory();
@@ -176,9 +177,7 @@ export default function Earn(props) {
               }
               icon={IconClaim}
               buttonEle={
-                <button className="btn-secondary " style={{ width: 75, height: 32 }}>
-                  Claim
-                </button>
+                <ClaimButton></ClaimButton>
               }
             />
           </div>

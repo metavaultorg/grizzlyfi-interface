@@ -295,7 +295,7 @@ function AppHeaderUser({
       </div> */}
       {active ? (
         <div style={{ display: "flex", gap: 8 }}>
-          <div className="App-header-balance">
+          <div className="App-header-balance font-number">
             <img src={IconToken} alt="icon" width={24} />
             <span>${nativeTokenPrice}</span>
           </div>
@@ -774,12 +774,13 @@ function FullApp() {
         setIsVisible={setIsSettingsVisible}
         label="Settings"
       >
+        <div style={{ height: 40 }}></div>
         <div className="App-settings-row query-modal">
           <div>Allowed Slippage</div>
           <div className="App-slippage-tolerance-input-container">
             <input
               type="number"
-              className="App-slippage-tolerance-input"
+              className="App-slippage-tolerance-input font-number"
               min="0"
               value={slippageAmount}
               onChange={(e) => setSlippageAmount(e.target.value)}
