@@ -1707,13 +1707,13 @@ a:not([href]):not([class]):hover {
   }
 }
 .Toastify__toast{
-  border-radius: 23px;
-  box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.2);
-  border: solid 1px #3f3f3f;
-  background: #333;
+  border-radius: 23px !important;
+  box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.2) !important;
+  border: solid 1px #3f3f3f !important;
+  background: #333 !important;
 }
 .Toastify__close-button{
-  align-self: center;
+  align-self: center !important;
 }
 .Toastify__toast-container{
   top: 96px;
