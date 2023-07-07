@@ -49,6 +49,8 @@ export default function MarketTable() {
         defaultTokenSelection
     );
 
+    const [swapOption, setSwapOption] = useLocalStorageByChainId(chainId, "Swap-option-v2", LONG);
+
     function SortTh({ value, title, }) {
         return <th
             className="sortCol"
@@ -63,7 +65,7 @@ export default function MarketTable() {
         const token = getTokenBySymbol(chainId, symbol);
         if (token) {
             const newTokenSelection = JSON.parse(JSON.stringify(tokenSelection));
-            newTokenSelection[LONG].to = token.address;
+            newTokenSelection[swapOption].to = token.address;
             setTokenSelection(newTokenSelection);
         }
         history.push("/trade")
