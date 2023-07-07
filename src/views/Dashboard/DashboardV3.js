@@ -61,6 +61,7 @@ import OpenedPositions from "./OpenedPositions";
 import animationData from "./animation_1.json";
 import { useInfoTokens } from "../../Api";
 import { getPositionQuery, getPositions } from "../Exchange/Exchange";
+import ClaimButton from "../../components/ClaimButton/ClaimButton";
 
 const claimTypes = [
   { id: "eth", iconPath: "coins/eth", token: "ETH" },
@@ -171,13 +172,14 @@ export default function DashboardV3(props) {
     return [total, delta, percentage];
   }, [totalGllData]);
 
+  const poolShare = ( processedData && processedData.gllBalanceUsd && processedData.gllSupplyUsd) ? processedData.gllBalanceUsd.mul(10000).div(processedData.gllSupplyUsd).toNumber()/100 : 0;
   const vaultList = [
     {
       symbol: "GLL",
       apy: `${formatKeyAmount(processedData, "gllAprTotal", 2, 2, true)}%`,
-      locked: "104.41",
+      locked: `${formatKeyAmount(processedData, "gllSupplyUsd", USD_DECIMALS, 2, true)}`,
       invest: `${formatKeyAmount(processedData, "gllBalance", GLL_DECIMALS, 2, true)}`,
-      poolShare: "0.96%",
+      poolShare: `${poolShare}%`,
       profit: `$${formatKeyAmount(processedData, "totalGllRewardsUsd", USD_DECIMALS, 2, true)}`,
     },
   ];
@@ -447,9 +449,7 @@ export default function DashboardV3(props) {
               }
               icon={IconClaim}
               buttonEle={
-                <button className="btn-secondary " style={{ width: 75, height: 32 }}>
-                  Claim
-                </button>
+                <ClaimButton></ClaimButton>
               }
             />
           </div>
@@ -527,16 +527,11 @@ export default function DashboardV3(props) {
                             {item.profit}
                           </span>
                         </td>
-
-                                            <td><button
-                                                className="btn-secondary "
-
-                                            >
-                                                Claim
-                                            </button></td>
-                                        </tr>
-                                    )
-                                }
+                        <td>
+                          <ClaimButton></ClaimButton>
+                        </td>
+                      </tr>
+                    )}
 
                                 )}
                             </tbody>
