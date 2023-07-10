@@ -297,7 +297,7 @@ function AppHeaderUser({
         <div style={{ display: "flex", gap: 8 }}>
           <div className="App-header-balance font-number">
             <img src={IconToken} alt="icon" width={24} />
-            <span>${nativeTokenPrice}</span>
+            <span className="font-number">${nativeTokenPrice}</span>
           </div>
           {/* <div className="App-header-network"><img src={IconBnb} alt="icon" /></div> */}
           <div style={{ position: "relative" }}>
