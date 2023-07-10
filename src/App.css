@@ -1331,7 +1331,7 @@ button.App-button {
 }
 
 .positive {
-  color: #79ffab;
+  color: #79ffab !important;
 }
 
 .positive-background {
@@ -1339,7 +1339,7 @@ button.App-button {
 }
 
 .negative {
-  color: #ff7b41;
+  color: #ff7b41 !important;
 }
 
 .negative-background {
