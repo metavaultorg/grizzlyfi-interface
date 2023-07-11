@@ -23,7 +23,7 @@ export default function LinkDropdown() {
                     <Menu.Item>
                         <a href='https://docs.grizzly.fi/v/eng/product/grizzly-trade' target="_blank" rel="noopener noreferrer" className="menu-item">
                             <img src={doc} alt="" />
-                            <p>Documents</p>
+                            <p>Docs</p>
                         </a>
                     </Menu.Item>
                     <Menu.Item>
