@@ -2248,6 +2248,7 @@ export default function SwapBox(props) {
                 {feesUsd && (
                   <Tooltip
                     handle={`$${formatAmount(totalFeesUsd, USD_DECIMALS, USD_DISPLAY_DECIMALS, true)}`}
+                     handleClassName="font-number"
                     position="right-bottom"
                     renderContent={() => {
                       return (
@@ -2303,7 +2304,7 @@ export default function SwapBox(props) {
         )}
         <div className="Exchange-swap-button-container">
           <button
-            className={cx("App-cta Exchange-swap-button", isLong?"positive":isShort?"negative":"")}
+            className={cx("App-cta Exchange-swap-button", isLong?"longbtn":isShort?"shortbtn":"")}
             onClick={onClickPrimary}
             disabled={!isPrimaryEnabled()}
           >

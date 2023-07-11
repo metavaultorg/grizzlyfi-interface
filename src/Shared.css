@@ -69,7 +69,7 @@ input {
   background: none;
   border: none;
   padding: 0.8rem;
-  font-family: "Relative";
+  /*font-family: "Relative";*/
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -78,7 +78,7 @@ input {
 button {
   outline: none;
   cursor: pointer;
-  font-family: "Relative";
+  /*font-family: "Relative";*/
 }
 
 button:disabled,

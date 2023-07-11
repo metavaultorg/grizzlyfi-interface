@@ -96,15 +96,15 @@
     background-color: #1f1f1f;
 }
 .section-noinvestments{
-    background: url('https://res.cloudinary.com/dfsqsebxd/image/upload/v1685962645/website-assets/bg-noInvestments.png') no-repeat;
+    background: url('https://res.cloudinary.com/dfsqsebxd/image/upload/q_auto,f_auto/v1685962645/website-assets/bg-noInvestments.png') no-repeat;
     background-size: 100% 100%;
 }
 .section-investments{
-    background: url('https://res.cloudinary.com/dfsqsebxd/image/upload/v1685962645/website-assets/bg-noInvestments.png') no-repeat;
+    background: url('https://res.cloudinary.com/dfsqsebxd/image/upload/q_auto,f_auto/v1685962645/website-assets/bg-noInvestments.png') no-repeat;
     background-size: 100% 100%;
 }
 .leverage-liquidity-container {
-  background: url('https://res.cloudinary.com/dfsqsebxd/image/upload/v1685951731/website-assets/bg-liquidity.png') no-repeat;
+  background: url('https://res.cloudinary.com/dfsqsebxd/image/upload/q_auto,f_auto/v1685951731/website-assets/bg-liquidity.png') no-repeat;
   background-size: 100% 100%;
   padding-top: 0 !important;
 }

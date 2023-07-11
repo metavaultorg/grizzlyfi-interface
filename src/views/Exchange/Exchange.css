@@ -965,9 +965,9 @@ input.Exchange-swap-input.small {
 }
 
 .App-cta.Exchange-swap-button,
-.App-cta.Exchange-swap-button.positive,
+.App-cta.Exchange-swap-button.longbtn,
 .App-cta.Confirmation-box-button,
-.App-cta.Confirmation-box-button.positive {
+.App-cta.Confirmation-box-button.longbtn {
   display: block;
   width: 100%;
   color: #fff;
@@ -979,20 +979,20 @@ input.Exchange-swap-input.small {
   padding-bottom: 19px;
 }
 
-.App-cta.Exchange-swap-button.positive:hover,
-.App-cta.Confirmation-box-button.positive:hover {
+.App-cta.Exchange-swap-button.longbtn:hover,
+.App-cta.Confirmation-box-button.longbtn:hover {
   background-image: linear-gradient(to bottom, #f2c75c, #cb9612);
   filter: brightness(115%);
 }
 
-.App-cta.Exchange-swap-button.negative,
-.App-cta.Confirmation-box-button.negative {
+.App-cta.Exchange-swap-button.shortbtn,
+.App-cta.Confirmation-box-button.shortbtn {
   box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.2);
   background-image: linear-gradient(to bottom, #ff7b41, #ff570d);
 }
 
-.App-cta.Exchange-swap-button.negative:hover,
-.App-cta.Confirmation-box-button.negative:hover {
+.App-cta.Exchange-swap-button.shortbtn:hover,
+.App-cta.Confirmation-box-button.shortbtn:hover {
   box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.2);
   background-image: linear-gradient(to bottom, #ff7b41, #ff570d);
   filter: brightness(115%);
