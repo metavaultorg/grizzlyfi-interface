@@ -26,8 +26,10 @@ export default function useWeb3Onboard() {
       setAccount(account);
       if(BigInt(connectedChain.id).toString() === "5611")
         setActive(true);
-      else   
+      else{
         setActive(false);      
+        setChain({chainId:5611});
+      }   
     } else {
       setActive(false);
       setAccount(null);
