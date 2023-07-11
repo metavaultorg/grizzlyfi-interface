@@ -14,7 +14,7 @@ export default function useWeb3Onboard() {
   useEffect(() => {
     if (connectedChain) {
       const cId = BigInt(connectedChain.id).toString();
-      if (cId === 5611) {
+      if (cId === "5611") {
         setChainId(+cId);
       }
     }
@@ -23,13 +23,16 @@ export default function useWeb3Onboard() {
   useEffect(() => {
     if (wallet?.provider) {
       const account = wallet.accounts[0].address;
-      setActive(true);
       setAccount(account);
+      if(BigInt(connectedChain.id).toString() === "5611")
+        setActive(true);
+      else   
+        setActive(false);      
     } else {
       setActive(false);
       setAccount(null);
     }
-  }, [wallet]);
+  }, [wallet,connectedChain]);
 
   useEffect(() => {
     if (!wallet?.provider) {
