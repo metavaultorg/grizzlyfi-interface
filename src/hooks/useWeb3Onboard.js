@@ -1,40 +1,51 @@
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
-
+import { opBNB, DEFAULT_CHAIN_ID } from "../Helpers";
 import { useConnectWallet, useSetChain, useWallets } from "@web3-onboard/react";
 
 export default function useWeb3Onboard() {
+  const SUPPORTED_CHAINS = [opBNB];
   const [{ wallet }, connect, disconnect] = useConnectWallet();
   const [{ chains, connectedChain, settingChain }, setChain] = useSetChain();
   const [chainId, setChainId] = useState(5611);
   const [active, setActive] = useState(false);
   const [account, setAccount] = useState("");
   const [library, setLibrary] = useState(undefined);
+  const [wrongChain, setWrongChain] = useState(false);
 
-  useEffect(() => {
-    if (connectedChain) {
-      const cId = BigInt(connectedChain.id).toString();
-      if (cId === "5611") {
-        setChainId(+cId);
+  useEffect(async () => {
+    if (!wallet) {
+      setWrongChain(false);
+    }
+    if (wallet && connectedChain) {
+      const cId = +BigInt(connectedChain.id).toString();
+      // state variable
+
+      if (SUPPORTED_CHAINS.includes(cId)) {
+        setWrongChain(false);
+        setChainId(cId);
+      } else {
+        // not supported chain == wrong chain
+        setWrongChain(true);
       }
     }
-  }, [connectedChain]);
+  }, [wallet, connectedChain]);
 
   useEffect(() => {
     if (wallet?.provider) {
       const account = wallet.accounts[0].address;
       setAccount(account);
-      if(BigInt(connectedChain.id).toString() === "5611")
+      if(!wrongChain) {
         setActive(true);
-      else{
-        setActive(false);      
-        setChain({chainId:5611});
+       } else {
+        setActive(false);
+        setChain({chainId:DEFAULT_CHAIN_ID});
       }   
     } else {
       setActive(false);
       setAccount(null);
     }
-  }, [wallet,connectedChain]);
+  }, [wallet,wrongChain]);
 
   useEffect(() => {
     if (!wallet?.provider) {
@@ -45,5 +56,5 @@ export default function useWeb3Onboard() {
     }
   }, [wallet]);
 
-  return { active, account, library, chainId };
+  return { active, account, library, chainId, wrongChain };
 }
