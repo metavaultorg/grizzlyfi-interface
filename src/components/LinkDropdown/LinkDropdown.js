@@ -35,7 +35,7 @@ export default function LinkDropdown() {
                     </Menu.Item>
                     <Menu.Item>
                         <a href='https://leaderboard.grizzly.fi/' target="_blank" rel="noopener noreferrer" className="menu-item">
-                            <img src={leaderboard} alt="" />
+                            <img src={leaderboard} alt="" width={16} height={16} />
                             <p>Leaderboard</p>
                         </a>
                     </Menu.Item>

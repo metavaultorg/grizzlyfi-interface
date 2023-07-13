@@ -1264,7 +1264,7 @@ table.Exchange-list-small td {
   }
 }
 
-@media (max-width: 700px) {
+@media (max-width: 740px) {
   .PositionEditor .Modal-content {
     width: 90vw;
   }
