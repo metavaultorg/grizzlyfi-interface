@@ -9,6 +9,7 @@ import telegram from './icon-telegram.svg'
 import ins from './icon-instagram.svg'
 import youtube from './icon-youtube-yt.svg'
 import discord from './icon-discord.svg'
+import leaderboard from './icon-leaderboard.svg'
 
 export default function LinkDropdown() {
     return (
@@ -32,7 +33,12 @@ export default function LinkDropdown() {
                             <p>Stats</p>
                         </a>
                     </Menu.Item>
-
+                    <Menu.Item>
+                        <a href='https://leaderboard.grizzly.fi/' target="_blank" rel="noopener noreferrer" className="menu-item">
+                            <img src={leaderboard} alt="" />
+                            <p>Leaderboard</p>
+                        </a>
+                    </Menu.Item>
                     <Menu.Item>
                         <a href='https://app.grizzly.fi/' target="_blank" rel="noopener noreferrer" className="menu-item">
                             <img src={hub} alt="" />
