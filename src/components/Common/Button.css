@@ -28,7 +28,7 @@ a.btn {
 }
 @media(max-width:600px){
   .btn-wallet{
-    padding: 10px 15px;
+    padding: 10px 13px;
     height: 40px;
   }
 }
