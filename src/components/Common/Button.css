@@ -23,10 +23,15 @@ a.btn {
 }
 
 .btn-wallet{
-  padding: 10px 15px;
-  height: 40px;
+  /* padding: 10px 15px; */
+  /* height: 40px; */
 }
-
+@media(max-width:600px){
+  .btn-wallet{
+    padding: 10px 15px;
+    height: 40px;
+  }
+}
 /* @media (max-width: 1300px) {
   .btn {
     padding: 10px 6px;
