@@ -323,7 +323,7 @@ function AppHeaderUser({
           </div>
           <button className={"btn btn-yellow btn-wallet"} onClick={() => handleConnectWallet()}>
             {/* {small ? "Connect" : "Connect Wallet"} */}
-            Connect
+              Connect Wallet
           </button>
         </div>
 
@@ -664,15 +664,8 @@ function FullApp() {
                     {isDrawerVisible && <FaTimes className="App-header-menu-icon" />}
                   </div>
                   <div className="App-header-link-main clickable" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
-                    {/* <img
-                      width={24}
-                      height={24}
-                      src={getImageUrl({
-                        path: "brandLogos/tradeLogomark",
-                      })}
-                      alt="Trade Logo"
-                    /> */}
                     <Logo />
+                    <div className="logo-text">TRADE</div>
                   </div>
                 </div>
                 <div className="App-header-container-right">

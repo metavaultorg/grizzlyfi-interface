@@ -22,10 +22,10 @@ a.btn {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* .btn-wallet{
-  padding-left: 6px;
-  padding-right: 6px;
-} */
+.btn-wallet{
+  padding: 10px 15px;
+  height: 40px;
+}
 
 /* @media (max-width: 1300px) {
   .btn {

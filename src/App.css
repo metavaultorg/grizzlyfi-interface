@@ -505,6 +505,12 @@ button:hover{
   .token-logo {
     display: none;
   }
+  .App-header-user-address{
+    height: 40px;
+  }
+  .App-header-user-address img{
+    width: 24px;
+  }
 }
 .App-header-user-address:hover,
 .App-header-actions:hover {
@@ -1600,10 +1606,13 @@ button.App-button {
 }
 
 @media (max-width: 600px) {
-  .small .App-header-link-main{
+  .small .App-header-link-main svg{
     /* display: none; */
+    width: 92px;
   }
-  
+  .small .App-header-link-main .logo-text{
+    width: 56px;
+  }
   .App-header-link-main img.big {
     display: none;
   }
