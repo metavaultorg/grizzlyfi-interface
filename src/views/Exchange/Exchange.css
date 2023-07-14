@@ -954,6 +954,28 @@ input.Exchange-swap-input {
   width: 100%;
   line-height: 1.07;
 }
+
+.withdraw-input .Exchange-swap-input input {
+  padding: 0;
+  padding-right: 8px;
+  max-width: 100%;
+  font-size: 30px;
+  font-weight: 500;
+  width: 100%;
+  line-height: 1.07;
+}
+
+.withdraw-input {
+  display:flex;
+}
+.withdraw-usd {
+  display: flex;
+  font-size: 16px;
+  line-height: 1.07;
+  color: rgba(255,255,255,0.5);
+  align-items: center;
+}
+
 input.Exchange-swap-input.small {
   max-width: 20px;
   font-weight: 500;
