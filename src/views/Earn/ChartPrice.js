@@ -79,7 +79,7 @@ export default function ChartPrice() {
                     { key: "gllPrice" },
                 ]}
             >
-                <ResponsiveContainer width={chartWidth} height={536} debounce={3}>
+                <ResponsiveContainer width={chartWidth} height={574} debounce={3}>
                 <LineChart data={gllData} syncId="syncGll">
                         <CartesianGrid stroke="#2b2b2b" strokeDasharray="5 5" />
                         <XAxis
