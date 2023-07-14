@@ -1,8 +1,9 @@
 import { ethers } from "ethers";
-import { getContract } from "../Addresses";
+import { BSC, opBNB } from "../config/chains";
+import { getContract } from "../config/contracts";
 
 const TOKENS = {
-  5611: [
+  [opBNB] : [
     // bsc
     {
       name: "Bitcoin",
@@ -61,21 +62,93 @@ const TOKENS = {
       displayDecimals:4
     },
   ],
+  [BSC] : [
+    // bsc
+    {
+      name: "Bitcoin",
+      symbol: "BTC",
+      address: "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c",
+      coingeckoUrl: "https://www.coingecko.com/en/coins/bitcoin",
+      decimals: 8,
+      isShortable: true,
+      displayDecimals:2
+    },
+    {
+      name: "Ethereum",
+      symbol: "ETH",
+      address: "0x2170Ed0880ac9A755fd29B2688956BD959F933F8",
+      coingeckoUrl: "https://www.coingecko.com/en/coins/ethereum",
+      decimals: 18,
+      isShortable: true,
+      displayDecimals:2
+    },
+    {
+      name: "BNB",
+      symbol: "BNB",
+      decimals: 18,
+      address: ethers.constants.AddressZero,
+      coingeckoUrl: "https://www.coingecko.com/en/coins/bnb",
+      isNative: true,
+      isShortable: false,
+      displayDecimals:3
+    },
+    {
+      name: "W.Bnb",
+      symbol: "WBNB",
+      decimals: 18,
+      address: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+      coingeckoUrl: "https://www.coingecko.com/en/coins/wbnb",
+      isWrapped: true,
+      baseSymbol: "BNB",
+      displayDecimals:3
+    },
+    {
+      name: "USDC",
+      symbol: "USDC",
+      address: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
+      coingeckoUrl: "https://www.coingecko.com/en/coins/usd-coin",
+      decimals: 6,
+      isStable: true,
+      displayDecimals:4
+    },
+    {
+      name: "USDT",
+      symbol: "USDT",
+      address: "0x55d398326f99059fF775485246999027B3197955",
+      coingeckoUrl: "https://www.coingecko.com/en/coins/tether",
+      decimals: 6,
+      isStable: true,
+      displayDecimals:4
+    },
+  ],
 };
 
 
 const ADDITIONAL_TOKENS = {
-  5611: [
+  [opBNB]: [
     {
       name: "GrizzlyFi Leverage Liquidity",
       symbol: "GLL",
-      address: getContract(5611, "GLL"),
+      address: getContract(opBNB, "GLL"),
+      decimals: 18,
+    },
+  ],
+  [BSC]: [
+    {
+      name: "GrizzlyFi Leverage Liquidity",
+      symbol: "GLL",
+      address: getContract(BSC, "GLL"),
       decimals: 18,
     },
   ],
 };
 
-const CHAIN_IDS = [5611];
+export const unavailableTokenSymbols = {
+  [opBNB]: ["BNB"],
+  [BSC]:["BNB"]
+};
+
+const CHAIN_IDS = [opBNB,BSC];
 
 const TOKENS_MAP = {};
 const TOKENS_MAP_LOWER = {};

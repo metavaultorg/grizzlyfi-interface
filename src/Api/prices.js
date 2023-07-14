@@ -3,9 +3,10 @@ import { gql } from "@apollo/client";
 import useSWR from "swr";
 import { ethers } from "ethers";
 
-import { USD_DECIMALS, CHART_PERIODS, formatAmount, sleep, DEFAULT_CHAIN_ID } from "../Helpers";
-import { priceGraphClient } from "./common";
+import { USD_DECIMALS, CHART_PERIODS, formatAmount, sleep } from "../Helpers";
 import { getTokenBySymbol } from "../data/Tokens";
+import { getPriceGraphClient } from "../config/subgraph";
+import { getStatsUrl } from "../config/chains";
 
 const BigNumber = ethers.BigNumber;
 
@@ -56,7 +57,7 @@ async function getChartPricesFromStats(chainId, symbol, period) {
     symbol = symbol.substr(1);
   }
 
-  const hostname = process.env.REACT_APP_STATS_API_URL;
+  const hostname = getStatsUrl(chainId);
   const timeDiff = CHART_PERIODS[period] * 3000;
   const from = Math.floor(Date.now() / 1000 - timeDiff);
   const url = `${hostname}/api/candles/${symbol}?preferableChainId=${chainId}&period=${period}&from=${from}&preferableSource=fast`;
@@ -175,7 +176,7 @@ function getCandlePricesFromGraph(tokenSymbol, period) {
         value
       }
     }`);
-    requests.push(priceGraphClient.query({ query }));
+    requests.push(getPriceGraphClient(chainId).query({ query }));
   }
 
   return Promise.all(requests)
@@ -229,7 +230,7 @@ function getChainlinkChartPricesFromGraph(tokenSymbol, period) {
         value
       }
     }`);
-    requests.push(priceGraphClient.query({ query }));
+    requests.push(getPriceGraphClient(chainId).query({ query }));
   }
 
   return Promise.all(requests)

@@ -19,13 +19,13 @@ import {
   expandDecimals,
 } from "../../Helpers.js";
 import { cancelSwapOrder, cancelIncreaseOrder, cancelDecreaseOrder, useTrailingStopOrders } from "../../Api";
-import { getContract } from "../../Addresses";
 
 import Tooltip from "../Tooltip/Tooltip";
 import OrderEditor from "./OrderEditor";
 
 import "./OrdersList.css";
 import IconNoPosition from "../../assets/icons/no-open-position.png";
+import { getContract } from "../../config/contracts.js";
 
 function getPositionForOrder(account, order, positionsMap) {
   const key = getPositionKey(account, order.collateralToken, order.indexToken, order.isLong);

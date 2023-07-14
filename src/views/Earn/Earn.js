@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import useSWR from "swr";
-import { getContract } from "../../Addresses";
+import { getContract } from "../../config/contracts";
 import { useInfoTokens } from "../../Api";
 import {
   BASIS_POINTS_DIVISOR,
@@ -10,7 +10,6 @@ import {
   fetcher,
   formatAmount,
   formatKeyAmount,
-  opBNB,
   useChainId,
 } from "../../Helpers";
 import Vault from "../../abis/Vault.json";
@@ -31,6 +30,7 @@ import ChartPrice from "./ChartPrice";
 import "./Earn.css";
 import GllSwapBox from "./GllSwapBox";
 import ClaimButton from "../../components/ClaimButton/ClaimButton";
+import { opBNB } from "../../config/chains";
 
 export default function Earn(props) {
   const history = useHistory();

@@ -5,7 +5,7 @@ import useSWR from "swr";
 
 import "./Actions.css";
 
-import { getContract } from "../../Addresses";
+import { getContract } from "../../config/contracts";
 import { fetcher, formatAmount, getTokenInfo, useAccountOrders, useChainId } from "../../Helpers";
 
 import { useInfoTokens } from "../../Api";

@@ -16,30 +16,18 @@ import {
   BASIS_POINTS_DIVISOR,
   clearWalletConnectData,
   clearWalletLinkData,
-  CURRENT_PROVIDER_LOCALSTORAGE_KEY,
   DEFAULT_SLIPPAGE_AMOUNT,
   getAccountUrl,
-  getChainName,
-  getExplorerUrl,
   getInjectedHandler,
   getWalletConnectHandler,
   hasCoinBaseWalletExtension,
   hasExodusWalletExtension,
   hasMetaMaskWalletExtension,
   helperToast,
-  IS_PNL_IN_LEVERAGE_KEY,
   isMobileDevice,
-  opBNB,
-  REFERRAL_CODE_KEY,
-  REFERRAL_CODE_QUERY_PARAMS,
-  SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
-  SHOULD_SHOW_POSITION_LINES_KEY,
-  SHOW_PNL_AFTER_FEES_KEY,
-  SLIPPAGE_BPS_KEY,
   switchNetwork,
   useChainId,
   useLocalStorageSerializeKey,
-  ZKSYNC,
 } from "./Helpers";
 
 import Actions from "./views/Actions/Actions";
@@ -78,8 +66,6 @@ import exodusImg from "./img/ic_exodus.svg";
 import metamaskImg from "./img/ic_metamask_hover_16.svg";
 import walletConnectImg from "./img/walletconnect-circle-blue.svg";
 
-import { getContract } from "./Addresses";
-
 import IconToken from "./assets/icons/honey-token.svg";
 import IconProfile from "./assets/icons/icon-profile.svg";
 import APRLabel from "./components/APRLabel/APRLabel";
@@ -93,6 +79,9 @@ import { useConnectWallet, Web3OnboardProvider } from "@web3-onboard/react";
 import { initWeb3Onboard } from "./services";
 
 import useWeb3Onboard from "./hooks/useWeb3Onboard";
+import { getWsUrl, opBNB ,BSC, getChainName } from "./config/chains";
+import { IS_PNL_IN_LEVERAGE_KEY, REFERRAL_CODE_KEY, REFERRAL_CODE_QUERY_PARAMS, SHOULD_SHOW_POSITION_LINES_KEY, SHOW_PNL_AFTER_FEES_KEY, SLIPPAGE_BPS_KEY } from "./config/localStorage";
+import { getContract } from "./config/contracts";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -112,16 +101,15 @@ const Zoom = cssTransition({
   duration: 200,
 });
 
-const bscWsProvider = new ethers.providers.WebSocketProvider(process.env.REACT_APP_BSC_WS);
+
+
 
 function getWsProvider(active, chainId) {
   if (!active) {
     return;
   }
 
-  if (chainId === opBNB) {
-    return bscWsProvider;
-  }
+  return getWsUrl(chainId);
 }
 
 function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
@@ -228,19 +216,18 @@ function AppHeaderUser({
   const showSelector = false;
   const networkOptions = [
     {
-      label: "Bsc Network",
-      network: "Bsc",
+      label: "opBNB Network",
+      network: "opBNB",
       value: opBNB,
       icon: "ic_bsc_24.svg",
       color: "#2e2f5a",
     },
     {
-      label: "zkSync (Coming Soon)",
-      network: "zkSync",
-      value: ZKSYNC,
-      icon: "ic_zksync_24.svg",
+      label: "Bsc Network",
+      network: "Bsc",
+      value: BSC,
+      icon: "ic_bsc_24.svg",
       color: "#2e2f5a",
-      disabled: true,
     },
   ];
 

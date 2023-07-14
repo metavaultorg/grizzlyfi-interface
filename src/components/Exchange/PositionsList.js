@@ -232,7 +232,7 @@ export default function PositionsList(props) {
             )}
             {positions.map((position) => {
               const positionOrders = getOrdersForPosition(account, position, orders, nativeTokenAddress);
-              const liquidationPrice = getLiquidationPrice(position);
+              const liquidationPrice = getLiquidationPrice(chainId,position);
               const hasPositionProfit = position[showPnlAfterFees ? "hasProfitAfterFees" : "hasProfit"];
               const positionDelta =
                 position[showPnlAfterFees ? "pendingDeltaAfterFees" : "pendingDelta"] || bigNumberify(0);
@@ -491,7 +491,7 @@ export default function PositionsList(props) {
             </tr>
           )}
           {positions.map((position) => {
-            const liquidationPrice = getLiquidationPrice(position) || bigNumberify(0);
+            const liquidationPrice = getLiquidationPrice(chainId,position) || bigNumberify(0);
             const positionOrders = getOrdersForPosition(account, position, orders, nativeTokenAddress);
             const hasOrderError = !!positionOrders.find((order) => order.error);
             const hasPositionProfit = position[showPnlAfterFees ? "hasProfitAfterFees" : "hasProfit"];

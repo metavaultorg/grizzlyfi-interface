@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import useSWR from "swr";
 
-import { getContract } from "../../Addresses";
+import { getContract } from "../../config/contracts";
 import { callContract } from "../../Api";
 
 import Modal from "../../components/Modal/Modal";

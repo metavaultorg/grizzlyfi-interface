@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import useSWR from "swr";
 import { getImageUrl } from "../../cloudinary/getImageUrl";
 
-import { getContract } from "../../Addresses";
+import { getContract } from "../../config/contracts";
 import { callContract } from "../../Api";
 import {
   GLL_DECIMALS,
@@ -21,7 +21,6 @@ import {
   getPageTitle,
   getProcessedData,
   getStakingData,
-  opBNB,
   today,
   useChainId,
   yesterday,
@@ -62,6 +61,7 @@ import animationData from "./animation_1.json";
 import { useInfoTokens } from "../../Api";
 import { getPositionQuery, getPositions } from "../Exchange/Exchange";
 import ClaimButton from "../../components/ClaimButton/ClaimButton";
+import { opBNB } from "../../config/chains";
 
 const claimTypes = [
   { id: "eth", iconPath: "coins/eth", token: "ETH" },

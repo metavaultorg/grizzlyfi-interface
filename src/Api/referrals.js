@@ -2,16 +2,8 @@ import { ethers } from "ethers";
 import { gql } from "@apollo/client";
 import { useState, useEffect } from "react";
 
-import { opBNB, MAX_REFERRAL_CODE_LENGTH, bigNumberify } from "../Helpers";
-import { referralsGraphClient} from "./common";
+import {  MAX_REFERRAL_CODE_LENGTH, bigNumberify } from "../Helpers";
 
-
-function getGraphClient(chainId) {
-  if (chainId === opBNB) {
-    return referralsGraphClient;
-  } 
-  throw new Error(`Unsupported chain ${chainId}`);
-}
 
 const DISTRIBUTION_TYPE_REBATES = "1";
 const DISTRIBUTION_TYPE_DISCOUNT = "2";
@@ -126,7 +118,7 @@ export function useReferralsData(chainId, account) {
     );
     setLoading(true);
 
-    getGraphClient(chainId)
+    getReferralsGraphClient(chainId)
       .query({ query })
       .then((res) => {
         const rebateDistributions = [];
@@ -230,7 +222,7 @@ export function useAffiliateCodes(chainId, account) {
   `;
   useEffect(() => {
     if (!chainId) return;
-    getGraphClient(chainId)
+    getReferralsGraphClient(chainId)
       .query({ query, variables: { account: account?.toLowerCase() } })
       .then((res) => {
         const parsedAffiliateCodes = res?.data?.referrerTotalStats.map((c) => decodeReferralCode(c?.referralCode));

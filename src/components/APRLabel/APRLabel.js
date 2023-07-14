@@ -19,8 +19,8 @@ import Vault from "../../abis/Vault.json";
 
 import { useInfoTokens } from "../../Api";
 
-import { getContract } from "../../Addresses";
 import useWeb3Onboard from "../../hooks/useWeb3Onboard";
+import { getContract } from "../../config/contracts";
 
 export default function APRLabel({ chainId, label, usePercentage = true, tokenDecimals = 2, displayDecimals = 2 }) {
   let { active, library, account } = useWeb3Onboard();
