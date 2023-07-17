@@ -5,7 +5,6 @@ import cx from "classnames";
 import { useTokenPairMarketData } from '../../hooks/useCoingeckoPrices';
 import { getImageUrl } from "../../cloudinary/getImageUrl";
 import { useHistory } from "react-router-dom";
-import { getConstant } from "../../Constants";
 import { getTokenBySymbol } from "../../data/Tokens";
 import { ethers } from "ethers";
 import {
@@ -16,6 +15,7 @@ import {
     useLocalStorageByChainId,
 } from "../../Helpers";
 import "./MarketTable.css";
+import { getConstant } from "../../config/chains";
 
 export default function MarketTable() {
     const [sorter, setSorter] = useState({ sortBy: 'change', isAsc: true })

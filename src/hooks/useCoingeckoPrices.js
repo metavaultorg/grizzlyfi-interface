@@ -1,9 +1,10 @@
 import { useMemo, useState, useEffect } from "react";
-import { limitDecimals, formatNumber, CHAIN_ID } from "../Helpers";
+import { limitDecimals, formatNumber } from "../Helpers";
 import { getTokenBySymbol } from "../data/Tokens";
 import useSWR from "swr";
 import axios from "axios";
 import { useHourlyVolumeByToken } from "../views/Earn/dataProvider"
+import { CHAIN_ID } from "../config/chains";
 
 export const FIRST_DATE_TS = parseInt(+new Date(2022, 5, 1) / 1000);
 export const NOW_TS = parseInt(new Date().getTime() / 1000);

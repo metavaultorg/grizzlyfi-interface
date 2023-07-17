@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import { opBNB, DEFAULT_CHAIN_ID } from "../Helpers";
 import { useConnectWallet, useSetChain, useWallets } from "@web3-onboard/react";
+import { DEFAULT_CHAIN_ID, SUPPORTED_CHAIN_IDS } from "../config/chains";
 
 export default function useWeb3Onboard() {
-  const SUPPORTED_CHAINS = [opBNB];
+
   const [{ wallet }, connect, disconnect] = useConnectWallet();
   const [{ chains, connectedChain, settingChain }, setChain] = useSetChain();
   const [chainId, setChainId] = useState(5611);
@@ -21,7 +21,7 @@ export default function useWeb3Onboard() {
       const cId = +BigInt(connectedChain.id).toString();
       // state variable
 
-      if (SUPPORTED_CHAINS.includes(cId)) {
+      if (SUPPORTED_CHAIN_IDS.includes(cId)) {
         setWrongChain(false);
         setChainId(cId);
       } else {

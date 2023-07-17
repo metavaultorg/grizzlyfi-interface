@@ -5,12 +5,11 @@ import { ethers } from "ethers";
 import useSWR from "swr";
 
 import { approvePlugin, cancelMultipleOrders, useInfoTokens, useMinExecutionFee } from "../../Api";
-import { getConstant } from "../../Constants";
+
 import {
   BASIS_POINTS_DIVISOR,
   FUNDING_RATE_PRECISION,
   LONG,
-  MARGIN_FEE_BASIS_POINTS,
   SHORT,
   SWAP,
   USD_DECIMALS,
@@ -18,7 +17,6 @@ import {
   fetcher,
   formatAmount,
   getDeltaStr,
-  getExplorerUrl,
   getLeverage,
   getPageTitle,
   getPositionContractKey,
@@ -30,7 +28,7 @@ import {
   useLocalStorageByChainId,
 } from "../../Helpers";
 
-import { getContract } from "../../Addresses";
+import { getContract } from "../../config/contracts";
 import { getToken, getTokenBySymbol, getTokens, getWhitelistedTokens } from "../../data/Tokens";
 
 import Reader from "../../abis/Reader.json";
@@ -50,6 +48,7 @@ import Footer from "./FooterExchange";
 
 import useWeb3Onboard from "../../hooks/useWeb3Onboard";
 import "./Exchange.css";
+import { FEES, getConstant } from "../../config/chains";
 const { AddressZero } = ethers.constants;
 
 const PENDING_POSITION_VALID_DURATION = 600 * 1000;
@@ -201,8 +200,8 @@ export function getPositions(
     position.fundingFee = fundingFee ? fundingFee : bigNumberify(0);
     position.collateralAfterFee = position.collateral.sub(position.fundingFee);
 
-    position.closingFee = position.size.mul(MARGIN_FEE_BASIS_POINTS).div(BASIS_POINTS_DIVISOR);
-    position.positionFee = position.size.mul(MARGIN_FEE_BASIS_POINTS).mul(2).div(BASIS_POINTS_DIVISOR);
+    position.closingFee = position.size.mul(FEES[chainId].MARGIN_FEE_BASIS_POINTS).div(BASIS_POINTS_DIVISOR);
+    position.positionFee = position.size.mul(FEES[chainId].MARGIN_FEE_BASIS_POINTS).mul(2).div(BASIS_POINTS_DIVISOR);
     position.totalFees = position.positionFee.add(position.fundingFee);
 
     position.pendingDelta = position.delta;

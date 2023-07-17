@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { getTokenBySymbol } from '../../data/Tokens';
-import { getContract } from '../../Addresses';
 import RewardRouter from "../../abis/RewardRouter.json";
 import useWeb3Onboard from '../../hooks/useWeb3Onboard';
 import { ethers } from 'ethers';
 import { callContract } from '../../Api';
+import { getContract } from '../../config/contracts';
 
 export default function ClaimButton({ className }) {
     const { active, library, account, chainId } = useWeb3Onboard();

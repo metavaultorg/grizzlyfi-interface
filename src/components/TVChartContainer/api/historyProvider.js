@@ -1,14 +1,18 @@
+import { getStatsUrl } from "../../../config/chains";
+
 const axios = require("axios").default;
-const api_root = process.env.REACT_APP_STATS_API_URL;
+
+
 const history = {};
 
 export default {
   history: history,
 
-  getBars: function (symbolInfo, resolution, periodParams) {
+  getBars: function (chainId,symbolInfo, resolution, periodParams) {
     var split_symbol = symbolInfo.name.split(/[:/]/);
 
     const url = split_symbol[0];
+    const api_root = getStatsUrl(chainId);
     return axios
       .get(`${api_root}/api/candles/${url}`, {
         params: {

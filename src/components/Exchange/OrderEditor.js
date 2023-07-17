@@ -31,11 +31,11 @@ import {
 import { updateSwapOrder, updateIncreaseOrder, updateDecreaseOrder } from "../../Api";
 import Modal from "../Modal/Modal";
 import ExchangeInfoRow from "./ExchangeInfoRow";
-import { getContract } from "../../Addresses";
 import { sliderHandle, trailingStopPrices } from "../Trailer/Trailer";
 import { BigNumber } from "ethers";
 import "./OrderEditor.css";
 import AutosizeInput from 'react-input-autosize';
+import { getContract } from "../../config/contracts";
 
 export default function OrderEditor(props) {
   const {
@@ -55,7 +55,7 @@ export default function OrderEditor(props) {
   const { chainId } = useChainId();
 
   const position = order.type !== SWAP ? getPositionForOrder(account, order, positionsMap) : null;
-  const liquidationPrice = order.type === DECREASE && position ? getLiquidationPrice(position) : null;
+  const liquidationPrice = order.type === DECREASE && position ? getLiquidationPrice(chainId,position) : null;
   const tokenPriceInUsd = position ? position.isLong ? position.indexToken.maxPrice : position.indexToken.minPrice : null;
 
   const [isSubmitting, setIsSubmitting] = useState(false);

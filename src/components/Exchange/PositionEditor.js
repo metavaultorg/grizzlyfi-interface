@@ -23,7 +23,7 @@ import {
   getLiquidationPrice,
   approveTokens,
 } from "../../Helpers";
-import { getContract } from "../../Addresses";
+
 import Tab from "../Tab/Tab";
 import Modal from "../Modal/Modal";
 import { callContract } from "../../Api";
@@ -32,6 +32,7 @@ import PositionRouter from "../../abis/PositionRouter.json";
 import Token from "../../abis/Token.json";
 import { tokenImageCloud } from "../../Helpers";
 import "./PositionEditor.css";
+import { getContract } from "../../config/contracts";
 
 const DEPOSIT = "Deposit";
 const WITHDRAW = "Withdraw";
@@ -116,7 +117,7 @@ export default function PositionEditor(props) {
       </>)
     }
     collateralToken = position.collateralToken;
-    liquidationPrice = getLiquidationPrice(position);
+    liquidationPrice = getLiquidationPrice(chainId,position);
 
     if (isDeposit) {
       fromAmount = parseValue(fromValue, collateralToken.decimals);
@@ -167,7 +168,7 @@ export default function PositionEditor(props) {
         includeDelta: false,
       });
 
-      nextLiquidationPrice = getLiquidationPrice({
+      nextLiquidationPrice = getLiquidationPrice(chainId,{
         isLong: position.isLong,
         size: position.size,
         collateral: position.collateral,

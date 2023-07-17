@@ -7,7 +7,7 @@ import { ethers } from "ethers";
 import useSWR from "swr";
 import Tab from "../../components/Tab/Tab";
 
-import { getContract } from "../../Addresses";
+import { getContract } from "../../config/contracts";
 import { callContract, useInfoTokens } from "../../Api";
 import {
   BASIS_POINTS_DIVISOR,
@@ -16,7 +16,6 @@ import {
   GLL_DECIMALS,
   PLACEHOLDER_ACCOUNT,
   SECONDS_PER_YEAR,
-  SLIPPAGE_BPS_KEY,
   USDG_DECIMALS,
   USD_DECIMALS,
   adjustForDecimals,
@@ -35,7 +34,6 @@ import {
   getUsd,
   helperToast,
   parseValue,
-  // getChainName,
   useChainId,
   useLocalStorageByChainId,
   useLocalStorageSerializeKey,
@@ -59,6 +57,7 @@ import IconMoney from "../../assets/icons/icon-investments-money.svg";
 import IconNext from "../../assets/icons/icon-next-left.svg";
 import ItemCard from "../../components/ItemCard/ItemCard";
 import useWeb3Onboard from "../../hooks/useWeb3Onboard";
+import { SLIPPAGE_BPS_KEY } from "../../config/localStorage";
 
 const { AddressZero } = ethers.constants;
 

@@ -9,17 +9,17 @@ import {
   BASIS_POINTS_DIVISOR,
   LIQUIDATION_FEE,
   formatAmount,
-  getExplorerUrl,
   formatDateTime,
   deserialize,
   getExchangeRateDisplay,
   bigNumberify,
 } from "../../Helpers";
 import { useLiquidationsData, useTradesFromGraph } from "../../Api";
-import { getContract } from "../../Addresses";
 
 import "./TradeHistory.css";
 import IconNoPosition from "../../assets/icons/no-open-position.png";
+import { getContract } from "../../config/contracts";
+import { getExplorerUrl } from "../../config/chains";
 
 const { AddressZero } = ethers.constants;
 

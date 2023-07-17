@@ -57,7 +57,7 @@ export default function OpenedPositions(props) {
           <tbody>
             {positions.length > 0 &&
               sortArr(positions, sorter.sortBy, sorter.isAsc).map((position, index) => {
-                const liquidationPrice = getLiquidationPrice(position) || bigNumberify(0);
+                const liquidationPrice = getLiquidationPrice(chainId,position) || bigNumberify(0);
                 const hasPositionProfit = position[savedShowPnlAfterFees ? "hasProfitAfterFees" : "hasProfit"];
                 const positionDelta =
                   position[savedShowPnlAfterFees ? "pendingDeltaAfterFees" : "pendingDelta"] || bigNumberify(0);
@@ -146,7 +146,7 @@ export default function OpenedPositions(props) {
       </div>
       <div className="token-grid">
         {positions.map((position, index) => {
-          const liquidationPrice = getLiquidationPrice(position) || bigNumberify(0);
+          const liquidationPrice = getLiquidationPrice(chainId,position) || bigNumberify(0);
           const marketToken = tokenPairMarketList.find((token) => token.symbol === position.indexToken.symbol);
           const hasPositionProfit = position[savedShowPnlAfterFees ? "hasProfitAfterFees" : "hasProfit"];
           const positionDelta =

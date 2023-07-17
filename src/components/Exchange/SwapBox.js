@@ -31,7 +31,6 @@ import {
   getPositionKey,
   getUsd,
   BASIS_POINTS_DIVISOR,
-  MARGIN_FEE_BASIS_POINTS,
   PRECISION,
   USDG_ADDRESS,
   STOP,
@@ -49,7 +48,6 @@ import {
   getLiquidationPrice,
   approveTokens,
   getLeverage,
-  isSupportedChain,
   getExchangeRate,
   getExchangeRateDisplay,
   getNextToAmount,
@@ -60,12 +58,10 @@ import {
   calculatePositionDelta,
   replaceNativeTokenAddress,
   adjustForDecimals,
-  REFERRAL_CODE_KEY,
   isHashZero,
 } from "../../Helpers";
-import { getConstant } from "../../Constants";
+
 import * as Api from "../../Api";
-import { getContract } from "../../Addresses";
 
 import Checkbox from "../Checkbox/Checkbox";
 import Tab from "../Tab/Tab";
@@ -87,6 +83,9 @@ import shortGrayImg from "../../assets/icons/icon-short-gray.svg";
 import swapBallImg from "../../assets/icons/icon-swap.svg";
 import swapImg from "../../assets/icons/swap.svg";
 import Trailer from "../Trailer/Trailer";
+import { getContract } from "../../config/contracts";
+import { FEES, getConstant } from "../../config/chains";
+import { REFERRAL_CODE_KEY } from "../../config/localStorage";
 
 const SWAP_ICONS = {
   [LONG]: longImg,
@@ -585,7 +584,7 @@ export default function SwapBox(props) {
           }
 
           const toNumerator = fromUsdMinAfterFee.mul(leverageMultiplier).mul(BASIS_POINTS_DIVISOR);
-          const toDenominator = bigNumberify(MARGIN_FEE_BASIS_POINTS)
+          const toDenominator = bigNumberify(FEES[chainId].MARGIN_FEE_BASIS_POINTS)
             .mul(leverageMultiplier)
             .add(bigNumberify(BASIS_POINTS_DIVISOR).mul(BASIS_POINTS_DIVISOR));
 
@@ -611,7 +610,7 @@ export default function SwapBox(props) {
 
         const baseFromAmountUsd = toUsdMax.mul(BASIS_POINTS_DIVISOR).div(leverageMultiplier);
 
-        let fees = toUsdMax.mul(MARGIN_FEE_BASIS_POINTS).div(BASIS_POINTS_DIVISOR);
+        let fees = toUsdMax.mul(FEES[chainId].MARGIN_FEE_BASIS_POINTS).div(BASIS_POINTS_DIVISOR);
 
         const { feeBasisPoints } = getNextToAmount(
           chainId,
@@ -685,7 +684,7 @@ export default function SwapBox(props) {
 
   let leverage = bigNumberify(0);
   if (fromUsdMin && toUsdMax && fromUsdMin.gt(0)) {
-    const fees = toUsdMax.mul(MARGIN_FEE_BASIS_POINTS).div(BASIS_POINTS_DIVISOR);
+    const fees = toUsdMax.mul(FEES[chainId].MARGIN_FEE_BASIS_POINTS).div(BASIS_POINTS_DIVISOR);
     if (fromUsdMin.sub(fees).gt(0)) {
       leverage = toUsdMax.mul(BASIS_POINTS_DIVISOR).div(fromUsdMin.sub(fees));
     }
@@ -714,7 +713,7 @@ export default function SwapBox(props) {
     });
   }
 
-  const liquidationPrice = getLiquidationPrice({
+  const liquidationPrice = getLiquidationPrice(chainId,{
     isLong,
     size: hasExistingPosition ? existingPosition.size : bigNumberify(0),
     collateral: hasExistingPosition ? existingPosition.collateral : bigNumberify(0),
@@ -727,7 +726,7 @@ export default function SwapBox(props) {
     increaseSize: true,
   });
 
-  const existingLiquidationPrice = existingPosition ? getLiquidationPrice(existingPosition) : undefined;
+  const existingLiquidationPrice = existingPosition ? getLiquidationPrice(chainId,existingPosition) : undefined;
   let displayLiquidationPrice = liquidationPrice ? liquidationPrice : existingLiquidationPrice;
 
   if (hasExistingPosition) {
@@ -1763,7 +1762,7 @@ export default function SwapBox(props) {
       feeBps = feeBasisPoints;
     }
   } else if (toUsdMax) {
-    positionFee = toUsdMax.mul(MARGIN_FEE_BASIS_POINTS).div(BASIS_POINTS_DIVISOR);
+    positionFee = toUsdMax.mul(FEES[chainId].MARGIN_FEE_BASIS_POINTS).div(BASIS_POINTS_DIVISOR);
     feesUsd = positionFee;
 
     const { feeBasisPoints } = getNextToAmount(

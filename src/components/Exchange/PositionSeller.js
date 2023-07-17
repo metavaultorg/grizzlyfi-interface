@@ -15,7 +15,6 @@ import {
   DUST_USD,
   BASIS_POINTS_DIVISOR,
   USDG_ADDRESS,
-  SLIPPAGE_BPS_KEY,
   TRIGGER_PREFIX_BELOW,
   TRIGGER_PREFIX_ABOVE,
   MIN_PROFIT_TIME,
@@ -41,12 +40,10 @@ import {
   getNextToAmount,
   getUsd,
   USDG_DECIMALS,
-  CLOSE_POSITION_RECEIVE_TOKEN_KEY,
   useLocalStorageByChainId,
 } from "../../Helpers";
-import { getConstant } from "../../Constants";
+
 import { createDecreaseOrder, callContract, useHasOutdatedUi } from "../../Api";
-import { getContract } from "../../Addresses";
 import PositionRouter from "../../abis/PositionRouter.json";
 import Checkbox from "../Checkbox/Checkbox";
 import Tab from "../Tab/Tab";
@@ -58,6 +55,9 @@ import { getTokens } from "../../data/Tokens";
 import "./PositionSeller.css";
 import { tokenImageCloud } from "../../Helpers";
 import AutosizeInput from 'react-input-autosize';
+import { getContract } from "../../config/contracts";
+import { SLIPPAGE_BPS_KEY } from "../../config/localStorage";
+import { getConstant } from "../../config/chains";
 
 const { AddressZero } = ethers.constants;
 const ORDER_SIZE_DUST_USD = expandDecimals(1, USD_DECIMALS - 1); // $0.10
@@ -312,11 +312,11 @@ export default function PositionSeller(props) {
       </>)
     }
     collateralToken = position.collateralToken;
-    liquidationPrice = getLiquidationPrice(position);
+    liquidationPrice = getLiquidationPrice(chainId,position);
 
     if (fromAmount) {
       isClosing = position.size.sub(fromAmount).lt(DUST_USD);
-      positionFee = getMarginFee(fromAmount);
+      positionFee = getMarginFee(chainId,fromAmount);
     }
 
     if (isClosing) {
@@ -443,7 +443,7 @@ export default function PositionSeller(props) {
           delta: nextDelta,
           includeDelta: savedIsPnlInLeverage,
         });
-        nextLiquidationPrice = getLiquidationPrice({
+        nextLiquidationPrice = getLiquidationPrice(chainId,{
           isLong: position.isLong,
           size: position.size,
           sizeDelta,

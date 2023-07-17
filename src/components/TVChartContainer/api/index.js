@@ -1,7 +1,7 @@
 import historyProvider from './historyProvider'
 import stream from './stream'
 import { getTokenBySymbol } from "../../../data/Tokens";
-import { DEFAULT_CHAIN_ID } from "../../../Helpers";
+import { DEFAULT_CHAIN_ID } from '../../../config/chains';
 
 
 
@@ -57,7 +57,7 @@ export default {
 	getBars: function(symbolInfo, resolution, periodParams, onHistoryCallback, onErrorCallback) {
 		// console.log('=====getBars running')
 		// console.log(`Requesting bars between ${new Date(periodParams.from * 1000).toISOString()} and ${new Date(periodParams.to * 1000).toISOString()}`)
-		historyProvider.getBars(symbolInfo, resolution, periodParams)
+		historyProvider.getBars(DEFAULT_CHAIN_ID,symbolInfo, resolution, periodParams)
 		.then(bars => {
 			if (bars.length) {
 				onHistoryCallback(bars, {noData: false})

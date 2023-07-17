@@ -20,11 +20,10 @@ import {
   expandDecimals,
   shouldRaiseGasError,
   getTokenInfo,
-  getLiquidationPrice,
   approveTokens,
   TRAILING_STOP_FEE,
 } from "../../Helpers";
-import { getContract } from "../../Addresses";
+import { getContract } from "../../config/contracts";
 import Tab from "../Tab/Tab";
 import Modal from "../Modal/Modal";
 import { callContract, createDecreaseOrder } from "../../Api";
@@ -37,7 +36,7 @@ import Tooltip from "../Tooltip/Tooltip";
 import TokenSelector from "./TokenSelector";
 import { getTokenAmount } from "./PositionSeller";
 import { getNativeToken, getTokens } from "../../data/Tokens";
-import { getConstant } from "../../Constants";
+import { getConstant } from "../../config/chains";
 
 const { AddressZero } = ethers.constants;
 

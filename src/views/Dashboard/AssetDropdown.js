@@ -1,20 +1,21 @@
 import { Menu } from "@headlessui/react";
 import { FiChevronDown } from "react-icons/fi";
-import { addTokenToMetamask, ICONLINKS, platformTokens, useChainId } from "../../Helpers";
+import { getChainName, getExplorerUrl, ICONLINKS } from "../../config/chains";
+import { getContract } from "../../config/contracts";
+import { unavailableTokenSymbols } from "../../data/Tokens";
+import { addTokenToMetamask, useChainId } from "../../Helpers";
 import useWeb3Onboard from "../../hooks/useWeb3Onboard";
 import coingeckoIcon from "../../img/coingecko.png";
 import metamaskIcon from "../../img/ic_metamask_hover_16.svg";
 import maticIcon from "../../img/ic_polygon_16.svg";
-import zkSyncEraIcon from "../../img/ic_zksync_era.svg";
 import "./AssetDropdown.css";
 
 function AssetDropdown({ assetSymbol, assetInfo, showReserves }) {
   const { active } = useWeb3Onboard();
   const { chainId } = useChainId();
-  let { coingecko, polygon, zkSync } = ICONLINKS[chainId][assetSymbol];
-  const unavailableTokenSymbols = {
-    5611: ["BNB"],
-  };
+  let { coingecko, link } = ICONLINKS[chainId][assetSymbol];
+
+  const txUrl = getExplorerUrl(chainId) + "address/" + getContract(chainId,"Vault");
 
   return (
     <Menu as="div" className="asset-menu">
@@ -34,9 +35,9 @@ function AssetDropdown({ assetSymbol, assetInfo, showReserves }) {
         </Menu.Item>
         <Menu.Item>
           <>
-            {polygon && showReserves && (
+            {link && showReserves && (
               <a
-                href="https://bscscan.com/address/0x32848e2d3aecfa7364595609fb050a301050a6b4"
+                href={txUrl}
                 className="asset-item"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -49,21 +50,10 @@ function AssetDropdown({ assetSymbol, assetInfo, showReserves }) {
         </Menu.Item>
         <Menu.Item>
           <>
-            {polygon && (
-              <a href={polygon} className="asset-item" target="_blank" rel="noopener noreferrer">
-                <img src={maticIcon} alt="Bsc" />
-                <p>Bsc Network</p>
-              </a>
-            )}
-          </>
-        </Menu.Item>
-
-        <Menu.Item>
-          <>
-            {zkSync && (
-              <a href={zkSync} className="asset-item" target="_blank" rel="noopener noreferrer">
-                <img src={zkSyncEraIcon} alt="Show in explorer" />
-                <p>zkSync Era</p>
+            {link && (
+              <a href={link} className="asset-item" target="_blank" rel="noopener noreferrer">
+                <img src={maticIcon} alt={getChainName(chainId)} />
+                <p>{getChainName(chainId)} Network</p>
               </a>
             )}
           </>
