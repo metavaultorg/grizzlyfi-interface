@@ -1138,7 +1138,7 @@ export default function PositionSeller(props) {
                     disableBodyScrollLock={true}
                     className={cx("PositionSeller-token-selector", { warning: notEnoughReceiveTokenLiquidity })}
                     label={"Receive"}
-                    showBalances={false}
+                    showBalances={true}
                     chainId={chainId}
                     tokenAddress={receiveToken.address}
                     onSelectToken={(token) => {
