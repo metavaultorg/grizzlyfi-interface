@@ -97,7 +97,7 @@ export default function TokenSelector(props) {
               value={searchKeyword}
               onChange={(e) => onSearchKeywordChange(e)}
               onKeyDown={_handleKeyDown}
-              autoFocus
+              // autoFocus
             />
           </div>
           <div className="TokenSelector-token-rows">
