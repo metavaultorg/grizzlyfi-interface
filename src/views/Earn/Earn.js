@@ -30,6 +30,7 @@ import ChartPrice from "./ChartPrice";
 import "./Earn.css";
 import GllSwapBox from "./GllSwapBox";
 import ClaimButton from "../../components/ClaimButton/ClaimButton";
+import Earnings from './Earnings'
 import { opBNB } from "../../config/chains";
 
 export default function Earn(props) {
@@ -157,15 +158,15 @@ export default function Earn(props) {
         <div className="Earn-left">
           <div className="info-card-section" style={{ maxWidth: 912 }}>
             <ItemCard
-              style={{ minWidth: 218 }}
+              // style={{ minWidth: 218 }}
               label="APR"
               value={<APRLabel chainId={opBNB} label="gllAprTotal" key="BSC" />}
               icon={IconPercentage}
             />
-            <ItemCard style={{ minWidth: 298 }} label="Assets Under Management" value={<AUMLabel />} icon={IconMoney} />
+            <ItemCard /* style={{ minWidth: 298 }} */ label="Assets Under Management" value={<AUMLabel />} icon={IconMoney} />
             <ItemCard
-              style={{ width: "-webkit-fill-available", minWidth: 320 }}
-              label="Claimable Rewards (BNB)"
+              // style={{ width: "-webkit-fill-available", minWidth: 320 }}
+              label="Claimable Rewards"
               value={
                 <APRLabel
                   usePercentage={false}
@@ -176,9 +177,9 @@ export default function Earn(props) {
                 />
               }
               icon={IconClaim}
-              buttonEle={
-                <ClaimButton></ClaimButton>
-              }
+              // buttonEle={
+              //   <ClaimButton></ClaimButton>
+              // }
             />
           </div>
           <ChartPrice />
@@ -189,6 +190,7 @@ export default function Earn(props) {
           </div>
         </div>
       </div>
+      <Earnings />
       <div className="earn-statistics">
         <div className="inner-card-title">GLL Statistics</div>
         <div className="list-table">

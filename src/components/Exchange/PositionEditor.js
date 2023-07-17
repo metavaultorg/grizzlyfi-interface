@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { ethers } from "ethers";
 import { BsArrowRight } from "react-icons/bs";
+import AutosizeInput from 'react-input-autosize';
 
 import {
   USD_DECIMALS,
@@ -458,7 +459,8 @@ export default function PositionEditor(props) {
                 </span>
                 <div className="Exchange-swap-section">
                       <div className="Exchange-swap-input-container">
-                        <input
+                        <div className="withdraw-input">
+                        <AutosizeInput
                           type="number"
                           min="0"
                           placeholder="0.0"
@@ -466,6 +468,8 @@ export default function PositionEditor(props) {
                           value={fromValue}
                           onChange={(e) => setFromValue(e.target.value)}
                         />
+                         {isWithdrawal ? <div className="withdraw-usd font-number">USD</div>:""}
+                        </div>
                         <div className="Exchange-swap-usd font-number">
                           ≈ {convertedAmountFormatted??0.00}{" "}
                           {isDeposit ? "USD" : position.collateralToken.symbol}
@@ -482,12 +486,10 @@ export default function PositionEditor(props) {
                               MAX
                             </div>
                           )}
-                        <div className="PositionEditor-token-symbol">
-                          {isDeposit ? <>
+                          {isDeposit ? (<div className="PositionEditor-token-symbol">
                             <img src={tokenImageCloud(position.collateralToken.symbol.toLowerCase())} style={{ height: 32, width: 32 }} alt=" " />
-                            <div style={{ width: 8 }}></div> {position.collateralToken.symbol}</>
-                            : <div style={{ paddingLeft:40 }}>USD</div>}
-                        </div>
+                            <div style={{ width: 8 }}></div> {position.collateralToken.symbol}
+                        </div>) : <></> }
                       </div>
                 </div>
                 <div style={{height:16}}></div>

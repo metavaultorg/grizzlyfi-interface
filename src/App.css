@@ -2,6 +2,7 @@
   position: relative;
   overflow: hidden;
   min-height: 100%;
+  min-width: 390px;
 }
 
 
@@ -99,34 +100,39 @@ button:hover{
 }
 
 .App-header-drawer {
-  /*   background: #17182c88 0% 0% no-repeat padding-box; */
-  /* box-shadow: 8px 3px 6px #00000029; */
-  opacity: 1;
-  backdrop-filter: blur(27px);
+  border: solid 1px #2b2b2b;
+  border-top: none;
+  background-color: #1f1f1f;
   position: fixed;
-  z-index: 801;
+  z-index: 99999;
   left: 0;
   right: 0;
   top: 0;
   height: 100vh;
-  width: 304px;
+  width: 334px;
   overflow-y: auto;
   -ms-overflow-style: none; /* Internet Explorer 10+ */
   scrollbar-width: none; /* Firefox */
 }
+
 .App-header-drawer::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
 }
-
+.App-header-drawer .App-header-link-container{
+  padding-left: 24px;
+}
+.App-header-drawer a{
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 20px;
+}
 .App-header-drawer .App-header-link-container a {
-  font-size: 17px;
   line-height: 18px;
   font-weight: 600;
   line-height: 28px;
   letter-spacing: -0.01em;
-  color: #fff;
   text-decoration: none;
-  padding: 10px;
+  padding: 10px 0;
   margin-bottom: 5px;
   display: inline-block;
   border-radius: 15px;
@@ -139,7 +145,9 @@ button:hover{
 .App-header-drawer .App-header-link-container a:hover,
 .App-header-drawer .App-header-link-container a:focus,
 .App-header-drawer .App-header-link-container a.active {
-  background: rgba(118, 118, 128, 0.24);
+  /* background: rgba(118, 118, 128, 0.24); */
+  color: #f2c75c;
+  position: relative;
 }
 
 .App-header-links-header {
@@ -167,6 +175,11 @@ button:hover{
   margin-left: 0px;
   display: flex;
   align-items: center;
+  width: 40px;
+  height: 40px;
+  justify-content: center;
+  border-radius: 14px;
+  background-color: rgba(255,255,255,0.05);
 }
 
 .App-header-menu-icon {
@@ -494,8 +507,16 @@ button:hover{
 @media (max-width:600px) {
 
   .App-header-balance,
-  .App-header-network {
+  .App-header-network,
+  .App-header-dots,
+  .token-logo {
     display: none;
+  }
+  .App-header-user-address{
+    height: 40px;
+  }
+  .App-header-user-address img{
+    width: 24px;
   }
 }
 .App-header-user-address:hover,
@@ -797,6 +818,7 @@ button:hover{
   color: rgba(255, 255, 255, 0.5);
   width: 72px;
   height: 24px;
+  line-height: 24px;
   border-radius: 7px;
   -webkit-backdrop-filter: blur(50px);
   backdrop-filter: blur(50px);
@@ -1591,10 +1613,13 @@ button.App-button {
 }
 
 @media (max-width: 600px) {
-  .small .App-header-link-main{
-    display: none;
+  .small .App-header-link-main svg{
+    /* display: none; */
+    width: 92px;
   }
-  
+  .small .App-header-link-main .logo-text{
+    width: 56px;
+  }
   .App-header-link-main img.big {
     display: none;
   }
