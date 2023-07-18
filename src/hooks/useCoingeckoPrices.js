@@ -101,7 +101,7 @@ export function useCoingeckoPrices(symbol) {
     );
 
     const token = getTokenBySymbol(CHAIN_ID, symbol).address;
-    const [, total, , ,] = useHourlyVolumeByToken({ token, from, to });
+    const [, total, , ,] = useHourlyVolumeByToken({ token, from, to, chainId: CHAIN_ID });
 
     const data = useMemo(() => {
         if (!res || res === undefined || res.length === 0) {

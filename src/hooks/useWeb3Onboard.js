@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { useConnectWallet, useSetChain, useWallets } from "@web3-onboard/react";
 import { DEFAULT_CHAIN_ID, SUPPORTED_CHAIN_IDS } from "../config/chains";
+import { SELECTED_NETWORK_LOCAL_STORAGE_KEY } from "../config/localStorage";
 
 export default function useWeb3Onboard() {
 
   const [{ wallet }, connect, disconnect] = useConnectWallet();
   const [{ chains, connectedChain, settingChain }, setChain] = useSetChain();
-  const [chainId, setChainId] = useState(5611);
+  const [chainId, setChainId] = useState(DEFAULT_CHAIN_ID);
   const [active, setActive] = useState(false);
   const [account, setAccount] = useState("");
   const [library, setLibrary] = useState(undefined);
@@ -24,8 +25,10 @@ export default function useWeb3Onboard() {
       if (SUPPORTED_CHAIN_IDS.includes(cId)) {
         setWrongChain(false);
         setChainId(cId);
+        localStorage.setItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY, cId.toString())
       } else {
         // not supported chain == wrong chain
+        localStorage.setItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY, DEFAULT_CHAIN_ID.toString())
         setWrongChain(true);
       }
     }
@@ -37,13 +40,16 @@ export default function useWeb3Onboard() {
       setAccount(account);
       if(!wrongChain) {
         setActive(true);
-       } else {
+        localStorage.setItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY, chainId.toString())
+      } else {
         setActive(false);
-        setChain({chainId:DEFAULT_CHAIN_ID});
+        // setChain({chainId: DEFAULT_CHAIN_ID});
+        localStorage.setItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY, DEFAULT_CHAIN_ID.toString())
       }   
     } else {
       setActive(false);
       setAccount(null);
+      localStorage.setItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY, DEFAULT_CHAIN_ID.toString())
     }
   }, [wallet,wrongChain]);
 

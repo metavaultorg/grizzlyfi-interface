@@ -169,26 +169,26 @@ export const platformTokens = {
 };
 
 
-export const RPC_PROVIDERS = {
+const RPC_PROVIDERS = {
   [opBNB]: process.env.REACT_APP_OPBNB_RPC_URLS.split(" "),
   [BSC]: process.env.REACT_APP_BSC_RPC_URLS.split(" "),
 };
 
-export const EXPLORER_URLS = {
+const EXPLORER_URLS = {
   [opBNB]: process.env.REACT_APP_EXPLORER_OPBNB_URL,
   [BSC]: process.env.REACT_APP_EXPLORER_BSC_URL,
 };
 
-export const API_URLS = {
+const API_URLS = {
   [opBNB]: process.env.REACT_APP_OPBNB_API_URL,
   [BSC]: process.env.REACT_APP_BSC_API_URL,
 };
 
-export const STATS_URLS = {
+const STATS_URLS = {
   [opBNB]: process.env.REACT_APP_OPBNB_STATS_API_URL,
   [BSC]: process.env.REACT_APP_BSC_STATS_API_URL,
 };
-export const FALLBACK_PROVIDERS = {
+const FALLBACK_PROVIDERS = {
   [opBNB]: process.env.REACT_APP_OPBNB_FALLBACK_PROVIDERS.split(" "),
   [BSC]: process.env.REACT_APP_BSC_FALLBACK_PROVIDERS.split(" "),
 };

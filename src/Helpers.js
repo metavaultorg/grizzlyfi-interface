@@ -17,8 +17,9 @@ import useWeb3Onboard from "./hooks/useWeb3Onboard";
 import IconSuccess from './assets/icons/icon-success.svg'
 import IconError from './assets/icons/icon-failed.svg'
 import { getImageUrl } from "./cloudinary/getImageUrl";
-import { CHAIN_ID, DEFAULT_CHAIN_ID, FEES, GAS_PRICE_ADJUSTMENT_MAP, getChainName, getExplorerUrl, getFallbackRpcUrl, getRpcUrl, isSupportedChain, MAX_GAS_PRICE_MAP } from "./config/chains";
+import { CHAIN_ID, DEFAULT_CHAIN_ID, FEES, GAS_PRICE_ADJUSTMENT_MAP, getChainName, getExplorerUrl, getFallbackRpcUrl, getRpcUrl, isSupportedChain, MAX_GAS_PRICE_MAP, NETWORK_METADATA } from "./config/chains";
 import { getContract } from "./config/contracts";
+import { SELECTED_NETWORK_LOCAL_STORAGE_KEY, WALLET_CONNECT_LOCALSTORAGE_KEY, WALLET_LINK_LOCALSTORAGE_PREFIX } from "./config/localStorage";
 
 
 const { AddressZero } = ethers.constants;
@@ -382,7 +383,7 @@ export function getBuyGllToAmount(chainId,fromAmount, swapTokenAddress, infoToke
   return { amount: gllAmount, feeBasisPoints };
 }
 
-export function getSellGllFromAmount(toAmount, swapTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
+export function getSellGllFromAmount(chaindId, toAmount, swapTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0), feeBasisPoints: 0 };
   if (!toAmount || !swapTokenAddress || !infoTokens || !gllPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
@@ -413,7 +414,7 @@ export function getSellGllFromAmount(toAmount, swapTokenAddress, infoTokens, gll
   return { amount: gllAmount, feeBasisPoints };
 }
 
-export function getBuyGllFromAmount(toAmount, fromTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
+export function getBuyGllFromAmount(chainId, toAmount, fromTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0) };
   if (!toAmount || !fromTokenAddress || !infoTokens || !gllPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
@@ -443,7 +444,7 @@ export function getBuyGllFromAmount(toAmount, fromTokenAddress, infoTokens, gllP
   return { amount: fromAmount, feeBasisPoints };
 }
 
-export function getSellGllToAmount(chaindId,toAmount, fromTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
+export function getSellGllToAmount(chaindId, toAmount, fromTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0) };
   if (!toAmount || !fromTokenAddress || !infoTokens || !gllPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
@@ -1136,11 +1137,11 @@ export function getProvider(library, chainId) {
   if (library) {
     return library.getSigner();
   }
-  return new ethers.providers.StaticJsonRpcProvider(getRpcUrl(chainId), { chainId });
+  return new ethers.providers.StaticJsonRpcProvider(getRpcUrl(chainId));
 }
 
 export function getFallbackProvider(chainId) {
-  return new ethers.providers.StaticJsonRpcProvider(getFallbackRpcUrl(chainId), { chainId });
+  return new ethers.providers.StaticJsonRpcProvider(getFallbackRpcUrl(chainId));
 }
 
 export const getContractCall = ({ provider, contractInfo, arg0, arg1, method, params, additionalArgs, onError }) => {
@@ -1216,7 +1217,7 @@ export const fetcher = (library, contractInfo, additionalArgs) => (...args) => {
       shouldCallFallback = false
       resolve(result)
     }).catch((e) => {
-      // console.error("fetcher error", id, contractInfo.contractName, method, e);
+      console.error("fetcher error", id, contractInfo.contractName, method, e);
       handleFallback(resolve, reject, e)
     })
 
@@ -1761,7 +1762,7 @@ export const switchNetwork = async (chainId, active) => {
   }
 
   try {
-    const chainIdHex = "0x" + chainId.toString(16);
+    const chainIdHex = "0x" + Number(chainId).toString(16);
     await window.ethereum.request({
       method: "wallet_switchEthereumChain",
       params: [{ chainId: chainIdHex }],

@@ -1,10 +1,11 @@
 import { useMemo, useState, useEffect } from "react";
 import { gql, ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
 import { sortBy } from "lodash";
+import { DEFAULT_CHAIN_ID } from "../../config/chains";
+import { getCoreGraphClient, getPriceGraphClient, getReferralsGraphClient } from "../../config/subgraph";
 
 
 
-const coreSubgraphUrl = process.env.REACT_APP_GRIZZLYFI_CORE_SUBGRAPH;
 const DEFAULT_GROUP_PERIOD = 86400;
 
 
@@ -33,15 +34,10 @@ function fillNa(arr, keys) {
     }
     return arr;
 }
-export function useGraph(querySource, { subgraph = null, subgraphUrl = coreSubgraphUrl, chainName = "bsc" } = {}) {
+export function useGraph(querySource, { chainId = DEFAULT_CHAIN_ID, subgraph = "core"} = {}) {
     const query = gql(querySource);
 
-
-
-    const client = new ApolloClient({
-        link: new HttpLink({ uri: subgraphUrl, fetch }),
-        cache: new InMemoryCache(),
-    });
+    const client = subgraph === "core" ? getCoreGraphClient(chainId) : subgraph === "price" ? getPriceGraphClient(chainId) : getReferralsGraphClient(chainId)
     const [data, setData] = useState();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -58,7 +54,7 @@ export function useGraph(querySource, { subgraph = null, subgraphUrl = coreSubgr
                 setLoading(false);
             })
             .catch((ex) => {
-                console.warn("Subgraph request failed error: %s subgraphUrl: %s", ex.message, subgraphUrl);
+                console.warn("Subgraph request failed error: %s subgraphUrl: %s", ex.message, subgraph);
                 setError(ex);
                 setLoading(false);
             });
@@ -69,7 +65,7 @@ export function useGraph(querySource, { subgraph = null, subgraphUrl = coreSubgr
 
 
 
-export function useGllData({ from = FROM_DATE_TS, to = NOW_TS, period = "daily", chainName = "bsc" } = {}) {
+export function useGllData({ from = FROM_DATE_TS, to = NOW_TS, period = "daily", chainId = DEFAULT_CHAIN_ID } = {}) {
     const query = `{
     gllStats(
       first: 1000
@@ -84,7 +80,7 @@ export function useGllData({ from = FROM_DATE_TS, to = NOW_TS, period = "daily",
       distributedEth
     }
   }`;
-    let [data, loading, error] = useGraph(query, { chainName });
+    let [data, loading, error] = useGraph(query, { chainId });
 
     let cumulativeDistributedUsdPerGll = 0;
     let cumulativeDistributedEthPerGll = 0;
@@ -160,7 +156,7 @@ export function useGllData({ from = FROM_DATE_TS, to = NOW_TS, period = "daily",
     return [gllChartData, loading, error];
 }
 
-export function useFastPrice({ token, from = FROM_DATE_TS, to = NOW_TS, chainName = "bsc" } = {}) {
+export function useFastPrice({ token, from = FROM_DATE_TS, to = NOW_TS, chainId = DEFAULT_CHAIN_ID } = {}) {
     const timestampProp = "timestamp";
     const tokenLowerCase = token.toLowerCase();
     const query = `{
@@ -176,7 +172,7 @@ export function useFastPrice({ token, from = FROM_DATE_TS, to = NOW_TS, chainNam
             value
           }
     }`;
-    const [graphData, loading, error] = useGraph(query, { chainName, subgraphUrl: process.env.REACT_APP_PRICE_SUBGRAPH });
+    const [graphData, loading, error] = useGraph(query, { chainId, subgraph: "price" });
 
     const data = useMemo(() => {
         if (!graphData) {
@@ -194,7 +190,7 @@ export function useFastPrice({ token, from = FROM_DATE_TS, to = NOW_TS, chainNam
     return [data, loading, error];
 }
 
-export function useHourlyVolumeByToken({ token, from = FROM_DATE_TS, to = NOW_TS, chainName = "bsc" } = {}) {
+export function useHourlyVolumeByToken({ token, from = FROM_DATE_TS, to = NOW_TS, chainId = DEFAULT_CHAIN_ID } = {}) {
     const PROPS = "margin liquidation swap mint burn".split(" ");
     // const PROPS = "margin".split(" ");
     const timestampProp = "timestamp";
@@ -209,7 +205,7 @@ export function useHourlyVolumeByToken({ token, from = FROM_DATE_TS, to = NOW_TS
         ${PROPS.join("\n")}
       }
     }`;
-    const [graphData, loading, error] = useGraph(query, { chainName });
+    const [graphData, loading, error] = useGraph(query, { chainId });
     const [prices] = useFastPrice({ token, from, to });
     const data = useMemo(() => {
         if (!graphData || !prices) {

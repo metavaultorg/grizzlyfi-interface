@@ -1,7 +1,10 @@
+import { BSC, opBNB } from "../config/contracts";
+
 const SECONDS_PER_WEEK = 604800;
 
 const FEES = {
-  5611: []
+  [opBNB]: [],
+  [BSC]: []
 };
 
 export function getFeeHistory(chainId) {

@@ -4,7 +4,7 @@ import RewardRouter from "../../abis/RewardRouterBSC.json";
 import useWeb3Onboard from '../../hooks/useWeb3Onboard';
 import { ethers } from 'ethers';
 import { callContract } from '../../Api';
-import { BSC, getContract, opBNB } from '../../config/contracts';
+import { BSC, getContract } from '../../config/contracts';
 
 export default function ClaimButtonOpBSC({ className = "", token }) {
     const { active, library, account, chainId } = useWeb3Onboard();

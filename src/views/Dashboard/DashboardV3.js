@@ -24,6 +24,8 @@ import {
   today,
   useChainId,
   yesterday,
+  expandDecimals,
+  numberWithCommas,
 } from "../../Helpers";
 import GllManager from "../../abis/GllManager.json";
 import Reader from "../../abis/Reader.json";
@@ -69,7 +71,25 @@ const claimTypes = [
   { id: "usdc", iconPath: "coins/usdc", token: "USDC" },
   { id: "usdt", iconPath: "coins/usdt", token: "USDT" },
 ];
+function getCurrentFeesUsd(tokenAddresses, fees, infoTokens) {
+  if (!fees || !infoTokens) {
+    return bigNumberify(0);
+  }
 
+  let currentFeesUsd = bigNumberify(0);
+  for (let i = 0; i < tokenAddresses.length; i++) {
+    const tokenAddress = tokenAddresses[i];
+    const tokenInfo = infoTokens[tokenAddress];
+    if (!tokenInfo || !tokenInfo.contractMinPrice) {
+      continue;
+    }
+
+    const feeUsd = fees[i].mul(tokenInfo.contractMinPrice).div(expandDecimals(1, tokenInfo.decimals));
+    currentFeesUsd = currentFeesUsd.add(feeUsd);
+  }
+
+  return currentFeesUsd;
+}
 export default function DashboardV3(props) {
   const { connectWallet, savedShowPnlAfterFees, savedIsPnlInLeverage } = props;
   const { active, library, account } = useWeb3Onboard();
@@ -134,7 +154,7 @@ export default function DashboardV3(props) {
     }
   );
   const { data: stakingInfo } = useSWR(
-    [`StakeV2:stakingInfo:${active}`, chainId, rewardReaderAddress, "getStakingInfo", account || PLACEHOLDER_ACCOUNT],
+    chainId === opBNB && [`StakeV2:stakingInfo:${active}`, chainId, rewardReaderAddress, "getStakingInfo", account || PLACEHOLDER_ACCOUNT],
     {
       fetcher: fetcher(library, RewardReader, [rewardTrackersForStakingInfo]),
     }
@@ -160,7 +180,7 @@ export default function DashboardV3(props) {
     nativeTokenPrice
   );
 
-  const totalParams = { from: yesterday(), to: today() };
+  const totalParams = { from: yesterday(), to: today(), chainId };
   const [totalGllData] = useGllData(totalParams);
   const [totalAum, totalAumDelta, totalAumDeltaPercentage] = useMemo(() => {
     if (!totalGllData) {
@@ -207,6 +227,7 @@ export default function DashboardV3(props) {
   const [pendingPositions, setPendingPositions] = useState({});
   const [updatedPositions, setUpdatedPositions] = useState({});
   const whitelistedTokens = getWhitelistedTokens(chainId);
+  const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
   const positionQuery = getPositionQuery(whitelistedTokens, nativeTokenAddress);
   const { data: positionData, error: positionDataError } = useSWR(
     active && [active, chainId, readerAddress, "getPositions", vaultAddress, account],
@@ -219,6 +240,11 @@ export default function DashboardV3(props) {
     }
   );
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
+  const { data: fees } = useSWR([`Dashboard:fees:${active}`, chainId, readerAddress, "getFees", vaultAddress], {
+    dedupingInterval: 30000,
+    fetcher: fetcher(library, Reader, [whitelistedTokenAddresses]),
+});
+
   const { positions, positionsMap } = getPositions(
     chainId,
     positionQuery,
@@ -230,6 +256,12 @@ export default function DashboardV3(props) {
     pendingPositions,
     updatedPositions
   );
+  const currentFeesUsd = getCurrentFeesUsd(whitelistedTokenAddresses, fees, infoTokens);
+
+  const shouldIncludeCurrrentFees = true;
+  let totalFeesDistributed = shouldIncludeCurrrentFees
+    ? parseFloat(bigNumberify(formatAmount(currentFeesUsd, USD_DECIMALS - 2, 0, false)).toNumber()) / 100
+    : 0;
 
   const totalPnl = useMemo(() => {
     const positionsPnl = positions.reduce(
@@ -444,7 +476,7 @@ export default function DashboardV3(props) {
                   <APRLabel
                     usePercentage={false}
                     tokenDecimals={18}
-                    chainId={opBNB}
+                    chainId={chainId}
                     label="feeGllTrackerRewards"
                     key="BSC"
                   />
@@ -650,7 +682,7 @@ export default function DashboardV3(props) {
               value={`${formatKeyAmount(processedData, "gllAprTotal", 2, 2, true)}%`}
               icon={IconPercentage}
             />
-            <ItemCard label="GLL 24h Rewards" value="$..." icon={IconClaim} />
+            <ItemCard label="GLL Weekly Rewards" value={"$"+numberWithCommas(totalFeesDistributed.toFixed(0))} icon={IconClaim} />
           </div>
           <div style={{ maxWidth: 500, margin: "auto", marginTop: 80, position: "relative" }}>
             <div

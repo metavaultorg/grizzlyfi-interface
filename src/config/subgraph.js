@@ -1,22 +1,22 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { opBNB, BSC, isSupportedChain } from "./chains";
 
-export const priceGraphClient = {
+const priceGraphClient = {
   [opBNB]: createClient(process.env.REACT_APP_OPBNB_PRICE_SUBGRAPH),
   [BSC]: createClient(process.env.REACT_APP_BSC_PRICE_SUBGRAPH),
 };
 
-export const coreGraphClient = {
+const coreGraphClient = {
   [opBNB]: createClient(process.env.REACT_APP_OPBNB_CORE_SUBGRAPH),
   [BSC]: createClient(process.env.REACT_APP_BSC_CORE_SUBGRAPH),
 };
 
-export const positionsGraphClient = {
+const positionsGraphClient = {
   [opBNB]: createClient(process.env.REACT_APP_OPBNB_POSITIONS_SUBGRAPH),
   [BSC]: createClient(process.env.REACT_APP_BSC_POSITIONS_SUBGRAPH),
 };
 
-export const referralsGraphClient = {
+const referralsGraphClient = {
   [opBNB]: createClient(process.env.REACT_APP_OPBNB_REFERRAL_SUBGRAPH),
   [BSC]: createClient(process.env.REACT_APP_BSC_REFERRAL_SUBGRAPH),
 };

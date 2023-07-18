@@ -90,7 +90,7 @@ import { initWeb3Onboard } from "./services";
 
 import useWeb3Onboard from "./hooks/useWeb3Onboard";
 import { getWsUrl, opBNB ,BSC, getChainName } from "./config/chains";
-import { IS_PNL_IN_LEVERAGE_KEY, REFERRAL_CODE_KEY, REFERRAL_CODE_QUERY_PARAMS, SHOULD_SHOW_POSITION_LINES_KEY, SHOW_PNL_AFTER_FEES_KEY, SLIPPAGE_BPS_KEY } from "./config/localStorage";
+import { CURRENT_PROVIDER_LOCALSTORAGE_KEY, IS_PNL_IN_LEVERAGE_KEY, REFERRAL_CODE_KEY, REFERRAL_CODE_QUERY_PARAMS, SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY, SHOULD_SHOW_POSITION_LINES_KEY, SHOW_PNL_AFTER_FEES_KEY, SLIPPAGE_BPS_KEY } from "./config/localStorage";
 import { getContract } from "./config/contracts";
 
 if ("ethereum" in window) {
@@ -215,20 +215,20 @@ function AppHeaderUser({
 
   const [{ wallet }, connect, disconnect] = useConnectWallet();
 
-  const showSelector = false;
+  const showSelector = true;
   const networkOptions = [
     {
       label: "opBNB Network",
       network: "opBNB",
       value: opBNB,
-      icon: "ic_bsc_24.svg",
+      icon: "ic_eth_24.svg",
       color: "#2e2f5a",
     },
     {
       label: "Bsc Network",
-      network: "Bsc",
+      network: "BSC",
       value: BSC,
-      icon: "ic_bsc_24.svg",
+      icon: "ic_btc_24.svg",
       color: "#2e2f5a",
     },
   ];
@@ -377,13 +377,6 @@ function FullApp() {
     localStorage.removeItem(SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY);
     localStorage.removeItem(CURRENT_PROVIDER_LOCALSTORAGE_KEY);
     setIsSettingsVisible(false);
-  };
-
-  const attemptActivateWallet = (providerName) => {
-    localStorage.setItem(SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY, true);
-    localStorage.setItem(CURRENT_PROVIDER_LOCALSTORAGE_KEY, providerName);
-    activateInjectedProvider(providerName);
-    connectInjectedWallet();
   };
 
   const [walletModalVisible, setWalletModalVisible] = useState();
