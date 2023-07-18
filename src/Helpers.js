@@ -17,7 +17,7 @@ import useWeb3Onboard from "./hooks/useWeb3Onboard";
 import IconSuccess from './assets/icons/icon-success.svg'
 import IconError from './assets/icons/icon-failed.svg'
 import { getImageUrl } from "./cloudinary/getImageUrl";
-import { CHAIN_ID, DEFAULT_CHAIN_ID, FEES, getChainName, getExplorerUrl, getFallbackRpcUrl, getRpcUrl, isSupportedChain } from "./config/chains";
+import { CHAIN_ID, DEFAULT_CHAIN_ID, FEES, GAS_PRICE_ADJUSTMENT_MAP, getChainName, getExplorerUrl, getFallbackRpcUrl, getRpcUrl, isSupportedChain, MAX_GAS_PRICE_MAP } from "./config/chains";
 import { getContract } from "./config/contracts";
 
 
@@ -351,7 +351,7 @@ export function getFeeBasisPoints(
   return feeBasisPoints.add(taxBps).toNumber();
 }
 
-export function getBuyGllToAmount(fromAmount, swapTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
+export function getBuyGllToAmount(chainId,fromAmount, swapTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0), feeBasisPoints: 0 };
   if (!fromAmount || !swapTokenAddress || !infoTokens || !gllPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
@@ -443,7 +443,7 @@ export function getBuyGllFromAmount(toAmount, fromTokenAddress, infoTokens, gllP
   return { amount: fromAmount, feeBasisPoints };
 }
 
-export function getSellGllToAmount(toAmount, fromTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
+export function getSellGllToAmount(chaindId,toAmount, fromTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0) };
   if (!toAmount || !fromTokenAddress || !infoTokens || !gllPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;

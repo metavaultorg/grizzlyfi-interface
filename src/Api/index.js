@@ -37,7 +37,7 @@ import { groupBy } from "lodash";
 import { getAddress } from "ethers/lib/utils";
 import { getContract } from "../config/contracts";
 import { getCoreGraphClient, getPositionsGraphClient } from "../config/subgraph";
-import { getConstant, getGasMultiplier, getHighExecutionFee, getServerUrl, opBNB } from "../config/chains";
+import { getConstant, getExplorerUrl, getGasMultiplier, getHighExecutionFee, getServerUrl, opBNB } from "../config/chains";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;

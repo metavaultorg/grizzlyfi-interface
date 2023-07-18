@@ -277,7 +277,9 @@ export default function GllSwapBox(props) {
         }
 
         if (isBuying) {
+          console.log("chainId",chainId);
           const { amount: nextAmount, feeBasisPoints: feeBps } = getBuyGllToAmount(
+            chainId,
             swapAmount,
             swapTokenAddress,
             infoTokens,
@@ -290,6 +292,7 @@ export default function GllSwapBox(props) {
           setFeeBasisPoints(feeBps);
         } else {
           const { amount: nextAmount, feeBasisPoints: feeBps } = getSellGllFromAmount(
+            chainId,
             swapAmount,
             swapTokenAddress,
             infoTokens,
@@ -314,6 +317,7 @@ export default function GllSwapBox(props) {
       if (swapToken) {
         if (isBuying) {
           const { amount: nextAmount, feeBasisPoints: feeBps } = getBuyGllFromAmount(
+            chainId,
             gllAmount,
             swapTokenAddress,
             infoTokens,
@@ -326,6 +330,7 @@ export default function GllSwapBox(props) {
           setFeeBasisPoints(feeBps);
         } else {
           const { amount: nextAmount, feeBasisPoints: feeBps } = getSellGllToAmount(
+            chainId,
             gllAmount,
             swapTokenAddress,
             infoTokens,

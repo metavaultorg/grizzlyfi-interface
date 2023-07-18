@@ -8,7 +8,7 @@ const { parseEther } = ethers.utils;
 export const opBNB = 5611;
 export const BSC = 56;
 
-export const DEFAULT_CHAIN_ID = opBNB;
+export const DEFAULT_CHAIN_ID = BSC;
 export const CHAIN_ID = DEFAULT_CHAIN_ID;
 
 export const SUPPORTED_CHAIN_IDS = [opBNB, BSC];
@@ -93,7 +93,7 @@ const constants = {
 };
 
 export const ICONLINKS = {
-  opBNB: {
+  [opBNB]: {
     GLL: {
       link: "https://opbnbscan.com/address/0x9F4f8bc00F48663B7C204c96b932C29ccc43A2E8",
     },
@@ -118,7 +118,7 @@ export const ICONLINKS = {
       link: "https://opbnbscan.com/address/0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
     },
   },
-  BSC: {
+  [BSC]: {
     GLL: {
       link: "https://bscscan.com/address/0x9F4f8bc00F48663B7C204c96b932C29ccc43A2E8",
     },
