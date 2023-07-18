@@ -277,7 +277,6 @@ export default function GllSwapBox(props) {
         }
 
         if (isBuying) {
-          console.log("chainId",chainId);
           const { amount: nextAmount, feeBasisPoints: feeBps } = getBuyGllToAmount(
             chainId,
             swapAmount,
@@ -433,7 +432,7 @@ export default function GllSwapBox(props) {
     }
     const [error, modal] = getError();
     if (error) {
-      console.error(error);
+      // console.error(error);
     }
     if (error && !modal) {
       return false;
@@ -460,7 +459,7 @@ export default function GllSwapBox(props) {
     }
     const [error, modal] = getError();
     if (error) {
-      console.error(error);
+      // console.error(error);
     }
 
     if (error && !modal) {

@@ -15,8 +15,10 @@ import IconLong from "../../assets/icons/icon-long.svg";
 import IconShort from "../../assets/icons/icon-short.svg";
 import { getImageUrl } from "../../cloudinary/getImageUrl";
 import { sortArr } from "./util";
+import useWeb3Onboard from "../../hooks/useWeb3Onboard";
 
 export default function OpenedPositions(props) {
+  const { chainId } = useWeb3Onboard();
   const history = useHistory();
   const { savedIsPnlInLeverage, savedShowPnlAfterFees, tokenPairMarketList, positions } = props;
   const [sorter, setSorter] = useState({ sortBy: "change", isAsc: true });

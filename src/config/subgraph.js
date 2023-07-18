@@ -1,5 +1,5 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-import { opBNB, BSC } from "./chains";
+import { opBNB, BSC, isSupportedChain } from "./chains";
 
 export const priceGraphClient = {
   [opBNB]: createClient(process.env.REACT_APP_OPBNB_PRICE_SUBGRAPH),

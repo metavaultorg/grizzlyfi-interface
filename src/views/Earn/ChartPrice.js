@@ -61,7 +61,7 @@ export default function ChartPrice() {
         if (width > 1300) {
             const leftWidth = document.getElementsByClassName('Earn-content')[0].clientWidth
             setChartWidth(leftWidth - 440 - 64)
-            console.log(leftWidth - 440 - 64, 'useeffct');
+            // console.log(leftWidth - 440 - 64, 'useeffct');
         } else {
             setChartWidth('100%')
         }

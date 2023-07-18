@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import useSWR from "swr";
-import { getContract } from "../../config/contracts";
+import { BSC, getContract } from "../../config/contracts";
 import { useInfoTokens } from "../../Api";
 import {
   BASIS_POINTS_DIVISOR,
@@ -29,7 +29,7 @@ import "../Exchange/Exchange.css";
 import ChartPrice from "./ChartPrice";
 import "./Earn.css";
 import GllSwapBox from "./GllSwapBox";
-import ClaimButton from "../../components/ClaimButton/ClaimButton";
+import ClaimButtonOpBNB from "../../components/ClaimButton/ClaimButtonOpBNB";
 import Earnings from './Earnings'
 import { opBNB } from "../../config/chains";
 
@@ -177,9 +177,9 @@ export default function Earn(props) {
                 />
               }
               icon={IconClaim}
-              // buttonEle={
-              //   <ClaimButton></ClaimButton>
-              // }
+              buttonEle={
+                <ClaimButtonOpBNB></ClaimButtonOpBNB>
+              }
             />
           </div>
           <ChartPrice />
@@ -190,7 +190,8 @@ export default function Earn(props) {
           </div>
         </div>
       </div>
-      <Earnings />
+      {chainId === BSC && <Earnings {...props} />}
+      
       <div className="earn-statistics">
         <div className="inner-card-title">GLL Statistics</div>
         <div className="list-table">
