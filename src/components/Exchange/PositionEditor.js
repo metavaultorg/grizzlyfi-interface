@@ -146,6 +146,7 @@ export default function PositionEditor(props) {
         collateralDelta = collateralDelta.mul(BASIS_POINTS_DIVISOR - DEPOSIT_FEE).div(BASIS_POINTS_DIVISOR);
       }
       nextLeverage = getLeverage({
+        chainId: chainId,
         size: position.size,
         collateral: position.collateral,
         collateralDelta,
@@ -157,6 +158,7 @@ export default function PositionEditor(props) {
         includeDelta: savedIsPnlInLeverage,
       });
       nextLeverageExcludingPnl = getLeverage({
+        chainId: chainId,
         size: position.size,
         collateral: position.collateral,
         collateralDelta,

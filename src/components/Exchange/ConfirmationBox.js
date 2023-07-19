@@ -37,7 +37,7 @@ import TokenSelector from "./TokenSelector";
 import { getSwapLimits, getTokenAmount } from "./PositionSeller";
 import IconNext from '../../assets/icons/icon-next-left.svg'
 import { getContract } from "../../config/contracts";
-import { SLIPPAGE_BPS_KEY } from "../../config/localStorage";
+import { CLOSE_POSITION_RECEIVE_TOKEN_KEY, SLIPPAGE_BPS_KEY } from "../../config/localStorage";
 import { getConstant } from "../../config/chains";
 
 const HIGH_SPREAD_THRESHOLD = expandDecimals(1, USD_DECIMALS).div(100); // 1%;

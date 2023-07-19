@@ -434,6 +434,7 @@ export default function PositionSeller(props) {
     if (fromAmount) {
       if (!isClosing && !keepLeverage) {
         nextLeverage = getLeverage({
+          chainId: chainId,
           size: position.size,
           sizeDelta,
           collateral: position.collateral,

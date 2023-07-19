@@ -65,24 +65,6 @@ const TOKENS = {
   [BSC] : [
     // bsc
     {
-      name: "Bitcoin",
-      symbol: "BTC",
-      address: "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c",
-      coingeckoUrl: "https://www.coingecko.com/en/coins/bitcoin",
-      decimals: 8,
-      isShortable: true,
-      displayDecimals:2
-    },
-    {
-      name: "Ethereum",
-      symbol: "ETH",
-      address: "0x2170Ed0880ac9A755fd29B2688956BD959F933F8",
-      coingeckoUrl: "https://www.coingecko.com/en/coins/ethereum",
-      decimals: 18,
-      isShortable: true,
-      displayDecimals:2
-    },
-    {
       name: "BNB",
       symbol: "BNB",
       decimals: 18,
@@ -103,11 +85,30 @@ const TOKENS = {
       displayDecimals:3
     },
     {
+      name: "Ethereum",
+      symbol: "ETH",
+      address: "0x2170Ed0880ac9A755fd29B2688956BD959F933F8",
+      coingeckoUrl: "https://www.coingecko.com/en/coins/ethereum",
+      decimals: 18,
+      isShortable: true,
+      displayDecimals:2
+    },
+    {
+      name: "Bitcoin",
+      symbol: "BTC",
+      address: "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c",
+      coingeckoUrl: "https://www.coingecko.com/en/coins/bitcoin",
+      decimals: 18,
+      isShortable: true,
+      displayDecimals:2
+    },
+
+    {
       name: "USDC",
       symbol: "USDC",
       address: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
       coingeckoUrl: "https://www.coingecko.com/en/coins/usd-coin",
-      decimals: 6,
+      decimals: 18,
       isStable: true,
       displayDecimals:4
     },
@@ -116,7 +117,7 @@ const TOKENS = {
       symbol: "USDT",
       address: "0x55d398326f99059fF775485246999027B3197955",
       coingeckoUrl: "https://www.coingecko.com/en/coins/tether",
-      decimals: 6,
+      decimals: 18,
       isStable: true,
       displayDecimals:4
     },

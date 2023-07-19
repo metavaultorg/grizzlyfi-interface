@@ -804,6 +804,7 @@ export function getDeltaStr({ delta, deltaPercentage, hasProfit }) {
 }
 
 export function getLeverage({
+  chainId,
   size,
   sizeDelta,
   increaseSize,
