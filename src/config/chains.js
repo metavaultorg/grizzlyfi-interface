@@ -16,7 +16,7 @@ export const SUPPORTED_CHAIN_IDS = [opBNB, BSC];
 
 export const CHAIN_NAMES_MAP = {
   [opBNB]: "opBNB",
-  [BSC]: "BSC",
+  [BSC]: "BNB",
 };
 
 export const GAS_PRICE_ADJUSTMENT_MAP = {

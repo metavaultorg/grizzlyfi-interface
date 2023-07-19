@@ -219,7 +219,7 @@ function AppHeaderUser({
   const networkOptions = [
     {
       label: "BNB Network",
-      network: "Bsc",
+      network: "BNB",
       value: BSC,
       icon: "ic_bsc_32.svg",
       color: "#2e2f5a",
