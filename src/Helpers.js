@@ -18,6 +18,7 @@ import IconSuccess from './assets/icons/icon-success.svg'
 import IconError from './assets/icons/icon-failed.svg'
 import { getImageUrl } from "./cloudinary/getImageUrl";
 import { CHAIN_ID, DEFAULT_CHAIN_ID, FEES, getChainName, getExplorerUrl, getFallbackRpcUrl, getRpcUrl, isSupportedChain, NETWORK_METADATA } from "./config/chains";
+import { SELECTED_NETWORK_LOCAL_STORAGE_KEY } from "./config/localStorage";
 import { getContract } from "./config/contracts";
 
 
