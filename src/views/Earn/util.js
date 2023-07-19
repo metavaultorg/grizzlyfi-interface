@@ -75,13 +75,13 @@ export const compactNumber = value => {
     if (abs >= 1e3) {
         return `${(value / 1e3).toFixed(abs < 1e4 ? 2 : 1)}K`
     }
-    return `${value.toFixed(2)}`
+    return `${value.toFixed(3)}`
 }
 export const yaxisFormatterNumber = value => {
     return compactNumber(value)
 }
 export const tooltipFormatterNumber = (value, name, item) => {
-    return formatNumber(value)
+    return compactNumber(value)
 }
 
 

@@ -44,7 +44,7 @@ export default function ChartPrice() {
             return (
 
                 <div style={{ textAlign: 'right' }} className="font-number">
-                    <h3>${lastPrice.toFixed(2)}</h3>
+                    <h3>${lastPrice.toFixed(3)}</h3>
                     <div className={cx({
                         positive:change > 0,
                         negative: change < 0,
@@ -52,7 +52,7 @@ export default function ChartPrice() {
                     })} style={{fontSize:16,fontWeight:'normal',display:'flex',alignItems:'center',gap:4}}>
                         <img src={change > 0 ? UpChartArrow : DownChartArrow} alt="icon" />
                         <div>{Math.abs(change)}%</div>
-                        <div>(${(lastPrice - fristPrice).toFixed(2)})</div>
+                        <div>(${(lastPrice - fristPrice).toFixed(3)})</div>
                     </div>
                 </div>
 

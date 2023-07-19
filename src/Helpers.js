@@ -383,7 +383,7 @@ export function getBuyGllToAmount(chainId,fromAmount, swapTokenAddress, infoToke
   return { amount: gllAmount, feeBasisPoints };
 }
 
-export function getSellGllFromAmount(chaindId, toAmount, swapTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
+export function getSellGllFromAmount(chainId, toAmount, swapTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0), feeBasisPoints: 0 };
   if (!toAmount || !swapTokenAddress || !infoTokens || !gllPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
@@ -444,7 +444,7 @@ export function getBuyGllFromAmount(chainId, toAmount, fromTokenAddress, infoTok
   return { amount: fromAmount, feeBasisPoints };
 }
 
-export function getSellGllToAmount(chaindId, toAmount, fromTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
+export function getSellGllToAmount(chainId, toAmount, fromTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0) };
   if (!toAmount || !fromTokenAddress || !infoTokens || !gllPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;

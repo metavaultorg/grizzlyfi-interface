@@ -60,9 +60,13 @@ export default function Earn(props) {
   const usdgAddress = getContract(chainId, "USDG");
   const tokensForBalanceAndSupplyQuery = [feeGllTrackerAddress, usdgAddress];
   const { AddressZero } = ethers.constants;
-
-
-  const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
+  
+  const tokens = getTokens(chainId);
+  const tokenAddresses = tokens.map((token) => token.address);
+  const { data: tokenBalances } = useSWR([active, chainId, readerAddress, "getTokenBalances", account], {
+    fetcher: fetcher(library, Reader, [tokenAddresses]),
+  });
+  const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, undefined, undefined);
 
   const { data: balancesAndSupplies } = useSWR(
     [
