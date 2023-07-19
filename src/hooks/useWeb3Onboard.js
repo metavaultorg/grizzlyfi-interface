@@ -25,9 +25,11 @@ export default function useWeb3Onboard() {
       if (SUPPORTED_CHAIN_IDS.includes(cId)) {
         setWrongChain(false);
         setChainId(cId);
+        console.log("SUPPORTED_CHAIN_IDS", connectedChain);
         localStorage.setItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY, cId.toString())
       } else {
         // not supported chain == wrong chain
+        console.log("not SUPPORTED_CHAIN_IDS", DEFAULT_CHAIN_ID);
         localStorage.setItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY, DEFAULT_CHAIN_ID.toString())
         setWrongChain(true);
       }
@@ -40,16 +42,19 @@ export default function useWeb3Onboard() {
       setAccount(account);
       if(!wrongChain) {
         setActive(true);
-        localStorage.setItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY, chainId.toString())
+        console.log("not wrongChain", connectedChain);
+        localStorage.setItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY, parseInt(connectedChain.id, 16).toString())
       } else {
         setActive(false);
         // setChain({chainId: DEFAULT_CHAIN_ID});
+        console.log("wrongChain", DEFAULT_CHAIN_ID);
         localStorage.setItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY, DEFAULT_CHAIN_ID.toString())
       }   
     } else {
       setActive(false);
       setAccount(null);
-      localStorage.setItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY, DEFAULT_CHAIN_ID.toString())
+        console.log("not provider", DEFAULT_CHAIN_ID);
+        localStorage.setItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY, DEFAULT_CHAIN_ID.toString())
     }
   }, [wallet,wrongChain]);
 
