@@ -9,7 +9,7 @@ export default function EarningsCard({icon,tokenName,tokenValue,UsdValue,action}
       </div>
       <div>
         <div>
-          <div className='tokenValue'>{tokenValue}{tokenName}</div>
+          <div className='tokenValue'>{tokenValue}</div>
           <div className='usdValue'>~${UsdValue}</div>
         </div>
         <div className='action'>
