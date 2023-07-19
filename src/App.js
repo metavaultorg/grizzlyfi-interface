@@ -89,7 +89,7 @@ import { useConnectWallet, Web3OnboardProvider } from "@web3-onboard/react";
 import { initWeb3Onboard } from "./services";
 
 import useWeb3Onboard from "./hooks/useWeb3Onboard";
-import { getWsUrl, opBNB ,BSC, getChainName } from "./config/chains";
+import { getWsUrl, opBNB ,BSC, getChainName, getExplorerUrl } from "./config/chains";
 import { CURRENT_PROVIDER_LOCALSTORAGE_KEY, IS_PNL_IN_LEVERAGE_KEY, REFERRAL_CODE_KEY, REFERRAL_CODE_QUERY_PARAMS, SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY, SHOULD_SHOW_POSITION_LINES_KEY, SHOW_PNL_AFTER_FEES_KEY, SLIPPAGE_BPS_KEY } from "./config/localStorage";
 import { getContract } from "./config/contracts";
 
