@@ -84,7 +84,7 @@ import swapBallImg from "../../assets/icons/icon-swap.svg";
 import swapImg from "../../assets/icons/swap.svg";
 import Trailer from "../Trailer/Trailer";
 import { getContract } from "../../config/contracts";
-import { FEES, getConstant } from "../../config/chains";
+import { FEES, getConstant, isSupportedChain } from "../../config/chains";
 import { REFERRAL_CODE_KEY } from "../../config/localStorage";
 
 const SWAP_ICONS = {

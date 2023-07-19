@@ -17,7 +17,7 @@ import useWeb3Onboard from "./hooks/useWeb3Onboard";
 import IconSuccess from './assets/icons/icon-success.svg'
 import IconError from './assets/icons/icon-failed.svg'
 import { getImageUrl } from "./cloudinary/getImageUrl";
-import { CHAIN_ID, DEFAULT_CHAIN_ID, FEES, getChainName, getExplorerUrl, getFallbackRpcUrl, getRpcUrl, isSupportedChain } from "./config/chains";
+import { CHAIN_ID, DEFAULT_CHAIN_ID, FEES, getChainName, getExplorerUrl, getFallbackRpcUrl, getRpcUrl, isSupportedChain, NETWORK_METADATA } from "./config/chains";
 import { getContract } from "./config/contracts";
 
 
