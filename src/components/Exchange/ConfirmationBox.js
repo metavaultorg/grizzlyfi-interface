@@ -867,7 +867,7 @@ export default function ConfirmationBox(props) {
           <button
             style={{ }}
             onClick={onConfirmationClick}
-            className={cx("App-cta Confirmation-box-button text-uppercase", isLong?"positive":isShort?"negative":"")}
+            className={cx("App-cta Confirmation-box-button text-uppercase", isLong?"longbtn":isShort?"shortbtn":"")}
             disabled={!isPrimaryEnabled()}
           >
             {getPrimaryText()}
