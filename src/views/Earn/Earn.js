@@ -1,15 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import useSWR from "swr";
-import { getContract } from "../../config/contracts";
-import { useInfoTokens } from "../../Api";
+import { BSC, getContract, opBNB } from "../../config/contracts";
+import { useAllTokensPerInterval, useInfoTokens } from "../../Api";
 import {
   BASIS_POINTS_DIVISOR,
+  GLL_DECIMALS,
+  PLACEHOLDER_ACCOUNT,
+  SECONDS_PER_YEAR,
+  USDG_DECIMALS,
   USD_DECIMALS,
   bigNumberify,
+  expandDecimals,
   fetcher,
   formatAmount,
   formatKeyAmount,
+  getStakingData,
+  getTokenInfo,
   useChainId,
 } from "../../Helpers";
 import Vault from "../../abis/Vault.json";
@@ -22,37 +29,57 @@ import AUMLabel from "../../components/AUMLabel/AUMLabel";
 import TextBadge from "../../components/Common/TextBadge";
 import ItemCard from "../../components/ItemCard/ItemCard";
 import TooltipComponent from "../../components/Tooltip/Tooltip";
-import { getWhitelistedTokens } from "../../data/Tokens";
+import { getTokens, getWhitelistedTokens } from "../../data/Tokens";
 import useWeb3Onboard from "../../hooks/useWeb3Onboard";
 import AssetDropdown from "../Dashboard/AssetDropdown";
 import "../Exchange/Exchange.css";
 import ChartPrice from "./ChartPrice";
 import "./Earn.css";
 import GllSwapBox from "./GllSwapBox";
-import ClaimButton from "../../components/ClaimButton/ClaimButton";
+import ClaimButtonOpBNB from "../../components/ClaimButton/ClaimButtonOpBNB";
 import Earnings from './Earnings'
-import { opBNB } from "../../config/chains";
+import { useCoingeckoCurrentPrice } from "../../hooks/useCoingeckoPrices";
+import RewardReader from "../../abis/RewardReader.json";
+import Reader from "../../abis/Reader.json";
+import GllManager from "../../abis/GllManager.json";
+import RewardTracker from "../../abis/RewardTracker.json";
+import { ethers } from "ethers";
 
 export default function Earn(props) {
   const history = useHistory();
   const [isBuying, setIsBuying] = useState(true);
-  const { active, library } = useWeb3Onboard();
+  const { active, library, account } = useWeb3Onboard();
   const { chainId } = useChainId();
-
+  const gllManagerAddress = getContract(chainId, "GllManager");
+  const readerAddress = getContract(chainId, "Reader");
+  const rewardReaderAddress = getContract(chainId, "RewardReader");
+  const feeGllTrackerAddress = getContract(chainId, "FeeGllTracker");
+  const vaultAddress = getContract(chainId, "Vault");
   const whitelistedTokens = getWhitelistedTokens(chainId);
   const tokenList = whitelistedTokens.filter((t) => !t.isWrapped);
+  const usdgAddress = getContract(chainId, "USDG");
+  const tokensForBalanceAndSupplyQuery = [feeGllTrackerAddress, usdgAddress];
+  const { AddressZero } = ethers.constants;
+
+
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
 
-  useEffect(() => {
-    const hash = history.location.hash.replace("#", "");
-    const buying = hash === "redeem" ? false : true;
-    setIsBuying(buying);
-  }, [history.location.hash]);
+  const { data: balancesAndSupplies } = useSWR(
+    [
+      `Earn:getTokenBalancesWithSupplies:${active}`,
+      chainId,
+      readerAddress,
+      "getTokenBalancesWithSupplies",
+      account || PLACEHOLDER_ACCOUNT,
+    ],
+    {
+      fetcher: fetcher(library, Reader, [tokensForBalanceAndSupplyQuery]),
+    }
+  );
 
-  const vaultAddress = getContract(chainId, "Vault");
 
   const { data: totalTokenWeights } = useSWR(
-    [`GllSwap:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
+    [`Earn:totalTokenWeights:${active}`, chainId, vaultAddress, "totalTokenWeights"],
     {
       fetcher: fetcher(library, Vault),
     }
@@ -140,6 +167,97 @@ export default function Earn(props) {
       />
     );
   };
+  // @ts-ignore
+  const nativeToken = getTokenInfo(infoTokens, AddressZero);
+
+  const ghnyPrice = useCoingeckoCurrentPrice("GHNY")
+  const [allTokensPerInterval,] = useAllTokensPerInterval(library, chainId)
+  const gllSupply = balancesAndSupplies ? balancesAndSupplies[1] : bigNumberify(0);
+
+  const { data: aums } = useSWR([`Earn:getAums:${active}`, chainId, gllManagerAddress, "getAums"], {
+    fetcher: fetcher(library, GllManager),
+  });
+  const { data: gllBalance } = useSWR(
+    [`Earn:gllBalance:${active}`, chainId, feeGllTrackerAddress, "stakedAmounts", account || PLACEHOLDER_ACCOUNT],
+    {
+      fetcher: fetcher(library, RewardTracker),
+    }
+  );
+  let aum;
+  if (aums && aums.length > 0) {
+    aum = isBuying ? aums[0] : aums[1];
+  }
+  const gllPrice =
+    aum && aum.gt(0) && gllSupply.gt(0)
+      ? aum.mul(expandDecimals(1, GLL_DECIMALS)).div(gllSupply)
+      : expandDecimals(1, USD_DECIMALS);
+  let gllBalanceUsd;
+  if (gllBalance) {
+    gllBalanceUsd = gllBalance.mul(gllPrice).div(expandDecimals(1, GLL_DECIMALS));
+  }
+  const gllSupplyUsd = gllSupply.mul(gllPrice).div(expandDecimals(1, GLL_DECIMALS));
+  const rewardTrackersForStakingInfo = [feeGllTrackerAddress];
+  const { data: stakingInfo } = useSWR(
+    chainId === opBNB && [`Earn:stakingInfo:${active}`, chainId, rewardReaderAddress, "getStakingInfo", account || PLACEHOLDER_ACCOUNT],
+    {
+      fetcher: fetcher(library, RewardReader, [rewardTrackersForStakingInfo]),
+    }
+  );
+  console.log("stakingInfo", stakingInfo);
+  let totalApr = useMemo(() => {
+    if (chainId === opBNB) {
+      const stakingData = getStakingData(stakingInfo);
+
+      let feeGllTrackerAnnualRewardsUsd;
+      let feeGllTrackerApr;
+      if (
+        stakingData &&
+        stakingData.feeGllTracker &&
+        stakingData.feeGllTracker.tokensPerInterval &&
+        nativeToken &&
+        nativeToken.minPrice &&
+        gllSupplyUsd &&
+        gllSupplyUsd.gt(0)
+      ) {
+        feeGllTrackerAnnualRewardsUsd = stakingData.feeGllTracker.tokensPerInterval
+          .mul(SECONDS_PER_YEAR)
+          .mul(nativeToken.minPrice)
+          .div(expandDecimals(1, 18));
+        feeGllTrackerApr = feeGllTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(gllSupplyUsd);
+        return feeGllTrackerApr.toNumber() / 100;
+      }
+    } else {
+      let annualRewardsInUsd = bigNumberify(0);
+      if (!Array.isArray(allTokensPerInterval) && allTokensPerInterval.length === 0) return;
+      if (gllSupply.eq(0)) return;
+      for (let i = 0; i < allTokensPerInterval.length; i++) {
+        const [tokenAddress, tokensPerInterval] = allTokensPerInterval[i];
+        let tokenPrice = bigNumberify(0)
+        let tokenDecimals = 18;
+        if (tokenAddress === getContract(chainId, "GHNY")) {
+          tokenPrice = ghnyPrice;
+        } else {
+          const token = infoTokens[tokenAddress];
+          if (token && token.maxPrice) {
+            tokenPrice = token.maxPrice;
+            tokenDecimals = token.decimals
+          }
+        }
+
+        const tokenAnnualRewardsInUsd = tokenPrice.mul(tokensPerInterval).mul(86400).mul(365).div(expandDecimals(1, 30)).div(expandDecimals(1, tokenDecimals))
+        annualRewardsInUsd = annualRewardsInUsd.add(tokenAnnualRewardsInUsd);
+      }
+      const apr = annualRewardsInUsd.mul(10000).mul(expandDecimals(1, USD_DECIMALS)).div(gllPrice).div(gllSupply.div(expandDecimals(1, USDG_DECIMALS)))
+      return apr.toNumber() / 100;
+    }
+    return 0
+  }, [allTokensPerInterval, ghnyPrice, infoTokens, gllSupply, gllPrice, chainId])
+
+  useEffect(() => {
+    const hash = history.location.hash.replace("#", "");
+    const buying = hash === "redeem" ? false : true;
+    setIsBuying(buying);
+  }, [history.location.hash]);
 
   return (
     <div className="Earn  page-layout">
@@ -160,7 +278,7 @@ export default function Earn(props) {
             <ItemCard
               // style={{ minWidth: 218 }}
               label="APR"
-              value={<APRLabel chainId={opBNB} label="gllAprTotal" key="BSC" />}
+              value={totalApr}
               icon={IconPercentage}
             />
             <ItemCard /* style={{ minWidth: 298 }} */ label="Assets Under Management" value={<AUMLabel />} icon={IconMoney} />
@@ -171,26 +289,26 @@ export default function Earn(props) {
                 <APRLabel
                   usePercentage={false}
                   tokenDecimals={18}
-                  chainId={opBNB}
+                  chainId={chainId}
                   label="feeGllTrackerRewards"
-                  key="BSC"
                 />
               }
               icon={IconClaim}
-              // buttonEle={
-              //   <ClaimButton></ClaimButton>
-              // }
+              buttonEle={
+                <ClaimButtonOpBNB></ClaimButtonOpBNB>
+              }
             />
           </div>
           <ChartPrice />
         </div>
         <div className="Earn-right">
           <div className="Exchange-swap-box">
-            <GllSwapBox {...props} isBuying={isBuying} setIsBuying={setIsBuying} getWeightText={getWeightText} />
+            <GllSwapBox {...props} isBuying={isBuying} setIsBuying={setIsBuying} getWeightText={getWeightText} gllPrice={gllPrice} infoTokens={infoTokens} gllBalance={gllBalance} />
           </div>
         </div>
       </div>
-      <Earnings />
+      {chainId === BSC && <Earnings {...props} />}
+
       <div className="earn-statistics">
         <div className="inner-card-title">GLL Statistics</div>
         <div className="list-table">
@@ -232,7 +350,7 @@ export default function Earn(props) {
                       <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                         <img
                           style={{ objectFit: "contain" }}
-                          src={tokenImage || tokenImage.default}
+                          src={tokenImage}
                           alt={token.symbol}
                           width={32}
                           height={32}
@@ -294,7 +412,7 @@ export default function Earn(props) {
                   <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                     <img
                       style={{ objectFit: "contain" }}
-                      src={tokenImage || tokenImage.default}
+                      src={tokenImage}
                       alt={token.symbol}
                       width={32}
                       height={32}

@@ -10,7 +10,7 @@ import Router from "../abis/Router.json";
 import VaultReader from "../abis/VaultReader.json";
 import ReferralStorage from "../abis/ReferralStorage.json";
 import PositionRouter from "../abis/PositionRouter.json";
-
+import FeeGllDistributor from "../abis/FeeGllDistributor.json";
 import {
   bigNumberify,
   setGasPrice,
@@ -35,9 +35,9 @@ import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Token
 
 import { groupBy } from "lodash";
 import { getAddress } from "ethers/lib/utils";
-import { getContract } from "../config/contracts";
+import { BSC, getContract } from "../config/contracts";
 import { getCoreGraphClient, getPositionsGraphClient } from "../config/subgraph";
-import { getConstant, getGasMultiplier, getHighExecutionFee, getServerUrl, opBNB } from "../config/chains";
+import { getConstant, getExplorerUrl, getGasMultiplier, getHighExecutionFee, getServerUrl } from "../config/chains";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;
@@ -128,6 +128,34 @@ export function useUserStat(chainId) {
   }, [setRes, query, chainId]);
 
   return res ? res.data.userStat : null;
+}
+
+export function useAllTokensPerInterval(library, chainId) {
+  const [allTokensPerInterval, setAllTokensPerInterval] = useState([]);
+
+  useEffect(() => {
+    if (chainId === BSC) {
+      const provider = getProvider(library, chainId);
+      const feeQlpDistributorAddress = getContract(chainId, "FeeGllDistributor");
+      const contract = new ethers.Contract(feeQlpDistributorAddress, FeeGllDistributor.abi, provider);
+      const _allTokensPerInterval = []
+      contract.getAllRewardTokens().then(tokens => {
+        for (let i = 0; i < tokens.length; i++) {
+          const tokenAddress = tokens[i];
+          contract.tokensPerInterval(tokenAddress).then(tokensPerInterval => {
+            console.log("tokensPerInterval", tokensPerInterval);
+            _allTokensPerInterval.push([tokenAddress, tokensPerInterval])
+            if (_allTokensPerInterval.length === tokens.length) {
+              setAllTokensPerInterval(_allTokensPerInterval);
+            }
+          })
+        }
+      })
+        .catch((e) => { console.log("e", e) });
+    }
+  }, [setAllTokensPerInterval, library, chainId])
+
+  return [allTokensPerInterval, setAllTokensPerInterval]
 }
 
 export function useLiquidationsData(chainId, account) {
@@ -349,7 +377,7 @@ export function useTradesFromGraph(chainId, account) {
       }
     }`);
 
-      getCoreGraphClient(chainId).query({ query }).then(setTrades);
+    getCoreGraphClient(chainId).query({ query }).then(setTrades);
   }, [setTrades, chainId, account]);
 
   return { trades };

@@ -8,7 +8,7 @@ const { parseEther } = ethers.utils;
 export const opBNB = 5611;
 export const BSC = 56;
 
-export const DEFAULT_CHAIN_ID = opBNB;
+export const DEFAULT_CHAIN_ID = BSC;
 export const CHAIN_ID = DEFAULT_CHAIN_ID;
 
 export const SUPPORTED_CHAIN_IDS = [opBNB, BSC];
@@ -93,7 +93,7 @@ const constants = {
 };
 
 export const ICONLINKS = {
-  opBNB: {
+  [opBNB]: {
     GLL: {
       link: "https://opbnbscan.com/address/0x9F4f8bc00F48663B7C204c96b932C29ccc43A2E8",
     },
@@ -118,7 +118,7 @@ export const ICONLINKS = {
       link: "https://opbnbscan.com/address/0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
     },
   },
-  BSC: {
+  [BSC]: {
     GLL: {
       link: "https://bscscan.com/address/0x9F4f8bc00F48663B7C204c96b932C29ccc43A2E8",
     },
@@ -169,26 +169,26 @@ export const platformTokens = {
 };
 
 
-export const RPC_PROVIDERS = {
+const RPC_PROVIDERS = {
   [opBNB]: process.env.REACT_APP_OPBNB_RPC_URLS.split(" "),
   [BSC]: process.env.REACT_APP_BSC_RPC_URLS.split(" "),
 };
 
-export const EXPLORER_URLS = {
+const EXPLORER_URLS = {
   [opBNB]: process.env.REACT_APP_EXPLORER_OPBNB_URL,
   [BSC]: process.env.REACT_APP_EXPLORER_BSC_URL,
 };
 
-export const API_URLS = {
+const API_URLS = {
   [opBNB]: process.env.REACT_APP_OPBNB_API_URL,
   [BSC]: process.env.REACT_APP_BSC_API_URL,
 };
 
-export const STATS_URLS = {
+const STATS_URLS = {
   [opBNB]: process.env.REACT_APP_OPBNB_STATS_API_URL,
   [BSC]: process.env.REACT_APP_BSC_STATS_API_URL,
 };
-export const FALLBACK_PROVIDERS = {
+const FALLBACK_PROVIDERS = {
   [opBNB]: process.env.REACT_APP_OPBNB_FALLBACK_PROVIDERS.split(" "),
   [BSC]: process.env.REACT_APP_BSC_FALLBACK_PROVIDERS.split(" "),
 };

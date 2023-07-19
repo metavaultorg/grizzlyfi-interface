@@ -287,6 +287,7 @@ export function getPositions(
     }
 
     position.leverage = getLeverage({
+      chainId: chainId,
       size: position.size,
       collateral: position.collateral,
       entryFundingRate: position.entryFundingRate,

@@ -1,4 +1,4 @@
-import { getStatsUrl } from "../../../config/chains";
+import { DEFAULT_CHAIN_ID, getStatsUrl } from "../../../config/chains";
 
 const axios = require("axios").default;
 
@@ -16,7 +16,7 @@ export default {
     return axios
       .get(`${api_root}/api/candles/${url}`, {
         params: {
-          preferableChainId: "5611",
+          preferableChainId: chainId,
           period:
             resolution === "1D"
               ? "1d"

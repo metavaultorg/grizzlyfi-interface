@@ -733,6 +733,7 @@ export default function SwapBox(props) {
     const collateralDelta = fromUsdMin ? fromUsdMin : bigNumberify(0);
     const sizeDelta = toUsdMax ? toUsdMax : bigNumberify(0);
     leverage = getLeverage({
+      chainId: chainId,
       size: existingPosition.size,
       sizeDelta,
       collateral: existingPosition.collateral,

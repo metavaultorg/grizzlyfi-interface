@@ -7,6 +7,8 @@ import { tooltipLabelFormatter, CHART_HEIGHT, yaxisFormatterNumber, YAXIS_WIDTH,
 import cx from "classnames";
 import DownChartArrow from '../../assets/icons/down-chart-arrow.svg'
 import UpChartArrow from '../../assets/icons/up-chart-arrow.svg'
+import useWeb3Onboard from "../../hooks/useWeb3Onboard";
+import { useChainId } from "../../Helpers";
 
 
 const tYear = new Date().getFullYear()
@@ -20,6 +22,7 @@ const timeGroup = [
 ]
 
 export default function ChartPrice() {
+    const { chainId } = useChainId();
     const [width, height] = useWindowSize();
     const [chartWidth,setChartWidth] = useState('100%')
     const [selectedTimeRange, setSelectedTimeRange] = useState(timeGroup[3])
@@ -28,7 +31,7 @@ export default function ChartPrice() {
     const to = NOW_TS;
     const period = selectedTimeRange.period
 
-    const params = { from, to, period  };
+    const params = { from, to, period, chainId  };
     const [gllData, gllLoading] = useGllData(params);
     
 
@@ -61,7 +64,7 @@ export default function ChartPrice() {
         if (width > 1300) {
             const leftWidth = document.getElementsByClassName('Earn-content')[0].clientWidth
             setChartWidth(leftWidth - 440 - 64)
-            console.log(leftWidth - 440 - 64, 'useeffct');
+            // console.log(leftWidth - 440 - 64, 'useeffct');
         } else {
             setChartWidth('100%')
         }

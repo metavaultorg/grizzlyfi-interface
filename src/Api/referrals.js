@@ -3,6 +3,7 @@ import { gql } from "@apollo/client";
 import { useState, useEffect } from "react";
 
 import {  MAX_REFERRAL_CODE_LENGTH, bigNumberify } from "../Helpers";
+import { getReferralsGraphClient } from "../config/subgraph";
 
 
 const DISTRIBUTION_TYPE_REBATES = "1";
