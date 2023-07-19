@@ -218,17 +218,17 @@ function AppHeaderUser({
   const showSelector = true;
   const networkOptions = [
     {
-      label: "opBNB Network",
-      network: "opBNB",
-      value: opBNB,
-      icon: "ic_eth_24.svg",
+      label: "BNB Network",
+      network: "Bsc",
+      value: BSC,
+      icon: "ic_bsc_32.svg",
       color: "#2e2f5a",
     },
     {
-      label: "Bsc Network",
-      network: "BSC",
-      value: BSC,
-      icon: "ic_btc_24.svg",
+      label: "opBNB Network",
+      network: "opBNB",
+      value: opBNB,
+      icon: "ic_opbnb_32.svg",
       color: "#2e2f5a",
     },
   ];
@@ -265,18 +265,7 @@ function AppHeaderUser({
 
   return (
     <div className="App-header-user">
-      {showSelector && (
-        <NetworkSelector
-          options={networkOptions}
-          label={selectorLabel}
-          onSelect={onNetworkSelect}
-          className="App-header-user-network"
-          showCaret={true}
-          modalLabel="Select Network"
-          small={small}
-          showModal={showNetworkSelectorModal}
-        />
-      )}
+      
       {/* <div className="App-header-user-link">
         <NavLink disabled="disabled" className="btn btn-blue" to="/trade">
           Trade
@@ -288,6 +277,18 @@ function AppHeaderUser({
             <img src={IconToken} alt="icon" width={24} />
             <span className="font-number">${nativeTokenPrice}</span>
           </div>
+          {showSelector && (
+            <NetworkSelector
+              options={networkOptions}
+              label={selectorLabel}
+              onSelect={onNetworkSelect}
+              className="App-header-user-network App-header-actions"
+              showCaret={true}
+              modalLabel="Select Network"
+              small={small}
+              showModal={showNetworkSelectorModal}
+            />
+          )}
           {/* <div className="App-header-network"><img src={IconBnb} alt="icon" /></div> */}
           <div className="App-header-dots" style={{ position: "relative" }}>
             <LinkDropdown />
@@ -304,7 +305,19 @@ function AppHeaderUser({
           </div>
         </div>
       ) : (
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            {showSelector && (
+              <NetworkSelector
+                options={networkOptions}
+                label={selectorLabel}
+                onSelect={onNetworkSelect}
+                className="App-header-user-network App-header-actions"
+                showCaret={true}
+                modalLabel="Select Network"
+                small={small}
+                showModal={showNetworkSelectorModal}
+              />
+            )}
             <div className="App-header-dots" style={{ position: "relative" }}>
             <LinkDropdown />
           </div>
