@@ -207,7 +207,7 @@ export default function Earn(props) {
       fetcher: fetcher(library, RewardReader, [rewardTrackersForStakingInfo]),
     }
   );
-  console.log("stakingInfo", stakingInfo);
+
   let totalApr = useMemo(() => {
     if (chainId === opBNB) {
       const stakingData = getStakingData(stakingInfo);
@@ -303,7 +303,7 @@ export default function Earn(props) {
               }
             />
           </div>
-          <ChartPrice />
+          <ChartPrice gllPrice={gllPrice} />
         </div>
         <div className="Earn-right">
           <div className="Exchange-swap-box">
