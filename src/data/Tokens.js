@@ -34,7 +34,7 @@ const TOKENS = {
       displayDecimals:3
     },
     {
-      name: "W.Bnb",
+      name: "Wrapped BNB",
       symbol: "WBNB",
       decimals: 18,
       address: "0x617d91847b74b70a3d3e3745445cb0d1b3c8560e",
@@ -75,7 +75,7 @@ const TOKENS = {
       displayDecimals:3
     },
     {
-      name: "W.Bnb",
+      name: "Wrapped BNB",
       symbol: "WBNB",
       decimals: 18,
       address: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
