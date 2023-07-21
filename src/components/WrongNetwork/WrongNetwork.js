@@ -33,7 +33,7 @@ export default function WrongNetwork() {
             {currentChainId}).
           </p>
           <div style={{ marginLeft: 16 }} className="clickable underline" onClick={() => switchNetwork(chainId, true)}>
-            Add to {getChainName(chainId)}
+            Add {getChainName(chainId)} Network
           </div>
           <button className="add-btn" onClick={() => switchNetwork(chainId, true)}>
             Switch to {getChainName(chainId)}

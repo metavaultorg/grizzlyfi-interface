@@ -60,9 +60,13 @@ export default function Earn(props) {
   const usdgAddress = getContract(chainId, "USDG");
   const tokensForBalanceAndSupplyQuery = [feeGllTrackerAddress, usdgAddress];
   const { AddressZero } = ethers.constants;
-
-
-  const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
+  
+  const tokens = getTokens(chainId);
+  const tokenAddresses = tokens.map((token) => token.address);
+  const { data: tokenBalances } = useSWR([active, chainId, readerAddress, "getTokenBalances", account], {
+    fetcher: fetcher(library, Reader, [tokenAddresses]),
+  });
+  const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, undefined, undefined);
 
   const { data: balancesAndSupplies } = useSWR(
     [
@@ -203,7 +207,7 @@ export default function Earn(props) {
       fetcher: fetcher(library, RewardReader, [rewardTrackersForStakingInfo]),
     }
   );
-  console.log("stakingInfo", stakingInfo);
+
   let totalApr = useMemo(() => {
     if (chainId === opBNB) {
       const stakingData = getStakingData(stakingInfo);
@@ -299,7 +303,7 @@ export default function Earn(props) {
               }
             />
           </div>
-          <ChartPrice />
+          <ChartPrice gllPrice={gllPrice} />
         </div>
         <div className="Earn-right">
           <div className="Exchange-swap-box">

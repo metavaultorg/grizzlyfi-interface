@@ -264,7 +264,7 @@ export default function ExchangeTVChart(props) {
                 )
             );
 
-          const liquidationPrice = getLiquidationPrice(chaind,position);
+          const liquidationPrice = getLiquidationPrice(chainId,position);
 
           if (window.tvWidget && window.tvWidget._ready && marketName.startsWith(position.indexToken.symbol))
             lines.push(

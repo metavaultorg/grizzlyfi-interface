@@ -56,7 +56,7 @@ import "./PositionSeller.css";
 import { tokenImageCloud } from "../../Helpers";
 import AutosizeInput from 'react-input-autosize';
 import { getContract } from "../../config/contracts";
-import { SLIPPAGE_BPS_KEY } from "../../config/localStorage";
+import { CLOSE_POSITION_RECEIVE_TOKEN_KEY, SLIPPAGE_BPS_KEY } from "../../config/localStorage";
 import { getConstant } from "../../config/chains";
 
 const { AddressZero } = ethers.constants;
@@ -530,11 +530,11 @@ export default function PositionSeller(props) {
     }
 
     if (!isClosing && position && position.size && fromAmount) {
-      if (position.size.sub(fromAmount).lt(expandDecimals(10, USD_DECIMALS))) {
-        return "Leftover position below 10 USD";
+      if (position.size.sub(fromAmount).lt(expandDecimals(25, USD_DECIMALS))) {
+        return "Leftover position below 25 USD";
       }
-      if (nextCollateral && nextCollateral.lt(expandDecimals(5, USD_DECIMALS))) {
-        return "Leftover collateral below 5 USD";
+      if (nextCollateral && nextCollateral.lt(expandDecimals(10, USD_DECIMALS))) {
+        return "Leftover collateral below 10 USD";
       }
     }
 

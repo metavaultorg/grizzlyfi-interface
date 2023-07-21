@@ -16,7 +16,7 @@ export const SUPPORTED_CHAIN_IDS = [opBNB, BSC];
 
 export const CHAIN_NAMES_MAP = {
   [opBNB]: "opBNB",
-  [BSC]: "BSC",
+  [BSC]: "BNB",
 };
 
 export const GAS_PRICE_ADJUSTMENT_MAP = {
@@ -27,6 +27,11 @@ export const GAS_PRICE_ADJUSTMENT_MAP = {
 export const MAX_GAS_PRICE_MAP = {
   [opBNB]: 2000000000,
   [BSC]: 2000000000,
+};
+
+export const DEFAULT_GAS_PRICE_MAP = {
+  [opBNB]: 2000000000,
+  [BSC]: 3300000000,
 };
 
 export const HIGH_EXECUTION_FEES_MAP = {
@@ -84,10 +89,10 @@ const constants = {
     defaultFlagOrdersEnabled: true,
     positionReaderPropsLength: 9,
     v2: true,
-    SWAP_ORDER_EXECUTION_GAS_FEE: parseEther("0.005"),
-    INCREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.005"),
+    SWAP_ORDER_EXECUTION_GAS_FEE: parseEther("0.008"),
+    INCREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.008"),
     // contract requires that execution fee be strictly greater than instead of gte
-    DECREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.0055"),
+    DECREASE_ORDER_EXECUTION_GAS_FEE: parseEther("0.0081"),
     TRAILING_STOP_EXECUTION_GAS_FEE: parseEther("0.01"),
   },
 };
@@ -175,8 +180,8 @@ const RPC_PROVIDERS = {
 };
 
 const EXPLORER_URLS = {
-  [opBNB]: process.env.REACT_APP_EXPLORER_OPBNB_URL,
-  [BSC]: process.env.REACT_APP_EXPLORER_BSC_URL,
+  [opBNB]: process.env.REACT_APP_OPBNB_EXPLORER_URL,
+  [BSC]: process.env.REACT_APP_BSC_EXPLORER_URL,
 };
 
 const API_URLS = {

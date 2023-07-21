@@ -38,20 +38,22 @@ export default function useWeb3Onboard() {
     if (wallet?.provider) {
       const account = wallet.accounts[0].address;
       setAccount(account);
-      if(!wrongChain) {
+      if (!wrongChain) {
         setActive(true);
-        localStorage.setItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY, chainId.toString())
+        localStorage.setItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY, parseInt(connectedChain.id, 16).toString())
       } else {
         setActive(false);
         // setChain({chainId: DEFAULT_CHAIN_ID});
         localStorage.setItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY, DEFAULT_CHAIN_ID.toString())
-      }   
+      }
     } else {
       setActive(false);
       setAccount(null);
-      localStorage.setItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY, DEFAULT_CHAIN_ID.toString())
+      const chainId = Number(localStorage.getItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY)) || DEFAULT_CHAIN_ID;
+      setChainId(chainId);
+      localStorage.setItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY, chainId.toString())
     }
-  }, [wallet,wrongChain]);
+  }, [wallet, wrongChain]);
 
   useEffect(() => {
     if (!wallet?.provider) {
