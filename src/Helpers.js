@@ -1637,7 +1637,7 @@ export async function setGasPrice(txnOpts, provider, chainId) {
 
     // const feeData = await provider.getFeeData();
     // txnOpts["maxPriorityFeePerGas"] = feeData.maxPriorityFeePerGas.add(priority);
-  }
+  // }
 }
 
 export async function getGasLimit(contract, method, params = [], value, gasBuffer) {
