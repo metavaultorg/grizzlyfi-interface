@@ -56,7 +56,7 @@ import "./PositionSeller.css";
 import { tokenImageCloud } from "../../Helpers";
 import AutosizeInput from 'react-input-autosize';
 import { getContract } from "../../config/contracts";
-import { SLIPPAGE_BPS_KEY } from "../../config/localStorage";
+import { CLOSE_POSITION_RECEIVE_TOKEN_KEY, SLIPPAGE_BPS_KEY } from "../../config/localStorage";
 import { getConstant } from "../../config/chains";
 
 const { AddressZero } = ethers.constants;
