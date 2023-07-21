@@ -180,8 +180,8 @@ const RPC_PROVIDERS = {
 };
 
 const EXPLORER_URLS = {
-  [opBNB]: process.env.REACT_APP_EXPLORER_OPBNB_URL,
-  [BSC]: process.env.REACT_APP_EXPLORER_BSC_URL,
+  [opBNB]: process.env.REACT_APP_OPBNB_EXPLORER_URL,
+  [BSC]: process.env.REACT_APP_BSC_EXPLORER_URL,
 };
 
 const API_URLS = {
