@@ -282,7 +282,7 @@ export default function Earn(props) {
             <ItemCard
               // style={{ minWidth: 218 }}
               label="APR"
-              value={totalApr}
+              value={totalApr+"%"}
               icon={IconPercentage}
             />
             <ItemCard /* style={{ minWidth: 298 }} */ label="Assets Under Management" value={<AUMLabel />} icon={IconMoney} />
