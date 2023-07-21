@@ -19,8 +19,8 @@ import Vault from "../../abis/Vault.json";
 
 import { useInfoTokens } from "../../Api";
 
-import { getContract } from "../../Addresses";
 import useWeb3Onboard from "../../hooks/useWeb3Onboard";
+import { getContract, opBNB } from "../../config/contracts";
 
 export default function APRLabel({ chainId, label, usePercentage = true, tokenDecimals = 2, displayDecimals = 2 }) {
   let { active, library, account } = useWeb3Onboard();
@@ -69,7 +69,7 @@ export default function APRLabel({ chainId, label, usePercentage = true, tokenDe
   );
 
   const { data: stakingInfo } = useSWR(
-    [`StakeV2:stakingInfo:${active}`, chainId, rewardReaderAddress, "getStakingInfo", account || PLACEHOLDER_ACCOUNT],
+    chainId === opBNB && [`StakeV2:stakingInfo:${active}`, chainId, rewardReaderAddress, "getStakingInfo", account || PLACEHOLDER_ACCOUNT],
     {
       fetcher: fetcher(undefined, RewardReader, [rewardTrackersForStakingInfo]),
     }

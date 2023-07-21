@@ -9,19 +9,14 @@ import { format as formatDateFn } from "date-fns";
 import { decodeReferralCode, encodeReferralCode, useReferralsData } from "../../Api/referrals";
 import {
   MAX_REFERRAL_CODE_LENGTH,
-  REFERRALS_SELECTED_TAB_KEY,
-  REFERRAL_CODE_KEY,
-  REFERRAL_CODE_QUERY_PARAMS,
   USD_DECIMALS,
   bigNumberify,
   formatAmount,
   // formatDate,
-  getExplorerUrl,
   getPageTitle,
   helperToast,
   isAddressZero,
   isHashZero,
-  opBNB,
   shortenAddress,
   useChainId,
   useDebounce,
@@ -51,6 +46,8 @@ import Tooltip from "../../components/Tooltip/Tooltip";
 import { getNativeToken, getToken } from "../../data/Tokens";
 import useWeb3Onboard from "../../hooks/useWeb3Onboard";
 import "./Referrals.css";
+import { REFERRALS_SELECTED_TAB_KEY, REFERRAL_CODE_KEY, REFERRAL_CODE_QUERY_PARAMS } from "../../config/localStorage";
+import { getChainName } from "../../config/chains";
 
 const REFERRAL_DATA_MAX_TIME = 60000 * 5; // 5 minutes
 const TRADERS = "Traders";
@@ -93,10 +90,10 @@ function isRecentReferralCodeNotExpired(referralCodeInfo) {
 async function getReferralCodeTakenStatus(account, referralCode, chainId) {
   const referralCodeBytes32 = encodeReferralCode(referralCode);
 
-  const codeOwner = await getReferralCodeOwner(opBNB, referralCodeBytes32);
+  const codeOwner = await getReferralCodeOwner(chainId, referralCodeBytes32);
 
   const takenOnBsc =
-    !isAddressZero(codeOwner) && (codeOwner !== account || (codeOwner === account && chainId === opBNB));
+    !isAddressZero(codeOwner) && (codeOwner !== account || (codeOwner === account ));
   if (takenOnBsc) {
     return { status: "current", info: codeOwner };
   }
@@ -906,7 +903,7 @@ function AffiliatesInfo({
                                 handle={<BiErrorCircle color="#e82e56" size={16} />}
                                 renderContent={() => (
                                   <div>
-                                    This code has been taken by someone else on Bsc, you will not receive fee-cashback
+                                    This code has been taken by someone else on {getChainName(chainId)}, you will not receive fee-cashback
                                     from traders using this code on.
                                   </div>
                                 )}

@@ -1,15 +1,19 @@
 import React, { useState } from 'react'
 import { getTokenBySymbol } from '../../data/Tokens';
-import { getContract } from '../../Addresses';
 import RewardRouter from "../../abis/RewardRouter.json";
 import useWeb3Onboard from '../../hooks/useWeb3Onboard';
 import { ethers } from 'ethers';
 import { callContract } from '../../Api';
+import { getContract, opBNB } from '../../config/contracts';
 
-export default function ClaimButton({ className }) {
+export default function ClaimButtonOpBNB({ className = "" }) {
     const { active, library, account, chainId } = useWeb3Onboard();
     const [isSubmitting, setIsSubmitting] = useState(false);
-    console.log("ClaimButton", active, account, chainId);
+    
+    if(chainId !== opBNB){
+        return <></>
+    }
+
     function claim() {
         const rewardRouterAddress = getContract(chainId, "RewardRouter");
         const contract = new ethers.Contract(rewardRouterAddress, RewardRouter.abi, library.getSigner());

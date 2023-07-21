@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useCopyToClipboard } from "react-use";
 
-import { getContract } from "../../Addresses";
+import { getContract } from "../../config/contracts";
 import { callContract } from "../../Api";
 import { helperToast, useChainId } from "../../Helpers";
 

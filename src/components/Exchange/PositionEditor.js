@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import useSWR from "swr";
 import { ethers } from "ethers";
 import { BsArrowRight } from "react-icons/bs";
+import AutosizeInput from 'react-input-autosize';
 
 import {
   USD_DECIMALS,
@@ -22,7 +23,7 @@ import {
   getLiquidationPrice,
   approveTokens,
 } from "../../Helpers";
-import { getContract } from "../../Addresses";
+
 import Tab from "../Tab/Tab";
 import Modal from "../Modal/Modal";
 import { callContract } from "../../Api";
@@ -31,6 +32,7 @@ import PositionRouter from "../../abis/PositionRouter.json";
 import Token from "../../abis/Token.json";
 import { tokenImageCloud } from "../../Helpers";
 import "./PositionEditor.css";
+import { getContract } from "../../config/contracts";
 
 const DEPOSIT = "Deposit";
 const WITHDRAW = "Withdraw";
@@ -115,7 +117,7 @@ export default function PositionEditor(props) {
       </>)
     }
     collateralToken = position.collateralToken;
-    liquidationPrice = getLiquidationPrice(position);
+    liquidationPrice = getLiquidationPrice(chainId,position);
 
     if (isDeposit) {
       fromAmount = parseValue(fromValue, collateralToken.decimals);
@@ -144,6 +146,7 @@ export default function PositionEditor(props) {
         collateralDelta = collateralDelta.mul(BASIS_POINTS_DIVISOR - DEPOSIT_FEE).div(BASIS_POINTS_DIVISOR);
       }
       nextLeverage = getLeverage({
+        chainId: chainId,
         size: position.size,
         collateral: position.collateral,
         collateralDelta,
@@ -155,6 +158,7 @@ export default function PositionEditor(props) {
         includeDelta: savedIsPnlInLeverage,
       });
       nextLeverageExcludingPnl = getLeverage({
+        chainId: chainId,
         size: position.size,
         collateral: position.collateral,
         collateralDelta,
@@ -166,7 +170,7 @@ export default function PositionEditor(props) {
         includeDelta: false,
       });
 
-      nextLiquidationPrice = getLiquidationPrice({
+      nextLiquidationPrice = getLiquidationPrice(chainId,{
         isLong: position.isLong,
         size: position.size,
         collateral: position.collateral,
@@ -191,10 +195,10 @@ export default function PositionEditor(props) {
 
     if (!isDeposit && fromAmount) {
       if (fromAmount.gte(position.collateral)) {
-        return "MIN ORDER: 10 USD";
+        return "MIN ORDER: 25 USD";
       }
-      if (position.collateral.sub(fromAmount).lt(expandDecimals(10, USD_DECIMALS))) {
-        return "MIN ORDER: 10 USD";
+      if (position.collateral.sub(fromAmount).lt(expandDecimals(25, USD_DECIMALS))) {
+        return "MIN ORDER: 25 USD";
       }
     }
 
@@ -457,7 +461,8 @@ export default function PositionEditor(props) {
                 </span>
                 <div className="Exchange-swap-section">
                       <div className="Exchange-swap-input-container">
-                        <input
+                        <div className="withdraw-input">
+                        <AutosizeInput
                           type="number"
                           min="0"
                           placeholder="0.0"
@@ -465,6 +470,8 @@ export default function PositionEditor(props) {
                           value={fromValue}
                           onChange={(e) => setFromValue(e.target.value)}
                         />
+                         {isWithdrawal ? <div className="withdraw-usd font-number">USD</div>:""}
+                        </div>
                         <div className="Exchange-swap-usd font-number">
                           ≈ {convertedAmountFormatted??0.00}{" "}
                           {isDeposit ? "USD" : position.collateralToken.symbol}
@@ -481,12 +488,10 @@ export default function PositionEditor(props) {
                               MAX
                             </div>
                           )}
-                        <div className="PositionEditor-token-symbol">
-                          {isDeposit ? <>
+                          {isDeposit ? (<div className="PositionEditor-token-symbol">
                             <img src={tokenImageCloud(position.collateralToken.symbol.toLowerCase())} style={{ height: 32, width: 32 }} alt=" " />
-                            <div style={{ width: 8 }}></div> {position.collateralToken.symbol}</>
-                            : <div style={{ paddingLeft:40 }}>USD</div>}
-                        </div>
+                            <div style={{ width: 8 }}></div> {position.collateralToken.symbol}
+                        </div>) : <></> }
                       </div>
                 </div>
                 <div style={{height:16}}></div>

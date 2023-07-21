@@ -3,6 +3,7 @@ import injectedModule from "@web3-onboard/injected-wallets";
 import { init } from "@web3-onboard/react";
 import trustModule from "@web3-onboard/trust";
 import walletConnectModule from "@web3-onboard/walletconnect";
+import { BSC, getRpcUrl, opBNB } from "./config/chains";
 
 import logo from "./img/grizzlyfi_logo.svg";
 
@@ -55,7 +56,7 @@ const walletConnect = walletConnectModule({
   version: 2,
   handleUri: (uri) => console.log(uri),
   projectId: WALLET_CONNECT_PROJECT_ID,
-  requiredChains: [137],
+  requiredChains: [opBNB,BSC],
   qrcodeModalOptions: {
     mobileLinks: ["rainbow", "metamask", "argent", "trust", "imtoken", "pillar"],
   },
@@ -79,7 +80,13 @@ export const initWeb3Onboard = init({
       id: "0x15EB",
       token: "BNB",
       label: "opBNB Testnet",
-      rpcUrl: "https://opbnb-testnet-rpc.bnbchain.org"
+      rpcUrl: getRpcUrl(opBNB)
+    },
+    {
+      id: "0x38",
+      token: "BNB",
+      label: "BSC Mainnet",
+      rpcUrl: getRpcUrl(BSC)
     }
   ],
   appMetadata: {

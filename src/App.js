@@ -16,30 +16,18 @@ import {
   BASIS_POINTS_DIVISOR,
   clearWalletConnectData,
   clearWalletLinkData,
-  CURRENT_PROVIDER_LOCALSTORAGE_KEY,
   DEFAULT_SLIPPAGE_AMOUNT,
   getAccountUrl,
-  getChainName,
-  getExplorerUrl,
   getInjectedHandler,
   getWalletConnectHandler,
   hasCoinBaseWalletExtension,
   hasExodusWalletExtension,
   hasMetaMaskWalletExtension,
   helperToast,
-  IS_PNL_IN_LEVERAGE_KEY,
   isMobileDevice,
-  opBNB,
-  REFERRAL_CODE_KEY,
-  REFERRAL_CODE_QUERY_PARAMS,
-  SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY,
-  SHOULD_SHOW_POSITION_LINES_KEY,
-  SHOW_PNL_AFTER_FEES_KEY,
-  SLIPPAGE_BPS_KEY,
   switchNetwork,
   useChainId,
   useLocalStorageSerializeKey,
-  ZKSYNC,
 } from "./Helpers";
 
 import Actions from "./views/Actions/Actions";
@@ -59,6 +47,16 @@ import NetworkSelector from "./components/NetworkSelector/NetworkSelector";
 import { FaTimes } from "react-icons/fa";
 import { FiX } from "react-icons/fi";
 import { RiMenuLine } from "react-icons/ri";
+import doc from './components/LinkDropdown/icon-documents.svg'
+import track from './components/LinkDropdown/icon-track.svg'
+import hub from './components/LinkDropdown/icon-hub.svg'
+import twitter from './components/LinkDropdown/icon-twitter.svg'
+import telegram from './components/LinkDropdown/icon-telegram.svg'
+import ins from './components/LinkDropdown/icon-instagram.svg'
+import youtube from './components/LinkDropdown/icon-youtube-yt.svg'
+import discord from './components/LinkDropdown/icon-discord.svg'
+import leaderboard from './components/LinkDropdown/icon-leaderboard.svg'
+import setting from './components/LinkDropdown/icon-settings.svg'
 
 import "./App.css";
 import "./AppOrder.css";
@@ -66,7 +64,7 @@ import "./Font.css";
 import "./Input.css";
 import "./Shared.css";
 import "./components/Common/Button.css";
-
+import { MdClose } from "react-icons/md";
 import { encodeReferralCode } from "./Api/referrals";
 import AddressDropdown from "./components/AddressDropdown/AddressDropdown";
 import SEO from "./components/Common/SEO";
@@ -77,8 +75,6 @@ import coinbaseImg from "./img/coinbaseWallet.png";
 import exodusImg from "./img/ic_exodus.svg";
 import metamaskImg from "./img/ic_metamask_hover_16.svg";
 import walletConnectImg from "./img/walletconnect-circle-blue.svg";
-
-import { getContract } from "./Addresses";
 
 import IconToken from "./assets/icons/honey-token.svg";
 import IconProfile from "./assets/icons/icon-profile.svg";
@@ -93,6 +89,9 @@ import { useConnectWallet, Web3OnboardProvider } from "@web3-onboard/react";
 import { initWeb3Onboard } from "./services";
 
 import useWeb3Onboard from "./hooks/useWeb3Onboard";
+import { getWsUrl, opBNB ,BSC, getChainName, getExplorerUrl } from "./config/chains";
+import { CURRENT_PROVIDER_LOCALSTORAGE_KEY, IS_PNL_IN_LEVERAGE_KEY, REFERRAL_CODE_KEY, REFERRAL_CODE_QUERY_PARAMS, SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY, SHOULD_SHOW_POSITION_LINES_KEY, SHOW_PNL_AFTER_FEES_KEY, SLIPPAGE_BPS_KEY } from "./config/localStorage";
+import { getContract } from "./config/contracts";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -112,50 +111,36 @@ const Zoom = cssTransition({
   duration: 200,
 });
 
-const bscWsProvider = new ethers.providers.WebSocketProvider(process.env.REACT_APP_BSC_WS);
+
+
 
 function getWsProvider(active, chainId) {
   if (!active) {
     return;
   }
 
-  if (chainId === opBNB) {
-    return bscWsProvider;
-  }
+  return getWsUrl(chainId);
 }
 
 function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
+  const { active,} = useWeb3Onboard();
   return (
     <div className="App-header-links mobile-header-padding">
       {small && (
-        <div className="App-header-links-header">
-          <div className="App-header-menu-icon-block" onClick={() => clickCloseIcon()}>
-            <FiX className="App-header-menu-icon" />
+        <div className="App-header App-header-links-header" style={{marginBottom:48}}>
+          <div className="Modal-close-button" onClick={() => clickCloseIcon()} style={{width:40,height:40,marginRight:8,}}>
+            <MdClose fontSize={28} className="Modal-close-icon" />
           </div>
           <a
-            style={{ width: 21, height: 21 }}
             className="App-header-link-main"
             href=" https://trade.grizzly.fi/#/dashboard"
             rel="noopener noreferrer"
           >
-            {/* <img
-              style={{ width: 21, height: 21 }}
-              src={getImageUrl({
-                path: "brandLogos/tradeLogomark",
-                width: 21,
-                height: 21,
-              })}
-              alt=""
-            /> */}
             <Logo />
+            <div className="logo-text">TRADE</div>
           </a>
         </div>
       )}
-      <div className="App-header-link-container App-header-link-home">
-        <a href="https://trade.grizzly.fi/#/dashboard" rel="noopener noreferrer">
-          Home
-        </a>
-      </div>
 
       <div className="App-header-link-container">
         <NavLink activeClassName="active" to="/dashboard">
@@ -177,39 +162,44 @@ function AppHeaderLinks({ small, openSettings, clickCloseIcon }) {
           Referrals
         </NavLink>
       </div>
-      {/* <div className="App-header-link-container">
-        <NavLink activeClassName="active" to="/buy">
-          Buy
-        </NavLink>
-      </div>
       
-      <div className="App-header-link-container">
-        <a href="https://docs.grizzly.fi/v/eng/product/grizzly-trade" target="_blank" rel="noopener noreferrer">
-          <span
-            className="hover-white"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              color: "color: rgba(255, 255, 255, 0.8)",
-              opacity: "80%",
-              whiteSpace: "nowrap",
-              lineHeight: "28px",
-            }}
-          >
-            Docs
-            <TopRightArrColored />
-          </span>
-        </a>
-      </div> */}
 
       {small && (
-        <div className="App-header-link-container">
-          {/* eslint-disable-next-line */}
-          <a href="#" onClick={openSettings}>
-            Settings
-          </a>
+        <div className="">
+          
+          <div style={{ background: '#fff', opacity: '0.1', height: 1, width: 254, margin: '100px 0 16px 24px', }}></div>
+          <div className="">
+            {active &&<a href="#" onClick={openSettings} className="menu-item">
+              <img src={setting} alt="" width={24} height={24} />
+              <p>Settings</p>
+            </a>}
+            <a href='https://docs.grizzly.fi/v/eng/product/grizzly-trade' target="_blank" rel="noopener noreferrer" className="menu-item">
+              <img src={doc} alt="" width={24} height={24} />
+              <p>Docs</p>
+            </a>
+            <a href='https://stats.grizzly.fi/' target="_blank" rel="noopener noreferrer" className="menu-item">
+              <img src={track} alt="" width={24} height={24} />
+              <p>Stats</p>
+            </a>
+            <a href='https://leaderboard.grizzly.fi/' target="_blank" rel="noopener noreferrer" className="menu-item">
+              <img src={leaderboard} alt="" width={24} height={24} />
+              <p>Leaderboard</p>
+            </a>
+            <a href='https://app.grizzly.fi/' target="_blank" rel="noopener noreferrer" className="menu-item">
+              <img src={hub} alt="" width={24} height={24} />
+              <p>Grizzly.fi App</p>
+            </a>
+            <div className='media-links' style={{ border: 'none', marginTop: 20, }}>
+              <a href='https://twitter.com/GrizzlyFi' target="_blank" rel="noopener noreferrer"><img src={twitter} alt='' width={24} height={24} /></a>
+              <a href='https://t.me/grizzlyficommunity' target="_blank" rel="noopener noreferrer"><img src={telegram} alt='' width={24} height={24} /></a>
+              <a href='https://www.instagram.com/grizzly.fi/' target="_blank" rel="noopener noreferrer"><img src={ins} alt='' width={24} height={24} /></a>
+              <a href='https://www.youtube.com/c/Grizzly-fi' target="_blank" rel="noopener noreferrer"><img src={youtube} alt='' width={24} height={24} /></a>
+              <a href='https://discord.gg/grizzlyfi' target="_blank" rel="noopener noreferrer"><img src={discord} alt='' width={24} height={24} /></a>
+            </div>
+          </div>
         </div>
       )}
+      
     </div>
   );
 }
@@ -225,22 +215,21 @@ function AppHeaderUser({
 
   const [{ wallet }, connect, disconnect] = useConnectWallet();
 
-  const showSelector = false;
+  const showSelector = true;
   const networkOptions = [
     {
-      label: "Bsc Network",
-      network: "Bsc",
-      value: opBNB,
-      icon: "ic_bsc_24.svg",
+      label: "BNB Network",
+      network: "BNB",
+      value: BSC,
+      icon: "ic_bsc_32.svg",
       color: "#2e2f5a",
     },
     {
-      label: "zkSync (Coming Soon)",
-      network: "zkSync",
-      value: ZKSYNC,
-      icon: "ic_zksync_24.svg",
+      label: "opBNB Network",
+      network: "opBNB",
+      value: opBNB,
+      icon: "ic_opbnb_32.svg",
       color: "#2e2f5a",
-      disabled: true,
     },
   ];
 
@@ -276,18 +265,7 @@ function AppHeaderUser({
 
   return (
     <div className="App-header-user">
-      {showSelector && (
-        <NetworkSelector
-          options={networkOptions}
-          label={selectorLabel}
-          onSelect={onNetworkSelect}
-          className="App-header-user-network"
-          showCaret={true}
-          modalLabel="Select Network"
-          small={small}
-          showModal={showNetworkSelectorModal}
-        />
-      )}
+      
       {/* <div className="App-header-user-link">
         <NavLink disabled="disabled" className="btn btn-blue" to="/trade">
           Trade
@@ -299,8 +277,20 @@ function AppHeaderUser({
             <img src={IconToken} alt="icon" width={24} />
             <span className="font-number">${nativeTokenPrice}</span>
           </div>
+          {showSelector && (
+            <NetworkSelector
+              options={networkOptions}
+              label={selectorLabel}
+              onSelect={onNetworkSelect}
+              className="App-header-user-network App-header-actions"
+              showCaret={true}
+              modalLabel="Select Network"
+              small={small}
+              showModal={showNetworkSelectorModal}
+            />
+          )}
           {/* <div className="App-header-network"><img src={IconBnb} alt="icon" /></div> */}
-          <div style={{ position: "relative" }}>
+          <div className="App-header-dots" style={{ position: "relative" }}>
             <LinkDropdown />
           </div>
           <div className="App-header-user-address">
@@ -315,13 +305,25 @@ function AppHeaderUser({
           </div>
         </div>
       ) : (
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <div style={{ position: "relative" }}>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            {showSelector && (
+              <NetworkSelector
+                options={networkOptions}
+                label={selectorLabel}
+                onSelect={onNetworkSelect}
+                className="App-header-user-network App-header-actions"
+                showCaret={true}
+                modalLabel="Select Network"
+                small={small}
+                showModal={showNetworkSelectorModal}
+              />
+            )}
+            <div className="App-header-dots" style={{ position: "relative" }}>
             <LinkDropdown />
           </div>
           <button className={"btn btn-yellow btn-wallet"} onClick={() => handleConnectWallet()}>
             {/* {small ? "Connect" : "Connect Wallet"} */}
-            Connect
+              Connect Wallet
           </button>
         </div>
 
@@ -388,13 +390,6 @@ function FullApp() {
     localStorage.removeItem(SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY);
     localStorage.removeItem(CURRENT_PROVIDER_LOCALSTORAGE_KEY);
     setIsSettingsVisible(false);
-  };
-
-  const attemptActivateWallet = (providerName) => {
-    localStorage.setItem(SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY, true);
-    localStorage.setItem(CURRENT_PROVIDER_LOCALSTORAGE_KEY, providerName);
-    activateInjectedProvider(providerName);
-    connectInjectedWallet();
   };
 
   const [walletModalVisible, setWalletModalVisible] = useState();
@@ -662,15 +657,8 @@ function FullApp() {
                     {isDrawerVisible && <FaTimes className="App-header-menu-icon" />}
                   </div>
                   <div className="App-header-link-main clickable" onClick={() => setIsDrawerVisible(!isDrawerVisible)}>
-                    {/* <img
-                      width={24}
-                      height={24}
-                      src={getImageUrl({
-                        path: "brandLogos/tradeLogomark",
-                      })}
-                      alt="Trade Logo"
-                    /> */}
                     <Logo />
+                    <div className="logo-text">TRADE</div>
                   </div>
                 </div>
                 <div className="App-header-container-right">

@@ -9,6 +9,7 @@ body,
   font-size: 16px;
   background: #191919;
   background-repeat: no-repeat;
+  width: 100%;
 }
 
 * {

@@ -17,16 +17,13 @@ import {
   getExchangeRateDisplay,
   DEFAULT_SLIPPAGE_AMOUNT,
   DEFAULT_HIGHER_SLIPPAGE_AMOUNT,
-  SLIPPAGE_BPS_KEY,
   formatDateTime,
   calculatePositionDelta,
   STOP,
   getTokenInfo,
   useLocalStorageByChainId,
-  CLOSE_POSITION_RECEIVE_TOKEN_KEY,
 } from "../../Helpers";
-import { getConstant } from "../../Constants";
-import { getContract } from "../../Addresses";
+
 
 import { BsArrowRight } from "react-icons/bs";
 import Modal from "../Modal/Modal";
@@ -39,6 +36,9 @@ import "./ConfirmationBox.css";
 import TokenSelector from "./TokenSelector";
 import { getSwapLimits, getTokenAmount } from "./PositionSeller";
 import IconNext from '../../assets/icons/icon-next-left.svg'
+import { getContract } from "../../config/contracts";
+import { CLOSE_POSITION_RECEIVE_TOKEN_KEY, SLIPPAGE_BPS_KEY } from "../../config/localStorage";
+import { getConstant } from "../../config/chains";
 
 const HIGH_SPREAD_THRESHOLD = expandDecimals(1, USD_DECIMALS).div(100); // 1%;
 

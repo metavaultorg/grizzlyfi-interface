@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import useSWR from "swr";
 import { getImageUrl } from "../../cloudinary/getImageUrl";
 
-import { getContract } from "../../Addresses";
+import { getContract } from "../../config/contracts";
 import { callContract } from "../../Api";
 import {
   GLL_DECIMALS,
@@ -21,10 +21,11 @@ import {
   getPageTitle,
   getProcessedData,
   getStakingData,
-  opBNB,
   today,
   useChainId,
   yesterday,
+  expandDecimals,
+  numberWithCommas,
 } from "../../Helpers";
 import GllManager from "../../abis/GllManager.json";
 import Reader from "../../abis/Reader.json";
@@ -61,7 +62,8 @@ import OpenedPositions from "./OpenedPositions";
 import animationData from "./animation_1.json";
 import { useInfoTokens } from "../../Api";
 import { getPositionQuery, getPositions } from "../Exchange/Exchange";
-import ClaimButton from "../../components/ClaimButton/ClaimButton";
+import ClaimButtonOpBNB from "../../components/ClaimButton/ClaimButtonOpBNB";
+import { opBNB } from "../../config/chains";
 
 const claimTypes = [
   { id: "eth", iconPath: "coins/eth", token: "ETH" },
@@ -69,7 +71,25 @@ const claimTypes = [
   { id: "usdc", iconPath: "coins/usdc", token: "USDC" },
   { id: "usdt", iconPath: "coins/usdt", token: "USDT" },
 ];
+function getCurrentFeesUsd(tokenAddresses, fees, infoTokens) {
+  if (!fees || !infoTokens) {
+    return bigNumberify(0);
+  }
 
+  let currentFeesUsd = bigNumberify(0);
+  for (let i = 0; i < tokenAddresses.length; i++) {
+    const tokenAddress = tokenAddresses[i];
+    const tokenInfo = infoTokens[tokenAddress];
+    if (!tokenInfo || !tokenInfo.contractMinPrice) {
+      continue;
+    }
+
+    const feeUsd = fees[i].mul(tokenInfo.contractMinPrice).div(expandDecimals(1, tokenInfo.decimals));
+    currentFeesUsd = currentFeesUsd.add(feeUsd);
+  }
+
+  return currentFeesUsd;
+}
 export default function DashboardV3(props) {
   const { connectWallet, savedShowPnlAfterFees, savedIsPnlInLeverage } = props;
   const { active, library, account } = useWeb3Onboard();
@@ -134,7 +154,7 @@ export default function DashboardV3(props) {
     }
   );
   const { data: stakingInfo } = useSWR(
-    [`StakeV2:stakingInfo:${active}`, chainId, rewardReaderAddress, "getStakingInfo", account || PLACEHOLDER_ACCOUNT],
+    chainId === opBNB && [`StakeV2:stakingInfo:${active}`, chainId, rewardReaderAddress, "getStakingInfo", account || PLACEHOLDER_ACCOUNT],
     {
       fetcher: fetcher(library, RewardReader, [rewardTrackersForStakingInfo]),
     }
@@ -160,7 +180,7 @@ export default function DashboardV3(props) {
     nativeTokenPrice
   );
 
-  const totalParams = { from: yesterday(), to: today() };
+  const totalParams = { from: yesterday(), to: today(), chainId };
   const [totalGllData] = useGllData(totalParams);
   const [totalAum, totalAumDelta, totalAumDeltaPercentage] = useMemo(() => {
     if (!totalGllData) {
@@ -172,7 +192,7 @@ export default function DashboardV3(props) {
     return [total, delta, percentage];
   }, [totalGllData]);
 
-  const poolShare = ( processedData && processedData.gllBalanceUsd && processedData.gllSupplyUsd) ? processedData.gllBalanceUsd.mul(10000).div(processedData.gllSupplyUsd).toNumber()/100 : 0;
+  const poolShare = (processedData && processedData.gllBalanceUsd && processedData.gllSupplyUsd) ? processedData.gllBalanceUsd.mul(10000).div(processedData.gllSupplyUsd).toNumber() / 100 : 0;
   const vaultList = [
     {
       symbol: "GLL",
@@ -195,7 +215,7 @@ export default function DashboardV3(props) {
       successMsg: `Claim Succeed!`,
       // setPendingTxns,
     })
-      .then(async () => {})
+      .then(async () => { })
       .catch((error) => {
         console.log(error);
       })
@@ -207,6 +227,7 @@ export default function DashboardV3(props) {
   const [pendingPositions, setPendingPositions] = useState({});
   const [updatedPositions, setUpdatedPositions] = useState({});
   const whitelistedTokens = getWhitelistedTokens(chainId);
+  const whitelistedTokenAddresses = whitelistedTokens.map((token) => token.address);
   const positionQuery = getPositionQuery(whitelistedTokens, nativeTokenAddress);
   const { data: positionData, error: positionDataError } = useSWR(
     active && [active, chainId, readerAddress, "getPositions", vaultAddress, account],
@@ -219,6 +240,11 @@ export default function DashboardV3(props) {
     }
   );
   const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
+  const { data: fees } = useSWR([`Dashboard:fees:${active}`, chainId, readerAddress, "getFees", vaultAddress], {
+    dedupingInterval: 30000,
+    fetcher: fetcher(library, Reader, [whitelistedTokenAddresses]),
+});
+
   const { positions, positionsMap } = getPositions(
     chainId,
     positionQuery,
@@ -230,6 +256,12 @@ export default function DashboardV3(props) {
     pendingPositions,
     updatedPositions
   );
+  const currentFeesUsd = getCurrentFeesUsd(whitelistedTokenAddresses, fees, infoTokens);
+
+  const shouldIncludeCurrrentFees = true;
+  let totalFeesDistributed = shouldIncludeCurrrentFees
+    ? parseFloat(bigNumberify(formatAmount(currentFeesUsd, USD_DECIMALS - 2, 0, false)).toNumber()) / 100
+    : 0;
 
   const totalPnl = useMemo(() => {
     const positionsPnl = positions.reduce(
@@ -245,6 +277,7 @@ export default function DashboardV3(props) {
   return (
     <SEO title={getPageTitle("Dashboard")}>
       <div className="default-container DashboardV2 page-layout">
+        {chainId === opBNB &&
         <div className="faucet">
           <div style={{ fontSize: 20, fontWeight: 600, color: "#afafaf" }}>
             <span style={{ color: "#fff" }}>GrizzlyFi</span>
@@ -297,6 +330,7 @@ export default function DashboardV3(props) {
             )}
           </div>
         </div>
+        }
         <div className="section-total-info">
           <div className="total-info">
             <div className="label">Total Trading Volume</div>
@@ -361,7 +395,7 @@ export default function DashboardV3(props) {
           </div>
         </div>
 
-        {(!processedData.gllBalanceUsd || processedData.gllBalanceUsd.eq(0) ) && (positions.length === 0) && (
+        {(!processedData.gllBalanceUsd || processedData.gllBalanceUsd.eq(0)) && (positions.length === 0) && (
           <div className="section section-noinvestments">
             <div className="section-header">
               <h1>No Investment Yet</h1>
@@ -414,13 +448,13 @@ export default function DashboardV3(props) {
           </div>
         )}
         {((processedData.gllBalanceUsd && processedData.gllBalanceUsd.gt(0)) || (positions.length > 0)) &&
-        <div className="section section-investments">
-          <div className="section-header">
-            <h1>Your Investments </h1>
-          </div>
-          <div className="info-card-section" style={{ margin: "40px auto", maxWidth: 952 }}>
-            <ItemCard
-              label="Total PnL"
+          <div className="section section-investments">
+            <div className="section-header">
+              <h1>Your Investments </h1>
+            </div>
+            <div className="info-card-section" style={{ margin: "40px auto", maxWidth: 952 }}>
+              <ItemCard
+                label="Total PnL"
                 value={<span
                   className={cx({
                     positive: totalPnl.gt(0),
@@ -428,182 +462,183 @@ export default function DashboardV3(props) {
                     muted: totalPnl.eq(0),
                   })}
                 >${formatAmount(totalPnl, USD_DECIMALS, 2, true)}</span>}
-              icon={IconPercentage}
-            />
-            <ItemCard
-              label="Your GLL deposit"
-              value={`$${formatKeyAmount(processedData, "gllBalanceUsd", USD_DECIMALS, 2, true)}`}
-              icon={IconMoney}
-            />
-            <ItemCard
-              style={{ width: "-webkit-fill-available" }}
-              label="Claimable Rewards (BNB)"
-              value={
-                <APRLabel
-                  usePercentage={false}
-                  tokenDecimals={18}
-                  chainId={opBNB}
-                  label="feeGllTrackerRewards"
-                  key="BSC"
-                />
-              }
-              icon={IconClaim}
-              buttonEle={
-                <ClaimButton></ClaimButton>
-              }
-            />
-          </div>
-          <InnerCard title="Your Opened Positions">
-            <OpenedPositions
-              positions={positions}
-              tokenPairMarketList={tokenPairMarketList}
-              savedShowPnlAfterFees={savedShowPnlAfterFees}
-              savedIsPnlInLeverage={savedIsPnlInLeverage}
-            />
-          </InnerCard>
-          <InnerCard title="Your GLL Vault" style={{ marginTop: 8 }}>
-            <div className="list-table">
-              <table
-                className="table-bordered"
-                style={{ width: "100%", textAlign: "left", borderSpacing: "0px 10px" }}
-                cellSpacing="0"
-                cellPadding="0"
-              >
-                <thead>
-                  <tr>
-                    <th></th>
-                    <th>APY {/* <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /> */}</th>
-                    <th>Locked in GLL</th>
-                    <th>Your Investment</th>
-                    <th>Pool Share</th>
-                    <th>Profit</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {vaultList.map((item, index) => {
-                    return (
-                      <tr key={index}>
-                        <td>
-                          <div className="App-card-title-info">
-                            <div
-                              className="App-card-title-info-icon"
-                              style={{
-                                border: "solid 1px rgba(255, 255, 255, 0.2)",
-                                backgroundColor: "rgba(255, 255, 255, 0.1)",
-                                borderRadius: 10,
-                                width: 34,
-                                height: 34,
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
-                            >
-                              <img
-                                style={{ objectFit: "contain" }}
-                                src={IconToken}
-                                alt={item.symbol}
-                                width={18}
-                                height={18}
-                              />
-                            </div>
-                            <div>{item.symbol}</div>
-                          </div>
-                        </td>
-                        <td className="font-number">{item.apy}</td>
-                        <td className="font-number">{item.locked}</td>
-                        <td className="font-number">{item.invest}</td>
-                        <td className="font-number">{item.poolShare}</td>
-                        <td>
-                          <span
-                            className={cx(
-                              {
-                                positive: item.profit > 0,
-                                negative: item.profit < 0,
-                                muted: item.profit === 0,
-                              },
-                              "font-number"
-                            )}
-                          >
-                            {item.profit}
-                          </span>
-                        </td>
-                        <td>
-                          <ClaimButton></ClaimButton>
-                        </td>
-                      </tr>
-                    )}
-
-                                )}
-                            </tbody>
-                        </table></div>
-                    <div className="token-grid" style={{ gridTemplateColumns: '1fr' }}>
-                        {vaultList.map((item, index) => {
-
-                            return (
-                                <div className="App-card" key={index}>
-                                    <div className="App-card-title">
-                                        <div style={{ display: "flex", alignItems: 'center', gap: 16 }}>
-                                            <img
-                                                style={{ objectFit: "contain" }}
-                                                src={IconToken}
-                                                alt={item.symbol}
-                                                width={32}
-                                                height={32}
-                                            />
-                                            <span>{item.symbol}</span>
-                                        </div>
-                                    </div>
-                                    <div className="App-card-divider"></div>
-                                    <div className="App-card-content">
-                                        <div className="App-card-row">
-                                            <div className="label">APY <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /></div>
-                                            <div className="font-number">
-                                                {item.apy}
-                                            </div>
-                                        </div>
-                                        <div className="App-card-row">
-                                            <div className="label">Locked in GLL</div>
-                                            <div className="font-number">
-                                                {item.locked}
-                                            </div>
-                                        </div>
-                                        <div className="App-card-row">
-                                            <div className="label">Your Investment</div>
-                                            <div className="font-number">
-                                                {item.invest}
-                                            </div>
-                                        </div>
-                                        <div className="App-card-row">
-                                            <div className="label">Pool Share</div>
-                                            <div className="font-number">
-                                                {item.poolShare}
-                                            </div>
-                                        </div>
-                                        <div className="App-card-row">
-                                            <div className="label">Profit</div>
-                                            <div>
-                                                <span className={cx({
-                                                    positive: item.profit > 0,
-                                                    negative: item.profit < 0,
-                                                    muted: item.profit === 0,
-                                                }, "font-number")}>{item.profit}%</span>
-                                            </div>
-                                        </div>
-                                        <div className="App-card-row"><button
-                                            className="btn-secondary w-full "
-
-                                        >
-                                            Claim
-                                        </button></div>
-                                    </div>
-                                </div>
-                            )
-                        })}
-                    </div>
-                </InnerCard>
-
+                icon={IconPercentage}
+              />
+              <ItemCard
+                label="Your GLL deposit"
+                value={`$${formatKeyAmount(processedData, "gllBalanceUsd", USD_DECIMALS, 2, true)}`}
+                icon={IconMoney}
+              />
+              <ItemCard
+                style={{ width: "-webkit-fill-available" }}
+                label="Claimable Rewards (BNB)"
+                value={
+                  <APRLabel
+                    usePercentage={false}
+                    tokenDecimals={18}
+                    chainId={chainId}
+                    label="feeGllTrackerRewards"
+                    key="BSC"
+                  />
+                }
+                icon={IconClaim}
+                buttonEle={
+                  <ClaimButtonOpBNB></ClaimButtonOpBNB>
+                }
+              />
             </div>
-            }
+            <InnerCard title="Your Opened Positions">
+              <OpenedPositions
+                positions={positions}
+                tokenPairMarketList={tokenPairMarketList}
+                savedShowPnlAfterFees={savedShowPnlAfterFees}
+                savedIsPnlInLeverage={savedIsPnlInLeverage}
+              />
+            </InnerCard>
+            <InnerCard title="Your GLL Vault" style={{ marginTop: 8 }}>
+              <div className="list-table">
+                <table
+                  className="table-bordered"
+                  style={{ width: "100%", textAlign: "left", borderSpacing: "0px 10px" }}
+                  cellSpacing="0"
+                  cellPadding="0"
+                >
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>APY {/* <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /> */}</th>
+                      <th>Locked in GLL</th>
+                      <th>Your Investment</th>
+                      <th>Pool Share</th>
+                      <th>Profit</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {vaultList.map((item, index) => {
+                      return (
+                        <tr key={index}>
+                          <td>
+                            <div className="App-card-title-info">
+                              <div
+                                className="App-card-title-info-icon"
+                                style={{
+                                  border: "solid 1px rgba(255, 255, 255, 0.2)",
+                                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                                  borderRadius: 10,
+                                  width: 34,
+                                  height: 34,
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <img
+                                  style={{ objectFit: "contain" }}
+                                  src={IconToken}
+                                  alt={item.symbol}
+                                  width={18}
+                                  height={18}
+                                />
+                              </div>
+                              <div>{item.symbol}</div>
+                            </div>
+                          </td>
+                          <td className="font-number">{item.apy}</td>
+                          <td className="font-number">{item.locked}</td>
+                          <td className="font-number">{item.invest}</td>
+                          <td className="font-number">{item.poolShare}</td>
+                          <td>
+                            <span
+                              className={cx(
+                                {
+                                  positive: item.profit > 0,
+                                  negative: item.profit < 0,
+                                  muted: item.profit === 0,
+                                },
+                                "font-number"
+                              )}
+                            >
+                              {item.profit}
+                            </span>
+                          </td>
+                          <td>
+                            <ClaimButtonOpBNB></ClaimButtonOpBNB>
+                          </td>
+                        </tr>
+                      )
+                    }
+
+                    )}
+                  </tbody>
+                </table></div>
+              <div className="token-grid" style={{ gridTemplateColumns: '1fr' }}>
+                {vaultList.map((item, index) => {
+
+                  return (
+                    <div className="App-card" key={index}>
+                      <div className="App-card-title">
+                        <div style={{ display: "flex", alignItems: 'center', gap: 16 }}>
+                          <img
+                            style={{ objectFit: "contain" }}
+                            src={IconToken}
+                            alt={item.symbol}
+                            width={32}
+                            height={32}
+                          />
+                          <span>{item.symbol}</span>
+                        </div>
+                      </div>
+                      <div className="App-card-divider"></div>
+                      <div className="App-card-content">
+                        <div className="App-card-row">
+                          <div className="label">APY <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /></div>
+                          <div className="font-number">
+                            {item.apy}
+                          </div>
+                        </div>
+                        <div className="App-card-row">
+                          <div className="label">Locked in GLL</div>
+                          <div className="font-number">
+                            {item.locked}
+                          </div>
+                        </div>
+                        <div className="App-card-row">
+                          <div className="label">Your Investment</div>
+                          <div className="font-number">
+                            {item.invest}
+                          </div>
+                        </div>
+                        <div className="App-card-row">
+                          <div className="label">Pool Share</div>
+                          <div className="font-number">
+                            {item.poolShare}
+                          </div>
+                        </div>
+                        <div className="App-card-row">
+                          <div className="label">Profit</div>
+                          <div>
+                            <span className={cx({
+                              positive: item.profit > 0,
+                              negative: item.profit < 0,
+                              muted: item.profit === 0,
+                            }, "font-number")}>{item.profit}%</span>
+                          </div>
+                        </div>
+                        <div className="App-card-row"><button
+                          className="btn-secondary w-full "
+
+                        >
+                          Claim
+                        </button></div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </InnerCard>
+
+          </div>
+        }
 
         <div className=" section-markets">
           <div className="section-header">
@@ -647,7 +682,7 @@ export default function DashboardV3(props) {
               value={`${formatKeyAmount(processedData, "gllAprTotal", 2, 2, true)}%`}
               icon={IconPercentage}
             />
-            <ItemCard label="GLL 24h Rewards" value="$..." icon={IconClaim} />
+            <ItemCard label="GLL Weekly Rewards" value={"$"+numberWithCommas(totalFeesDistributed.toFixed(0))} icon={IconClaim} />
           </div>
           <div style={{ maxWidth: 500, margin: "auto", marginTop: 80, position: "relative" }}>
             <div

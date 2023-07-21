@@ -10,16 +10,9 @@ import Router from "../abis/Router.json";
 import VaultReader from "../abis/VaultReader.json";
 import ReferralStorage from "../abis/ReferralStorage.json";
 import PositionRouter from "../abis/PositionRouter.json";
-
-import { getContract } from "../Addresses";
-import { getConstant } from "../Constants";
+import FeeGllDistributor from "../abis/FeeGllDistributor.json";
 import {
-  UI_VERSION,
-  // DEFAULT_GAS_LIMIT,
   bigNumberify,
-  getExplorerUrl,
-  getServerBaseUrl,
-  getServerUrl,
   setGasPrice,
   getGasLimit,
   replaceNativeTokenAddress,
@@ -31,31 +24,24 @@ import {
   getInfoTokens,
   isAddressZero,
   helperToast,
-  opBNB,
-  ZKSYNC,
   FIRST_DATE_TS,
   getUsd,
   USD_DECIMALS,
-  HIGH_EXECUTION_FEES_MAP,
   SWAP,
   INCREASE,
   DECREASE,
 } from "../Helpers";
 import { getTokens, getTokenBySymbol, getWhitelistedTokens } from "../data/Tokens";
 
-import { coreGraphClient, positionsGraphClient } from "./common";
 import { groupBy } from "lodash";
 import { getAddress } from "ethers/lib/utils";
+import { BSC, getContract } from "../config/contracts";
+import { getCoreGraphClient, getPositionsGraphClient } from "../config/subgraph";
+import { getConstant, getExplorerUrl, getGasMultiplier, getHighExecutionFee, getServerUrl } from "../config/chains";
 export * from "./prices";
 
 const { AddressZero } = ethers.constants;
 
-function getCoreGraphClient(chainId) {
-  if (chainId === opBNB) {
-    return coreGraphClient;
-  }
-  throw new Error(`Unsupported chain ${chainId}`);
-}
 
 export function useAllOrdersStats(chainId) {
   const query = gql(`{
@@ -144,6 +130,34 @@ export function useUserStat(chainId) {
   return res ? res.data.userStat : null;
 }
 
+export function useAllTokensPerInterval(library, chainId) {
+  const [allTokensPerInterval, setAllTokensPerInterval] = useState([]);
+
+  useEffect(() => {
+    if (chainId === BSC) {
+      const provider = getProvider(library, chainId);
+      const feeQlpDistributorAddress = getContract(chainId, "FeeGllDistributor");
+      const contract = new ethers.Contract(feeQlpDistributorAddress, FeeGllDistributor.abi, provider);
+      const _allTokensPerInterval = []
+      contract.getAllRewardTokens().then(tokens => {
+        for (let i = 0; i < tokens.length; i++) {
+          const tokenAddress = tokens[i];
+          contract.tokensPerInterval(tokenAddress).then(tokensPerInterval => {
+            console.log("tokensPerInterval", tokensPerInterval);
+            _allTokensPerInterval.push([tokenAddress, tokensPerInterval])
+            if (_allTokensPerInterval.length === tokens.length) {
+              setAllTokensPerInterval(_allTokensPerInterval);
+            }
+          })
+        }
+      })
+        .catch((e) => { console.log("e", e) });
+    }
+  }, [setAllTokensPerInterval, library, chainId])
+
+  return [allTokensPerInterval, setAllTokensPerInterval]
+}
+
 export function useLiquidationsData(chainId, account) {
   const [data, setData] = useState(null);
   useEffect(() => {
@@ -211,7 +225,7 @@ export function useAllPositions(chainId, library) {
   const [res, setRes] = useState();
 
   useEffect(() => {
-    positionsGraphClient.query({ query }).then(setRes).catch(console.warn);
+    getPositionsGraphClient(chainId).query({ query }).then(setRes).catch(console.warn);
   }, [setRes, query]);
 
   const key = res ? `allPositions${count}__` : false;
@@ -363,7 +377,7 @@ export function useTradesFromGraph(chainId, account) {
       }
     }`);
 
-      getCoreGraphClient(chainId).query({ query }).then(setTrades);
+    getCoreGraphClient(chainId).query({ query }).then(setTrades);
   }, [setTrades, chainId, account]);
 
   return { trades };
@@ -466,22 +480,18 @@ export function useMinExecutionFee(library, active, chainId, infoTokens) {
 
   let multiplier;
 
-  // multiplier for bsc is just the average gas usage
-  if (chainId === opBNB) {
-    multiplier = 700000;
-  }
 
   let finalExecutionFee = minExecutionFee;
 
   if (gasPrice && minExecutionFee) {
-    const estimatedExecutionFee = gasPrice.mul(multiplier);
+    const estimatedExecutionFee = gasPrice.mul(getGasMultiplier(chainId));
     if (estimatedExecutionFee.gt(minExecutionFee)) {
       finalExecutionFee = estimatedExecutionFee;
     }
   }
 
   const finalExecutionFeeUSD = getUsd(finalExecutionFee, nativeTokenAddress, false, infoTokens);
-  const isFeeHigh = finalExecutionFeeUSD?.gt(expandDecimals(HIGH_EXECUTION_FEES_MAP[chainId], USD_DECIMALS));
+  const isFeeHigh = finalExecutionFeeUSD?.gt(expandDecimals(getHighExecutionFee(chainId), USD_DECIMALS));
   const errorMessage =
     isFeeHigh &&
     `The network cost to send transactions is high at the moment, please check the "Execution Fee" value before proceeding.`;
@@ -979,7 +989,7 @@ function getTotalVolumeFromGraph() {
        burn
       }
     }`);
-  requests.push(coreGraphClient.query({ query }));
+  requests.push(getCoreGraphClient(chainId).query({ query }));
 
   return Promise.all(requests)
     .then((chunks) => {
@@ -1043,7 +1053,7 @@ function getHourlyVolumeFromGraph() {
         __typename
       }
     }`);
-  requests.push(coreGraphClient.query({ query }));
+  requests.push(getCoreGraphClient(chainId).query({ query }));
 
   return Promise.all(requests)
     .then((chunks) => {
@@ -1107,7 +1117,7 @@ function getTotalFeesFromGraph() {
     }
   }`);
 
-  requests.push(coreGraphClient.query({ query }));
+  requests.push(getCoreGraphClient(chainId).query({ query }));
 
   return Promise.all(requests)
     .then((chunks) => {

@@ -1,10 +1,10 @@
 import React from "react";
 import useSWR from "swr";
 
-import { getContract } from "../../Addresses";
 import { USD_DECIMALS, fetcher, formatAmount, useChainId } from "../../Helpers";
 import GllManager from "../../abis/GllManager.json";
 import useWeb3Onboard from "../../hooks/useWeb3Onboard";
+import { getContract } from "../../config/contracts";
 
 export default function AUMLabel() {
   const { active, library } = useWeb3Onboard();

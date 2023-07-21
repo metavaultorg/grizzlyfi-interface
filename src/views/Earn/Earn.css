@@ -145,8 +145,114 @@
 .Earn .Exchange-swap-box{
   width: 440px;
 }
+
+.Earings{
+  margin: 10px 0;
+  padding: 32px;
+  border-radius: 40px;
+  -webkit-backdrop-filter: blur(50px);
+  backdrop-filter: blur(50px);
+  background-color: rgba(36, 36, 36, 0.6);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+.Earings-left{
+  font-size: 20px;
+  font-weight: bold;
+}
+.Earings-left p{
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.5);
+}
+.Earings-right{
+  padding: 16px;
+  border-radius: 29px;
+  background-color: rgba(255, 255, 255, 0.05);
+  display: flex;
+  gap: 40px;
+  width: 100%;
+  max-width: 1014px;
+  justify-content: space-between;
+}
+.Earings-right .cards{
+  display: flex;
+  gap: 8px;
+}
+.EarningsCard{
+  min-width: 342px;
+  height: 56px;
+  margin: 0 8px 0 0;
+  padding: 8px 12px 8px 8px;
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.07);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.EarningsCard>div{
+  display: flex;
+  align-items: center;
+}
+.Earings .tokenName{
+  font-size: 18px;
+  font-weight: bold;
+  margin-left: 8px;
+}
+.Earings .tokenValue{
+  font-family: Montserrat;
+  font-size: 18px;
+}
+.Earings .usdValue{
+  opacity: 0.5;
+  font-family: Montserrat;
+  font-size: 14px;
+}
+.Earings .action{
+  margin-left: 24px;
+}
+.claim-all-btn{
+  border-radius: 20px;
+  width: 200px;
+  font-size: 20px;
+  font-weight: bold;
+  min-width: 120px;
+}
+@media (max-width: 1000px){
+  .Earings{
+    padding: 24px 8px 8px;
+    border-radius: 20px;
+  }
+  .Earings-right{
+    padding: 8px;
+    border-radius: 20px;
+  }
+  .Earings-right,.Earings-right .cards{
+    flex-direction: column;
+  }
+  .Earings .action {
+    margin-left: 16px;
+  }
+  .claim-all-btn{
+    border-radius: 16px;
+    width: 100%;
+    font-size: 18px;
+  }
+  .btn-secondary{
+    border-radius: 10px;
+  }
+  .Earings-right{
+    flex-direction: column;
+    gap: 16px;
+  }
+}
 @media (max-width: 1300px) {
   .Earn .Exchange-swap-box {
     width: auto;
+  }
+  .Earings{
+    flex-direction: column;
+    justify-content: flex-start;
   }
 }

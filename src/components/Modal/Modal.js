@@ -11,8 +11,23 @@ export default function Modal(props) {
   const { isVisible, setIsVisible, className, zIndex, onAfterOpen, disableBodyScrollLock } = props;
   const modalRef = useRef(null);
 
-  useLockBodyScroll(modalRef, isVisible, disableBodyScrollLock);
+  // useLockBodyScroll(modalRef, isVisible, disableBodyScrollLock);
+  useEffect(() => {
 
+    if (isVisible ) {
+      const top = document.documentElement.scrollTop || document.body.scrollTop
+      document.body.style.cssText += `
+            position: fixed;
+            overflow:hidden;
+            top: ${-top}px;`;
+      
+    } else {
+      const top = document.body.style.top;
+      document.body.style.cssText += `position: static;overflow:auto`;
+      window.scrollTo(0, Math.abs(parseFloat(top)));
+
+    }
+  }, [isVisible, setIsVisible])
   useEffect(() => {
     function close(e) {
       if (e.keyCode === 27) {

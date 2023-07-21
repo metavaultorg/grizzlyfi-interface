@@ -1,9 +1,10 @@
 import { useMemo, useState, useEffect } from "react";
-import { limitDecimals, formatNumber, CHAIN_ID } from "../Helpers";
+import { limitDecimals, formatNumber, fetcher, expandDecimals } from "../Helpers";
 import { getTokenBySymbol } from "../data/Tokens";
 import useSWR from "swr";
 import axios from "axios";
 import { useHourlyVolumeByToken } from "../views/Earn/dataProvider"
+import { CHAIN_ID } from "../config/chains";
 
 export const FIRST_DATE_TS = parseInt(+new Date(2022, 5, 1) / 1000);
 export const NOW_TS = parseInt(new Date().getTime() / 1000);
@@ -32,22 +33,57 @@ export function useRequest(url, defaultValue, fetcher = defaultFetcher) {
 
     return [data, loading, error];
 }
+const coins = {
+    BTC: "bitcoin",
+    ETH: "ethereum",
+    LINK: "chainlink",
+    UNI: "uniswap",
+    MATIC: "matic-network",
+    WBTC: "wrapped-bitcoin",
+    AAVE: "aave",
+    USDC: "usd-coin",
+    USDT: "tether",
+    DAI: "dai",
+    BUSD: "binance-usd",
+    BNB: "binancecoin",
+    GHNY: "grizzly-honey"
+};
+const coinsDefaultPrices = {
+    BTC: 27000,
+    ETH: 1800,
+    MATIC: 0.8,
+    WBTC: 27000,
+    USDC: 1,
+    USDT: 1,
+    DAI: 1,
+    BNB: 250,
+    GHNY: 9,
+};
+export function useCoingeckoCurrentPrice(symbol) {
+    const _symbol = coins[symbol]
+    const _defaultPrice = coinsDefaultPrices[symbol]
+
+    const { res, error } = useSWR(`https://api.coingecko.com/api/v3/simple/price?ids=${symbol}&vs_currencies=usd`, {
+        dedupingInterval: 60000,
+        fetcher: fetcher,
+    });
+
+    const data = useMemo(() => {
+        if (!res || res[symbol] || res[symbol]["usd"] === 0) {
+            return expandDecimals(_defaultPrice * 1e6, 24);
+        }
+
+        return expandDecimals(Number(res[_symbol]["usd"]) * 1e6, 24);
+    }, [res]);
+
+    return data;
+}
+
+
 export function useCoingeckoPrices(symbol) {
     // token ids https://api.coingecko.com/api/v3/coins
-    const _symbol = {
-        BTC: "bitcoin",
-        ETH: "ethereum",
-        LINK: "chainlink",
-        UNI: "uniswap",
-        MATIC: "matic-network",
-        WBTC: "wrapped-bitcoin",
-        AAVE: "aave",
-        USDC: "usd-coin",
-        USDT: "tether",
-        DAI: "dai",
-        BUSD: "binance-usd",
-        BNB: "binancecoin",
-    }[symbol];
+
+    const _symbol = coins[symbol]
 
     const from = NOW_TS - 86400;
     const to = NOW_TS;
@@ -65,7 +101,7 @@ export function useCoingeckoPrices(symbol) {
     );
 
     const token = getTokenBySymbol(CHAIN_ID, symbol).address;
-    const [, total, , ,] = useHourlyVolumeByToken({ token, from, to });
+    const [, total, , ,] = useHourlyVolumeByToken({ token, from, to, chainId: CHAIN_ID });
 
     const data = useMemo(() => {
         if (!res || res === undefined || res.length === 0) {

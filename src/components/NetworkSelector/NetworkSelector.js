@@ -27,7 +27,7 @@ export default function NetworkSelector(props) {
   function renderOption(option) {
     var optionIcon = require("../../img/" + option.icon);
     return (
-      <div className={cx("Selector-option", option.network, {disabled: option.disabled})} onClick={() => onSelect(option)} key={option.value}>
+      <div className={cx("Selector-option", option.network, { disabled: option.disabled })} onClick={() => onSelect(option)} key={option.value}>
         <img src={optionIcon.default} alt={option.icon} className="Selector-option_icon" />
         <span className="Selector-option_label">{option.label}</span>
         {selectedNetwork === option.network && <div className="selected-icon"></div>}
@@ -36,7 +36,7 @@ export default function NetworkSelector(props) {
   }
 
   const onSelect = async (token) => {
-    if(token.disabled) return;
+    if (token.disabled) return;
     setIsModalVisible(false);
     props.showModal(false);
     let network;
@@ -74,7 +74,7 @@ export default function NetworkSelector(props) {
     return (
       <components.SingleValue {...props}>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <img src={icon.default} alt={data.label} width={28} className="network-icon" />
+          <img src={icon} alt={data.label} width={28} className="network-icon" />
           {/* <span style={{ marginLeft: 5 }} className="network-label">
             {data.label}
           </span> */}
@@ -85,19 +85,18 @@ export default function NetworkSelector(props) {
 
   const customStyles = {
     option: (provided, state) => {
-      const backgroundColor = "black";
+      const backgroundColor = "#333";
       return {
         ...provided,
-        ":active":{
+        ":active": {
           backgroundColor: "rgba(255, 255, 255, 0.15)"
         },
         margin: 0,
-        paddingLeft: 8,
         cursor: "pointer",
         backgroundColor,
         color: "#fff",
         // height: 36,
-        // paddingTop: 6,
+        padding: 16,
       };
     },
     control: (provided, state) => {
@@ -105,7 +104,7 @@ export default function NetworkSelector(props) {
         width: 72,
         height: 52,
         cursor: "pointer",
-        fontSize: "14px",
+        fontSize: "16px",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -128,27 +127,28 @@ export default function NetworkSelector(props) {
     }),
     menu: (provided, state) => {
       return {
-      ...provided,
-      // background: "rgba(2, 2, 15, 1)",
-      border: "1px solid rgba(255, 255, 255, 0.16)",
-      background: "black",
-      // boxShadow: "0px 5px 12px #00000052",
-      borderRadius: "16px",
-      fontSize: "14px",
-      width: "250px"
-    }},
+        ...provided,
+        // background: "rgba(2, 2, 15, 1)",
+        border: "1px solid #3f3f3f",
+        background: "#333",
+        // boxShadow: "0px 5px 12px #00000052",
+        borderRadius: "22px",
+        fontSize: "16px",
+        width: "248px",
+        right: '0'
+      }
+    },
     menuList: (provided) => ({
-      border: "1px solid rgba(255, 255, 255, 0.16)",
-      borderRadius: "16px",
-      background: "black",
-      paddingTop: "0px",
-      paddingBottom: "0px",
+      // border: "1px solid rgba(255, 255, 255, 0.16)",
+      borderRadius: "22px",
+      background: "#333",
+      overflow: 'hidden',
     }),
     singleValue: (provided, state) => ({
       ...provided,
       color: "white",
       margin: 0,
-      fontSize: "14px",
+      fontSize: "16px",
       borderRadius: "16px",
     }),
     valueContainer: (provided, state) => ({
@@ -179,35 +179,37 @@ export default function NetworkSelector(props) {
           </Modal>
         </div>
       )}
-        <Select
-          value={value}
-          options={options}
-          components={{
-            DropdownIndicator,
-            SingleValue,
-            Option,
-            IndicatorsContainer,
-          }}
-          classNamePrefix="react-select"
-          onChange={onSelect}
-          isSearchable={false}
-          className={"network-select"}
-          styles={customStyles}
-          getOptionLabel={(e) => {
-            var optionIcon = require("../../img/" + e.icon);
-            return (
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "left", width: "220px"}}>
-                <img src={optionIcon.default} alt={e.icon} className="network-icon" />
-                <span style={{ marginLeft: 5 }} className={cx("network-label", {disabled: e.disabled})}>
+      <Select
+        value={value}
+        options={options}
+        components={{
+          DropdownIndicator,
+          SingleValue,
+          Option,
+          IndicatorsContainer,
+        }}
+        classNamePrefix="react-select"
+        onChange={onSelect}
+        isSearchable={false}
+        className={"network-select"}
+        styles={customStyles}
+        getOptionLabel={(e) => {
+          var optionIcon = require("../../img/" + e.icon);
+          return (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", }}>
+              <div style={{ display: "flex", alignItems: "center",}}>
+                <img src={optionIcon} alt={e.icon} className="network-icon" />
+                <span className={cx("network-label", { disabled: e.disabled })}>
                   {e.label}
                 </span>
-                {selectedNetwork === e.network && (
-                  <img src={tick} alt="Selected" style={{marginLeft: 5}}></img>
-                )}
               </div>
-            );
-          }}
-        />
+              {selectedNetwork === e.network && (
+                <img src={tick} alt="Selected" style={{ marginLeft: 5 }}></img>
+              )}
+            </div>
+          );
+        }}
+      />
     </div>
   );
 }

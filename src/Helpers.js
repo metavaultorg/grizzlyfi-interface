@@ -6,7 +6,6 @@ import { ethers } from "ethers";
 import { format as formatDateFn } from "date-fns";
 import Token from "./abis/Token.json";
 import _ from "lodash";
-import { getContract } from "./Addresses";
 import useSWR from "swr";
 
 import OrderBookReader from "./abis/OrderBookReader.json";
@@ -17,50 +16,24 @@ import useWeb3Onboard from "./hooks/useWeb3Onboard";
 
 import IconSuccess from './assets/icons/icon-success.svg'
 import IconError from './assets/icons/icon-failed.svg'
-import IconPending from './assets/icons/icon-waiting.svg'
 import { getImageUrl } from "./cloudinary/getImageUrl";
+import { CHAIN_ID, DEFAULT_CHAIN_ID, DEFAULT_GAS_PRICE_MAP, FEES, GAS_PRICE_ADJUSTMENT_MAP, getChainName, getExplorerUrl, getFallbackRpcUrl, getRpcUrl, isSupportedChain, MAX_GAS_PRICE_MAP, NETWORK_METADATA } from "./config/chains";
+import { getContract } from "./config/contracts";
+import { SELECTED_NETWORK_LOCAL_STORAGE_KEY, WALLET_CONNECT_LOCALSTORAGE_KEY, WALLET_LINK_LOCALSTORAGE_PREFIX } from "./config/localStorage";
 
 
 const { AddressZero } = ethers.constants;
 
-export const UI_VERSION = "1.3";
 
 // use a random placeholder account instead of the zero address as the zero address might have tokens
 export const PLACEHOLDER_ACCOUNT = ethers.Wallet.createRandom().address;
 
-export const opBNB = 5611;
-export const ZKSYNC = 324;
-export const MUMBAI_TESTNET = 80001;
 
-export const DEFAULT_CHAIN_ID = opBNB;
-export const CHAIN_ID = DEFAULT_CHAIN_ID;
 
 export const MIN_PROFIT_TIME = 0;
 
-export const SELECTED_NETWORK_LOCAL_STORAGE_KEY = "SELECTED_NETWORK";
 
-const CHAIN_NAMES_MAP = {
-  [opBNB]: "opBNB",
-};
 
-const GAS_PRICE_ADJUSTMENT_MAP = {
-  [opBNB]: 200000000,
-};
-
-const MAX_GAS_PRICE_MAP = {
-  [opBNB]: 2000000000,
-};
-
-const BSC_RPC_PROVIDERS = process.env.REACT_APP_BSC_RPC_URLS.split(" ");
-
-export const WALLET_CONNECT_LOCALSTORAGE_KEY = "walletconnect";
-export const WALLET_LINK_LOCALSTORAGE_PREFIX = "-walletlink";
-export const SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY = "eagerconnect";
-export const CURRENT_PROVIDER_LOCALSTORAGE_KEY = "currentprovider";
-
-export function getChainName(chainId) {
-  return CHAIN_NAMES_MAP[chainId];
-}
 
 export const USDG_ADDRESS = getContract(CHAIN_ID, "USDG");
 export const MAX_LEVERAGE = 100 * 10000;
@@ -79,13 +52,6 @@ export const DUST_USD = expandDecimals(1, USD_DECIMALS);
 export const PRECISION = expandDecimals(1, 30);
 export const GLL_DECIMALS = 18;
 export const DEFAULT_MAX_USDG_AMOUNT = expandDecimals(200 * 1000 * 1000, 18);
-
-export const TAX_BASIS_POINTS = 50;
-export const STABLE_TAX_BASIS_POINTS = 5;
-export const MINT_BURN_FEE_BASIS_POINTS = 20;
-export const SWAP_FEE_BASIS_POINTS = 30;
-export const STABLE_SWAP_FEE_BASIS_POINTS = 25;
-export const MARGIN_FEE_BASIS_POINTS = 10;
 
 export const TRAILING_STOP_FEE = 50;
 
@@ -113,15 +79,7 @@ export const DEFAULT_HIGHER_SLIPPAGE_AMOUNT = 100;
 
 export const DECREASE_ORDER_TYPES = ["Decrease", "(SL)", "(TP)", "(TS)"];
 
-export const SLIPPAGE_BPS_KEY = "Exchange-swap-slippage-basis-points-v3";
-export const CLOSE_POSITION_RECEIVE_TOKEN_KEY = "Close-position-receive-token";
-export const IS_PNL_IN_LEVERAGE_KEY = "Exchange-swap-is-pnl-in-leverage";
-export const SHOW_PNL_AFTER_FEES_KEY = "Exchange-swap-show-pnl-after-fees";
-export const DISABLE_ORDER_VALIDATION_KEY = "disable-order-validation";
-export const SHOULD_SHOW_POSITION_LINES_KEY = "Exchange-swap-should-show-position-lines";
-export const REFERRAL_CODE_KEY = "GrizzlyFi-referralCode";
-export const REFERRAL_CODE_QUERY_PARAMS = "ref";
-export const REFERRALS_SELECTED_TAB_KEY = "Referrals-selected-tab";
+
 export const MAX_REFERRAL_CODE_LENGTH = 20;
 
 export const FIRST_DATE_TS = parseInt(+new Date(2022, 5, 1) / 1000);
@@ -132,91 +90,16 @@ export const TRIGGER_PREFIX_BELOW = "<";
 export const MIN_PROFIT_BIPS = 0;
 
 export const GLLPOOLCOLORS = {
-  MATIC: "#7C43DA",
+  BNB: "#7C43DA",
   ETH: "#6185F5",
   BTC: "#F7931A",
-  LINK: "#3256D6",
   USDC: "#2775CA",
   USDT: "#67B18A",
-  AAVE: "#9695F8",
-  DAI: "#FAC044",
-  UNI: "#E9167C",
-  BUSD: "#F0B90B",
-  stMATIC: "#25c0ff",
-};
-export const HIGH_EXECUTION_FEES_MAP = {
-  [opBNB]: 3, // 3 USD
-};
-export const ICONLINKS = {
-  5611: {
-    GLL: {
-      bsc: "https://bscscan.com/address/0x9F4f8bc00F48663B7C204c96b932C29ccc43A2E8",
-    },
-    BNB: {
-      coingecko: "https://www.coingecko.com/en/coins/bsc",
-      bsc: "https://bscscan.com/address/0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
-    },
-    ETH: {
-      coingecko: "https://www.coingecko.com/en/coins/weth",
-      bsc: "https://bscscan.com/address/0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
-    },
-    BTC: {
-      coingecko: "https://www.coingecko.com/en/coins/wrapped-bitcoin",
-      bsc: "https://bscscan.com/address/0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6",
-    },
-    DAI: {
-      coingecko: "https://www.coingecko.com/en/coins/dai",
-      bsc: "https://bscscan.com/address/0x8f3cf7ad23cd3cadbd9735aff958023239c6a063",
-    },
-    BUSD: {
-      coingecko: "https://www.coingecko.com/en/coins/binance-usd",
-      bsc: "https://bscscan.com/token/0x9C9e5fD8bbc25984B178FdCE6117Defa39d2db39",
-    },
-    USDC: {
-      coingecko: "https://www.coingecko.com/en/coins/usd-coin",
-      bsc: "https://bscscan.com/address/0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
-    },
-    USDT: {
-      coingecko: "https://www.coingecko.com/en/coins/tether",
-      bsc: "https://bscscan.com/address/0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
-    },
-    LINK: {
-      coingecko: "https://www.coingecko.com/en/coins/chainlink",
-      bsc: "https://bscscan.com/address/0xb0897686c545045afc77cf20ec7a532e3120e0f1",
-    },
-    AAVE: {
-      coingecko: "https://www.coingecko.com/en/coins/aave",
-      bsc: "https://bscscan.com/address/0xd6df932a45c0f255f85145f286ea0b292b21c90b",
-    },
-    UNI: {
-      coingecko: "https://www.coingecko.com/en/coins/uniswap",
-      bsc: "https://bscscan.com/address/0xb33eaad8d922b1083446dc23f610c2567fb5180f",
-    },
-    stMATIC: {
-      coingecko: "https://www.coingecko.com/en/coins/lido-staked-matic",
-      bsc: "https://bscscan.com/address/0x3a58a54c066fdc0f2d55fc9c89f0415c92ebf3c4",
-    },
-  },
 };
 
-export const platformTokens = {
-  5611: {
-    // bsc
-    GLL: {
-      name: "GrizzlyFi Leverage Liquidity",
-      symbol: "GLL",
-      decimals: 18,
-      address: getContract(opBNB, "FeeGllTracker"),
-      imageUrl: "https://res.cloudinary.com/grizzlyfi/image/upload/v1662984581/website-assets/gll-token.png",
-    },
-  },
-};
 
-const supportedChainIds = [opBNB];
 
-export function isSupportedChain(chainId) {
-  return supportedChainIds.includes(chainId);
-}
+
 
 export function deserialize(data) {
   for (const [key, value] of Object.entries(data)) {
@@ -225,10 +108,6 @@ export function deserialize(data) {
     }
   }
   return data;
-}
-
-export function isHomeSite() {
-  return process.env.REACT_APP_IS_HOME_SITE === "true";
 }
 
 export const helperToast = {
@@ -334,32 +213,12 @@ export const replaceNativeTokenAddress = (path, nativeTokenAddress) => {
   return updatedPath;
 };
 
-export function getMarginFee(sizeDelta) {
+export function getMarginFee(chainId,sizeDelta) {
   if (!sizeDelta) {
     return bigNumberify(0);
   }
-  const afterFeeUsd = sizeDelta.mul(BASIS_POINTS_DIVISOR - MARGIN_FEE_BASIS_POINTS).div(BASIS_POINTS_DIVISOR);
+  const afterFeeUsd = sizeDelta.mul(BASIS_POINTS_DIVISOR - FEES[chainId].MARGIN_FEE_BASIS_POINTS).div(BASIS_POINTS_DIVISOR);
   return sizeDelta.sub(afterFeeUsd);
-}
-
-export function getServerBaseUrl(chainId) {
-  if (!chainId) {
-    throw new Error("chainId is not provided");
-  }
-  if (document.location.hostname.includes("deploy-preview")) {
-    const fromLocalStorage = localStorage.getItem("SERVER_BASE_URL");
-    if (fromLocalStorage) {
-      return fromLocalStorage;
-    }
-  }
-  if (chainId === opBNB) {
-    return process.env.REACT_APP_GRIZZLYFI_API_URL;
-  }
-  return process.env.REACT_APP_GRIZZLYFI_API_URL;
-}
-
-export function getServerUrl(chainId, path) {
-  return `${getServerBaseUrl(chainId)}${path}`;
 }
 
 export function isTriggerRatioInverted(fromTokenInfo, toTokenInfo) {
@@ -493,7 +352,7 @@ export function getFeeBasisPoints(
   return feeBasisPoints.add(taxBps).toNumber();
 }
 
-export function getBuyGllToAmount(fromAmount, swapTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
+export function getBuyGllToAmount(chainId,fromAmount, swapTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0), feeBasisPoints: 0 };
   if (!fromAmount || !swapTokenAddress || !infoTokens || !gllPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
@@ -512,8 +371,8 @@ export function getBuyGllToAmount(fromAmount, swapTokenAddress, infoTokens, gllP
   const feeBasisPoints = getFeeBasisPoints(
     swapToken,
     usdgAmount,
-    MINT_BURN_FEE_BASIS_POINTS,
-    TAX_BASIS_POINTS,
+    FEES[chainId].MINT_BURN_FEE_BASIS_POINTS,
+    FEES[chainId].TAX_BASIS_POINTS,
     true,
     usdgSupply,
     totalTokenWeights
@@ -524,7 +383,7 @@ export function getBuyGllToAmount(fromAmount, swapTokenAddress, infoTokens, gllP
   return { amount: gllAmount, feeBasisPoints };
 }
 
-export function getSellGllFromAmount(toAmount, swapTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
+export function getSellGllFromAmount(chainId, toAmount, swapTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0), feeBasisPoints: 0 };
   if (!toAmount || !swapTokenAddress || !infoTokens || !gllPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
@@ -543,8 +402,8 @@ export function getSellGllFromAmount(toAmount, swapTokenAddress, infoTokens, gll
   const feeBasisPoints = getFeeBasisPoints(
     swapToken,
     usdgAmount,
-    MINT_BURN_FEE_BASIS_POINTS,
-    TAX_BASIS_POINTS,
+    FEES[chainId].MINT_BURN_FEE_BASIS_POINTS,
+    FEES[chainId].TAX_BASIS_POINTS,
     false,
     usdgSupply,
     totalTokenWeights
@@ -555,7 +414,7 @@ export function getSellGllFromAmount(toAmount, swapTokenAddress, infoTokens, gll
   return { amount: gllAmount, feeBasisPoints };
 }
 
-export function getBuyGllFromAmount(toAmount, fromTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
+export function getBuyGllFromAmount(chainId, toAmount, fromTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0) };
   if (!toAmount || !fromTokenAddress || !infoTokens || !gllPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
@@ -573,8 +432,8 @@ export function getBuyGllFromAmount(toAmount, fromTokenAddress, infoTokens, gllP
   const feeBasisPoints = getFeeBasisPoints(
     fromToken,
     usdgAmount,
-    MINT_BURN_FEE_BASIS_POINTS,
-    TAX_BASIS_POINTS,
+    FEES[chainId].MINT_BURN_FEE_BASIS_POINTS,
+    FEES[chainId].TAX_BASIS_POINTS,
     true,
     usdgSupply,
     totalTokenWeights
@@ -585,7 +444,7 @@ export function getBuyGllFromAmount(toAmount, fromTokenAddress, infoTokens, gllP
   return { amount: fromAmount, feeBasisPoints };
 }
 
-export function getSellGllToAmount(toAmount, fromTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
+export function getSellGllToAmount(chainId, toAmount, fromTokenAddress, infoTokens, gllPrice, usdgSupply, totalTokenWeights) {
   const defaultValue = { amount: bigNumberify(0) };
   if (!toAmount || !fromTokenAddress || !infoTokens || !gllPrice || !usdgSupply || !totalTokenWeights) {
     return defaultValue;
@@ -603,8 +462,8 @@ export function getSellGllToAmount(toAmount, fromTokenAddress, infoTokens, gllPr
   const feeBasisPoints = getFeeBasisPoints(
     fromToken,
     usdgAmount,
-    MINT_BURN_FEE_BASIS_POINTS,
-    TAX_BASIS_POINTS,
+    FEES[chainId].MINT_BURN_FEE_BASIS_POINTS,
+    FEES[chainId].TAX_BASIS_POINTS,
     false,
     usdgSupply,
     totalTokenWeights
@@ -679,8 +538,8 @@ export function getNextFromAmount(
   let usdgAmount = fromAmount.mul(fromTokenMinPrice).div(PRECISION);
   usdgAmount = adjustForDecimals(usdgAmount, toToken.decimals, USDG_DECIMALS);
   const swapFeeBasisPoints =
-    fromToken.isStable && toToken.isStable ? STABLE_SWAP_FEE_BASIS_POINTS : SWAP_FEE_BASIS_POINTS;
-  const taxBasisPoints = fromToken.isStable && toToken.isStable ? STABLE_TAX_BASIS_POINTS : TAX_BASIS_POINTS;
+    fromToken.isStable && toToken.isStable ? FEES[chainId].STABLE_SWAP_FEE_BASIS_POINTS : FEES[chainId].SWAP_FEE_BASIS_POINTS;
+  const taxBasisPoints = fromToken.isStable && toToken.isStable ? FEES[chainId].STABLE_TAX_BASIS_POINTS : FEES[chainId].TAX_BASIS_POINTS;
   const feeBasisPoints0 = getFeeBasisPoints(
     fromToken,
     usdgAmount,
@@ -855,8 +714,8 @@ export function getNextToAmount(
   let usdgAmount = fromAmount.mul(fromTokenMinPrice).div(PRECISION);
   usdgAmount = adjustForDecimals(usdgAmount, fromToken.decimals, USDG_DECIMALS);
   const swapFeeBasisPoints =
-    fromToken.isStable && toToken.isStable ? STABLE_SWAP_FEE_BASIS_POINTS : SWAP_FEE_BASIS_POINTS;
-  const taxBasisPoints = fromToken.isStable && toToken.isStable ? STABLE_TAX_BASIS_POINTS : TAX_BASIS_POINTS;
+    fromToken.isStable && toToken.isStable ? FEES[chainId].STABLE_SWAP_FEE_BASIS_POINTS : FEES[chainId].SWAP_FEE_BASIS_POINTS;
+  const taxBasisPoints = fromToken.isStable && toToken.isStable ? FEES[chainId].STABLE_TAX_BASIS_POINTS : FEES[chainId].TAX_BASIS_POINTS;
   const feeBasisPoints0 = getFeeBasisPoints(
     fromToken,
     usdgAmount,
@@ -945,6 +804,7 @@ export function getDeltaStr({ delta, deltaPercentage, hasProfit }) {
 }
 
 export function getLeverage({
+  chainId,
   size,
   sizeDelta,
   increaseSize,
@@ -1005,7 +865,7 @@ export function getLeverage({
   }
 
   remainingCollateral = sizeDelta
-    ? remainingCollateral.mul(BASIS_POINTS_DIVISOR - MARGIN_FEE_BASIS_POINTS).div(BASIS_POINTS_DIVISOR)
+    ? remainingCollateral.mul(BASIS_POINTS_DIVISOR - FEES[chainId].MARGIN_FEE_BASIS_POINTS).div(BASIS_POINTS_DIVISOR)
     : remainingCollateral;
   if (entryFundingRate && cumulativeFundingRate) {
     const fundingFee = size.mul(cumulativeFundingRate.sub(entryFundingRate)).div(FUNDING_RATE_PRECISION);
@@ -1015,7 +875,7 @@ export function getLeverage({
   return nextSize.mul(BASIS_POINTS_DIVISOR).div(remainingCollateral);
 }
 
-export function getLiquidationPrice(data) {
+export function getLiquidationPrice(chainId,data) {
   let {
     isLong,
     size,
@@ -1034,6 +894,7 @@ export function getLiquidationPrice(data) {
   if (!size || !collateral || !averagePrice) {
     return;
   }
+
 
   let nextSize = size ? size : bigNumberify(0);
   let remainingCollateral = collateral;
@@ -1065,7 +926,7 @@ export function getLiquidationPrice(data) {
     }
   }
 
-  let positionFee = getMarginFee(size).add(LIQUIDATION_FEE);
+  let positionFee = getMarginFee(chainId,size).add(LIQUIDATION_FEE);
   if (entryFundingRate && cumulativeFundingRate) {
     const fundingFee = size.mul(cumulativeFundingRate.sub(entryFundingRate)).div(FUNDING_RATE_PRECISION);
     positionFee = positionFee.add(fundingFee);
@@ -1137,17 +998,10 @@ export function getPositionContractKey(account, collateralToken, indexToken, isL
 }
 
 export function getSwapFeeBasisPoints(isStable) {
-  return isStable ? STABLE_SWAP_FEE_BASIS_POINTS : SWAP_FEE_BASIS_POINTS;
+  return isStable ? FEES[chainId].STABLE_SWAP_FEE_BASIS_POINTS : FEES[chainId].SWAP_FEE_BASIS_POINTS;
 }
 
-const RPC_PROVIDERS = {
-  [opBNB]: BSC_RPC_PROVIDERS,
-  //   [ZKSYNC]: ZKSYNC_RPC_PROVIDERS,
-};
 
-const FALLBACK_PROVIDERS = {
-  [opBNB]: process.env.REACT_APP_BSC_FALLBACK_PROVIDERS.split(" "),
-};
 
 export function shortenAddress(address, length) {
   if (!length) {
@@ -1241,7 +1095,7 @@ export function useChainId() {
     }
   }
 
-  if (!chainId || !supportedChainIds.includes(chainId)) {
+  if (!chainId || !isSupportedChain(chainId)) {
     chainId = DEFAULT_CHAIN_ID;
   }
   return { chainId };
@@ -1254,7 +1108,7 @@ export function useENS(address) {
     async function resolveENS() {
       if (address) {
         try {
-          const provider = new ethers.providers.JsonRpcProvider(BSC_RPC_PROVIDERS[0]);
+          const provider = new ethers.providers.JsonRpcProvider(getRpcUrl(chainId));
           const name = await provider.lookupAddress(address.toLowerCase());
           if (name) setENSName(name);
         } catch (e) {
@@ -1281,21 +1135,14 @@ export function clearWalletLinkData() {
 }
 
 export function getProvider(library, chainId) {
-  let provider;
   if (library) {
     return library.getSigner();
   }
-  provider = _.sample(RPC_PROVIDERS[chainId]);
-  return new ethers.providers.StaticJsonRpcProvider(provider, { chainId });
+  return new ethers.providers.StaticJsonRpcProvider(getRpcUrl(chainId));
 }
 
 export function getFallbackProvider(chainId) {
-  if (!FALLBACK_PROVIDERS[chainId]) {
-    return;
-  }
-
-  const provider = _.sample(FALLBACK_PROVIDERS[chainId]);
-  return new ethers.providers.StaticJsonRpcProvider(provider, { chainId });
+  return new ethers.providers.StaticJsonRpcProvider(getFallbackRpcUrl(chainId));
 }
 
 export const getContractCall = ({ provider, contractInfo, arg0, arg1, method, params, additionalArgs, onError }) => {
@@ -1371,7 +1218,7 @@ export const fetcher = (library, contractInfo, additionalArgs) => (...args) => {
       shouldCallFallback = false
       resolve(result)
     }).catch((e) => {
-      // console.error("fetcher error", id, contractInfo.contractName, method, e);
+      console.error("fetcher error", id, contractInfo.contractName, method, e);
       handleFallback(resolve, reject, e)
     })
 
@@ -1600,21 +1447,6 @@ export function useAccountOrders(flagOrdersEnabled, overrideAccount) {
       const orderBookContract = new ethers.Contract(orderBookAddress, OrderBook.abi, provider);
       const orderBookReaderContract = new ethers.Contract(orderBookReaderAddress, OrderBookReader.abi, provider);
 
-      // const fetchIndexesFromServer = () => {
-      //   const ordersIndexesUrl = `${getServerBaseUrl(chainId)}/orders_indices?account=${account}`;
-      //   return fetch(ordersIndexesUrl)
-      //     .then(async (res) => {
-      //       const json = await res.json();
-      //       const ret = {};
-      //       for (const key of Object.keys(json)) {
-      //         ret[key.toLowerCase()] = json[key].map((val) => parseInt(val.value));
-      //       }
-
-      //       return ret;
-      //     })
-      //     .catch(() => ({ swap: [], increase: [], decrease: [] }));
-      // };
-
       const fetchIndexesFromServer = () => {
         return { swap: [], increase: [], decrease: [] };
       };
@@ -1760,13 +1592,6 @@ export function numberWithCommas(x) {
   return parts.join(".");
 }
 
-export function getExplorerUrl(chainId) {
-  if (chainId === opBNB) {
-    return process.env.REACT_APP_EXPLORER_BSC_URL;
-  }
-  return process.env.REACT_APP_EXPLORER_BSC_URL;
-}
-
 export function getAccountUrl(chainId, account) {
   if (!account) {
     return getExplorerUrl(chainId);
@@ -1794,23 +1619,25 @@ export const getApiGasPrice = async () => {
 };
 
 export async function setGasPrice(txnOpts, provider, chainId) {
+  let defaultGasPrice = DEFAULT_GAS_PRICE_MAP[chainId];
+  txnOpts["gasPrice"] = bigNumberify(defaultGasPrice);
   let maxGasPrice = MAX_GAS_PRICE_MAP[chainId];
-  const premium = GAS_PRICE_ADJUSTMENT_MAP[chainId] || bigNumberify(0);
+  // const premium = GAS_PRICE_ADJUSTMENT_MAP[chainId] || bigNumberify(0);
 
-  const gasPrice = await getApiGasPrice();
-  if (gasPrice.gt(0)) {
-    txnOpts["gasPrice"] = gasPrice; //.add(premium);
-  } else if (maxGasPrice) {
-    const gasPrice = await provider.getGasPrice();
-    if (gasPrice.gt(maxGasPrice)) {
-      txnOpts["gasPrice"] = bigNumberify(maxGasPrice); //.add(premium);
-    } else {
-      txnOpts["gasPrice"] = gasPrice; //.add(premium);
-    }
+  // const gasPrice = await getApiGasPrice();
+  // if (gasPrice.gt(0)) {
+  //   txnOpts["gasPrice"] = gasPrice; //.add(premium);
+  // } else if (maxGasPrice) {
+  //   const gasPrice = await provider.getGasPrice();
+  //   if (gasPrice.gt(maxGasPrice)) {
+  //     txnOpts["gasPrice"] = bigNumberify(maxGasPrice); //.add(premium);
+  //   } else {
+  //     txnOpts["gasPrice"] = gasPrice; //.add(premium);
+  //   }
 
     // const feeData = await provider.getFeeData();
     // txnOpts["maxPriorityFeePerGas"] = feeData.maxPriorityFeePerGas.add(priority);
-  }
+  // }
 }
 
 export async function getGasLimit(contract, method, params = [], value, gasBuffer) {
@@ -1921,19 +1748,7 @@ export const getTokenInfo = (infoTokens, tokenAddress, replaceNative, nativeToke
   return infoTokens[tokenAddress];
 };
 
-const NETWORK_METADATA = {
-  [opBNB]: {
-    chainId: "0x" + opBNB.toString(16),
-    chainName: "BSC",
-    nativeCurrency: {
-      name: "BNB",
-      symbol: "BNB",
-      decimals: 18,
-    },
-    rpcUrls: BSC_RPC_PROVIDERS,
-    blockExplorerUrls: [getExplorerUrl(opBNB)],
-  },
-};
+
 
 export const addNetwork = async (metadata) => {
   await window.ethereum.request({ method: "wallet_addEthereumChain", params: [metadata] }).catch();
@@ -1950,7 +1765,7 @@ export const switchNetwork = async (chainId, active) => {
   }
 
   try {
-    const chainIdHex = "0x" + chainId.toString(16);
+    const chainIdHex = "0x" + Number(chainId).toString(16);
     await window.ethereum.request({
       method: "wallet_switchEthereumChain",
       params: [{ chainId: chainIdHex }],

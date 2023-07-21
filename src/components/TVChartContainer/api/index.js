@@ -1,9 +1,11 @@
 import historyProvider from './historyProvider'
 import stream from './stream'
 import { getTokenBySymbol } from "../../../data/Tokens";
-import { DEFAULT_CHAIN_ID } from "../../../Helpers";
+import { DEFAULT_CHAIN_ID } from '../../../config/chains';
+import { SELECTED_NETWORK_LOCAL_STORAGE_KEY } from '../../../config/localStorage';
 
 
+const chainId = Number(localStorage.getItem(SELECTED_NETWORK_LOCAL_STORAGE_KEY)) || DEFAULT_CHAIN_ID;
 
 const supportedResolutions = [ "5", "15", "60", "240","1D"]
 
@@ -43,7 +45,7 @@ export default {
 			data_status: 'streaming',
 		}
 
-		const curToken = getTokenBySymbol(DEFAULT_CHAIN_ID, split_data[0]);
+		const curToken = getTokenBySymbol(chainId, split_data[0]);
 
 		symbol_stub.pricescale = Math.pow(10,curToken.displayDecimals)
 
@@ -57,7 +59,7 @@ export default {
 	getBars: function(symbolInfo, resolution, periodParams, onHistoryCallback, onErrorCallback) {
 		// console.log('=====getBars running')
 		// console.log(`Requesting bars between ${new Date(periodParams.from * 1000).toISOString()} and ${new Date(periodParams.to * 1000).toISOString()}`)
-		historyProvider.getBars(symbolInfo, resolution, periodParams)
+		historyProvider.getBars(chainId,symbolInfo, resolution, periodParams)
 		.then(bars => {
 			if (bars.length) {
 				onHistoryCallback(bars, {noData: false})
