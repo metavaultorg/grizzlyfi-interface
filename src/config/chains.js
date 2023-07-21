@@ -29,6 +29,11 @@ export const MAX_GAS_PRICE_MAP = {
   [BSC]: 2000000000,
 };
 
+export const DEFAULT_GAS_PRICE_MAP = {
+  [opBNB]: 2000000000,
+  [BSC]: 3300000000,
+};
+
 export const HIGH_EXECUTION_FEES_MAP = {
   [opBNB]: 3, // 3 USD
   [BSC]: 3, // 3 USD

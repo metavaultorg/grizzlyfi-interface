@@ -17,7 +17,7 @@ import useWeb3Onboard from "./hooks/useWeb3Onboard";
 import IconSuccess from './assets/icons/icon-success.svg'
 import IconError from './assets/icons/icon-failed.svg'
 import { getImageUrl } from "./cloudinary/getImageUrl";
-import { CHAIN_ID, DEFAULT_CHAIN_ID, FEES, GAS_PRICE_ADJUSTMENT_MAP, getChainName, getExplorerUrl, getFallbackRpcUrl, getRpcUrl, isSupportedChain, MAX_GAS_PRICE_MAP, NETWORK_METADATA } from "./config/chains";
+import { CHAIN_ID, DEFAULT_CHAIN_ID, DEFAULT_GAS_PRICE_MAP, FEES, GAS_PRICE_ADJUSTMENT_MAP, getChainName, getExplorerUrl, getFallbackRpcUrl, getRpcUrl, isSupportedChain, MAX_GAS_PRICE_MAP, NETWORK_METADATA } from "./config/chains";
 import { getContract } from "./config/contracts";
 import { SELECTED_NETWORK_LOCAL_STORAGE_KEY, WALLET_CONNECT_LOCALSTORAGE_KEY, WALLET_LINK_LOCALSTORAGE_PREFIX } from "./config/localStorage";
 
@@ -1619,19 +1619,21 @@ export const getApiGasPrice = async () => {
 };
 
 export async function setGasPrice(txnOpts, provider, chainId) {
+  let defaultGasPrice = DEFAULT_GAS_PRICE_MAP[chainId];
+  txnOpts["gasPrice"] = bigNumberify(defaultGasPrice);
   let maxGasPrice = MAX_GAS_PRICE_MAP[chainId];
-  const premium = GAS_PRICE_ADJUSTMENT_MAP[chainId] || bigNumberify(0);
+  // const premium = GAS_PRICE_ADJUSTMENT_MAP[chainId] || bigNumberify(0);
 
-  const gasPrice = await getApiGasPrice();
-  if (gasPrice.gt(0)) {
-    txnOpts["gasPrice"] = gasPrice; //.add(premium);
-  } else if (maxGasPrice) {
-    const gasPrice = await provider.getGasPrice();
-    if (gasPrice.gt(maxGasPrice)) {
-      txnOpts["gasPrice"] = bigNumberify(maxGasPrice); //.add(premium);
-    } else {
-      txnOpts["gasPrice"] = gasPrice; //.add(premium);
-    }
+  // const gasPrice = await getApiGasPrice();
+  // if (gasPrice.gt(0)) {
+  //   txnOpts["gasPrice"] = gasPrice; //.add(premium);
+  // } else if (maxGasPrice) {
+  //   const gasPrice = await provider.getGasPrice();
+  //   if (gasPrice.gt(maxGasPrice)) {
+  //     txnOpts["gasPrice"] = bigNumberify(maxGasPrice); //.add(premium);
+  //   } else {
+  //     txnOpts["gasPrice"] = gasPrice; //.add(premium);
+  //   }
 
     // const feeData = await provider.getFeeData();
     // txnOpts["maxPriorityFeePerGas"] = feeData.maxPriorityFeePerGas.add(priority);
