@@ -12,6 +12,7 @@ export default function Modal(props) {
   const modalRef = useRef(null);
 
   // useLockBodyScroll(modalRef, isVisible, disableBodyScrollLock);
+  /*
   useEffect(() => {
 
     if (isVisible ) {
@@ -28,6 +29,7 @@ export default function Modal(props) {
 
     }
   }, [isVisible, setIsVisible])
+  */
   useEffect(() => {
     function close(e) {
       if (e.keyCode === 27) {
