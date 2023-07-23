@@ -100,8 +100,8 @@ export default function DashboardV3(props) {
 
   const tokenPairMarketList = useTokenPairMarketData();
 
-  const totalVolumeSum = useTotalVolume();
-  const volumeInfo = useHourlyVolume();
+  const totalVolumeSum = useTotalVolume(chainId);
+  const volumeInfo = useHourlyVolume(chainId);
 
   const vaultAddress = getContract(chainId, "Vault");
   const nativeTokenAddress = getContract(chainId, "NATIVE_TOKEN");

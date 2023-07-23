@@ -7,7 +7,7 @@ import { addTokenToMetamask, useChainId } from "../../Helpers";
 import useWeb3Onboard from "../../hooks/useWeb3Onboard";
 import coingeckoIcon from "../../img/coingecko.png";
 import metamaskIcon from "../../img/ic_metamask_hover_16.svg";
-import maticIcon from "../../img/ic_polygon_16.svg";
+import bscscanIcon from "../../img/ic_bscscan.svg";
 import "./AssetDropdown.css";
 
 function AssetDropdown({ assetSymbol, assetInfo, showReserves }) {
@@ -42,7 +42,7 @@ function AssetDropdown({ assetSymbol, assetInfo, showReserves }) {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <img src={maticIcon} alt="Show in explorer" />
+                <img style={{ width: 30, height: 30}} src={bscscanIcon} alt="Show in explorer" />
                 <p>Proof of Reserves</p>
               </a>
             )}
@@ -52,7 +52,7 @@ function AssetDropdown({ assetSymbol, assetInfo, showReserves }) {
           <>
             {link && (
               <a href={link} className="asset-item" target="_blank" rel="noopener noreferrer">
-                <img src={maticIcon} alt={getChainName(chainId)} />
+                <img style={{ width: 30, height: 30}} src={bscscanIcon} alt={getChainName(chainId)} />
                 <p>{getChainName(chainId)} Network</p>
               </a>
             )}

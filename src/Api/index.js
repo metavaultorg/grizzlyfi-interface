@@ -953,12 +953,12 @@ export async function callContract(chainId, contract, method, params, opts) {
   }
 }
 
-export function useTotalVolume() {
-  const swrKey = ["getTotalVolume"];
+export function useTotalVolume(chainId) {
+  const swrKey = ["getTotalVolume", chainId];
   let { data: totalVolume } = useSWR(swrKey, {
     fetcher: async (...args) => {
       try {
-        return await getTotalVolumeFromGraph();
+        return await getTotalVolumeFromGraph(chainId);
       } catch (ex2) {
         console.warn("getTotalVolumeFromGraph failed");
         console.warn(ex2);
@@ -973,7 +973,7 @@ export function useTotalVolume() {
   return totalVolume;
 }
 
-function getTotalVolumeFromGraph() {
+function getTotalVolumeFromGraph(chainId) {
   const requests = [];
   const nowTs = parseInt(Date.now() / 1000);
 
@@ -1011,12 +1011,12 @@ function getTotalVolumeFromGraph() {
     });
 }
 
-export function useHourlyVolume() {
-  const swrKey = ["getHourlyVolume"];
+export function useHourlyVolume(chainId) {
+  const swrKey = ["getHourlyVolume",chainId];
   let { data: hourlyVolume } = useSWR(swrKey, {
     fetcher: async (...args) => {
       try {
-        return await getHourlyVolumeFromGraph();
+        return await getHourlyVolumeFromGraph(chainId);
       } catch (ex2) {
         console.warn("getHourlyVolumeFromGraph failed");
         console.warn(ex2);
@@ -1031,7 +1031,7 @@ export function useHourlyVolume() {
   return hourlyVolume;
 }
 
-function getHourlyVolumeFromGraph() {
+function getHourlyVolumeFromGraph(chainId) {
   const requests = [];
   const secondsPerHour = 60 * 60;
   const minTime = parseInt(Date.now() / 1000 / secondsPerHour) * secondsPerHour - 24 * secondsPerHour;
