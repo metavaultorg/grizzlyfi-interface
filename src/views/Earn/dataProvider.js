@@ -58,7 +58,7 @@ export function useGraph(querySource, { chainId = DEFAULT_CHAIN_ID, subgraph = "
                 setError(ex);
                 setLoading(false);
             });
-    }, [querySource, setData, setError, setLoading]);
+    }, [querySource, setData, setError, setLoading, client]);
 
     return [data, loading, error];
 }
