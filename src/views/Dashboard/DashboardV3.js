@@ -349,6 +349,7 @@ export default function DashboardV3(props) {
               </div>
             </div>
           </div>
+{/*
           <div className="total-info">
             <div className="label">Paid out to GLL Stakers</div>
             <div>
@@ -370,6 +371,7 @@ export default function DashboardV3(props) {
               </div>
             </div>
           </div>
+*/}
           <div className="total-info">
             <div className="label">Assets Under Management</div>
             <div>

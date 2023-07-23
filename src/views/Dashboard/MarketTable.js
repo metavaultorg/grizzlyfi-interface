@@ -19,9 +19,9 @@ import { getConstant } from "../../config/chains";
 
 export default function MarketTable() {
     const [sorter, setSorter] = useState({ sortBy: 'change', isAsc: true })
-    const tokenPairMarketList = useTokenPairMarketData();
-    const history = useHistory();
     const { chainId } = useChainId();
+    const tokenPairMarketList = useTokenPairMarketData(chainId);
+    const history = useHistory();
     const { AddressZero } = ethers.constants;
 
     const defaultCollateralSymbol = getConstant(chainId, "defaultCollateralSymbol");

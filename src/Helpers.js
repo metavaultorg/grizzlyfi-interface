@@ -1281,7 +1281,7 @@ export const compactNumber = (value) => {
 };
 
 export const formatNumber = (value, displayDecimals, useComma, compact) => {
-  if (!value) {
+  if (!value && value !== 0) {
     return null;
   }
   let ret = limitDecimals(value, displayDecimals);
@@ -2234,5 +2234,5 @@ export function today() {
 }
 
 export function yesterday() {
-  return today() - 86400;
+  return today() - 2*24*60*60;
 }
