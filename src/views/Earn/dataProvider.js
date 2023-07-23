@@ -206,7 +206,7 @@ export function useHourlyVolumeByToken({ token, from = FROM_DATE_TS, to = NOW_TS
       }
     }`;
     const [graphData, loading, error] = useGraph(query, { chainId });
-    const [prices] = useFastPrice({ token, from, to });
+    const [prices] = useFastPrice({ token, from, to, chainId });
     const data = useMemo(() => {
         if (!graphData || !prices) {
             return null;

@@ -80,7 +80,7 @@ export function useCoingeckoCurrentPrice(symbol) {
 }
 
 
-export function useCoingeckoPrices(symbol) {
+export function useCoingeckoPrices(chainId, symbol) {
     // token ids https://api.coingecko.com/api/v3/coins
 
     const _symbol = coins[symbol]
@@ -100,8 +100,8 @@ export function useCoingeckoPrices(symbol) {
         }
     );
 
-    const token = getTokenBySymbol(CHAIN_ID, symbol).address;
-    const [, total, , ,] = useHourlyVolumeByToken({ token, from, to, chainId: CHAIN_ID });
+    const token = getTokenBySymbol(chainId??CHAIN_ID, symbol).address;
+    const [, total, , ,] = useHourlyVolumeByToken({ token, from, to, chainId: chainId });
 
     const data = useMemo(() => {
         if (!res || res === undefined || res.length === 0) {
@@ -118,7 +118,7 @@ export function useCoingeckoPrices(symbol) {
         const high_24h = prices.reduce((previous, current) => Math.max(previous, current))
         const low_24h = prices.reduce((previous, current) => Math.min(previous, current))
 
-        const displayDecimals = getTokenBySymbol(CHAIN_ID, symbol).displayDecimals || 2;
+        const displayDecimals = getTokenBySymbol(chainId??CHAIN_ID, symbol).displayDecimals || 2;
         return {
             name: symbol.concat("/USD"),
             symbol: symbol,
@@ -134,10 +134,10 @@ export function useCoingeckoPrices(symbol) {
     return [data, null, error];
 }
 
-export function useTokenPairMarketData() {
-    const [btcPrices] = useCoingeckoPrices("BTC");
-    const [ethPrices] = useCoingeckoPrices("ETH");
-    const [bnbPrices] = useCoingeckoPrices("BNB");
+export function useTokenPairMarketData(chainId) {
+    const [btcPrices] = useCoingeckoPrices(chainId, "BTC");
+    const [ethPrices] = useCoingeckoPrices(chainId, "ETH");
+    const [bnbPrices] = useCoingeckoPrices(chainId, "BNB");
 
     const data = useMemo(() => {
         const ret = [];
