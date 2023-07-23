@@ -17,6 +17,7 @@ import {
   clearWalletConnectData,
   clearWalletLinkData,
   DEFAULT_SLIPPAGE_AMOUNT,
+  formatNumber,
   getAccountUrl,
   getInjectedHandler,
   getWalletConnectHandler,
@@ -275,7 +276,7 @@ function AppHeaderUser({
         <div style={{ display: "flex", gap: 8 }}>
           <div className="App-header-balance font-number">
             <img src={IconToken} alt="icon" width={24} />
-            <span className="font-number">${nativeTokenPrice}</span>
+            <span className="font-number">${nativeTokenPrice.toFixed(2)}</span>
           </div>
           {showSelector && (
             <NetworkSelector
