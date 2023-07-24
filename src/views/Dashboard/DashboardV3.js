@@ -180,7 +180,7 @@ export default function DashboardV3(props) {
     nativeTokenPrice
   );
 
-  const totalParams = { from: yesterday(), chainId };
+  const totalParams = { from: yesterday(), to: today(), chainId };
   const [totalGllData] = useGllData(totalParams);
   const [totalAum, totalAumDelta, totalAumDeltaPercentage] = useMemo(() => {
     if (!totalGllData) {
