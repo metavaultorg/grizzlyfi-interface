@@ -8,6 +8,11 @@
 .user-address {
   margin-right: 10px;
 }
+@media (max-width:430px) {
+  .user-address {
+    display: none;
+  }
+}
 
 .App-header-user-address {
   display: flex;

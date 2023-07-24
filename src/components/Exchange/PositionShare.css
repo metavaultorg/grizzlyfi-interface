@@ -274,7 +274,7 @@ align-items: center;
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
   .position-share-modal .Modal-content {
     /* max-width: 377px; */
   }

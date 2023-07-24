@@ -378,6 +378,10 @@ export default function Earn(props) {
                               {token.symbol}
                               <br />
                               <br />
+                              Target Min Amount:{" "}
+                                  {formatKeyAmount(tokenInfo, "bufferAmount", token.decimals, 2, true)} {token.symbol}
+                                  <br />
+                                  <br />
                               Max {tokenInfo.symbol} Capacity: ${formatAmount(maxUsdgAmount, 18, 0, true)}
                             </>
                           );
