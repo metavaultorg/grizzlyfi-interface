@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { toast } from "react-toastify";
 
 import { useLocalStorage } from "react-use";
@@ -18,7 +18,7 @@ import IconSuccess from './assets/icons/icon-success.svg'
 import IconError from './assets/icons/icon-failed.svg'
 import { getImageUrl } from "./cloudinary/getImageUrl";
 import { CHAIN_ID, DEFAULT_CHAIN_ID, DEFAULT_GAS_PRICE_MAP, FEES, GAS_PRICE_ADJUSTMENT_MAP, getChainName, getExplorerUrl, getFallbackRpcUrl, getRpcUrl, isSupportedChain, MAX_GAS_PRICE_MAP, NETWORK_METADATA } from "./config/chains";
-import { getContract } from "./config/contracts";
+import { getContract, opBNB } from "./config/contracts";
 import { SELECTED_NETWORK_LOCAL_STORAGE_KEY, WALLET_CONNECT_LOCALSTORAGE_KEY, WALLET_LINK_LOCALSTORAGE_PREFIX } from "./config/localStorage";
 
 
@@ -2009,6 +2009,61 @@ export function getStakingData(stakingInfo) {
   }
 
   return data;
+}
+
+
+
+export function getTotalApr(allTokensPerInterval, ghnyPrice, infoTokens, gllSupply, gllPrice, chainId, stakingInfo, gllSupplyUsd, nativeToken){
+  let totalApr = useMemo(() => {
+    if (chainId === opBNB) {
+      const stakingData = getStakingData(stakingInfo);
+
+      let feeGllTrackerAnnualRewardsUsd;
+      let feeGllTrackerApr;
+      if (
+        stakingData &&
+        stakingData.feeGllTracker &&
+        stakingData.feeGllTracker.tokensPerInterval &&
+        nativeToken &&
+        nativeToken.minPrice &&
+        gllSupplyUsd &&
+        gllSupplyUsd.gt(0)
+      ) {
+        feeGllTrackerAnnualRewardsUsd = stakingData.feeGllTracker.tokensPerInterval
+          .mul(SECONDS_PER_YEAR)
+          .mul(nativeToken.minPrice)
+          .div(expandDecimals(1, 18));
+        feeGllTrackerApr = feeGllTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(gllSupplyUsd);
+        return feeGllTrackerApr.toNumber() / 100;
+      }
+    } else {
+      let annualRewardsInUsd = bigNumberify(0);
+      if (!Array.isArray(allTokensPerInterval) && allTokensPerInterval.length === 0) return;
+      if (gllSupply.eq(0)) return;
+      for (let i = 0; i < allTokensPerInterval.length; i++) {
+        const [tokenAddress, tokensPerInterval] = allTokensPerInterval[i];
+        let tokenPrice = bigNumberify(0)
+        let tokenDecimals = 18;
+        if (tokenAddress === getContract(chainId, "GHNY")) {
+          tokenPrice = ghnyPrice;
+        } else {
+          const token = infoTokens[tokenAddress];
+          if (token && token.maxPrice) {
+            tokenPrice = token.maxPrice;
+            tokenDecimals = token.decimals
+          }
+        }
+
+        const tokenAnnualRewardsInUsd = tokenPrice.mul(tokensPerInterval).mul(86400).mul(365).div(expandDecimals(1, 30)).div(expandDecimals(1, tokenDecimals))
+        annualRewardsInUsd = annualRewardsInUsd.add(tokenAnnualRewardsInUsd);
+      }
+      const apr = annualRewardsInUsd.mul(10000).mul(expandDecimals(1, USD_DECIMALS)).div(gllPrice).div(gllSupply.div(expandDecimals(1, USDG_DECIMALS)))
+      return apr.toNumber() / 100;
+    }
+    return 0
+  }, [allTokensPerInterval, ghnyPrice, infoTokens, gllSupply, gllPrice, chainId, stakingInfo, gllSupplyUsd])
+
+  return totalApr;
 }
 
 export function getProcessedData(balanceData, supplyData, depositBalanceData, stakingData, aum, nativeTokenPrice) {

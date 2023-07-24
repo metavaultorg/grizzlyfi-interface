@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { getImageUrl } from "../../cloudinary/getImageUrl";
 
 import { getContract } from "../../config/contracts";
-import { callContract } from "../../Api";
+import { callContract, useAllTokensPerInterval } from "../../Api";
 import {
   GLL_DECIMALS,
   GLL_DISPLAY_DECIMALS,
@@ -26,6 +26,11 @@ import {
   yesterday,
   expandDecimals,
   numberWithCommas,
+  USDG_DECIMALS,
+  BASIS_POINTS_DIVISOR,
+  SECONDS_PER_YEAR,
+  getTotalApr,
+  getTokenInfo,
 } from "../../Helpers";
 import GllManager from "../../abis/GllManager.json";
 import Reader from "../../abis/Reader.json";
@@ -53,8 +58,8 @@ import UpChartArrow from "../../assets/icons/up-chart-arrow.svg";
 import APRLabel from "../../components/APRLabel/APRLabel";
 import AUMLabel from "../../components/AUMLabel/AUMLabel";
 import TextBadge from "../../components/Common/TextBadge";
-import { getTokenBySymbol, getWhitelistedTokens } from "../../data/Tokens";
-import { useTokenPairMarketData } from "../../hooks/useCoingeckoPrices";
+import { getTokenBySymbol, getTokens, getWhitelistedTokens } from "../../data/Tokens";
+import { useCoingeckoCurrentPrice, useTokenPairMarketData } from "../../hooks/useCoingeckoPrices";
 import useWeb3Onboard from "../../hooks/useWeb3Onboard";
 import { FIRST_DATE_TS, NOW_TS, useGllData, useTotalPaidOutToGLLStakers } from "../../views/Earn/dataProvider";
 import MarketTable from "./MarketTable";
@@ -64,6 +69,7 @@ import { useInfoTokens } from "../../Api";
 import { getPositionQuery, getPositions } from "../Exchange/Exchange";
 import ClaimButtonOpBNB from "../../components/ClaimButton/ClaimButtonOpBNB";
 import { opBNB } from "../../config/chains";
+const { AddressZero } = ethers.constants;
 
 const claimTypes = [
   { id: "eth", iconPath: "coins/eth", token: "ETH" },
@@ -90,6 +96,7 @@ function getCurrentFeesUsd(tokenAddresses, fees, infoTokens) {
 
   return currentFeesUsd;
 }
+
 export default function DashboardV3(props) {
   const { connectWallet, savedShowPnlAfterFees, savedIsPnlInLeverage } = props;
   const { active, library, account } = useWeb3Onboard();
@@ -195,16 +202,6 @@ export default function DashboardV3(props) {
   const [totalPayout, totalPayoutDelta, totalPayoutLoading] = useTotalPaidOutToGLLStakers({ from: FIRST_DATE_TS, to: NOW_TS, chainId });
 
   const poolShare = (processedData && processedData.gllBalanceUsd && processedData.gllSupplyUsd) ? processedData.gllBalanceUsd.mul(10000).div(processedData.gllSupplyUsd).toNumber() / 100 : 0;
-  const vaultList = [
-    {
-      symbol: "GLL",
-      apy: `${formatKeyAmount(processedData, "gllAprTotal", 2, 2, true)}%`,
-      locked: `${formatKeyAmount(processedData, "gllSupplyUsd", USD_DECIMALS, 2, true)}`,
-      invest: `${formatKeyAmount(processedData, "gllBalance", GLL_DECIMALS, 2, true)}`,
-      poolShare: `${poolShare}%`,
-      profit: `$${formatKeyAmount(processedData, "totalGllRewardsUsd", USD_DECIMALS, 2, true)}`,
-    },
-  ];
 
   function requestToken() {
     const token = getTokenBySymbol(chainId, selectedClaimToken.token);
@@ -241,11 +238,21 @@ export default function DashboardV3(props) {
       ]),
     }
   );
-  const { infoTokens } = useInfoTokens(library, chainId, active, undefined, undefined);
+
+  const tokens = getTokens(chainId);
+  const tokenAddresses = tokens.map((token) => token.address);
+  const usdgAddress = getContract(chainId, "USDG");
+  const tokensForBalanceAndSupplyQuery = [feeGllTrackerAddress, usdgAddress];
+
+  const { data: tokenBalances } = useSWR([`Dashboard:getTokenBalances:${active}`, chainId, readerAddress, "getTokenBalances", account || PLACEHOLDER_ACCOUNT], {
+    fetcher: fetcher(library, Reader, [tokenAddresses]),
+  });
+
+  const { infoTokens } = useInfoTokens(library, chainId, active, tokenBalances, undefined);
   const { data: fees } = useSWR([`Dashboard:fees:${active}`, chainId, readerAddress, "getFees", vaultAddress], {
     dedupingInterval: 30000,
     fetcher: fetcher(library, Reader, [whitelistedTokenAddresses]),
-});
+  });
 
   const { positions, positionsMap } = getPositions(
     chainId,
@@ -265,6 +272,44 @@ export default function DashboardV3(props) {
     ? parseFloat(bigNumberify(formatAmount(currentFeesUsd, USD_DECIMALS - 2, 0, false)).toNumber()) / 100
     : 0;
 
+
+  const { data: balancesAndSupplies } = useSWR(
+    [
+      `Earn:getTokenBalancesWithSupplies:${active}`,
+      chainId,
+      readerAddress,
+      "getTokenBalancesWithSupplies",
+      account || PLACEHOLDER_ACCOUNT,
+    ],
+    {
+      fetcher: fetcher(library, Reader, [tokensForBalanceAndSupplyQuery]),
+    }
+  );
+  const ghnyPrice = useCoingeckoCurrentPrice("GHNY")
+  const [allTokensPerInterval,] = useAllTokensPerInterval(library, chainId)
+  const gllSupply = balancesAndSupplies ? balancesAndSupplies[1] : bigNumberify(0);
+
+  const gllPrice =
+  aum && aum.gt(0) && gllSupply.gt(0)
+    ? aum.mul(expandDecimals(1, GLL_DECIMALS)).div(gllSupply)
+    : expandDecimals(1, USD_DECIMALS);
+
+  const gllSupplyUsd = gllSupply.mul(gllPrice).div(expandDecimals(1, GLL_DECIMALS));
+  const nativeToken = getTokenInfo(infoTokens, AddressZero);
+
+  let totalApr = getTotalApr(allTokensPerInterval, ghnyPrice, infoTokens, gllSupply, gllPrice, chainId, stakingInfo, gllSupplyUsd, nativeToken)
+  console.log(processedData);
+  const vaultList = [
+    {
+      symbol: "GLL",
+      apy: `${totalApr}%`,
+      locked: `${formatAmount(gllSupplyUsd, USD_DECIMALS, 2, true)}`,
+      invest: `${formatKeyAmount(processedData, "gllBalance", GLL_DECIMALS, 2, true)}`,
+      poolShare: `${poolShare}%`,
+      profit: `$${formatKeyAmount(processedData, "totalGllRewardsUsd", USD_DECIMALS, 2, true)}`,
+    },
+  ];
+
   const totalPnl = useMemo(() => {
     const positionsPnl = positions.reduce(
       (accumulator, position) => {
@@ -278,60 +323,60 @@ export default function DashboardV3(props) {
 
   return (
     <SEO title={getPageTitle("Dashboard")}>
-      <div className="default-container DashboardV2 page-layout" style={{paddingTop:16}}>
+      <div className="default-container DashboardV2 page-layout" style={{ paddingTop: 16 }}>
         {chainId === opBNB &&
-        <div className="faucet">
-          <div style={{ fontSize: 20, fontWeight: 600, color: "#afafaf" }}>
-            <span style={{ color: "#fff" }}>GrizzlyFi</span>
-            &nbsp; is live on&nbsp;
-            <a
-              href="https://opbnb.bnbchain.org"
-              target="_blank"
-              rel="noreferrer"
-              style={{ fontWeight: "bold", color: "#fff", textDecoration: "none" }}
-            >
-              opBNB Testnet.
-            </a>
-            &nbsp; Get your Testnet token via faucet
-          </div>
-          <div className="faucet-right">
-            <div>
-              {claimTypes.map((item) => (
-                <div
-                  style={{
-                    display: "inline-flex",
-                    marginRight: 8,
-                  }}
-                >
-                  <img
-                    style={{
-                      objectFit: "none",
-                      cursor: "pointer",
-                      opacity: selectedClaimToken.id === item.id ? "1" : "0.4",
-                      border: selectedClaimToken.id === item.id ? "solid 2px #fff" : "none",
-                      borderRadius: 14,
-                      boxShadow: selectedClaimToken.id === item.id ? "0 0 0 3px rgba(255, 255, 255, 0.2)" : "none",
-                    }}
-                    src={getImageUrl({ path: item.iconPath })}
-                    alt={""}
-                    width={40}
-                    height={40}
-                    onClick={() => setSelectedClaimToken(item)}
-                  />
-                </div>
-              ))}
+          <div className="faucet">
+            <div style={{ fontSize: 20, fontWeight: 600, color: "#afafaf" }}>
+              <span style={{ color: "#fff" }}>GrizzlyFi</span>
+              &nbsp; is live on&nbsp;
+              <a
+                href="https://opbnb.bnbchain.org"
+                target="_blank"
+                rel="noreferrer"
+                style={{ fontWeight: "bold", color: "#fff", textDecoration: "none" }}
+              >
+                opBNB Testnet.
+              </a>
+              &nbsp; Get your Testnet token via faucet
             </div>
-            {active ? (
-              <button disabled={isSubmitting || !active} className="claim-btn" onClick={requestToken}>
-                Claim&nbsp;{selectedClaimToken.token}
-              </button>
-            ) : (
-              <button className="claim-btn" onClick={connectWallet}>
-                Connect
-              </button>
-            )}
+            <div className="faucet-right">
+              <div>
+                {claimTypes.map((item) => (
+                  <div
+                    style={{
+                      display: "inline-flex",
+                      marginRight: 8,
+                    }}
+                  >
+                    <img
+                      style={{
+                        objectFit: "none",
+                        cursor: "pointer",
+                        opacity: selectedClaimToken.id === item.id ? "1" : "0.4",
+                        border: selectedClaimToken.id === item.id ? "solid 2px #fff" : "none",
+                        borderRadius: 14,
+                        boxShadow: selectedClaimToken.id === item.id ? "0 0 0 3px rgba(255, 255, 255, 0.2)" : "none",
+                      }}
+                      src={getImageUrl({ path: item.iconPath })}
+                      alt={""}
+                      width={40}
+                      height={40}
+                      onClick={() => setSelectedClaimToken(item)}
+                    />
+                  </div>
+                ))}
+              </div>
+              {active ? (
+                <button disabled={isSubmitting || !active} className="claim-btn" onClick={requestToken}>
+                  Claim&nbsp;{selectedClaimToken.token}
+                </button>
+              ) : (
+                <button className="claim-btn" onClick={connectWallet}>
+                  Connect
+                </button>
+              )}
+            </div>
           </div>
-        </div>
         }
         <div className="section-total-info">
           <div className="total-info">
@@ -676,15 +721,15 @@ export default function DashboardV3(props) {
             />
             <ItemCard
               label="Assets in GLL"
-              value={<AUMLabel/>}
+              value={<AUMLabel />}
               icon={IconMoney}
             />
             <ItemCard
               label="GLL APR"
-              value={`${formatKeyAmount(processedData, "gllAprTotal", 2, 2, true)}%`}
+              value={`${totalApr}%`}
               icon={IconPercentage}
             />
-            <ItemCard label="GLL Weekly Rewards" value={"$"+numberWithCommas(totalFeesDistributed.toFixed(0))} icon={IconClaim} />
+            <ItemCard label="GLL Weekly Rewards" value={"$" + numberWithCommas(totalFeesDistributed.toFixed(0))} icon={IconClaim} />
           </div>
           <div style={{ maxWidth: 500, margin: "auto", marginTop: 80, position: "relative" }}>
             <div

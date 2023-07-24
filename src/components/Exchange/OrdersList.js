@@ -18,7 +18,7 @@ import {
   bigNumberify,
   expandDecimals,
 } from "../../Helpers.js";
-import { cancelSwapOrder, cancelIncreaseOrder, cancelDecreaseOrder, useTrailingStopOrders } from "../../Api";
+import { cancelSwapOrder, cancelIncreaseOrder, cancelDecreaseOrder } from "../../Api";
 
 import Tooltip from "../Tooltip/Tooltip";
 import OrderEditor from "./OrderEditor";
@@ -49,8 +49,6 @@ export default function OrdersList(props) {
   } = props;
 
   const [editingOrder, setEditingOrder] = useState(null);
-
-  const { trailingStopOrders, updateTrailingStopOrders } = useTrailingStopOrders(account);
 
   const onCancelClick = useCallback(
     (order) => {
@@ -229,34 +227,6 @@ export default function OrdersList(props) {
           if (positionForOrder) {
             orderSizeDelta = positionForOrder.size;
           }
-          if (order.orderType.toNumber() === 3 && trailingStopOrders) {
-            // console.log("trailingStopOrders-here",trailingStopOrders)
-            const trailingStopOrder = trailingStopOrders.filter((o) => o.orderIndex === order.index);
-
-            if (trailingStopOrder.length > 0) {
-              trailingStopRefPrice = bigNumberify(trailingStopOrder[0].referencePrice).mul(expandDecimals(1, 24));
-              trailingStopRefPriceTimestamp = trailingStopOrder[0].referencePriceTimestamp;
-              orderTriggerPrice = order.isLong
-                ? trailingStopRefPrice
-                    .mul(BASIS_POINTS_DIVISOR - order.trailingStopPercentage.toNumber())
-                    .div(BASIS_POINTS_DIVISOR)
-                : trailingStopRefPrice
-                    .mul(BASIS_POINTS_DIVISOR + order.trailingStopPercentage.toNumber())
-                    .div(BASIS_POINTS_DIVISOR);
-
-              // console.log("price",order.isLong,trailingStopRefPrice.toString(),order.triggerPrice.toString(),orderTriggerPrice.toString())  ;
-
-              trailingStopContent =
-                (order.isLong ? "Maximum" : "Minimum") +
-                " price was " +
-                formatAmount(trailingStopRefPrice, USD_DECIMALS, indexToken.displayDecimals, true) +
-                " at " +
-                new Date(trailingStopRefPriceTimestamp).toLocaleString();
-            }
-
-            orderType = "(TS-" + (order.trailingStopPercentage.toNumber() * 100) / BASIS_POINTS_DIVISOR + "%)";
-            triggerPricePrefix = order.isLong ? TRIGGER_PREFIX_BELOW : TRIGGER_PREFIX_ABOVE;
-          }
           byWord = ",size=";
         }
       }
@@ -411,34 +381,6 @@ export default function OrdersList(props) {
           orderType = DECREASE_ORDER_TYPES[order.orderType];
           if (positionForOrder) {
             orderSizeDelta = positionForOrder.size;
-          }
-          if (order.orderType.toNumber() === 3 && trailingStopOrders) {
-            // console.log("trailingStopOrders-here",trailingStopOrders)
-            const trailingStopOrder = trailingStopOrders.filter((o) => o.orderIndex === order.index);
-
-            if (trailingStopOrder.length > 0) {
-              trailingStopRefPrice = bigNumberify(trailingStopOrder[0].referencePrice).mul(expandDecimals(1, 24));
-              trailingStopRefPriceTimestamp = trailingStopOrder[0].referencePriceTimestamp;
-              orderTriggerPrice = order.isLong
-                ? trailingStopRefPrice
-                    .mul(BASIS_POINTS_DIVISOR - order.trailingStopPercentage.toNumber())
-                    .div(BASIS_POINTS_DIVISOR)
-                : trailingStopRefPrice
-                    .mul(BASIS_POINTS_DIVISOR + order.trailingStopPercentage.toNumber())
-                    .div(BASIS_POINTS_DIVISOR);
-
-              //console.log("price",order.isLong,trailingStopRefPrice.toString(),order.triggerPrice.toString(),orderTriggerPrice.toString())  ;
-
-              trailingStopContent =
-                (order.isLong ? "Maximum" : "Minimum") +
-                " price was " +
-                formatAmount(trailingStopRefPrice, USD_DECIMALS, indexToken.displayDecimals, true) +
-                " at " +
-                new Date(trailingStopRefPriceTimestamp).toLocaleString();
-            }
-
-            orderType = "(TS-" + (order.trailingStopPercentage.toNumber() * 100) / BASIS_POINTS_DIVISOR + "%)";
-            triggerPricePrefix = order.isLong ? TRIGGER_PREFIX_BELOW : TRIGGER_PREFIX_ABOVE;
           }
           byWord = ",size=";
         }
