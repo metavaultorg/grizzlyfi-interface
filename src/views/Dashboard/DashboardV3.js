@@ -276,7 +276,7 @@ export default function DashboardV3(props) {
 
   return (
     <SEO title={getPageTitle("Dashboard")}>
-      <div className="default-container DashboardV2 page-layout">
+      <div className="default-container DashboardV2 page-layout" style={{paddingTop:16}}>
         {chainId === opBNB &&
         <div className="faucet">
           <div style={{ fontSize: 20, fontWeight: 600, color: "#afafaf" }}>
