@@ -508,7 +508,7 @@ export default function DashboardV3(props) {
                   <thead>
                     <tr>
                       <th></th>
-                      <th>APY {/* <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /> */}</th>
+                      <th>APR {/* <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /> */}</th>
                       <th>Locked in GLL</th>
                       <th>Your Investment</th>
                       <th>Pool Share</th>
@@ -593,7 +593,7 @@ export default function DashboardV3(props) {
                       <div className="App-card-divider"></div>
                       <div className="App-card-content">
                         <div className="App-card-row">
-                          <div className="label">APY <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /></div>
+                          <div className="label">APR <img src={IconDown} alt="change" style={{ marginBottom: '-4px' }} /></div>
                           <div className="font-number">
                             {item.apy}
                           </div>
@@ -680,7 +680,7 @@ export default function DashboardV3(props) {
               icon={IconMoney}
             />
             <ItemCard
-              label="GLL APY"
+              label="GLL APR"
               value={`${formatKeyAmount(processedData, "gllAprTotal", 2, 2, true)}%`}
               icon={IconPercentage}
             />

@@ -79,6 +79,14 @@ export function useCoingeckoCurrentPrice(symbol) {
     return data;
 }
 
+const rangeFetcher = (url) => {
+    const nowTs = parseInt(new Date().getTime() / 1000);
+    const from = nowTs - 86400;
+    const to = nowTs;
+    
+    const newUrl = url + `&from=${from}&to=${to}`;
+    return axios.get(newUrl).then((res) => res.data);
+};
 
 export function useCoingeckoPrices(chainId, symbol) {
     // token ids https://api.coingecko.com/api/v3/coins
@@ -89,15 +97,16 @@ export function useCoingeckoPrices(chainId, symbol) {
     const from = ON_HOUR - 86400;
     const to = ON_HOUR;
 
-    const url = `https://api.coingecko.com/api/v3/coins/${_symbol}/market_chart/range?vs_currency=usd&from=${from}&to=${to}`;
+    // const url = `https://api.coingecko.com/api/v3/coins/${_symbol}/market_chart/range?vs_currency=usd&from=${from}&to=${to}`;
+    const url = `https://api.coingecko.com/api/v3/coins/${_symbol}/market_chart/range?vs_currency=usd`;
 
     // const [res, loading, error] = useRequest(url);
 
     const { data: res, error } = useSWR(
         [url, symbol],
         {
-            fetcher: defaultFetcher,
-            refreshInterval: 100000
+            fetcher: rangeFetcher,
+            refreshInterval: 300000
         }
     );
 
