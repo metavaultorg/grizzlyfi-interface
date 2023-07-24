@@ -676,7 +676,7 @@ export default function DashboardV3(props) {
             />
             <ItemCard
               label="Assets in GLL"
-              value={`$${formatKeyAmount(processedData, "gllSupplyUsd", USD_DECIMALS, 2, true)}`}
+              value={<AUMLabel/>}
               icon={IconMoney}
             />
             <ItemCard

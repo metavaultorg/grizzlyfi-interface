@@ -72,14 +72,9 @@ import SEO from "./components/Common/SEO";
 import EventToastContainer from "./components/EventToast/EventToastContainer";
 import useEventToast from "./components/EventToast/useEventToast";
 import useRouteQuery from "./hooks/useRouteQuery";
-import coinbaseImg from "./img/coinbaseWallet.png";
-import exodusImg from "./img/ic_exodus.svg";
-import metamaskImg from "./img/ic_metamask_hover_16.svg";
-import walletConnectImg from "./img/walletconnect-circle-blue.svg";
 
 import IconToken from "./assets/icons/honey-token.svg";
 import IconProfile from "./assets/icons/icon-profile.svg";
-import APRLabel from "./components/APRLabel/APRLabel";
 import LinkDropdown from "./components/LinkDropdown/LinkDropdown";
 import Earn from "./views/Earn/Earn";
 import ReferralTerms from "./views/ReferralTerms/ReferralTerms";
