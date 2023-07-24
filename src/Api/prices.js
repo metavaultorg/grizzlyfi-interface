@@ -152,12 +152,12 @@ function getCandlesFromPrices(prices, period) {
   }));
 }
 
-function getCandlePricesFromGraph(tokenSymbol, period) {
+function getCandlePricesFromGraph(chainId, tokenSymbol, period) {
   if (["BNB"].includes(tokenSymbol)) {
     tokenSymbol = "WBNB";
   }
 
-  const token = getTokenBySymbol(DEFAULT_CHAIN_ID, tokenSymbol);
+  const token = getTokenBySymbol(chainId, tokenSymbol);
   const nowTs = parseInt(Date.now() / 1000)
   const timeThreshold = nowTs - 24 * 60 * 60;
   const PER_CHUNK = 1000;
@@ -202,8 +202,8 @@ function getCandlePricesFromGraph(tokenSymbol, period) {
 
 }
 
-function getChainlinkChartPricesFromGraph(tokenSymbol, period) {
-  if (["WBTC", "WETH", "WMBNB"].includes(tokenSymbol)) {
+function getChainlinkChartPricesFromGraph(chainId, tokenSymbol, period) {
+  if (["WBTC", "WETH", "WBNB"].includes(tokenSymbol)) {
     tokenSymbol = tokenSymbol.substr(1);
   }
   const marketName = tokenSymbol + "_USD";
@@ -212,7 +212,7 @@ function getChainlinkChartPricesFromGraph(tokenSymbol, period) {
     throw new Error(`undefined marketName ${marketName}`);
   }
 
-  const token = getTokenBySymbol(DEFAULT_CHAIN_ID, tokenSymbol);
+  const token = getTokenBySymbol(chainId, tokenSymbol);
 
   const PER_CHUNK = 1000;
   const CHUNKS_TOTAL = 6;
@@ -267,7 +267,7 @@ export function useChartPrices(chainId, symbol, isStable, period, currentAverage
       //   console.warn(ex);
       //   console.warn("Switching to graph chainlink data");
         try {
-          return await getCandlePricesFromGraph(symbol, period);
+          return await getCandlePricesFromGraph(chainId, symbol, period);
         } catch (ex2) {
           console.warn("getCandlePricesFromGraph failed");
           console.warn(ex2);
@@ -291,7 +291,7 @@ export function useChartPrices(chainId, symbol, isStable, period, currentAverage
 
     let _prices = [...prices];
     if (currentAveragePriceString && prices.length) {
-      _prices = appendCurrentAveragePrice(_prices, BigNumber.from(currentAveragePriceString), period,symbol);
+      _prices = appendCurrentAveragePrice(chainId, _prices, BigNumber.from(currentAveragePriceString), period,symbol);
     }
 
     return fillGaps(_prices, CHART_PERIODS[period]);
@@ -300,8 +300,8 @@ export function useChartPrices(chainId, symbol, isStable, period, currentAverage
   return [retPrices, updatePrices];
 }
 
-function appendCurrentAveragePrice(prices, currentAveragePrice, period,symbol) {
-  const token = getTokenBySymbol(DEFAULT_CHAIN_ID, symbol);
+function appendCurrentAveragePrice(chainId, prices, currentAveragePrice, period,symbol) {
+  const token = getTokenBySymbol(chainId, symbol);
   const periodSeconds = CHART_PERIODS[period];
   const currentCandleTime = Math.floor(Date.now() / 1000 / periodSeconds) * periodSeconds + timezoneOffset;
   const last = prices[prices.length - 1];
