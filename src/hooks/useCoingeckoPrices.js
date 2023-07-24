@@ -85,8 +85,9 @@ export function useCoingeckoPrices(chainId, symbol) {
 
     const _symbol = coins[symbol]
 
-    const from = NOW_TS - 86400;
-    const to = NOW_TS;
+    const ON_HOUR = NOW_TS - (NOW_TS % 3600);
+    const from = ON_HOUR - 86400;
+    const to = ON_HOUR;
 
     const url = `https://api.coingecko.com/api/v3/coins/${_symbol}/market_chart/range?vs_currency=usd&from=${from}&to=${to}`;
 
