@@ -81,8 +81,9 @@ export function useCoingeckoCurrentPrice(symbol) {
 
 const rangeFetcher = (url) => {
     const nowTs = parseInt(new Date().getTime() / 1000);
-    const from = nowTs - 86400;
-    const to = nowTs;
+    const onPoint = nowTs - (nowTs % 300);
+    const from = onPoint - 86400;
+    const to = onPoint;
     
     const newUrl = url + `&from=${from}&to=${to}`;
     return axios.get(newUrl).then((res) => res.data);
