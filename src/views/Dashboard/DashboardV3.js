@@ -56,7 +56,7 @@ import TextBadge from "../../components/Common/TextBadge";
 import { getTokenBySymbol, getWhitelistedTokens } from "../../data/Tokens";
 import { useTokenPairMarketData } from "../../hooks/useCoingeckoPrices";
 import useWeb3Onboard from "../../hooks/useWeb3Onboard";
-import { useGllData } from "../../views/Earn/dataProvider";
+import { FIRST_DATE_TS, NOW_TS, useGllData, useTotalPaidOutToGLLStakers } from "../../views/Earn/dataProvider";
 import MarketTable from "./MarketTable";
 import OpenedPositions from "./OpenedPositions";
 import animationData from "./animation_1.json";
@@ -180,7 +180,7 @@ export default function DashboardV3(props) {
     nativeTokenPrice
   );
 
-  const totalParams = { from: yesterday(), to: today(), chainId };
+  const totalParams = { from: yesterday(), chainId };
   const [totalGllData] = useGllData(totalParams);
   const [totalAum, totalAumDelta, totalAumDeltaPercentage] = useMemo(() => {
     if (!totalGllData) {
@@ -191,6 +191,8 @@ export default function DashboardV3(props) {
     const percentage = (Math.abs(delta) / total) * 100;
     return [total, delta, percentage];
   }, [totalGllData]);
+
+  const [totalPayout, totalPayoutDelta, totalPayoutLoading] = useTotalPaidOutToGLLStakers({ from: FIRST_DATE_TS, to: NOW_TS, chainId });
 
   const poolShare = (processedData && processedData.gllBalanceUsd && processedData.gllSupplyUsd) ? processedData.gllBalanceUsd.mul(10000).div(processedData.gllSupplyUsd).toNumber() / 100 : 0;
   const vaultList = [
@@ -349,29 +351,27 @@ export default function DashboardV3(props) {
               </div>
             </div>
           </div>
-{/*
           <div className="total-info">
             <div className="label">Paid out to GLL Stakers</div>
             <div>
-              <h1 className="font-number">${formatAmount(totalVolumeSum, USD_DECIMALS, 0, true)}</h1>
+              <h1 className="font-number">${formatNumber(totalPayout, 2, true, false)}</h1>
               <div
                 className={cx(
                   "info-change",
                   {
-                    positive: volumeInfo > 0,
-                    negative: volumeInfo < 0,
-                    muted: volumeInfo === 0,
+                    positive: totalPayoutDelta > 0,
+                    negative: totalPayoutDelta < 0,
+                    muted: totalPayoutDelta === 0,
                   },
                   "font-number"
                 )}
               >
-                <img src={volumeInfo > 0 ? UpChartArrow : DownChartArrow} alt="icon" />
-                {((volumeInfo / totalVolumeSum) * 100).toFixed(2)}% (${formatAmount(volumeInfo, USD_DECIMALS, 0, true)})
+                <img src={totalPayoutDelta > 0 ? UpChartArrow : DownChartArrow} alt="icon" />
+                {((totalPayoutDelta / totalPayout) * 100).toFixed(2)}% (${formatNumber(totalPayoutDelta, 2, true, false)})
                 <span>24h</span>
               </div>
             </div>
           </div>
-*/}
           <div className="total-info">
             <div className="label">Assets Under Management</div>
             <div>

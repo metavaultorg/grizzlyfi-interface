@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { gql, ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
-import { sortBy } from "lodash";
+import { sortBy ,chain, sumBy } from "lodash";
 import { DEFAULT_CHAIN_ID } from "../../config/chains";
 import { getCoreGraphClient, getPriceGraphClient, getReferralsGraphClient } from "../../config/subgraph";
 
@@ -8,6 +8,8 @@ import { getCoreGraphClient, getPriceGraphClient, getReferralsGraphClient } from
 
 const DEFAULT_GROUP_PERIOD = 86400;
 
+const MOVING_AVERAGE_DAYS = 7;
+const MOVING_AVERAGE_PERIOD = 86400 * MOVING_AVERAGE_DAYS;
 
 export const NOW_TS = parseInt(Date.now() / 1000);
 export const FROM_DATE_TS = NOW_TS - NOW_TS % 86400 - DEFAULT_GROUP_PERIOD * 30; // 15 day before
@@ -233,4 +235,91 @@ export function useHourlyVolumeByToken({ token, from = FROM_DATE_TS, to = NOW_TS
         total["volume"] = (prices && Object.keys(prices).length !== 0) ? data.reduce((accumulator, item) => accumulator += item.allAmount, 0) : "-";
     }
     return [data, total, loading, error];
+}
+
+export function useFeesData({ from = FROM_DATE_TS, to = NOW_TS, period = "daily", chainId = DEFAULT_CHAIN_ID } = {}) {
+    const PROPS = "margin liquidation swap mint burn".split(" ");
+    const feesQuery = `{
+      feeStats(
+        first: 1000
+        orderBy: id
+        orderDirection: desc
+        where: { period: ${period}, timestamp_gte: ${from}, timestamp_lte: ${to} }
+      ) {
+        id
+        margin
+        marginAndLiquidation
+        swap
+        mint
+        burn
+        timestamp
+      }
+    }`;
+
+    let [feesData, loading, error] = useGraph(feesQuery, { chainId });
+
+    const feesChartData = useMemo(() => {
+        if (!feesData || (feesData && feesData.feeStats.length === 0)) {
+            return null;
+        }
+
+        let chartData = sortBy(feesData.feeStats, "id").map((item) => {
+            const ret = { timestamp: item.timestamp || item.id };
+
+            PROPS.forEach((prop) => {
+                if (item[prop]) {
+                    ret[prop] = item[prop] / 1e30;
+                }
+            });
+
+            ret.liquidation = item.marginAndLiquidation / 1e30 - item.margin / 1e30;
+            ret.all = PROPS.reduce((memo, prop) => memo + ret[prop], 0);
+            return ret;
+        });
+
+        let cumulative = 0;
+        const cumulativeByTs = {};
+        return chain(chartData)
+            .groupBy((item) => item.timestamp)
+            .map((values, timestamp) => {
+                const all = sumBy(values, "all");
+                cumulative += all;
+
+                let movingAverageAll;
+                const movingAverageTs = Number(timestamp) - MOVING_AVERAGE_PERIOD;
+                if (movingAverageTs in cumulativeByTs) {
+                    movingAverageAll = (cumulative - cumulativeByTs[movingAverageTs]) / MOVING_AVERAGE_DAYS;
+                }
+
+                const ret = {
+                    timestamp: Number(timestamp),
+                    all,
+                    cumulative,
+                    movingAverageAll,
+                };
+                PROPS.forEach((prop) => {
+                    ret[prop] = sumBy(values, prop);
+                });
+                cumulativeByTs[timestamp] = cumulative;
+                return ret;
+            })
+            .value()
+            .filter((item) => item.timestamp >= from);
+    }, [feesData]);
+
+    return [feesChartData, loading, error];
+}
+
+export function useTotalPaidOutToGLLStakers({ from = FROM_DATE_TS, to = NOW_TS, period = "daily", chainId = DEFAULT_CHAIN_ID } = {}) {
+    const [totalFeesData, totalFeesLoading] = useFeesData({ from, to, period, chainId });
+    const [totalPayout, totalPayoutDelta] = useMemo(() => {
+        if (!totalFeesData) {
+            return [];
+        }
+        const total = totalFeesData[totalFeesData.length - 1]?.cumulative;
+        const delta = (total - totalFeesData[totalFeesData.length - 2]?.cumulative);
+        return [total * 0.5, delta * 0.5];
+    }, [totalFeesData]);
+
+    return [totalPayout, totalPayoutDelta, totalFeesLoading]
 }
