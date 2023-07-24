@@ -85,7 +85,7 @@ export function useCoingeckoPrices(chainId, symbol) {
 
     const _symbol = coins[symbol]
 
-    const ON_HOUR = NOW_TS - (NOW_TS % 3600);
+    const ON_HOUR = NOW_TS - (NOW_TS % 300);
     const from = ON_HOUR - 86400;
     const to = ON_HOUR;
 
