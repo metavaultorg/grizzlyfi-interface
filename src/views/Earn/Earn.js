@@ -222,7 +222,7 @@ export default function Earn(props) {
       <div className="section-header" style={{ maxWidth: 1006, margin: "0 auto" }}>
         <h1>
           Grizzly Leverage Liquidity
-          <TextBadge text="Low Risk" bgColor={"rgba(158,206,255,0.1)"} textColor="#9eceff" />
+          {/*<TextBadge text="Low Risk" bgColor={"rgba(158,206,255,0.1)"} textColor="#9eceff" />*/}
         </h1>
         <p className="text-description" style={{ marginTop: 16, marginBottom: 48 }}>
           The Grizzly Leverage Liquidity tokens (GLL) is the counterparty to everyone trading with leverage. Deposit
