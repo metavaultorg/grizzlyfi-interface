@@ -2,7 +2,6 @@ import React, { useMemo, useState } from "react";
 import { sortArr } from './util'
 import IconDown from '../../assets/icons/icon-down.svg'
 import cx from "classnames";
-import { useTokenPairMarketData } from '../../hooks/useCoingeckoPrices';
 import { getImageUrl } from "../../cloudinary/getImageUrl";
 import { useHistory } from "react-router-dom";
 import { getTokenBySymbol } from "../../data/Tokens";
@@ -17,10 +16,12 @@ import {
 import "./MarketTable.css";
 import { getConstant } from "../../config/chains";
 
-export default function MarketTable() {
+export default function MarketTable(props) {
+    const {
+        tokenPairMarketList,
+    } = props;
     const [sorter, setSorter] = useState({ sortBy: 'change', isAsc: true })
     const { chainId } = useChainId();
-    const tokenPairMarketList = useTokenPairMarketData(chainId);
     const history = useHistory();
     const { AddressZero } = ethers.constants;
 

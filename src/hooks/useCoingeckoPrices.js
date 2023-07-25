@@ -89,66 +89,33 @@ const rangeFetcher = (url) => {
     return axios.get(newUrl).then((res) => res.data);
 };
 
-export function useCoingeckoPrices(chainId, symbol) {
-    // token ids https://api.coingecko.com/api/v3/coins
-
-    const _symbol = coins[symbol]
+export function useMarketVolume(chainId, symbol) {
 
     const ON_HOUR = NOW_TS - (NOW_TS % 300);
     const from = ON_HOUR - 86400;
     const to = ON_HOUR;
 
-    // const url = `https://api.coingecko.com/api/v3/coins/${_symbol}/market_chart/range?vs_currency=usd&from=${from}&to=${to}`;
-    const url = `https://api.coingecko.com/api/v3/coins/${_symbol}/market_chart/range?vs_currency=usd`;
-
-    // const [res, loading, error] = useRequest(url);
-
-    const { data: res, error } = useSWR(
-        [url, symbol],
-        {
-            fetcher: rangeFetcher,
-            refreshInterval: 300000
-        }
-    );
-
     const token = getTokenBySymbol(chainId??CHAIN_ID, symbol).address;
     const [, total, , ,] = useHourlyVolumeByToken({ token, from, to, chainId: chainId });
 
     const data = useMemo(() => {
-        if (!res || res === undefined || res.length === 0) {
-            return null;
-        }
-        if (!res.prices) {
-            return null;
-        }
-        const firstPrice = res.prices[0][1];
-        const lastPrice = res.prices[res.prices.length - 1][1];
-
-        const prices = res.prices.map((item) => item[1])
-
-        const high_24h = prices.reduce((previous, current) => Math.max(previous, current))
-        const low_24h = prices.reduce((previous, current) => Math.min(previous, current))
 
         const displayDecimals = getTokenBySymbol(chainId??CHAIN_ID, symbol).displayDecimals || 2;
         return {
-            name: symbol.concat("/USD"),
             symbol: symbol,
-            lastPrice: formatNumber(lastPrice, displayDecimals, true, false),
-            change: limitDecimals((lastPrice - firstPrice) / firstPrice * 100, 2),
-            high: formatNumber(high_24h, displayDecimals, true, false),
-            low: formatNumber(low_24h, displayDecimals, true, false),
             volume: formatNumber(total && total["volume"] ? total["volume"] : 0, displayDecimals, true, false),
             volumeUsd: formatNumber(total && total["volumeUsd"] ? total["volumeUsd"] : 0, displayDecimals, true, false),
         };
-    }, [res, symbol, total]);
+    }, [symbol, total]);
 
-    return [data, null, error];
+    return [data, null, null];
 }
 
 export function useTokenPairMarketData(chainId) {
-    const [btcPrices] = useCoingeckoPrices(chainId, "BTC");
-    const [ethPrices] = useCoingeckoPrices(chainId, "ETH");
-    const [bnbPrices] = useCoingeckoPrices(chainId, "BNB");
+    
+    const [btcPrices] = useMarketVolume(chainId, "BTC");
+    const [ethPrices] = useMarketVolume(chainId, "ETH");
+    const [bnbPrices] = useMarketVolume(chainId, "BNB");
 
     const data = useMemo(() => {
         const ret = [];

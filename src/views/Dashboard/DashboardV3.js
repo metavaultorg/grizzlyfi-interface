@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { getImageUrl } from "../../cloudinary/getImageUrl";
 
 import { getContract } from "../../config/contracts";
-import { callContract, useAllTokensPerInterval } from "../../Api";
+import { callContract, useAllTokensPerInterval, useChartPrices } from "../../Api";
 import {
   GLL_DECIMALS,
   GLL_DISPLAY_DECIMALS,
@@ -31,6 +31,8 @@ import {
   SECONDS_PER_YEAR,
   getTotalApr,
   getTokenInfo,
+  useLocalStorageSerializeKey,
+  CHART_PERIODS,
 } from "../../Helpers";
 import GllManager from "../../abis/GllManager.json";
 import Reader from "../../abis/Reader.json";
@@ -68,8 +70,9 @@ import animationData from "./animation_1.json";
 import { useInfoTokens } from "../../Api";
 import { getPositionQuery, getPositions } from "../Exchange/Exchange";
 import ClaimButtonOpBNB from "../../components/ClaimButton/ClaimButtonOpBNB";
-import { opBNB } from "../../config/chains";
+import { CHAIN_ID, opBNB } from "../../config/chains";
 const { AddressZero } = ethers.constants;
+const DEFAULT_PERIOD = "4h";
 
 const claimTypes = [
   { id: "eth", iconPath: "coins/eth", token: "ETH" },
@@ -97,6 +100,85 @@ function getCurrentFeesUsd(tokenAddresses, fees, infoTokens) {
   return currentFeesUsd;
 }
 
+export function getMarkListData(chainId, infoTokens, tokenPairMarketList, pairSymbols) {
+  const ret = [];
+  const volumeData = Object.fromEntries(tokenPairMarketList.map(item => [item.symbol, item]));
+  for (let i = 0; i < pairSymbols.length; i++) {
+      const symbol = pairSymbols[i];
+      const token = getTokenBySymbol(chainId ?? CHAIN_ID, symbol);
+      const tokenAddress = token.address;
+      const chartToken = getTokenInfo(infoTokens, tokenAddress, true, getContract(chainId, "NATIVE_TOKEN"));
+      let [period, setPeriod] = useLocalStorageSerializeKey([chainId, "Chart-period"], DEFAULT_PERIOD);
+      if (!(period in CHART_PERIODS)) {
+          period = DEFAULT_PERIOD;
+      }
+
+      const currentAveragePrice = chartToken.maxPrice && chartToken.minPrice ? chartToken.maxPrice.add(chartToken.minPrice).div(2) : null;
+      const [priceData, updatePriceData] = useChartPrices(
+          chainId,
+          symbol,
+          null,
+          period,
+          currentAveragePrice
+      );
+      let high;
+      let low;
+      let deltaPrice;
+      let delta;
+      let deltaPercentage;
+      let deltaPercentageStr;
+      const now = Date.now() / 1000;
+      const timeThreshold = now - 24 * 60 * 60;
+
+      if (priceData) {
+          for (let i = priceData.length - 1; i > 0; i--) {
+              const price = priceData[i];
+              if (price.time < timeThreshold) {
+                  break;
+              }
+              if (!low) {
+                  low = price.value;
+              }
+              if (!high) {
+                  high = price.value;
+              }
+
+              if (price.value > high) {
+                  high = price.value;
+              }
+              if (price.value < low) {
+                  low = price.value;
+              }
+              deltaPrice = price.value;
+          }
+      }
+      if (deltaPrice && currentAveragePrice) {
+          const average = parseFloat(formatAmount(currentAveragePrice, USD_DECIMALS, chartToken.displayDecimals));
+          delta = average - deltaPrice;
+          deltaPercentage = (delta * 100) / average;
+          if (deltaPercentage > 0) {
+              deltaPercentageStr = `+${deltaPercentage.toFixed(2)}%`;
+          } else {
+              deltaPercentageStr = `${deltaPercentage.toFixed(2)}%`;
+          }
+          if (deltaPercentage === 0) {
+              deltaPercentageStr = "0.00";
+          }
+      }
+      ret.push({
+          name: symbol.concat("/USD"),
+          symbol: symbol,
+          lastPrice: currentAveragePrice && formatAmount(currentAveragePrice, USD_DECIMALS, chartToken.displayDecimals, true),
+          high: high && formatNumber(high, chartToken.displayDecimals, true),
+          low: low && formatNumber(low, chartToken.displayDecimals, true),
+          change: deltaPercentage ? deltaPercentage.toFixed(2) : deltaPercentage,
+          volume: volumeData[symbol].volume,
+          volumeUsd: volumeData[symbol].volumeUsd
+      })
+  }
+  return ret;
+}
+
 export default function DashboardV3(props) {
   const { connectWallet, savedShowPnlAfterFees, savedIsPnlInLeverage } = props;
   const { active, library, account } = useWeb3Onboard();
@@ -105,7 +187,7 @@ export default function DashboardV3(props) {
   const [selectedClaimToken, setSelectedClaimToken] = useState(claimTypes[0]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const tokenPairMarketList = useTokenPairMarketData();
+  const tokenPairMarketVolume = useTokenPairMarketData();
 
   const totalVolumeSum = useTotalVolume(chainId);
   const volumeInfo = useHourlyVolume(chainId);
@@ -298,7 +380,7 @@ export default function DashboardV3(props) {
   const nativeToken = getTokenInfo(infoTokens, AddressZero);
 
   let totalApr = getTotalApr(allTokensPerInterval, ghnyPrice, infoTokens, gllSupply, gllPrice, chainId, stakingInfo, gllSupplyUsd, nativeToken)
-  console.log(processedData);
+
   const vaultList = [
     {
       symbol: "GLL",
@@ -320,6 +402,8 @@ export default function DashboardV3(props) {
 
     return positionsPnl;
   }, [positions])
+
+  const tokenPairMarketList = getMarkListData(chainId,infoTokens,tokenPairMarketVolume,["BNB","BTC","ETH"]);
 
   return (
     <SEO title={getPageTitle("Dashboard")}>
@@ -694,7 +778,7 @@ export default function DashboardV3(props) {
               Start leverage trading with Grizzly Pairs and earn up to 50x.{" "}
             </p>
           </div>
-          <MarketTable />
+          <MarketTable tokenPairMarketList={tokenPairMarketList} />
         </div>
 
         <div className=" section leverage-liquidity-container">
