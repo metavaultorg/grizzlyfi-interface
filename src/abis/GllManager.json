@@ -9,7 +9,7 @@
         },
         {
           "internalType": "address",
-          "name": "_usdq",
+          "name": "_usdg",
           "type": "address"
         },
         {
@@ -55,7 +55,7 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "aumInUsdq",
+          "name": "aumInUsdg",
           "type": "uint256"
         },
         {
@@ -67,7 +67,7 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "usdqAmount",
+          "name": "usdgAmount",
           "type": "uint256"
         },
         {
@@ -104,7 +104,7 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "aumInUsdq",
+          "name": "aumInUsdg",
           "type": "uint256"
         },
         {
@@ -116,7 +116,7 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "usdqAmount",
+          "name": "usdgAmount",
           "type": "uint256"
         },
         {
@@ -183,7 +183,7 @@
     },
     {
       "inputs": [],
-      "name": "USDQ_DECIMALS",
+      "name": "USDG_DECIMALS",
       "outputs": [
         {
           "internalType": "uint256",
@@ -208,7 +208,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_minUsdq",
+          "name": "_minUsdg",
           "type": "uint256"
         },
         {
@@ -252,7 +252,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_minUsdq",
+          "name": "_minUsdg",
           "type": "uint256"
         },
         {
@@ -338,7 +338,7 @@
           "type": "bool"
         }
       ],
-      "name": "getAumInUsdq",
+      "name": "getAumInUsdg",
       "outputs": [
         {
           "internalType": "uint256",
@@ -713,7 +713,7 @@
     },
     {
       "inputs": [],
-      "name": "usdq",
+      "name": "usdg",
       "outputs": [
         {
           "internalType": "address",

@@ -290,7 +290,7 @@ export function getStatsUrl(chainId) {
 }
 
 export function getWsUrl(chainId) {
-  return EXPLORER_URLS[chainId];
+  return WS_PROVIDERS[chainId];
 }
 
 export function getHighExecutionFee(chainId) {

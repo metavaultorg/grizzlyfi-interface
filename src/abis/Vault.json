@@ -29,7 +29,7 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "usdqAmount",
+          "name": "usdgAmount",
           "type": "uint256"
         },
         {
@@ -39,7 +39,7 @@
           "type": "uint256"
         }
       ],
-      "name": "BuyUSDQ",
+      "name": "BuyUSDG",
       "type": "event"
     },
     {
@@ -275,7 +275,7 @@
           "type": "uint256"
         }
       ],
-      "name": "DecreaseUsdqAmount",
+      "name": "DecreaseUsdgAmount",
       "type": "event"
     },
     {
@@ -431,7 +431,7 @@
           "type": "uint256"
         }
       ],
-      "name": "IncreaseUsdqAmount",
+      "name": "IncreaseUsdgAmount",
       "type": "event"
     },
     {
@@ -519,7 +519,7 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "usdqAmount",
+          "name": "usdgAmount",
           "type": "uint256"
         },
         {
@@ -535,7 +535,7 @@
           "type": "uint256"
         }
       ],
-      "name": "SellUSDQ",
+      "name": "SellUSDG",
       "type": "event"
     },
     {
@@ -792,7 +792,7 @@
     },
     {
       "inputs": [],
-      "name": "USDQ_DECIMALS",
+      "name": "USDG_DECIMALS",
       "outputs": [
         {
           "internalType": "uint256",
@@ -933,7 +933,7 @@
           "type": "address"
         }
       ],
-      "name": "buyUSDQ",
+      "name": "buyUSDG",
       "outputs": [
         {
           "internalType": "uint256",
@@ -1197,7 +1197,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_usdqDelta",
+          "name": "_usdgDelta",
           "type": "uint256"
         },
         {
@@ -1654,7 +1654,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_usdqAmount",
+          "name": "_usdgAmount",
           "type": "uint256"
         }
       ],
@@ -1715,7 +1715,7 @@
           "type": "address"
         }
       ],
-      "name": "getTargetUsdqAmount",
+      "name": "getTargetUsdgAmount",
       "outputs": [
         {
           "internalType": "uint256",
@@ -1909,7 +1909,7 @@
         },
         {
           "internalType": "address",
-          "name": "_usdq",
+          "name": "_usdg",
           "type": "address"
         },
         {
@@ -2146,7 +2146,7 @@
           "type": "address"
         }
       ],
-      "name": "maxUsdqAmounts",
+      "name": "maxUsdgAmounts",
       "outputs": [
         {
           "internalType": "uint256",
@@ -2341,7 +2341,7 @@
           "type": "address"
         }
       ],
-      "name": "sellUSDQ",
+      "name": "sellUSDG",
       "outputs": [
         {
           "internalType": "uint256",
@@ -2659,7 +2659,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_maxUsdqAmount",
+          "name": "_maxUsdgAmount",
           "type": "uint256"
         },
         {
@@ -2691,7 +2691,7 @@
           "type": "uint256"
         }
       ],
-      "name": "setUsdqAmount",
+      "name": "setUsdgAmount",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -3055,7 +3055,7 @@
     },
     {
       "inputs": [],
-      "name": "usdq",
+      "name": "usdg",
       "outputs": [
         {
           "internalType": "address",
@@ -3074,7 +3074,7 @@
           "type": "address"
         }
       ],
-      "name": "usdqAmounts",
+      "name": "usdgAmounts",
       "outputs": [
         {
           "internalType": "uint256",

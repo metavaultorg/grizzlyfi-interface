@@ -41,7 +41,7 @@
     },
     {
       "inputs": [],
-      "name": "USDQ_DECIMALS",
+      "name": "USDG_DECIMALS",
       "outputs": [
         {
           "internalType": "uint256",
@@ -173,7 +173,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_usdqAmount",
+          "name": "_usdgAmount",
           "type": "uint256"
         },
         {
@@ -491,7 +491,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_usdqAmount",
+          "name": "_usdgAmount",
           "type": "uint256"
         },
         {
@@ -525,7 +525,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_usdqAmount",
+          "name": "_usdgAmount",
           "type": "uint256"
         },
         {

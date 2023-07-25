@@ -9,7 +9,7 @@
         },
         {
           "internalType": "address",
-          "name": "_usdq",
+          "name": "_usdg",
           "type": "address"
         },
         {
@@ -651,7 +651,7 @@
     },
     {
       "inputs": [],
-      "name": "usdq",
+      "name": "usdg",
       "outputs": [
         {
           "internalType": "address",

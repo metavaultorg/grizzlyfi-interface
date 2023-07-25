@@ -274,6 +274,18 @@
           "internalType": "uint256",
           "name": "executionFee",
           "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "minOut",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "withdrawETH",
+          "type": "bool"
         }
       ],
       "name": "CreateDecreaseOrder",
@@ -636,6 +648,49 @@
       "anonymous": false,
       "inputs": [
         {
+          "indexed": false,
+          "internalType": "address",
+          "name": "router",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "vault",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "weth",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "usdg",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "minExecutionFee",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "minPurchaseTokenAmountUsd",
+          "type": "uint256"
+        }
+      ],
+      "name": "Initialize",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
           "indexed": true,
           "internalType": "address",
           "name": "account",
@@ -697,6 +752,19 @@
       "anonymous": false,
       "inputs": [
         {
+          "indexed": false,
+          "internalType": "address",
+          "name": "gov",
+          "type": "address"
+        }
+      ],
+      "name": "UpdateGov",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
           "indexed": true,
           "internalType": "address",
           "name": "account",
@@ -746,6 +814,45 @@
         }
       ],
       "name": "UpdateIncreaseOrder",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "minExecutionFee",
+          "type": "uint256"
+        }
+      ],
+      "name": "UpdateMinExecutionFee",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "minPurchaseTokenAmountUsd",
+          "type": "uint256"
+        }
+      ],
+      "name": "UpdateMinPurchaseTokenAmountUsd",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "orderExecutor",
+          "type": "address"
+        }
+      ],
+      "name": "UpdateOrderExecutor",
       "type": "event"
     },
     {
@@ -824,7 +931,7 @@
     },
     {
       "inputs": [],
-      "name": "USDQ_PRECISION",
+      "name": "USDG_PRECISION",
       "outputs": [
         {
           "internalType": "uint256",
@@ -1112,19 +1219,9 @@
           "type": "uint256"
         },
         {
-          "internalType": "bool",
-          "name": "isLong",
-          "type": "bool"
-        },
-        {
           "internalType": "uint256",
           "name": "triggerPrice",
           "type": "uint256"
-        },
-        {
-          "internalType": "bool",
-          "name": "triggerAboveThreshold",
-          "type": "bool"
         },
         {
           "internalType": "uint256",
@@ -1132,14 +1229,24 @@
           "type": "uint256"
         },
         {
-          "internalType": "bool",
-          "name": "withdrawETH",
-          "type": "bool"
-        },
-        {
           "internalType": "uint256",
           "name": "executionFee",
           "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "isLong",
+          "type": "bool"
+        },
+        {
+          "internalType": "bool",
+          "name": "triggerAboveThreshold",
+          "type": "bool"
+        },
+        {
+          "internalType": "bool",
+          "name": "withdrawETH",
+          "type": "bool"
         }
       ],
       "stateMutability": "view",
@@ -1429,59 +1536,6 @@
         },
         {
           "internalType": "uint256",
-          "name": "_index",
-          "type": "uint256"
-        },
-        {
-          "internalType": "enum OrderType",
-          "name": "_type",
-          "type": "uint8"
-        }
-      ],
-      "name": "getOrderKey",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "pure",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bool",
-          "name": "_returnFirst",
-          "type": "bool"
-        }
-      ],
-      "name": "getShouldExecuteOrderList",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        },
-        {
-          "internalType": "uint160[]",
-          "name": "",
-          "type": "uint160[]"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_account",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
           "name": "_orderIndex",
           "type": "uint256"
         }
@@ -1596,24 +1650,24 @@
           "type": "uint256"
         },
         {
-          "internalType": "bool",
-          "name": "isLong",
-          "type": "bool"
-        },
-        {
           "internalType": "uint256",
           "name": "triggerPrice",
           "type": "uint256"
         },
         {
-          "internalType": "bool",
-          "name": "triggerAboveThreshold",
-          "type": "bool"
-        },
-        {
           "internalType": "uint256",
           "name": "executionFee",
           "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "isLong",
+          "type": "bool"
+        },
+        {
+          "internalType": "bool",
+          "name": "triggerAboveThreshold",
+          "type": "bool"
         }
       ],
       "stateMutability": "view",
@@ -1657,7 +1711,7 @@
         },
         {
           "internalType": "address",
-          "name": "_usdq",
+          "name": "_usdg",
           "type": "address"
         },
         {
@@ -1723,19 +1777,6 @@
           "internalType": "address",
           "name": "",
           "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "orderList",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "size",
-          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -1842,6 +1883,11 @@
           "type": "uint256"
         },
         {
+          "internalType": "uint256",
+          "name": "executionFee",
+          "type": "uint256"
+        },
+        {
           "internalType": "bool",
           "name": "triggerAboveThreshold",
           "type": "bool"
@@ -1850,11 +1896,6 @@
           "internalType": "bool",
           "name": "shouldUnwrap",
           "type": "bool"
-        },
-        {
-          "internalType": "uint256",
-          "name": "executionFee",
-          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -1970,7 +2011,7 @@
     },
     {
       "inputs": [],
-      "name": "usdq",
+      "name": "usdg",
       "outputs": [
         {
           "internalType": "address",
