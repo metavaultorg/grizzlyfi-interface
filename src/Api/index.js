@@ -143,7 +143,6 @@ export function useAllTokensPerInterval(library, chainId) {
         for (let i = 0; i < tokens.length; i++) {
           const tokenAddress = tokens[i];
           contract.tokensPerInterval(tokenAddress).then(tokensPerInterval => {
-            console.log("tokensPerInterval", tokensPerInterval);
             _allTokensPerInterval.push([tokenAddress, tokensPerInterval])
             if (_allTokensPerInterval.length === tokens.length) {
               setAllTokensPerInterval(_allTokensPerInterval);
@@ -382,20 +381,6 @@ export function useTradesFromGraph(chainId, account) {
 
   return { trades };
 }
-
-export function useTrailingStopOrders(account) {
-  const url =
-    account && account.length > 0
-      ? `${process.env.REACT_APP_ORDER_API_URL}/trailing-stop-orders?account=${account}`
-      : `${process.env.REACT_APP_ORDER_API_URL}/trailing-stop-orders`;
-  const { data: trailingStopOrders, mutate: updateTrailingStopOrders } = useSWR(url, {
-    dedupingInterval: 30000,
-    fetcher: (...args) => fetch(...args).then((res) => res.json()),
-  });
-
-  return { trailingStopOrders, updateTrailingStopOrders };
-}
-
 
 export function useTrades(chainId, account) {
   const url =
