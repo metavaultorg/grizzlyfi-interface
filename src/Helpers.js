@@ -1362,12 +1362,10 @@ function parseDecreaseOrdersData(chainId, decreaseOrdersData, account, indexes) 
       isLong,
       triggerPrice: sliced[6],
       triggerAboveThreshold: sliced[7].toString() === "1",
-      orderType: sliced[8],
-      trailingStopPercentage: sliced[9],
       type: DECREASE,
     };
   };
-  return _parseOrdersData(decreaseOrdersData, account, indexes, extractor, 7, 3).filter((order) => {
+  return _parseOrdersData(decreaseOrdersData, account, indexes, extractor, 5, 3).filter((order) => {
     return isValidToken(chainId, order.collateralToken) && isValidToken(chainId, order.indexToken);
   });
 }
@@ -1521,7 +1519,7 @@ export function useAccountOrders(flagOrdersEnabled, overrideAccount) {
         const [swapOrders = [], increaseOrders = [], decreaseOrders = []] = await Promise.all([
           getOrders("getSwapOrders", serverIndexes.swap, lastIndexes.swap, parseSwapOrdersData),
           getOrders("getIncreaseOrders", serverIndexes.increase, lastIndexes.increase, parseIncreaseOrdersData),
-          getOrders("getDecreaseOrders", serverIndexes.decrease, lastIndexes.decrease, parseDecreaseOrdersData),
+          getOrders("getDecreaseOrdersV2", serverIndexes.decrease, lastIndexes.decrease, parseDecreaseOrdersData),
         ]);
 
         return [...swapOrders, ...increaseOrders, ...decreaseOrders];
