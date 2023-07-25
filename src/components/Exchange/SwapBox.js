@@ -405,7 +405,7 @@ export default function SwapBox(props) {
   }, [maxToTokenOut, toTokenAddress, infoTokens]);
 
   const maxFromTokenInUSD = useMemo(() => {
-    const value = fromTokenInfo.maxUsdqAmount
+    const value = fromTokenInfo.maxUsdgAmount
       ?.sub(fromTokenInfo.usdgAmount)
       .mul(expandDecimals(1, USD_DECIMALS))
       .div(expandDecimals(1, USDG_DECIMALS));
@@ -756,7 +756,7 @@ export default function SwapBox(props) {
     }
 
     if (!isMarketOrder) {
-      if ((toToken.isStable || toToken.isUsdq) && (fromToken.isStable || fromToken.isUsdq)) {
+      if ((toToken.isStable || toToken.isUsdg) && (fromToken.isStable || fromToken.isUsdg)) {
         return ["Select different tokens"];
       }
 
@@ -819,15 +819,15 @@ export default function SwapBox(props) {
 
     if (
       fromUsdMin &&
-      fromTokenInfo.maxUsdqAmount &&
-      fromTokenInfo.maxUsdqAmount.gt(0) &&
+      fromTokenInfo.maxUsdgAmount &&
+      fromTokenInfo.maxUsdgAmount.gt(0) &&
       fromTokenInfo.usdgAmount &&
       fromTokenInfo.maxPrice
     ) {
       const usdgFromAmount = adjustForDecimals(fromUsdMin, USD_DECIMALS, USDG_DECIMALS);
-      const nextUsdqAmount = fromTokenInfo.usdgAmount.add(usdgFromAmount);
+      const nextUsdgAmount = fromTokenInfo.usdgAmount.add(usdgFromAmount);
 
-      if (nextUsdqAmount.gt(fromTokenInfo.maxUsdqAmount)) {
+      if (nextUsdgAmount.gt(fromTokenInfo.maxUsdgAmount)) {
         return [`${fromTokenInfo.symbol} pool exceeded`];
       }
     }
@@ -915,14 +915,14 @@ export default function SwapBox(props) {
 
         if (
           fromUsdMin &&
-          fromTokenInfo.maxUsdqAmount &&
-          fromTokenInfo.maxUsdqAmount.gt(0) &&
+          fromTokenInfo.maxUsdgAmount &&
+          fromTokenInfo.maxUsdgAmount.gt(0) &&
           fromTokenInfo.minPrice &&
           fromTokenInfo.usdgAmount
         ) {
           const usdgFromAmount = adjustForDecimals(fromUsdMin, USD_DECIMALS, USDG_DECIMALS);
-          const nextUsdqAmount = fromTokenInfo.usdgAmount.add(usdgFromAmount);
-          if (nextUsdqAmount.gt(fromTokenInfo.maxUsdqAmount)) {
+          const nextUsdgAmount = fromTokenInfo.usdgAmount.add(usdgFromAmount);
+          if (nextUsdgAmount.gt(fromTokenInfo.maxUsdgAmount)) {
             return [`${fromTokenInfo.symbol} pool exceeded, try different token`, true, "MAX_USDG"];
           }
         }
@@ -971,14 +971,14 @@ export default function SwapBox(props) {
         }
 
         if (
-          fromTokenInfo.maxUsdqAmount &&
-          fromTokenInfo.maxUsdqAmount.gt(0) &&
+          fromTokenInfo.maxUsdgAmount &&
+          fromTokenInfo.maxUsdgAmount.gt(0) &&
           fromTokenInfo.minPrice &&
           fromTokenInfo.usdgAmount
         ) {
           const usdgFromAmount = adjustForDecimals(fromUsdMin, USD_DECIMALS, USDG_DECIMALS);
-          const nextUsdqAmount = fromTokenInfo.usdgAmount.add(usdgFromAmount);
-          if (nextUsdqAmount.gt(fromTokenInfo.maxUsdqAmount)) {
+          const nextUsdgAmount = fromTokenInfo.usdgAmount.add(usdgFromAmount);
+          if (nextUsdgAmount.gt(fromTokenInfo.maxUsdgAmount)) {
             return [`${fromTokenInfo.symbol} pool exceeded, try different token`, true, "MAX_USDG"];
           }
         }
