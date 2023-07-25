@@ -88,6 +88,8 @@ import useWeb3Onboard from "./hooks/useWeb3Onboard";
 import { getWsUrl, opBNB ,BSC, getChainName, getExplorerUrl } from "./config/chains";
 import { CURRENT_PROVIDER_LOCALSTORAGE_KEY, IS_PNL_IN_LEVERAGE_KEY, REFERRAL_CODE_KEY, REFERRAL_CODE_QUERY_PARAMS, SHOULD_EAGER_CONNECT_LOCALSTORAGE_KEY, SHOULD_SHOW_POSITION_LINES_KEY, SHOW_PNL_AFTER_FEES_KEY, SLIPPAGE_BPS_KEY } from "./config/localStorage";
 import { getContract } from "./config/contracts";
+import Vault from "./abis/Vault.json";
+import PositionRouter from "./abis/PositionRouter.json";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -524,49 +526,49 @@ function FullApp() {
   const vaultAddress = getContract(chainId, "Vault");
   const positionRouterAddress = getContract(chainId, "PositionRouter");
 
-  // useEffect(() => {
-  //   const wsVaultAbi = Vault.abi;
-  //   const wsProvider = getWsProvider(active, chainId);
-  //   if (!wsProvider) {
-  //     return;
-  //   }
+  useEffect(() => {
+    const wsVaultAbi = Vault.abi;
+    const wsProvider = getWsProvider(active, chainId);
+    if (!wsProvider) {
+      return;
+    }
 
-  //   const wsVault = new ethers.Contract(vaultAddress, wsVaultAbi, wsProvider);
-  //   const wsPositionRouter = new ethers.Contract(positionRouterAddress, PositionRouter.abi, wsProvider);
+    const wsVault = new ethers.Contract(vaultAddress, wsVaultAbi, wsProvider);
+    const wsPositionRouter = new ethers.Contract(positionRouterAddress, PositionRouter.abi, wsProvider);
 
-  //   const callExchangeRef = (method, ...args) => {
-  //     if (!exchangeRef || !exchangeRef.current) {
-  //       return;
-  //     }
+    const callExchangeRef = (method, ...args) => {
+      if (!exchangeRef || !exchangeRef.current) {
+        return;
+      }
 
-  //     exchangeRef.current[method](...args);
-  //   };
+      exchangeRef.current[method](...args);
+    };
 
-  //   // handle the subscriptions here instead of within the Exchange component to avoid unsubscribing and re-subscribing
-  //   // each time the Exchange components re-renders, which happens on every data update
-  //   const onUpdatePosition = (...args) => callExchangeRef("onUpdatePosition", ...args);
-  //   const onClosePosition = (...args) => callExchangeRef("onClosePosition", ...args);
-  //   const onIncreasePosition = (...args) => callExchangeRef("onIncreasePosition", ...args);
-  //   const onDecreasePosition = (...args) => callExchangeRef("onDecreasePosition", ...args);
-  //   const onCancelIncreasePosition = (...args) => callExchangeRef("onCancelIncreasePosition", ...args);
-  //   const onCancelDecreasePosition = (...args) => callExchangeRef("onCancelDecreasePosition", ...args);
+    // handle the subscriptions here instead of within the Exchange component to avoid unsubscribing and re-subscribing
+    // each time the Exchange components re-renders, which happens on every data update
+    const onUpdatePosition = (...args) => callExchangeRef("onUpdatePosition", ...args);
+    const onClosePosition = (...args) => callExchangeRef("onClosePosition", ...args);
+    const onIncreasePosition = (...args) => callExchangeRef("onIncreasePosition", ...args);
+    const onDecreasePosition = (...args) => callExchangeRef("onDecreasePosition", ...args);
+    const onCancelIncreasePosition = (...args) => callExchangeRef("onCancelIncreasePosition", ...args);
+    const onCancelDecreasePosition = (...args) => callExchangeRef("onCancelDecreasePosition", ...args);
 
-  //   wsVault.on("UpdatePosition", onUpdatePosition);
-  //   wsVault.on("ClosePosition", onClosePosition);
-  //   wsVault.on("IncreasePosition", onIncreasePosition);
-  //   wsVault.on("DecreasePosition", onDecreasePosition);
-  //   wsPositionRouter.on("CancelIncreasePosition", onCancelIncreasePosition);
-  //   wsPositionRouter.on("CancelDecreasePosition", onCancelDecreasePosition);
+    wsVault.on("UpdatePosition", onUpdatePosition);
+    wsVault.on("ClosePosition", onClosePosition);
+    wsVault.on("IncreasePosition", onIncreasePosition);
+    wsVault.on("DecreasePosition", onDecreasePosition);
+    wsPositionRouter.on("CancelIncreasePosition", onCancelIncreasePosition);
+    wsPositionRouter.on("CancelDecreasePosition", onCancelDecreasePosition);
 
-  //   return function cleanup() {
-  //     wsVault.off("UpdatePosition", onUpdatePosition);
-  //     wsVault.off("ClosePosition", onClosePosition);
-  //     wsVault.off("IncreasePosition", onIncreasePosition);
-  //     wsVault.off("DecreasePosition", onDecreasePosition);
-  //     wsPositionRouter.off("CancelIncreasePosition", onCancelIncreasePosition);
-  //     wsPositionRouter.off("CancelDecreasePosition", onCancelDecreasePosition);
-  //   };
-  // }, [active, chainId, vaultAddress, positionRouterAddress]);
+    return function cleanup() {
+      wsVault.off("UpdatePosition", onUpdatePosition);
+      wsVault.off("ClosePosition", onClosePosition);
+      wsVault.off("IncreasePosition", onIncreasePosition);
+      wsVault.off("DecreasePosition", onDecreasePosition);
+      wsPositionRouter.off("CancelIncreasePosition", onCancelIncreasePosition);
+      wsPositionRouter.off("CancelDecreasePosition", onCancelDecreasePosition);
+    };
+  }, [active, chainId, vaultAddress, positionRouterAddress]);
 
   return (
     <>
