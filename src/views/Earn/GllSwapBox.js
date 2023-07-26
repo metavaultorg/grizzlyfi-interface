@@ -546,7 +546,7 @@ export default function GllSwapBox(props) {
       {gllBalance && gllBalance.gt(0) ? (
         <ItemCard
           className="col-span-2"
-          label="Current Deposit"
+          label="Your Total Deposits"
           value={
             <div
               className="font-number"
