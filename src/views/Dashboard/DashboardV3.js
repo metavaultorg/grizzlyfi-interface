@@ -37,6 +37,7 @@ import {
 import GllManager from "../../abis/GllManager.json";
 import Reader from "../../abis/Reader.json";
 import RewardReader from "../../abis/RewardReader.json";
+import RewardTracker from "../../abis/RewardTracker.json";
 import Vault from "../../abis/Vault.json";
 
 import "./DashboardV3.css";
@@ -70,7 +71,8 @@ import animationData from "./animation_1.json";
 import { useInfoTokens } from "../../Api";
 import { getPositionQuery, getPositions } from "../Exchange/Exchange";
 import ClaimButtonOpBNB from "../../components/ClaimButton/ClaimButtonOpBNB";
-import { CHAIN_ID, opBNB } from "../../config/chains";
+import { BSC, CHAIN_ID, opBNB } from "../../config/chains";
+import Earnings from "../Earn/Earnings";
 const { AddressZero } = ethers.constants;
 const DEFAULT_PERIOD = "4h";
 
@@ -104,83 +106,83 @@ export function getMarkListData(chainId, infoTokens, tokenPairMarketList, pairSy
   const ret = [];
   const volumeData = Object.fromEntries(tokenPairMarketList.map(item => [item.symbol, item]));
   for (let i = 0; i < pairSymbols.length; i++) {
-      const symbol = pairSymbols[i];
-      const token = getTokenBySymbol(chainId ?? CHAIN_ID, symbol);
-      const tokenAddress = token.address;
-      const chartToken = getTokenInfo(infoTokens, tokenAddress, true, getContract(chainId, "NATIVE_TOKEN"));
-      let [period, setPeriod] = useLocalStorageSerializeKey([chainId, "Chart-period"], DEFAULT_PERIOD);
-      if (!(period in CHART_PERIODS)) {
-          period = DEFAULT_PERIOD;
-      }
+    const symbol = pairSymbols[i];
+    const token = getTokenBySymbol(chainId ?? CHAIN_ID, symbol);
+    const tokenAddress = token.address;
+    const chartToken = getTokenInfo(infoTokens, tokenAddress, true, getContract(chainId, "NATIVE_TOKEN"));
+    let [period, setPeriod] = useLocalStorageSerializeKey([chainId, "Chart-period"], DEFAULT_PERIOD);
+    if (!(period in CHART_PERIODS)) {
+      period = DEFAULT_PERIOD;
+    }
 
-      const currentAveragePrice = chartToken.maxPrice && chartToken.minPrice ? chartToken.maxPrice.add(chartToken.minPrice).div(2) : null;
-      const [priceData, updatePriceData] = useChartPrices(
-          chainId,
-          symbol,
-          null,
-          period,
-          currentAveragePrice
-      );
-      let high;
-      let low;
-      let deltaPrice;
-      let delta;
-      let deltaPercentage;
-      let deltaPercentageStr;
-      const now = Date.now() / 1000;
-      const timeThreshold = now - 24 * 60 * 60;
+    const currentAveragePrice = chartToken.maxPrice && chartToken.minPrice ? chartToken.maxPrice.add(chartToken.minPrice).div(2) : null;
+    const [priceData, updatePriceData] = useChartPrices(
+      chainId,
+      symbol,
+      null,
+      period,
+      currentAveragePrice
+    );
+    let high;
+    let low;
+    let deltaPrice;
+    let delta;
+    let deltaPercentage;
+    let deltaPercentageStr;
+    const now = Date.now() / 1000;
+    const timeThreshold = now - 24 * 60 * 60;
 
-      if (priceData) {
-          for (let i = priceData.length - 1; i > 0; i--) {
-              const price = priceData[i];
-              if (price.time < timeThreshold) {
-                  break;
-              }
-              if (!low) {
-                  low = price.value;
-              }
-              if (!high) {
-                  high = price.value;
-              }
+    if (priceData) {
+      for (let i = priceData.length - 1; i > 0; i--) {
+        const price = priceData[i];
+        if (price.time < timeThreshold) {
+          break;
+        }
+        if (!low) {
+          low = price.value;
+        }
+        if (!high) {
+          high = price.value;
+        }
 
-              if (price.value > high) {
-                  high = price.value;
-              }
-              if (price.value < low) {
-                  low = price.value;
-              }
-              deltaPrice = price.value;
-          }
+        if (price.value > high) {
+          high = price.value;
+        }
+        if (price.value < low) {
+          low = price.value;
+        }
+        deltaPrice = price.value;
       }
-      if (deltaPrice && currentAveragePrice) {
-          const average = parseFloat(formatAmount(currentAveragePrice, USD_DECIMALS, chartToken.displayDecimals));
-          delta = average - deltaPrice;
-          deltaPercentage = (delta * 100) / average;
-          if (deltaPercentage > 0) {
-              deltaPercentageStr = `+${deltaPercentage.toFixed(2)}%`;
-          } else {
-              deltaPercentageStr = `${deltaPercentage.toFixed(2)}%`;
-          }
-          if (deltaPercentage === 0) {
-              deltaPercentageStr = "0.00";
-          }
+    }
+    if (deltaPrice && currentAveragePrice) {
+      const average = parseFloat(formatAmount(currentAveragePrice, USD_DECIMALS, chartToken.displayDecimals));
+      delta = average - deltaPrice;
+      deltaPercentage = (delta * 100) / average;
+      if (deltaPercentage > 0) {
+        deltaPercentageStr = `+${deltaPercentage.toFixed(2)}%`;
+      } else {
+        deltaPercentageStr = `${deltaPercentage.toFixed(2)}%`;
       }
-      ret.push({
-          name: symbol.concat("/USD"),
-          symbol: symbol,
-          lastPrice: currentAveragePrice && formatAmount(currentAveragePrice, USD_DECIMALS, chartToken.displayDecimals, true),
-          high: high && formatNumber(high, chartToken.displayDecimals, true),
-          low: low && formatNumber(low, chartToken.displayDecimals, true),
-          change: deltaPercentage ? deltaPercentage.toFixed(2) : deltaPercentage,
-          volume: volumeData[symbol].volume,
-          volumeUsd: volumeData[symbol].volumeUsd
-      })
+      if (deltaPercentage === 0) {
+        deltaPercentageStr = "0.00";
+      }
+    }
+    ret.push({
+      name: symbol.concat("/USD"),
+      symbol: symbol,
+      lastPrice: currentAveragePrice && formatAmount(currentAveragePrice, USD_DECIMALS, chartToken.displayDecimals, true),
+      high: high && formatNumber(high, chartToken.displayDecimals, true),
+      low: low && formatNumber(low, chartToken.displayDecimals, true),
+      change: deltaPercentage ? deltaPercentage.toFixed(2) : deltaPercentage,
+      volume: volumeData[symbol].volume,
+      volumeUsd: volumeData[symbol].volumeUsd
+    })
   }
   return ret;
 }
 
 export default function DashboardV3(props) {
-  const { connectWallet, savedShowPnlAfterFees, savedIsPnlInLeverage } = props;
+  const { connectWallet, savedShowPnlAfterFees, savedIsPnlInLeverage, setPendingTxns } = props;
   const { active, library, account } = useWeb3Onboard();
   const { chainId } = useChainId();
 
@@ -231,7 +233,7 @@ export default function DashboardV3(props) {
   );
 
   const { data: depositBalances } = useSWR(
-    [
+    chainId === opBNB && [
       `StakeV2:depositBalances:${active}`,
       chainId,
       rewardReaderAddress,
@@ -242,6 +244,7 @@ export default function DashboardV3(props) {
       fetcher: fetcher(library, RewardReader, [depositTokens, rewardTrackersForDepositBalances]),
     }
   );
+
   const { data: stakingInfo } = useSWR(
     chainId === opBNB && [`StakeV2:stakingInfo:${active}`, chainId, rewardReaderAddress, "getStakingInfo", account || PLACEHOLDER_ACCOUNT],
     {
@@ -283,8 +286,6 @@ export default function DashboardV3(props) {
 
   const [totalPayout, totalPayoutDelta, totalPayoutLoading] = useTotalPaidOutToGLLStakers({ from: FIRST_DATE_TS, to: NOW_TS, chainId });
 
-  const poolShare = (processedData && processedData.gllBalanceUsd && processedData.gllSupplyUsd) ? processedData.gllBalanceUsd.mul(10000).div(processedData.gllSupplyUsd).toNumber() / 100 : 0;
-
   function requestToken() {
     const token = getTokenBySymbol(chainId, selectedClaimToken.token);
     const faucetAddress = getContract(chainId, "GrizzlyFaucet");
@@ -324,7 +325,7 @@ export default function DashboardV3(props) {
   const tokens = getTokens(chainId);
   const tokenAddresses = tokens.map((token) => token.address);
   const usdgAddress = getContract(chainId, "USDG");
-  const tokensForBalanceAndSupplyQuery = [feeGllTrackerAddress, usdgAddress];
+  const tokensForBalanceAndSupplyQuery = [feeGllTrackerAddress, usdgAddress, gllAddress];
 
   const { data: tokenBalances } = useSWR([`Dashboard:getTokenBalances:${active}`, chainId, readerAddress, "getTokenBalances", account || PLACEHOLDER_ACCOUNT], {
     fetcher: fetcher(library, Reader, [tokenAddresses]),
@@ -357,7 +358,7 @@ export default function DashboardV3(props) {
 
   const { data: balancesAndSupplies } = useSWR(
     [
-      `Earn:getTokenBalancesWithSupplies:${active}`,
+      `Dashboard:getTokenBalancesWithSupplies:${active}`,
       chainId,
       readerAddress,
       "getTokenBalancesWithSupplies",
@@ -367,17 +368,21 @@ export default function DashboardV3(props) {
       fetcher: fetcher(library, Reader, [tokensForBalanceAndSupplyQuery]),
     }
   );
+
   const ghnyPrice = useCoingeckoCurrentPrice("GHNY")
   const [allTokensPerInterval,] = useAllTokensPerInterval(library, chainId)
   const gllSupply = balancesAndSupplies ? balancesAndSupplies[1] : bigNumberify(0);
+  const gllBalance = balancesAndSupplies ? balancesAndSupplies[0] : bigNumberify(0);
 
   const gllPrice =
-  aum && aum.gt(0) && gllSupply.gt(0)
-    ? aum.mul(expandDecimals(1, GLL_DECIMALS)).div(gllSupply)
-    : expandDecimals(1, USD_DECIMALS);
+    aum && aum.gt(0) && gllSupply.gt(0)
+      ? aum.mul(expandDecimals(1, GLL_DECIMALS)).div(gllSupply)
+      : expandDecimals(1, USD_DECIMALS);
 
   const gllSupplyUsd = gllSupply.mul(gllPrice).div(expandDecimals(1, GLL_DECIMALS));
+  const gllBalanceUsd = gllBalance.mul(gllPrice).div(expandDecimals(1, GLL_DECIMALS));
   const nativeToken = getTokenInfo(infoTokens, AddressZero);
+  const poolShare = gllSupplyUsd.gt(0) ? gllBalanceUsd.mul(10000).div(gllSupplyUsd).toNumber() / 100 : 0;
 
   let totalApr = getTotalApr(allTokensPerInterval, ghnyPrice, infoTokens, gllSupply, gllPrice, chainId, stakingInfo, gllSupplyUsd, nativeToken)
 
@@ -386,7 +391,7 @@ export default function DashboardV3(props) {
       symbol: "GLL",
       apy: `${totalApr}%`,
       locked: `${formatAmount(gllSupplyUsd, USD_DECIMALS, 2, true)}`,
-      invest: `${formatKeyAmount(processedData, "gllBalance", GLL_DECIMALS, 2, true)}`,
+      invest: `${formatAmount(gllBalance, GLL_DECIMALS, 2, true)}`,
       poolShare: `${poolShare}%`,
       profit: `$${formatKeyAmount(processedData, "totalGllRewardsUsd", USD_DECIMALS, 2, true)}`,
     },
@@ -403,7 +408,13 @@ export default function DashboardV3(props) {
     return positionsPnl;
   }, [positions])
 
-  const tokenPairMarketList = getMarkListData(chainId,infoTokens,tokenPairMarketVolume,["BNB","BTC","ETH"]);
+  const tokenPairMarketList = getMarkListData(chainId, infoTokens, tokenPairMarketVolume, ["BNB", "BTC", "ETH"]);
+
+  function isInvestmentExist() {
+    if(gllBalance && gllBalance.gt(0)) return true;
+    if (positions.length > 0) return true;
+    return false;
+  }
 
   return (
     <SEO title={getPageTitle("Dashboard")}>
@@ -526,7 +537,7 @@ export default function DashboardV3(props) {
           </div>
         </div>
 
-        {(!processedData.gllBalanceUsd || processedData.gllBalanceUsd.eq(0)) && (positions.length === 0) && (
+        {!isInvestmentExist() && (
           <div className="section section-noinvestments">
             <div className="section-header">
               <h1>No Investment Yet</h1>
@@ -578,7 +589,7 @@ export default function DashboardV3(props) {
             </div>
           </div>
         )}
-        {((processedData.gllBalanceUsd && processedData.gllBalanceUsd.gt(0)) || (positions.length > 0)) &&
+        {isInvestmentExist() &&
           <div className="section section-investments">
             <div className="section-header">
               <h1>Your Investments </h1>
@@ -597,26 +608,32 @@ export default function DashboardV3(props) {
               />
               <ItemCard
                 label="Your GLL deposit"
-                value={`$${formatKeyAmount(processedData, "gllBalanceUsd", USD_DECIMALS, 2, true)}`}
+                value={formatAmount(gllBalance, GLL_DECIMALS, 2, true)}
                 icon={IconMoney}
               />
-              <ItemCard
-                style={{ width: "-webkit-fill-available" }}
-                label="Claimable Rewards (BNB)"
-                value={
-                  <APRLabel
-                    usePercentage={false}
-                    tokenDecimals={18}
-                    chainId={chainId}
-                    label="feeGllTrackerRewards"
-                    key="BSC"
-                  />
-                }
-                icon={IconClaim}
-                buttonEle={
-                  <ClaimButtonOpBNB></ClaimButtonOpBNB>
-                }
-              />
+              {chainId === opBNB && (
+                <ItemCard
+                  style={{ width: "-webkit-fill-available" }}
+                  label="Claimable Rewards"
+                  value={<>
+                    $<APRLabel
+                      usePercentage={false}
+                      tokenDecimals={18}
+                      chainId={chainId}
+                      label="feeGllTrackerRewards"
+                      key="BSC"
+                    />
+                  </>
+                  }
+                  icon={IconClaim}
+                  buttonEle={
+                    <ClaimButtonOpBNB></ClaimButtonOpBNB>
+                  }
+                />
+              )}
+              {chainId === BSC && (
+                <Earnings setPendingTxns={setPendingTxns} renderType="Dashboard"></Earnings>
+              )}
             </div>
             <InnerCard title="Your Opened Positions">
               <OpenedPositions
