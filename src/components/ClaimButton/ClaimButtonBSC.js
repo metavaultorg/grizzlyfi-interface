@@ -18,7 +18,7 @@ export default function ClaimButtonOpBSC({ className = "", token }) {
         const rewardRouterAddress = getContract(chainId, "RewardRouter");
         const contract = new ethers.Contract(rewardRouterAddress, RewardRouter.abi, library.getSigner());
         setIsSubmitting(true);
-        callContract(chainId, contract, "claim", [token, false, false], {
+        callContract(chainId, contract, "claim", [token, false, true], {
             sentMsg: "Claiming...",
             failMsg: "Claim failed.",
             successMsg: `Claim Succeed!`,

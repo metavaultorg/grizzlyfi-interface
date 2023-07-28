@@ -85,7 +85,7 @@ export default function Earnings({ setPendingTxns, renderType: viewType }) {
       contract,
       "handleRewards",
       [
-        false,
+        true,
         false
       ],
       {
