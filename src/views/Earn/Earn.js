@@ -260,6 +260,7 @@ export default function Earn(props) {
               icon={IconPercentage}
             />
             <ItemCard /* style={{ minWidth: 298 }} */ label="Assets Under Management" value={<AUMLabel />} icon={IconMoney} />
+           {chainId === opBNB && (
             <ItemCard
               // style={{ width: "-webkit-fill-available", minWidth: 320 }}
               label="Claimable Rewards"
@@ -276,6 +277,10 @@ export default function Earn(props) {
                 <ClaimButtonOpBNB></ClaimButtonOpBNB>
               }
             />
+           )}
+           {chainId === BSC && (
+             <Earnings {...props} renderType="Earn"></Earnings>
+           )}
           </div>
           <ChartPrice gllPrice={gllPrice} />
         </div>
