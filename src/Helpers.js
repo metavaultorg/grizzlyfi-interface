@@ -2012,7 +2012,8 @@ export function getStakingData(stakingInfo) {
 
 
 export function getTotalApr(allTokensPerInterval, ghnyPrice, infoTokens, gllSupply, gllPrice, chainId, stakingInfo, gllSupplyUsd, nativeToken){
-  let totalApr = useMemo(() => {
+  let [totalApr, tokensApr] = useMemo(() => {
+    let tokensApr = []
     if (chainId === opBNB) {
       const stakingData = getStakingData(stakingInfo);
 
@@ -2032,36 +2033,41 @@ export function getTotalApr(allTokensPerInterval, ghnyPrice, infoTokens, gllSupp
           .mul(nativeToken.minPrice)
           .div(expandDecimals(1, 18));
         feeGllTrackerApr = feeGllTrackerAnnualRewardsUsd.mul(BASIS_POINTS_DIVISOR).div(gllSupplyUsd);
-        return feeGllTrackerApr.toNumber() / 100;
+        return [feeGllTrackerApr.toNumber() / 100, tokensApr];
       }
     } else {
       let annualRewardsInUsd = bigNumberify(0);
-      if (!Array.isArray(allTokensPerInterval) && allTokensPerInterval.length === 0) return;
-      if (gllSupply.eq(0)) return;
+      if (!Array.isArray(allTokensPerInterval) && allTokensPerInterval.length === 0) return [null, tokensApr];
+      if (gllSupply.eq(0)) return [null, tokensApr];
       for (let i = 0; i < allTokensPerInterval.length; i++) {
+        let tokenApr = {}
         const [tokenAddress, tokensPerInterval] = allTokensPerInterval[i];
         let tokenPrice = bigNumberify(0)
         let tokenDecimals = 18;
         if (tokenAddress === getContract(chainId, "GHNY")) {
-          tokenPrice = ghnyPrice;
+            tokenApr.symbol = "GHNY"
+            tokenPrice = ghnyPrice;
         } else {
           const token = infoTokens[tokenAddress];
           if (token && token.maxPrice) {
+            tokenApr.symbol = token.symbol
             tokenPrice = token.maxPrice;
             tokenDecimals = token.decimals
           }
         }
 
         const tokenAnnualRewardsInUsd = tokenPrice.mul(tokensPerInterval).mul(86400).mul(365).div(expandDecimals(1, 30)).div(expandDecimals(1, tokenDecimals))
+        tokenApr.apr = tokenAnnualRewardsInUsd.mul(10000).mul(expandDecimals(1, USD_DECIMALS)).div(gllPrice).div(gllSupply.div(expandDecimals(1, USDG_DECIMALS))).toNumber() / 100
+        tokensApr.push(tokenApr)
         annualRewardsInUsd = annualRewardsInUsd.add(tokenAnnualRewardsInUsd);
       }
       const apr = annualRewardsInUsd.mul(10000).mul(expandDecimals(1, USD_DECIMALS)).div(gllPrice).div(gllSupply.div(expandDecimals(1, USDG_DECIMALS)))
-      return apr.toNumber() / 100;
+      return [apr.toNumber() / 100, tokensApr];
     }
-    return 0
+    return [null, tokensApr]
   }, [allTokensPerInterval, ghnyPrice, infoTokens, gllSupply, gllPrice, chainId, stakingInfo, gllSupplyUsd])
 
-  return totalApr;
+  return  [totalApr, tokensApr];
 }
 
 export function getProcessedData(balanceData, supplyData, depositBalanceData, stakingData, aum, nativeTokenPrice) {
