@@ -384,7 +384,7 @@ export default function DashboardV3(props) {
   const nativeToken = getTokenInfo(infoTokens, AddressZero);
   const poolShare = gllSupplyUsd.gt(0) ? gllBalanceUsd.mul(10000).div(gllSupplyUsd).toNumber() / 100 : 0;
 
-  let totalApr = getTotalApr(allTokensPerInterval, ghnyPrice, infoTokens, gllSupply, gllPrice, chainId, stakingInfo, gllSupplyUsd, nativeToken)
+  let [totalApr, ] = getTotalApr(allTokensPerInterval, ghnyPrice, infoTokens, gllSupply, gllPrice, chainId, stakingInfo, gllSupplyUsd, nativeToken)
 
   const vaultList = [
     {

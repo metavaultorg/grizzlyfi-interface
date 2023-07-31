@@ -209,7 +209,7 @@ export default function Earn(props) {
     }
   );
 
-  let totalApr = getTotalApr(allTokensPerInterval, ghnyPrice, infoTokens, gllSupply, gllPrice, chainId, stakingInfo, gllSupplyUsd, nativeToken)
+  let [totalApr, tokensApr] = getTotalApr(allTokensPerInterval, ghnyPrice, infoTokens, gllSupply, gllPrice, chainId, stakingInfo, gllSupplyUsd, nativeToken)
 
   useEffect(() => {
     const hash = history.location.hash.replace("#", "");
@@ -236,7 +236,27 @@ export default function Earn(props) {
             <ItemCard
               // style={{ minWidth: 218 }}
               label="APR"
-              value={totalApr+"%"}
+              value={tokensApr && tokensApr.length > 0 ?
+                <TooltipComponent
+                  handle={<label style={{ fontSize: "24px" }}>${totalApr}</label>}
+                  position="right-bottom"
+                  handleClassName="font-number"
+                  renderContent={() => {
+                    return (
+                      <>
+                        {tokensApr.map((t) => (
+                          <div key={t.symbol}>
+                            {t.symbol} APR: {t.apr}%
+                          </div>
+                        ))
+                        }
+                      </>
+                    );
+                  }}
+                />
+                :
+                <>${totalApr}</>
+              }
               icon={IconPercentage}
             />
             <ItemCard /* style={{ minWidth: 298 }} */ label="Assets Under Management" value={<AUMLabel />} icon={IconMoney} />
