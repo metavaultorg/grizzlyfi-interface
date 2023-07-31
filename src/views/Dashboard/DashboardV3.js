@@ -73,6 +73,8 @@ import { getPositionQuery, getPositions } from "../Exchange/Exchange";
 import ClaimButtonOpBNB from "../../components/ClaimButton/ClaimButtonOpBNB";
 import { BSC, CHAIN_ID, opBNB } from "../../config/chains";
 import Earnings from "../Earn/Earnings";
+import useReward from "../../hooks/useReward";
+
 const { AddressZero } = ethers.constants;
 const DEFAULT_PERIOD = "4h";
 
@@ -386,6 +388,8 @@ export default function DashboardV3(props) {
 
   let [totalApr, ] = getTotalApr(allTokensPerInterval, ghnyPrice, infoTokens, gllSupply, gllPrice, chainId, stakingInfo, gllSupplyUsd, nativeToken)
 
+  const {totalRewardsInUsd} = useReward();
+
   const vaultList = [
     {
       symbol: "GLL",
@@ -393,7 +397,8 @@ export default function DashboardV3(props) {
       locked: `${formatAmount(gllSupplyUsd, USD_DECIMALS, 2, true)}`,
       invest: `${formatAmount(gllBalance, GLL_DECIMALS, 2, true)}`,
       poolShare: `${poolShare}%`,
-      profit: `$${formatKeyAmount(processedData, "totalGllRewardsUsd", USD_DECIMALS, 2, true)}`,
+      profit: `$${chainId === BSC ? formatAmount(totalRewardsInUsd, USD_DECIMALS, 2, true)
+                  : formatKeyAmount(processedData, "totalGllRewardsUsd", USD_DECIMALS, 2, true)}`,
     },
   ];
 
@@ -817,7 +822,7 @@ export default function DashboardV3(props) {
           <div className="grid-cols-4 item-card-group">
             <ItemCard
               label="Price of GLL"
-              value={`$${formatKeyAmount(processedData, "gllPrice", USD_DECIMALS, GLL_DISPLAY_DECIMALS, true)}`}
+              value={`$${formatAmount(gllPrice, USD_DECIMALS, 3)}`}
               icon={IconToken}
             />
             <ItemCard
