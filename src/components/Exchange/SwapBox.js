@@ -1262,7 +1262,6 @@ export default function SwapBox(props) {
 
     const contract = new ethers.Contract(nativeTokenAddress, WETH.abi, library.getSigner());
     Api.callContract(chainId, contract, "deposit", {
-      gasLimit: bigNumberify(50000),
       value: fromAmount,
       sentMsg: "Swap submitted.",
       successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${
@@ -1284,7 +1283,6 @@ export default function SwapBox(props) {
 
     const contract = new ethers.Contract(nativeTokenAddress, WETH.abi, library.getSigner());
     Api.callContract(chainId, contract, "withdraw", [fromAmount], {
-      gasLimit: bigNumberify(50000),
       sentMsg: "Swap submitted!",
       failMsg: "Swap failed.",
       successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${
@@ -1397,7 +1395,6 @@ export default function SwapBox(props) {
     contract = new ethers.Contract(routerAddress, Router.abi, library.getSigner());
 
     Api.callContract(chainId, contract, method, params, {
-      gasLimit: bigNumberify(500000),
       value,
       sentMsg: `Swap ${!isMarketOrder ? " order " : ""} submitted!`,
       successMsg: `Swapped ${formatAmount(fromAmount, fromToken.decimals, 4, true)} ${
@@ -1575,7 +1572,6 @@ export default function SwapBox(props) {
     )} USD.`;
 
     Api.callContract(chainId, contract, method, params, {
-      gasLimit: bigNumberify(600000),
       value,
       setPendingTxns,
       sentMsg: `${isLong ? "Long" : "Short"} submitted.`,
