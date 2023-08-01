@@ -2512,11 +2512,6 @@ export default function SwapBox(props) {
               Leaderboard
             </a>
           </div>
-          <div className="Exchange-info-label-button">
-            <a href="https://trade.grizzly.fi/" target="_blank" rel="noopener noreferrer">
-              Speed up page loading
-            </a>
-          </div>
         </div>
         {/* <div className="Exchange-info-row">
           <div className="Exchange-info-label-button">
