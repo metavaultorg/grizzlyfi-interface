@@ -36,7 +36,6 @@ export default function ChartPrice({ gllPrice }) {
 
 
     const priceChange = () => {
-        console.log(gllPrice);
         if (gllData && gllData.length > 0) {
             const fristPrice = gllData[0].gllPrice
             const lastPrice = gllData[gllData.length - 1].gllPrice
