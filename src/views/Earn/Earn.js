@@ -238,7 +238,7 @@ export default function Earn(props) {
               label="APR"
               value={tokensApr && tokensApr.length > 0 ?
                 <TooltipComponent
-                  handle={<label style={{ fontSize: "24px" }}>${totalApr}</label>}
+                  handle={<label style={{ fontSize: "24px" }}>{totalApr}</label>}
                   position="right-bottom"
                   handleClassName="font-number"
                   renderContent={() => {
@@ -255,7 +255,7 @@ export default function Earn(props) {
                   }}
                 />
                 :
-                <>${totalApr}</>
+                <>{totalApr}</>
               }
               icon={IconPercentage}
             />
