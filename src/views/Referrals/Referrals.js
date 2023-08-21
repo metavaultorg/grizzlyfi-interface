@@ -1246,7 +1246,11 @@ function TraderStats({
   setPendingTxns,
   pendingTxns,
 }) {
-  const { referralTotalStats } = referralsData;
+  let referralTotalStats = null;
+  if(referralsData){
+    referralTotalStats = referralsData.referralTotalStats;
+  }
+  // const { referralTotalStats } = referralsData;
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editReferralCode, setEditReferralCode] = useState("");
   const [isUpdateSubmitting, setIsUpdateSubmitting] = useState(false);
