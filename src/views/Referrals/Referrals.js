@@ -47,7 +47,7 @@ import { getNativeToken, getToken } from "../../data/Tokens";
 import useWeb3Onboard from "../../hooks/useWeb3Onboard";
 import "./Referrals.css";
 import { REFERRALS_SELECTED_TAB_KEY, REFERRAL_CODE_KEY, REFERRAL_CODE_QUERY_PARAMS } from "../../config/localStorage";
-import { getChainName } from "../../config/chains";
+import { getChainName, getExplorerUrl } from "../../config/chains";
 
 const REFERRAL_DATA_MAX_TIME = 60000 * 5; // 5 minutes
 const TRADERS = "Traders";
@@ -1016,6 +1016,7 @@ function TradersInfo({
   setPendingTxns,
   pendingTxns,
 }) {
+  if(!referralsData) return <></>
   const { referralTotalStats, discountDistributions } = referralsData;
 
   const [, copyToClipboard] = useCopyToClipboard();
