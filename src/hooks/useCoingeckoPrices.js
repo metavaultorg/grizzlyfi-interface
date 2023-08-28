@@ -5,6 +5,7 @@ import useSWR from "swr";
 import axios from "axios";
 import { useHourlyVolumeByToken } from "../views/Earn/dataProvider"
 import { CHAIN_ID } from "../config/chains";
+import { BSC, getContract } from "../config/contracts";
 
 export const FIRST_DATE_TS = parseInt(+new Date(2022, 5, 1) / 1000);
 export const NOW_TS = parseInt(new Date().getTime() / 1000);
@@ -63,7 +64,11 @@ export function useCoingeckoCurrentPrice(symbol) {
     const _symbol = coins[symbol]
     const _defaultPrice = coinsDefaultPrices[symbol]
 
-    const { res, error } = useSWR(`https://api.coingecko.com/api/v3/simple/price?ids=${symbol}&vs_currencies=usd`, {
+    const platform = "binance-smart-chain";
+    const address = getContract(BSC,symbol);
+    const url = `https://api.coingecko.com/api/v3/simple/token_price/${platform}?contract_addresses=${address}&vs_currencies=usd`;
+
+    const { res, error } = useSWR(url, {
         dedupingInterval: 60000,
         fetcher: fetcher,
     });
