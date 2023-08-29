@@ -65,20 +65,22 @@ export function useCoingeckoCurrentPrice(symbol) {
     const _defaultPrice = coinsDefaultPrices[symbol]
 
     const platform = "binance-smart-chain";
-    const address = getContract(BSC,symbol);
+    const address = getContract(BSC,symbol).toLowerCase();
     const url = `https://api.coingecko.com/api/v3/simple/token_price/${platform}?contract_addresses=${address}&vs_currencies=usd`;
-
-    const { res, error } = useSWR(url, {
-        dedupingInterval: 60000,
-        fetcher: fetcher,
-    });
+    const { data: res, error } = useSWR(
+        [url, address],
+        {
+            fetcher: defaultFetcher,
+            refreshInterval: 100000
+        }
+    );
 
     const data = useMemo(() => {
-        if (!res || res[symbol] || res[symbol]["usd"] === 0) {
+        if (!res || res === undefined || res.length === 0) {
             return expandDecimals(_defaultPrice * 1e6, 24);
         }
+        return expandDecimals(Number(res[address].usd) * 1e6, 24);
 
-        return expandDecimals(Number(res[_symbol]["usd"]) * 1e6, 24);
     }, [res]);
 
     return data;
