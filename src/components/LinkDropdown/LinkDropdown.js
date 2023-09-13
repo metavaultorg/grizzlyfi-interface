@@ -46,7 +46,7 @@ export default function LinkDropdown() {
                         </a>
                     </Menu.Item>
                     <div className='media-links'>
-                        <a href='https://twitter.com/GrizzlyFi' target="_blank" rel="noopener noreferrer"><img src={twitter} alt='' /></a>
+                        <a href='https://twitter.com/GrizzlyFi' target="_blank" rel="noopener noreferrer"><img src={twitter} alt='' width={16} /></a>
                         <a href='https://t.me/grizzlyficommunity' target="_blank" rel="noopener noreferrer"><img src={telegram} alt='' /></a>
                         <a href='https://www.instagram.com/grizzly.fi/' target="_blank" rel="noopener noreferrer"><img src={ins} alt='' /></a>
                         <a href='https://www.youtube.com/c/Grizzly-fi' target="_blank" rel="noopener noreferrer"><img src={youtube} alt='' /></a>
