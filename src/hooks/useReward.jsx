@@ -55,7 +55,7 @@ export default function useReward() {
       } else {
         const token = infoTokens[claimableTokens[i]];
         if (token) {
-          const rewardInUsd = token.maxPrice && token.maxPrice.mul(reward).div(expandDecimals(1, token.decimals));
+          const rewardInUsd = token.maxPrice ? token.maxPrice.mul(reward).div(expandDecimals(1, token.decimals)) : bigNumberify(0);
           totalRewardsInUsd = totalRewardsInUsd.add(rewardInUsd);
           result.push({ token, reward, rewardInUsd });
         }
