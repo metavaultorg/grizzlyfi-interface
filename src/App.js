@@ -90,6 +90,7 @@ import { CURRENT_PROVIDER_LOCALSTORAGE_KEY, IS_PNL_IN_LEVERAGE_KEY, REFERRAL_COD
 import { getContract } from "./config/contracts";
 import Vault from "./abis/Vault.json";
 import PositionRouter from "./abis/PositionRouter.json";
+import IconBnb from "./img/ic_bsc_32.svg";
 
 if ("ethereum" in window) {
   window.ethereum.autoRefreshOnNetworkChange = false;
@@ -213,7 +214,7 @@ function AppHeaderUser({
 
   const [{ wallet }, connect, disconnect] = useConnectWallet();
 
-  const showSelector = true;
+  const showSelector = false;
   const networkOptions = [
     {
       label: "BNB Network",
@@ -222,13 +223,14 @@ function AppHeaderUser({
       icon: "ic_bsc_32.svg",
       color: "#2e2f5a",
     },
-    {
+/*    {
       label: "opBNB Network",
       network: "opBNB",
       value: opBNB,
       icon: "ic_opbnb_32.svg",
       color: "#2e2f5a",
     },
+*/
   ];
 
   useEffect(() => {
@@ -287,7 +289,15 @@ function AppHeaderUser({
               showModal={showNetworkSelectorModal}
             />
           )}
-          {/* <div className="App-header-network"><img src={IconBnb} alt="icon" /></div> */}
+          {!showSelector &&
+            <div className="App-header-network">
+              <div className="network-select">
+                <div style={{display: "flex", alignItems: "center"}}>
+                  <img src={IconBnb} alt={"BNB"} width={28} className="network-icon" />
+                </div>
+              </div>
+            </div>
+          }
           <div className="App-header-dots" style={{ position: "relative" }}>
             <LinkDropdown />
           </div>
@@ -316,6 +326,15 @@ function AppHeaderUser({
                 showModal={showNetworkSelectorModal}
               />
             )}
+            {!showSelector &&
+              <div className="App-header-network">
+                <div className="network-select">
+                  <div style={{display: "flex", alignItems: "center"}}>
+                    <img src={IconBnb} alt={"BNB"} width={28} className="network-icon" />
+                  </div>
+                </div>
+              </div>
+            }
             <div className="App-header-dots" style={{ position: "relative" }}>
             <LinkDropdown />
           </div>
