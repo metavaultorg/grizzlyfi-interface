@@ -36,6 +36,14 @@ let eventsData = [
     validTill: "03/30/2023 12:00:00 PM",
     bodyText: "USDC is currently facing a large spread due to its current market price. The spread might impact the transactions related to USDC on the platform, such as leverage with USDC collateral, swaps and GLL minting/burning.",
     buttons: []
+  },
+  {
+    id: "migration-period",
+    title: "Migration Period",
+    isActive: true,
+    validTill: "03/30/2024 12:00:00 PM",
+    bodyText: "Due to the migration to Grizzly Trade v2, v1 will be discontinued, so please close all positions, cancel limit orders and remove your liquidity (don't forget to claim your rewards).",
+    buttons: []
   }
 ];
 export default eventsData;
